@@ -8,17 +8,10 @@
 <style>
   :root{
     --bg:#000; --fg:#fff; --muted:#9aa0a6;
-    --accent:#9900FF;           /* purple */
-    --accent-2:#FFA500;         /* kept for future use */
+    --accent:#9900FF;
     --glass:rgba(255,255,255,.06);
-    --glass-2:rgba(255,255,255,.1);
     --border:rgba(255,255,255,.14);
     --shadow:0 10px 30px rgba(0,0,0,.45);
-  }
-  [data-theme="dawn"]{
-    --bg:#0b0b17; --fg:#fff; --muted:#b9bed3;
-    --accent:#9900FF; --glass:rgba(255,255,255,.08);
-    --glass-2:rgba(255,255,255,.14); --border:rgba(255,255,255,.22);
   }
   html,body{
     height:100%; margin:0; background:var(--bg); color:var(--fg);
@@ -26,8 +19,6 @@
     font-weight:700; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
     overflow:hidden;
   }
-
-  /* Starfield canvas */
   canvas#bg{
     position:fixed; inset:0; z-index:0;
     background:
@@ -35,11 +26,8 @@
       radial-gradient(1000px 600px at 20% 80%, rgba(255,165,0,0.12), transparent 70%),
       var(--bg);
   }
-
-  /* HUD (top-right) */
   .hud{
     position:fixed; right:14px; top:12px; z-index:3; display:flex; gap:10px; align-items:center;
-    pointer-events:auto;
   }
   .chip{
     font-weight:800; font-size:12px; padding:8px 12px; border-radius:999px;
@@ -47,243 +35,184 @@
   }
   .toggle{ cursor:pointer; }
 
-  /* Center hero bubble */
   .wrap{
     position:relative; z-index:2; min-height:100%;
     display:grid; place-items:center; text-align:center; padding:2rem;
   }
   .hero{
-    display:inline-block; user-select:none; pointer-events:auto;
-    background:linear-gradient( to bottom, rgba(255,255,255,.05), rgba(255,255,255,0) );
+    display:inline-block; background:linear-gradient(to bottom,rgba(255,255,255,.05),rgba(255,255,255,0));
     border:1px solid var(--border); border-radius:24px;
     padding:clamp(16px,3vw,32px) clamp(18px,4vw,52px);
     box-shadow:var(--shadow);
-    transform-style:preserve-3d; will-change:transform,filter;
-    transition:filter .15s ease;
+    transform-style:preserve-3d; transition:filter .15s ease;
   }
   .line{
     margin:0; letter-spacing:.2px; line-height:1.05;
     font-size:clamp(28px,6vw,72px);
-    text-shadow:0 0 10px rgba(153,0,255,.18), 0 0 35px rgba(153,0,255,.12);
+    text-shadow:0 0 10px rgba(153,0,255,.18),0 0 35px rgba(153,0,255,.12);
     white-space:pre-wrap;
   }
   .accent{ color:var(--accent); }
+  .accent.pulse{ animation:pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse{
+    0%,100%{text-shadow:0 0 10px rgba(153,0,255,.18),0 0 35px rgba(153,0,255,.12);}
+    50%{text-shadow:0 0 18px rgba(153,0,255,.45),0 0 60px rgba(153,0,255,.30);}
+  }
   .cursor-glitch{
-    display:inline-block; width:.55em; height:.9em; vertical-align:-0.05em;
-    margin-left:.06em; background:currentColor; animation:blink 1s steps(1) infinite;
+    display:inline-block;width:.55em;height:.9em;vertical-align:-0.05em;
+    margin-left:.06em;background:currentColor;animation:blink 1s steps(1) infinite;
   }
   @keyframes blink{50%{opacity:0}}
-
-  /* Tooltip helper */
-  .chip[data-tip]{ position:relative; }
-  .chip[data-tip]:hover::after{
-    content:attr(data-tip); position:absolute; right:0; top:calc(100% + 8px);
-    white-space:nowrap; background:#111; color:#fff; font-weight:800; font-size:12px;
-    padding:6px 8px; border-radius:8px; opacity:.96; border:1px solid #333;
-  }
 </style>
 </head>
-<body data-theme="void">
+<body>
 <canvas id="bg"></canvas>
-
-<!-- HUD -->
 <div class="hud">
-  <div class="chip" id="clockChip" data-tip="LA time">--:--:--</div>
-  <div class="chip toggle" id="themeToggle" data-tip="Toggle theme (T)">Theme: Void</div>
+  <div class="chip" id="clockChip">--:--:--</div>
+  <div class="chip toggle" id="themeToggle">Theme</div>
 </div>
-
-<!-- HERO -->
 <div class="wrap">
-  <div class="hero" id="hero" aria-live="polite" aria-atomic="true">
+  <div class="hero" id="hero">
     <h1 class="line" id="line">
-      <span>The world is </span><span class="accent">yours</span><span>.</span><span class="cursor-glitch"></span>
+      <span>The world is </span><span class="accent pulse">yours</span><span>.</span><span class="cursor-glitch"></span>
     </h1>
   </div>
 </div>
 
 <script>
-/* ======================= STARFIELD PARTICLES ======================= */
+/* ==== STARFIELD ==== */
 (function(){
-  const c = document.getElementById('bg'), ctx = c.getContext('2d');
+  const c=document.getElementById('bg'),ctx=c.getContext('2d');
   let W,H,dpr=Math.max(1,Math.min(2,devicePixelRatio||1));
-  function rs(){ W=c.width=Math.floor(innerWidth*dpr); H=c.height=Math.floor(innerHeight*dpr);
-    c.style.width=innerWidth+'px'; c.style.height=innerHeight+'px'; }
-  rs(); addEventListener('resize', rs);
-
-  const P=160, ps=[];
-  function R(a,b){ return a+Math.random()*(b-a); }
-  function reset(p){ p.x=R(0,W); p.y=R(0,H); p.z=R(.2,1.2);
-    p.vx=R(-.2,.2); p.vy=R(-.2,.2); p.r=p.z*R(.6,1.8); p.a=R(.3,.95); return p; }
-  for(let i=0;i<P;i++) ps.push(reset({}));
-
+  function rs(){W=c.width=innerWidth*dpr;H=c.height=innerHeight*dpr;c.style.width=innerWidth+'px';c.style.height=innerHeight+'px';}
+  rs();addEventListener('resize',rs);
+  const P=160,ps=[];
+  function R(a,b){return a+Math.random()*(b-a);}
+  function reset(p){p.x=R(0,W);p.y=R(0,H);p.z=R(.2,1.2);p.vx=R(-.2,.2);p.vy=R(-.2,.2);p.r=p.z*R(.6,1.8);p.a=R(.3,.95);return p;}
+  for(let i=0;i<P;i++)ps.push(reset({}));
   let mx=W/2,my=H/2;
-  addEventListener('pointermove',e=>{ mx=(e.clientX||innerWidth/2)*dpr; my=(e.clientY||innerHeight/2)*dpr; });
-
+  addEventListener('pointermove',e=>{mx=e.clientX*dpr;my=e.clientY*dpr;});
   (function tick(){
     ctx.clearRect(0,0,W,H);
     for(const p of ps){
-      const dx=(mx-p.x)*0.0006, dy=(my-p.y)*0.0006;
-      p.vx+=dx; p.vy+=dy; p.vx*=0.985; p.vy*=0.985;
-      p.x+=p.vx+(p.z*0.2); p.y+=p.vy+(p.z*0.2);
-      if(p.x<-10||p.x>W+10||p.y<-10||p.y>H+10) reset(p);
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(153,0,255,${p.a})`; ctx.fill();
-    }
-    requestAnimationFrame(tick);
+      const dx=(mx-p.x)*0.0006,dy=(my-p.y)*0.0006;
+      p.vx+=dx;p.vy+=dy;p.vx*=0.985;p.vy*=0.985;
+      p.x+=p.vx+p.z*0.2;p.y+=p.vy+p.z*0.2;
+      if(p.x<-10||p.x>W+10||p.y<-10||p.y>H+10)reset(p);
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(153,0,255,${p.a})`;ctx.fill();
+    }requestAnimationFrame(tick);
   })();
 })();
 
-/* ======================= CLOCK (LA local) ======================= */
+/* ==== CLOCK ==== */
 (function(){
   const chip=document.getElementById('clockChip');
   function pad(n){return String(n).padStart(2,'0');}
-  function fmt(t){return `${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}`;}
-  function tick(){ chip.textContent = fmt(new Date()); }
-  tick(); setInterval(tick,500);
+  function tick(){const t=new Date();chip.textContent=`${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}`;}
+  tick();setInterval(tick,500);
 })();
 
-/* ======================= THEME TOGGLE ======================= */
+/* ==== THEME TOGGLE ==== */
 (function(){
-  const root=document.body, btn=document.getElementById('themeToggle'), key='ui-theme';
-  function setTheme(name){ root.setAttribute('data-theme',name); localStorage.setItem(key,name); btn.textContent='Theme: '+(name==='void'?'Void':'Dawn'); }
-  setTheme(localStorage.getItem(key)||'void');
-  btn.addEventListener('click',()=> setTheme(root.getAttribute('data-theme')==='void'?'dawn':'void'));
-  addEventListener('keydown',e=>{ if((e.key==='t'||e.key==='T')&&!e.metaKey) setTheme(root.getAttribute('data-theme')==='void'?'dawn':'void'); });
+  const root=document.body,btn=document.getElementById('themeToggle');
+  function setTheme(name){root.setAttribute('data-theme',name);btn.textContent='Theme: '+(name==='void'?'Void':'Dawn');}
+  setTheme('void');
+  btn.addEventListener('click',()=>setTheme(root.getAttribute('data-theme')==='void'?'dawn':'void'));
 })();
 
-/* ======================= HERO 3D FULL LEAN ======================= */
+/* ==== HERO TILT ==== */
 (function(){
-  const hero=document.getElementById('hero');
-  const MAX=10; // degrees
-  hero.addEventListener('pointermove',(e)=>{
+  const hero=document.getElementById('hero');const MAX=10;
+  hero.addEventListener('pointermove',e=>{
     const r=hero.getBoundingClientRect();
-    const x=(e.clientX - (r.left + r.width/2)) / (r.width/2);   // -1 .. 1
-    const y=(e.clientY - (r.top  + r.height/2)) / (r.height/2); // -1 .. 1
-    const rx = (-y*MAX).toFixed(2);
-    const ry = ( x*MAX).toFixed(2);
-    hero.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-    hero.style.filter = 'contrast(1.08) saturate(1.08)';
+    const x=(e.clientX-(r.left+r.width/2))/(r.width/2);
+    const y=(e.clientY-(r.top+r.height/2))/(r.height/2);
+    hero.style.transform=`perspective(900px) rotateX(${-y*MAX}deg) rotateY(${x*MAX}deg)`;
+    hero.style.filter='contrast(1.08) saturate(1.08)';
   });
-  hero.addEventListener('pointerleave',()=>{
-    hero.style.transform='perspective(900px) rotateX(0) rotateY(0)';
-    hero.style.filter='none';
-  });
+  hero.addEventListener('pointerleave',()=>{hero.style.transform='perspective(900px) rotateX(0) rotateY(0)';hero.style.filter='none';});
 })();
 
-/* ======================= TYPER / DELETER (medium speed) ======================= */
+/* ==== TYPE/DELETE LOOP with PULSE ==== */
 (function(){
-  const lineEl = document.getElementById('line');
-  const CUR = '<span class="cursor-glitch"></span>';
-
-  const messages = [
-    { text: `The world is yours.`, accent: `yours` },
-    { text: `What are you so afraid of?`, accent: `afraid` },
-    { text: `Volume Negates Luck.`, accent: `Luck` },
-    { text: `Unreasonable within reason.`, accent: `reason` },
-    { text: `Obedience begets mediocrity.`, accent: `begets` },
-    { text: `Poverty loves balance.`, accent: `balance` },
-    { text: `Weak men hide behind fairness.`, accent: `fairness` },
-    { text: `Cowards speak loudest of failure.`, accent: `failure` },
-    { text: `Ask permission from the forgotten.`, accent: `forgotten` },
-    { text: `An undefined problem cannot be solved.`, accent: `solved` },
-    { text: `You claim ideologies you do not understand.`, accent: `claim` },
-    { text: `Are you not entertained?`, accent: `entertained` },
-    { text: `Half of my heart is in your chest.`, accent: `heart` },
-    { text: `You have choices but rarely question them.`, accent: `question` },
-    { text: `Second best is failure.`, accent: `failure` },
-    { text: `I feel saturated by it.`, accent: `saturated` },
-    { text: `I wanted to destroy something beautiful.`, accent: `beautiful` },
-    { text: `Jog in the middle of a hurricane.`, accent: `hurricane` },
-    { text: `It's too late now.`, accent: `now` },
-    { text: `If he kills an elephant his poverty ends.`, accent: `elephant` },
-    { text: `Why do you watch the concert through your camera?`, accent: `camera` },
-    { text: `Cannibalize your fears.`, accent: `fears` },
-    { text: `I am invincible.`, accent: `invincible` },
-    { text: `Every mistake rots in my brain.`, accent: `brain` },
-    { text: `Pursue suffering.`, accent: `suffering` },
-    { text: `No one is coming to save you.`, accent: `save` },
-    { text: `You can easily return to the past, but no one is there anymore.`, accent: `anymore` },
-    { text: `A deaf man doesn't listen to bad news.`, accent: `listen` },
-    { text: `Every action, breath, argument, on this planet is in vain.`, accent: `vain` },
-    { text: `I hate all my fattened calf equally.`, accent: `equally` },
-    { text: `Behind mountains are more mountains.`, accent: `mountains` },
-    { text: `Something to hold when there is nothing to say.`, accent: `nothing` },
-    { text: `I live three days at a time.`, accent: `time` },
-    { text: `Nothing can be gained without sacrifice.`, accent: `sacrifice` },
-    { text: `Having things isn't fun, getting things is fun.`, accent: `getting` },
-    { text: `This isn't real, you're dreaming.`, accent: `dreaming` },
-    { text: `No one is listening.`, accent: `listening` },
-    { text: `I don't believe in yesterday.`, accent: `yesterday` },
-    { text: `I don't feel it.`, accent: `feel` },
-    { text: `Whoever digs a pit will fall into it.`, accent: `fall` },
-    { text: `I cut off my nose to spite my face.`, accent: `spite` },
-    { text: `Until death all defeat is psychological.`, accent: `psychological` },
-    { text: `You don't win silver, you lose gold.`, accent: `lose` },
-    { text: `Have I led a compelling narrative?`, accent: `narrative` },
+  const lineEl=document.getElementById('line');
+  const CUR='<span class="cursor-glitch"></span>';
+  const messages=[
+    {text:`The world is yours.`,accent:`yours`},
+    {text:`What are you so afraid of?`,accent:`afraid`},
+    {text:`Volume Negates Luck.`,accent:`Luck`},
+    {text:`Unreasonable within reason.`,accent:` reason`}, // space ensures second one
+    {text:`Obedience begets mediocrity.`,accent:`begets`},
+    {text:`Poverty loves balance.`,accent:`balance`},
+    {text:`Weak men hide behind fairness.`,accent:`fairness`},
+    {text:`Cowards speak loudest of failure.`,accent:`failure`},
+    {text:`Ask permission from the forgotten.`,accent:`forgotten`},
+    {text:`An undefined problem cannot be solved.`,accent:`solved`},
+    {text:`You claim ideologies you do not understand.`,accent:`claim`},
+    {text:`Are you not entertained?`,accent:`entertained`},
+    {text:`Half of my heart is in your chest.`,accent:`heart`},
+    {text:`You have choices but rarely question them.`,accent:`question`},
+    {text:`Second best is failure.`,accent:`failure`},
+    {text:`I feel saturated by it.`,accent:`saturated`},
+    {text:`I wanted to destroy something beautiful.`,accent:`beautiful`},
+    {text:`Jog in the middle of a hurricane.`,accent:`hurricane`},
+    {text:`It's too late now.`,accent:`now`},
+    {text:`If he kills an elephant his poverty ends.`,accent:`elephant`},
+    {text:`Why do you watch the concert through your camera?`,accent:`camera`},
+    {text:`Cannibalize your fears.`,accent:`fears`},
+    {text:`I am invincible.`,accent:`invincible`},
+    {text:`Every mistake rots in my brain.`,accent:`brain`},
+    {text:`Pursue suffering.`,accent:`suffering`},
+    {text:`No one is coming to save you.`,accent:`save`},
+    {text:`You can easily return to the past, but no one is there anymore.`,accent:`anymore`},
+    {text:`A deaf man doesn't listen to bad news.`,accent:`listen`},
+    {text:`Every action, breath, argument, on this planet is in vain.`,accent:`vain`},
+    {text:`I hate all my fattened calf equally.`,accent:`equally`},
+    {text:`Behind mountains are more mountains.`,accent:`mountains`},
+    {text:`Something to hold when there is nothing to say.`,accent:`nothing`},
+    {text:`I live three days at a time.`,accent:`time`},
+    {text:`Nothing can be gained without sacrifice.`,accent:`sacrifice`},
+    {text:`Having things isn't fun, getting things is fun.`,accent:`getting`},
+    {text:`This isn't real, you're dreaming.`,accent:`dreaming`},
+    {text:`No one is listening.`,accent:`listening`},
+    {text:`I don't believe in yesterday.`,accent:`yesterday`},
+    {text:`I don't feel it.`,accent:`feel`},
+    {text:`Whoever digs a pit will fall into it.`,accent:`fall`},
+    {text:`I cut off my nose to spite my face.`,accent:`spite`},
+    {text:`Until death all defeat is psychological.`,accent:`psychological`},
+    {text:`You don't win silver, you lose gold.`,accent:`lose`},
+    {text:`Have I led a compelling narrative?`,accent:`narrative`}
   ];
-
-  const typeDelay = 80;   // ms per char
-  const delDelay  = 40;   // ms per char
-  const holdDelay = 1200; // ms before delete
-
+  const typeDelay=80,delDelay=40,holdDelay=1200;
   function parts(msg){
-    const a = msg.accent;
-    const i = msg.text.indexOf(a);
-    if (i === -1) return [{str: msg.text, isAccent:false}];
-    return [
-      {str: msg.text.slice(0,i), isAccent:false},
-      {str: a, isAccent:true},
-      {str: msg.text.slice(i + a.length), isAccent:false},
+    const i=msg.text.indexOf(msg.accent);
+    if(i===-1)return[{str:msg.text,isAccent:false}];
+    return[
+      {str:msg.text.slice(0,i),isAccent:false},
+      {str:msg.accent.trim(),isAccent:true},
+      {str:msg.text.slice(i+msg.accent.length),isAccent:false}
     ];
   }
-
-  function renderTyped(tokens, count){
-    let out = '', left = count;
+  function renderTyped(tokens,count){
+    let out='',left=count;
     for(const t of tokens){
-      if(left <= 0) break;
-      const chunk = t.str.slice(0, Math.min(left, t.str.length));
-      out += t.isAccent ? `<span class="accent">${chunk}</span>` : chunk;
-      left -= chunk.length;
+      if(left<=0)break;
+      const chunk=t.str.slice(0,Math.min(left,t.str.length));
+      out+=t.isAccent?`<span class="accent pulse">${chunk}</span>`:chunk;
+      left-=chunk.length;
     }
-    return out + CUR;
+    return out+CUR;
   }
-
-  function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
+  const wait=ms=>new Promise(r=>setTimeout(r,ms));
   async function typeMsg(msg){
-    const tokens = parts(msg);
-    const fullLen = msg.text.length;
-    for(let i=1;i<=fullLen;i++){
-      lineEl.innerHTML = renderTyped(tokens, i);
-      await wait(typeDelay);
-    }
+    const tokens=parts(msg);
+    const fullLen=msg.text.length;
+    for(let i=1;i<=fullLen;i++){lineEl.innerHTML=renderTyped(tokens,i);await wait(typeDelay);}
     await wait(holdDelay);
-    for(let i=fullLen-1;i>=0;i--){
-      lineEl.innerHTML = renderTyped(tokens, i);
-      await wait(delDelay);
-    }
+    for(let i=fullLen-1;i>=0;i--){lineEl.innerHTML=renderTyped(tokens,i);await wait(delDelay);}
   }
-
-  (async function loop(){
-    while(true){ for(const m of messages){ await typeMsg(m); } }
-  })();
-})();
-
-/* ======================= SUBTLE HERO JOLT EACH MINUTE ======================= */
-(function(){
-  const hero = document.getElementById('hero');
-  function glitch(){
-    hero.animate([
-      { filter:'none', transform: hero.style.transform || 'none' },
-      { filter:'contrast(1.3) saturate(1.3) hue-rotate(12deg)' },
-      { filter:'none' }
-    ], { duration:280, easing:'cubic-bezier(.2,.9,.2,1)' });
-  }
-  let last = new Date().getMinutes();
-  setInterval(()=>{
-    const now = new Date();
-    if(now.getMinutes()!==last){ last=now.getMinutes(); glitch(); }
-  },1000);
+  (async function loop(){while(true){for(const m of messages)await typeMsg(m);}})();
 })();
 </script>
 </body>
