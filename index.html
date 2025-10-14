@@ -4,244 +4,82 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>The world is yours.</title>
-<meta name="description" content="A maximal single-file UI playground." />
+<meta name="description" content="A maximal single-file UI billboard." />
 <style>
-  /* ───────────────────────── CORE THEME ───────────────────────── */
-  :root {
-    --bg: #000000;
-    --fg: #eaeaea;
-    --muted: #9aa0a6;
-    --accent: #9900FF;      /* your purple */
-    --accent-2: #FFA500;    /* your orange */
-    --ok: #00d68f;
-    --warn: #ffd166;
-    --err: #ff4d4f;
-    --glass: rgba(255,255,255,0.06);
-    --glass-2: rgba(255,255,255,0.1);
-    --border: rgba(255,255,255,0.14);
-    --shadow: 0 10px 30px rgba(0,0,0,0.45);
+  :root{
+    --bg:#000; --fg:#fff; --muted:#9aa0a6;
+    --accent:#9900FF;           /* purple */
+    --accent-2:#FFA500;         /* your orange palette kept for future */
+    --glass:rgba(255,255,255,.06);
+    --glass-2:rgba(255,255,255,.1);
+    --border:rgba(255,255,255,.14);
+    --shadow:0 10px 30px rgba(0,0,0,.45);
   }
   [data-theme="dawn"]{
-    --bg: #0b0b17;
-    --fg: #ffffff;
-    --muted: #b9bed3;
-    --accent: #ff7cff;
-    --accent-2: #ffd166;
-    --glass: rgba(255,255,255,0.08);
-    --glass-2: rgba(255,255,255,0.14);
-    --border: rgba(255,255,255,0.22);
+    --bg:#0b0b17; --fg:#fff; --muted:#b9bed3;
+    --accent:#9900FF; --glass:rgba(255,255,255,.08);
+    --glass-2:rgba(255,255,255,.14); --border:rgba(255,255,255,.22);
+  }
+  html,body{
+    height:100%; margin:0; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight:700; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    overflow:hidden;
   }
 
-  html, body {
-    height: 100%;
-    margin: 0;
-    background: var(--bg);
-    color: var(--fg);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-                 "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: 700;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow: hidden;
+  /* Starfield canvas */
+  canvas#bg{
+    position:fixed; inset:0; z-index:0;
+    background:
+      radial-gradient(1200px 700px at 70% 20%, rgba(153,0,255,0.18), transparent 60%),
+      radial-gradient(1000px 600px at 20% 80%, rgba(255,165,0,0.12), transparent 70%),
+      var(--bg);
   }
 
-  /* Animated starfield / particles */
-  canvas#bg {
-    position: fixed; inset: 0; z-index: 0;
-    background: radial-gradient(1200px 700px at 70% 20%, rgba(153,0,255,0.18), transparent 60%),
-                radial-gradient(1000px 600px at 20% 80%, rgba(255,165,0,0.12), transparent 70%),
-                var(--bg);
-  }
-
-  /* ───────────────────────── HERO ───────────────────────── */
-  .wrap {
-    position: relative; z-index: 2;
-    min-height: 100%;
-    display: grid; place-items: center;
-    text-align: center; pointer-events: none;
-    padding: 2rem;
-  }
-  .hero {
-    display: inline-block;
-    background: linear-gradient( to bottom, rgba(255,255,255,0.05), rgba(255,255,255,0.0) );
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: clamp(16px, 3vw, 32px) clamp(18px, 4vw, 52px);
-    box-shadow: var(--shadow);
-    transform-style: preserve-3d;
-    transition: transform .2s ease;
-    pointer-events: auto;
-    user-select: none;
-    will-change: transform, filter;
-  }
-  .hero:hover { transform: perspective(900px) rotateX(4deg) rotateY(-4deg); }
-  .line {
-    font-size: clamp(32px, 6vw, 72px);
-    line-height: 1.05;
-    margin: 0; letter-spacing: .2px;
-    text-shadow:
-      0 0 10px rgba(153,0,255,0.18),
-      0 0 35px rgba(153,0,255,0.12);
-  }
-  .accent { color: var(--accent); }
-  .cursor-glitch {
-    display:inline-block; width: .55em; height: .9em; vertical-align:-0.05em;
-    margin-left: .06em; background: currentColor; animation: blink 1s steps(1) infinite;
-  }
-  @keyframes blink { 50% { opacity: 0; } }
-
-  /* ───────────────────────── DOCK ───────────────────────── */
-  .dock {
-    position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
-    display: flex; gap: 10px; z-index: 3; pointer-events: auto;
-    background: var(--glass);
-    border: 1px solid var(--border);
-    backdrop-filter: blur(8px);
-    padding: 10px 12px; border-radius: 999px; box-shadow: var(--shadow);
-  }
-  .btn {
-    font-weight: 700; font-size: 13px; letter-spacing: .2px;
-    color: var(--fg); background: linear-gradient(180deg, var(--glass-2), rgba(255,255,255,0.02));
-    border: 1px solid var(--border);
-    padding: 10px 14px; border-radius: 999px; cursor: pointer;
-    transition: transform .08s ease, box-shadow .2s ease, background .2s;
-    box-shadow: 0 4px 16px rgba(153,0,255,0.15);
-    user-select: none;
-  }
-  .btn:hover { transform: translateY(-1px); }
-  .btn:active { transform: translateY(0); }
-
-  /* ───────────────────────── WINDOWS ───────────────────────── */
-  .win {
-    position: fixed; inset: auto auto 100px 100px; z-index: 4; width: min(92vw, 720px);
-    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
-    border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
-    backdrop-filter: blur(10px);
-    overflow: hidden; display: none;
-  }
-  .win.show { display: block; }
-  .win.small { width: min(92vw, 420px); }
-  .win .bar {
-    height: 44px; display: flex; align-items: center; gap: 10px;
-    padding: 0 12px; cursor: grab;
-    background: linear-gradient(180deg, rgba(153,0,255,0.18), rgba(153,0,255,0.05));
-    border-bottom: 1px solid var(--border);
-  }
-  .win .bar:active { cursor: grabbing; }
-  .dots { display:flex; gap:8px; }
-  .dot { width: 12px; height: 12px; border-radius: 999px; }
-  .dot.red { background:#ff5f56; } .dot.yellow { background:#ffbd2e; } .dot.green { background:#27c93f; }
-  .title { font-size: 13px; font-weight: 800; letter-spacing: .3px; color: var(--muted); }
-  .win .content { padding: 14px 16px 18px; font-weight: 600; color: var(--fg); }
-
-  .row { display: flex; gap: 12px; flex-wrap: wrap; }
-  .card {
-    flex: 1 1 220px;
-    background: rgba(0,0,0,.25);
-    border: 1px solid var(--border);
-    border-radius: 12px; padding: 12px;
-  }
-  .k { color: var(--muted); font-weight:700; }
-  .kbd { display:inline-block; border:1px solid var(--border); border-bottom-width:2px;
-         padding: 2px 7px; border-radius:8px; background: var(--glass-2); }
-
-  /* Terminal */
-  .term {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    font-weight: 600; font-size: 13px; line-height: 1.5;
-    color: #d1ffe7;
-  }
-  .prompt { color: var(--accent); }
-  .term-input {
-    width: 100%; background: transparent; border: none; outline: none; color: #d1ffe7;
-    font: inherit; padding: 6px 0;
-  }
-  .log { max-height: 42vh; overflow: auto; scrollbar-width: thin; }
-
-  /* Calculator */
-  .grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
-  }
-  .calc-btn {
-    padding: 14px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer;
-    background: linear-gradient(180deg, var(--glass-2), rgba(255,255,255,0.02));
-    text-align: center; font-size: 16px; box-shadow: 0 6px 18px rgba(0,0,0,.25);
-    user-select: none;
-  }
-  .calc-btn:hover { transform: translateY(-1px); }
-  .calc-btn:active { transform: translateY(0); }
-  .calc-display {
-    font-size: 22px; border:1px solid var(--border); border-radius:12px; padding: 12px;
-    background: rgba(0,0,0,.25); margin-bottom: 10px; text-align: right; overflow: hidden;
-  }
-
-  /* Notes */
-  textarea.notes {
-    width: 100%; min-height: 36vh; resize: vertical; border-radius: 12px;
-    border:1px solid var(--border); padding:12px; background: rgba(0,0,0,.25);
-    color: var(--fg); font-weight: 600; outline: none;
-  }
-
-  /* Command Palette */
-  .palette {
-    position: fixed; left: 50%; top: 10vh; transform: translateX(-50%);
-    width: min(92vw, 720px); z-index: 5; display: none;
-    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-    border:1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
-    backdrop-filter: blur(12px);
-  }
-  .palette.show { display:block; }
-  .pal-head { padding: 12px 14px; border-bottom:1px solid var(--border); display:flex; gap:10px; align-items:center;}
-  .pal-input {
-    flex:1; background: transparent; border:none; outline:none; color:var(--fg);
-    font-weight:700; font-size:14px;
-  }
-  .pal-list { max-height: 50vh; overflow:auto; }
-  .pal-item {
-    padding: 12px 14px; border-bottom:1px solid var(--border); cursor: pointer; font-weight:700;
-  }
-  .pal-item:hover { background: rgba(153,0,255,0.15); }
-
-  /* Top HUD */
-  .hud {
-    position: fixed; right: 14px; top: 12px; z-index: 3; display:flex; gap:10px; align-items:center;
+  /* HUD (top-right) */
+  .hud{
+    position:fixed; right:14px; top:12px; z-index:3; display:flex; gap:10px; align-items:center;
     pointer-events:auto;
   }
-  .chip {
-    font-weight:800; font-size:12px; padding: 8px 12px; border-radius: 999px;
-    background: var(--glass); border:1px solid var(--border); box-shadow: var(--shadow);
+  .chip{
+    font-weight:800; font-size:12px; padding:8px 12px; border-radius:999px;
+    background:var(--glass); border:1px solid var(--border); box-shadow:var(--shadow);
   }
-  .toggle { cursor: pointer; }
+  .toggle{ cursor:pointer; }
 
-  /* Tooltips */
-  .btn[data-tip], .chip[data-tip] { position: relative; }
-  .btn[data-tip]:hover::after, .chip[data-tip]:hover::after {
-    content: attr(data-tip);
-    position: absolute; left: 50%; bottom: calc(100% + 10px); transform: translateX(-50%);
-    white-space: nowrap; background: #111; color: #fff; font-weight: 800; font-size: 12px;
-    padding: 6px 8px; border-radius: 8px; opacity: .96;
-    border: 1px solid #333;
+  /* Center hero bubble */
+  .wrap{
+    position:relative; z-index:2; min-height:100%;
+    display:grid; place-items:center; text-align:center; padding:2rem;
   }
+  .hero{
+    display:inline-block; user-select:none; pointer-events:auto;
+    background:linear-gradient( to bottom, rgba(255,255,255,.05), rgba(255,255,255,0) );
+    border:1px solid var(--border); border-radius:24px;
+    padding:clamp(16px,3vw,32px) clamp(18px,4vw,52px);
+    box-shadow:var(--shadow);
+    transform-style:preserve-3d; will-change:transform,filter;
+    transition:filter .15s ease;
+  }
+  .line{
+    margin:0; letter-spacing:.2px; line-height:1.05;
+    font-size:clamp(32px,6vw,72px);
+    text-shadow:0 0 10px rgba(153,0,255,.18), 0 0 35px rgba(153,0,255,.12);
+    white-space:pre-wrap;
+  }
+  .accent{ color:var(--accent); }
+  .cursor-glitch{
+    display:inline-block; width:.55em; height:.9em; vertical-align:-0.05em;
+    margin-left:.06em; background:currentColor; animation:blink 1s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0}}
 
-  /* Konami overlay */
-  .konami {
-    position: fixed; inset: 0; z-index: 6; display: none; place-items: center;
-    background: rgba(153,0,255,0.08);
-    backdrop-filter: blur(2px);
-  }
-  .konami.show { display: grid; }
-  .konami .burst {
-    font-size: clamp(28px, 6vw, 64px); letter-spacing:.3px; text-align:center;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    text-shadow: 0 0 22px rgba(153,0,255,0.35);
-    animation: pop 900ms cubic-bezier(.2,.9,.2,1) forwards;
-  }
-  @keyframes pop { 0%{ transform: scale(.6); opacity:.2 } 100%{ transform: scale(1.05); opacity:1 } }
-
-  /* Responsive window placement */
-  @media (max-width: 720px){
-    .win { inset: auto 4vw 96px 4vw; width: auto; }
+  /* Tooltip helper */
+  .chip[data-tip]{ position:relative; }
+  .chip[data-tip]:hover::after{
+    content:attr(data-tip); position:absolute; right:0; top:calc(100% + 8px);
+    white-space:nowrap; background:#111; color:#fff; font-weight:800; font-size:12px;
+    padding:6px 8px; border-radius:8px; opacity:.96; border:1px solid #333;
   }
 </style>
 </head>
@@ -252,507 +90,169 @@
 <div class="hud">
   <div class="chip" id="clockChip" data-tip="LA time">--:--:--</div>
   <div class="chip toggle" id="themeToggle" data-tip="Toggle theme (T)">Theme: Void</div>
-  <div class="chip" data-tip="Open Command Palette (Ctrl+K)">⌘/Ctrl + K</div>
 </div>
 
 <!-- HERO -->
-<div class="wrap" aria-hidden="false">
-  <div class="hero" id="hero">
-    <h1 class="line" aria-label="The world is yours">
+<div class="wrap">
+  <div class="hero" id="hero" aria-live="polite" aria-atomic="true">
+    <h1 class="line" id="line">
       <span>The world is </span><span class="accent">yours</span><span>.</span><span class="cursor-glitch"></span>
     </h1>
   </div>
 </div>
 
-<!-- DOCK -->
-<div class="dock" role="menu" aria-label="Dock">
-  <button class="btn" data-open="#winClock" data-tip="Clock / Sunrise countdown">Clock</button>
-  <button class="btn" data-open="#winNotes" data-tip="Notes (saved)">Notes</button>
-  <button class="btn" data-open="#winCalc" data-tip="Calculator">Calc</button>
-  <button class="btn" data-open="#winTerm" data-tip="Fake terminal">Terminal</button>
-  <button class="btn" id="cmdBtn" data-tip="Command Palette (Ctrl+K)">⌘K</button>
-</div>
-
-<!-- WINDOWS -->
-<div class="win small" id="winClock" style="left: 7vw; top: 10vh;">
-  <div class="bar">
-    <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
-    <div class="title">Clock — Los Angeles</div>
-  </div>
-  <div class="content">
-    <div class="row">
-      <div class="card">
-        <div class="k">Current Time</div>
-        <div id="clockBig" style="font-size:28px;margin-top:6px;">--:--:--</div>
-        <div id="dateLine" style="font-size:13px;color:var(--muted);font-weight:800;margin-top:6px;">—</div>
-      </div>
-      <div class="card">
-        <div class="k">Countdown to 6:00 AM</div>
-        <div id="countdown" style="font-size:22px;margin-top:6px;">—</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:6px;">6:00 AM next occurrence (local)</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="win" id="winNotes" style="left: 20vw; top: 24vh;">
-  <div class="bar">
-    <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
-    <div class="title">Notes — saved locally</div>
-  </div>
-  <div class="content">
-    <textarea class="notes" id="notes" placeholder="Type to save…"></textarea>
-    <div style="font-size:12px;color:var(--muted);margin-top:8px;">Saved to your browser (localStorage).</div>
-  </div>
-</div>
-
-<div class="win small" id="winCalc" style="left: 58vw; top: 18vh;">
-  <div class="bar">
-    <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
-    <div class="title">Calculator</div>
-  </div>
-  <div class="content">
-    <div class="calc-display" id="calcDisplay">0</div>
-    <div class="grid" id="calcGrid" aria-label="Calculator">
-      <!-- Row 1 -->
-      <div class="calc-btn" data-op="C">C</div>
-      <div class="calc-btn" data-op="±">±</div>
-      <div class="calc-btn" data-op="%">%</div>
-      <div class="calc-btn" data-op="/">÷</div>
-      <!-- Row 2 -->
-      <div class="calc-btn">7</div>
-      <div class="calc-btn">8</div>
-      <div class="calc-btn">9</div>
-      <div class="calc-btn" data-op="*">×</div>
-      <!-- Row 3 -->
-      <div class="calc-btn">4</div>
-      <div class="calc-btn">5</div>
-      <div class="calc-btn">6</div>
-      <div class="calc-btn" data-op="-">−</div>
-      <!-- Row 4 -->
-      <div class="calc-btn">1</div>
-      <div class="calc-btn">2</div>
-      <div class="calc-btn">3</div>
-      <div class="calc-btn" data-op="+">+</div>
-      <!-- Row 5 -->
-      <div class="calc-btn" style="grid-column: span 2;">0</div>
-      <div class="calc-btn">.</div>
-      <div class="calc-btn" data-op="=">=</div>
-    </div>
-  </div>
-</div>
-
-<div class="win" id="winTerm" style="left: 10vw; top: 58vh;">
-  <div class="bar">
-    <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
-    <div class="title">Terminal (simulated)</div>
-  </div>
-  <div class="content term">
-    <div class="log" id="termLog" aria-live="polite">
-      <div>Booting… <span class="prompt">OK</span></div>
-      <div>Type <span class="prompt">help</span> to list commands.</div>
-    </div>
-    <div>
-      <span class="prompt">guest@void</span>:<span style="color:#b8ffe4">~</span>$&nbsp;
-      <input id="termInput" class="term-input" autocomplete="off" spellcheck="false" aria-label="terminal input" />
-    </div>
-  </div>
-</div>
-
-<!-- Command Palette -->
-<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Command Palette">
-  <div class="pal-head">
-    <span class="k">Run:</span>
-    <input class="pal-input" id="palInput" placeholder="Open, theme, hero, clear…" />
-  </div>
-  <div class="pal-list" id="palList"></div>
-</div>
-
-<!-- Konami overlay -->
-<div class="konami" id="konami">
-  <div class="burst">UNREASONABLE MODE: ON</div>
-</div>
-
 <script>
-/* ================================================================
-   STARFIELD / PARTICLES (Canvas, no lib)
-================================================================ */
+/* ======================= STARFIELD PARTICLES ======================= */
 (function(){
-  const c = document.getElementById('bg');
-  const ctx = c.getContext('2d');
-  let W, H, dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-  let particles = [];
-  const COUNT = 160;
+  const c = document.getElementById('bg'), ctx = c.getContext('2d');
+  let W,H,dpr=Math.max(1,Math.min(2,devicePixelRatio||1));
+  function rs(){ W=c.width=Math.floor(innerWidth*dpr); H=c.height=Math.floor(innerHeight*dpr);
+    c.style.width=innerWidth+'px'; c.style.height=innerHeight+'px'; }
+  rs(); addEventListener('resize', rs);
 
-  function resize(){
-    W = c.width = Math.floor(innerWidth * dpr);
-    H = c.height = Math.floor(innerHeight * dpr);
-    c.style.width = innerWidth + 'px';
-    c.style.height = innerHeight + 'px';
-  }
-  resize(); addEventListener('resize', resize);
+  const P=160, ps=[];
+  function R(a,b){ return a+Math.random()*(b-a); }
+  function reset(p){ p.x=R(0,W); p.y=R(0,H); p.z=R(.2,1.2);
+    p.vx=R(-.2,.2); p.vy=R(-.2,.2); p.r=p.z*R(.6,1.8); p.a=R(.3,.95); return p; }
+  for(let i=0;i<P;i++) ps.push(reset({}));
 
-  function rand(a,b){ return a + Math.random()*(b-a); }
-  function reset(p){
-    p.x = rand(0, W); p.y = rand(0, H);
-    p.z = rand(.2, 1.2);
-    p.vx = rand(-.2,.2); p.vy = rand(-.2,.2);
-    p.r = p.z * rand(.6, 1.8);
-    p.alpha = rand(.3, .95);
-    return p;
-  }
-  for (let i=0;i<COUNT;i++) particles.push(reset({}));
+  let mx=W/2,my=H/2;
+  addEventListener('pointermove',e=>{ mx=(e.clientX||innerWidth/2)*dpr; my=(e.clientY||innerHeight/2)*dpr; });
 
-  let mx = W/2, my = H/2;
-  addEventListener('pointermove', e=>{
-    mx = (e.clientX || innerWidth/2) * dpr;
-    my = (e.clientY || innerHeight/2) * dpr;
-  });
-
-  function tick(){
+  (function tick(){
     ctx.clearRect(0,0,W,H);
-    for (let p of particles){
-      const dx = (mx - p.x) * 0.0006;
-      const dy = (my - p.y) * 0.0006;
-      p.vx += dx; p.vy += dy;
-      p.vx *= 0.985; p.vy *= 0.985;
-      p.x += p.vx + (p.z * 0.2);
-      p.y += p.vy + (p.z * 0.2);
-
-      if (p.x < -10 || p.x > W+10 || p.y < -10 || p.y > H+10) reset(p);
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(153,0,255,${p.alpha})`;
-      ctx.fill();
+    for(const p of ps){
+      const dx=(mx-p.x)*0.0006, dy=(my-p.y)*0.0006;
+      p.vx+=dx; p.vy+=dy; p.vx*=0.985; p.vy*=0.985;
+      p.x+=p.vx+(p.z*0.2); p.y+=p.vy+(p.z*0.2);
+      if(p.x<-10||p.x>W+10||p.y<-10||p.y>H+10) reset(p);
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(153,0,255,${p.a})`; ctx.fill();
     }
     requestAnimationFrame(tick);
-  }
-  tick();
+  })();
 })();
 
-/* ================================================================
-   CLOCK + COUNTDOWN to 6:00 AM local
-================================================================ */
+/* ======================= CLOCK (LA local) ======================= */
 (function(){
-  const chip = document.getElementById('clockChip');
-  const big = document.getElementById('clockBig');
-  const dateLine = document.getElementById('dateLine');
-  const countdown = document.getElementById('countdown');
-
-  function pad(n){ return String(n).padStart(2,'0'); }
-  function fmt(t){
-    const h = t.getHours(), m = t.getMinutes(), s = t.getSeconds();
-    return `${pad(h)}:${pad(m)}:${pad(s)}`;
-  }
-  function nextSix(){
-    const now = new Date();
-    const target = new Date(now);
-    target.setHours(6,0,0,0);
-    if (target <= now) target.setDate(target.getDate()+1);
-    return target;
-  }
-  function diffStr(a,b){
-    let ms = b - a;
-    if (ms < 0) ms = 0;
-    const sec = Math.floor(ms/1000)%60;
-    const min = Math.floor(ms/60000)%60;
-    const hr  = Math.floor(ms/3600000);
-    return `${pad(hr)}:${pad(min)}:${pad(sec)}`;
-  }
-  function tick(){
-    const now = new Date();
-    chip.textContent = fmt(now);
-    big && (big.textContent = fmt(now));
-    dateLine && (dateLine.textContent = now.toLocaleDateString(undefined, { weekday:'long', year:'numeric', month:'long', day:'numeric'}));
-    countdown && (countdown.textContent = diffStr(now, nextSix()));
-  }
-  tick(); setInterval(tick, 500);
+  const chip=document.getElementById('clockChip');
+  function pad(n){return String(n).padStart(2,'0');}
+  function fmt(t){return `${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}`;}
+  function tick(){ chip.textContent = fmt(new Date()); }
+  tick(); setInterval(tick,500);
 })();
 
-/* ================================================================
-   THEME TOGGLE + PERSIST
-================================================================ */
+/* ======================= THEME TOGGLE ======================= */
 (function(){
-  const root = document.body;
-  const btn = document.getElementById('themeToggle');
-  const key = 'ui-theme';
-  function setTheme(name){
-    root.setAttribute('data-theme', name);
-    localStorage.setItem(key, name);
-    btn.textContent = 'Theme: ' + (name === 'void' ? 'Void' : 'Dawn');
-  }
-  setTheme(localStorage.getItem(key) || 'void');
-  btn.addEventListener('click', ()=> setTheme(root.getAttribute('data-theme')==='void'?'dawn':'void'));
-  addEventListener('keydown', e=>{ if((e.key==='t'||e.key==='T') && !e.metaKey) setTheme(root.getAttribute('data-theme')==='void'?'dawn':'void');});
+  const root=document.body, btn=document.getElementById('themeToggle'), key='ui-theme';
+  function setTheme(name){ root.setAttribute('data-theme',name); localStorage.setItem(key,name); btn.textContent='Theme: '+(name==='void'?'Void':'Dawn'); }
+  setTheme(localStorage.getItem(key)||'void');
+  btn.addEventListener('click',()=> setTheme(root.getAttribute('data-theme')==='void'?'dawn':'void'));
+  addEventListener('keydown',e=>{ if((e.key==='t'||e.key==='T')&&!e.metaKey) setTheme(root.getAttribute('data-theme')==='void'?'dawn':'void'); });
 })();
 
-/* ================================================================
-   DRAGGABLE WINDOWS + PERSIST POSITION
-================================================================ */
+/* ======================= HERO 3D FULL LEAN ======================= */
 (function(){
-  const POS_KEY = 'win-positions-v1';
-  const zBase = 10; let z = 100;
-  const positions = JSON.parse(localStorage.getItem(POS_KEY)||'{}');
-
-  document.querySelectorAll('.win').forEach(win=>{
-    // restore pos
-    const id = win.id;
-    if (positions[id]){
-      const {x,y} = positions[id];
-      win.style.left = x; win.style.top = y;
-    }
-    // open on button click
-    document.querySelectorAll(`[data-open="#${id}"]`).forEach(b=>{
-      b.addEventListener('click', ()=> show(win));
-    });
-    // bring to front on click
-    win.addEventListener('mousedown', ()=> win.style.zIndex = ++z);
-    // drag
-    const bar = win.querySelector('.bar');
-    let sx=0, sy=0, sl=0, st=0, dragging=false;
-    function move(e){
-      if(!dragging) return;
-      const dx = (e.clientX||sx) - sx;
-      const dy = (e.clientY||sy) - sy;
-      win.style.left = (sl + dx) + 'px';
-      win.style.top  = (st + dy) + 'px';
-    }
-    function up(){
-      if(!dragging) return;
-      dragging = false;
-      positions[id] = { x: win.style.left, y: win.style.top };
-      localStorage.setItem(POS_KEY, JSON.stringify(positions));
-      document.removeEventListener('mousemove', move);
-      document.removeEventListener('mouseup', up);
-    }
-    bar.addEventListener('mousedown', (e)=>{
-      dragging = true; win.style.zIndex = ++z;
-      sx = e.clientX; sy = e.clientY;
-      sl = parseFloat(getComputedStyle(win).left); st = parseFloat(getComputedStyle(win).top);
-      document.addEventListener('mousemove', move);
-      document.addEventListener('mouseup', up);
-    });
+  const hero=document.getElementById('hero');
+  const MAX=10; // degrees
+  hero.addEventListener('pointermove',(e)=>{
+    const r=hero.getBoundingClientRect();
+    const x=(e.clientX - (r.left + r.width/2)) / (r.width/2);   // -1 .. 1
+    const y=(e.clientY - (r.top  + r.height/2)) / (r.height/2); // -1 .. 1
+    const rx = (-y*MAX).toFixed(2);
+    const ry = ( x*MAX).toFixed(2);
+    hero.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+    hero.style.filter = 'contrast(1.08) saturate(1.08)';
   });
-
-  function show(w){ w.classList.add('show'); w.style.zIndex = ++z; }
-
-  // Open Clock on load
-  document.getElementById('winClock').classList.add('show');
-})();
-
-/* ================================================================
-   NOTES (localStorage)
-================================================================ */
-(function(){
-  const el = document.getElementById('notes'); if(!el) return;
-  const KEY = 'notes-v1';
-  el.value = localStorage.getItem(KEY) || '';
-  el.addEventListener('input', ()=> localStorage.setItem(KEY, el.value));
-})();
-
-/* ================================================================
-   CALCULATOR (basic)
-================================================================ */
-(function(){
-  const disp = document.getElementById('calcDisplay');
-  const grid = document.getElementById('calcGrid'); if(!grid) return;
-  let cur = '0', op = null, mem = null, fresh = false;
-
-  function render(){ disp.textContent = cur; }
-  function inputDigit(d){
-    if (fresh){ cur = (d === '.') ? '0.' : d; fresh=false; render(); return; }
-    if (d === '.'){ if (!cur.includes('.')) cur += '.'; }
-    else { cur = (cur==='0') ? d : cur + d; }
-    render();
-  }
-  function setOp(o){
-    if (op && !fresh) evalEq();
-    mem = parseFloat(cur); op = o; fresh = true;
-  }
-  function evalEq(){
-    if (op==null || mem==null) return;
-    const a = mem, b = parseFloat(cur);
-    let r = 0;
-    try {
-      if (op==='+') r=a+b; else if (op==='-') r=a-b; else if (op==='*') r=a*b; else if (op==='/') r=b===0? NaN : a/b;
-    } catch(e){ r = NaN; }
-    cur = String(Number.isFinite(r) ? +(Math.round(r*1e10)/1e10) : 'ERR');
-    op=null; mem=null; fresh=true; render();
-  }
-  function clear(){ cur='0'; op=null; mem=null; fresh=false; render(); }
-  function pct(){ cur = String(+cur/100); render(); }
-  function neg(){ cur = String( -(+cur) ); render(); }
-
-  grid.addEventListener('click', e=>{
-    const t = e.target.closest('.calc-btn'); if(!t) return;
-    const val = t.textContent.trim();
-    const o = t.dataset.op;
-    if (!o){
-      if (/\d/.test(val)) inputDigit(val);
-      else if (val==='.'){ inputDigit('.'); }
-    } else {
-      if (o==='C') clear();
-      else if (o==='=') evalEq();
-      else if (o==='%') pct();
-      else if (o==='±') neg();
-      else setOp(o);
-    }
-  });
-  render();
-})();
-
-/* ================================================================
-   FAKE TERMINAL
-================================================================ */
-(function(){
-  const input = document.getElementById('termInput');
-  const log = document.getElementById('termLog');
-  if (!input) return;
-
-  const cmds = {
-    help: () => lines([
-      'Available commands:',
-      ' help      – show this help',
-      ' hero      – glitch the hero',
-      ' theme     – toggle theme',
-      ' clear     – clear the screen',
-      ' kps       – show keybinds',
-      ' echo …    – repeat text',
-      ' time      – show current time',
-    ]),
-    hero: () => { glitchHero(); return 'Hero: ✨ jolted'; },
-    theme: () => { document.getElementById('themeToggle').click(); return 'Theme toggled.'; },
-    clear: () => { log.innerHTML=''; return ''; },
-    kps: () => lines(['Keybinds:',
-      '  Ctrl+K – Command Palette',
-      '  T – Toggle theme',
-    ]),
-    time: () => new Date().toString(),
-    echo: (args) => args.join(' ')
-  };
-
-  function lines(arr){ arr.forEach(s=> append(s)); return ''; }
-  function append(s){
-    const div = document.createElement('div'); div.textContent = s; log.appendChild(div);
-    log.scrollTop = log.scrollHeight;
-  }
-
-  input.addEventListener('keydown', (e)=>{
-    if (e.key === 'Enter'){
-      const raw = input.value.trim();
-      append(`$ ${raw}`);
-      const [cmd, ...args] = raw.split(/\s+/);
-      if (cmds[cmd]) {
-        const out = cmds[cmd](args);
-        if (out) append(out);
-      } else if (cmd) {
-        append('Command not found. Try "help".');
-      }
-      input.value = '';
-    }
+  hero.addEventListener('pointerleave',()=>{
+    hero.style.transform='perspective(900px) rotateX(0) rotateY(0)';
+    hero.style.filter='none';
   });
 })();
 
-/* ================================================================
-   COMMAND PALETTE (Ctrl/Cmd+K)
-================================================================ */
+/* ======================= TYPER / DELETER (medium speed) ======================= */
 (function(){
-  const pal = document.getElementById('palette');
-  const inp = document.getElementById('palInput');
-  const list = document.getElementById('palList');
-  const cmdBtn = document.getElementById('cmdBtn');
-  const commands = [
-    {label:'Open Clock', run:()=> openWin('#winClock')},
-    {label:'Open Notes', run:()=> openWin('#winNotes')},
-    {label:'Open Calculator', run:()=> openWin('#winCalc')},
-    {label:'Open Terminal', run:()=> openWin('#winTerm')},
-    {label:'Toggle Theme', run:()=> document.getElementById('themeToggle').click()},
-    {label:'Glitch Hero', run:()=> glitchHero()},
-    {label:'Clear Notes', run:()=> { localStorage.removeItem('notes-v1'); document.getElementById('notes').value=''; }},
+  const lineEl = document.getElementById('line');
+  const CUR = '<span class="cursor-glitch"></span>';
+
+  // Messages with accent word and punctuation
+  const messages = [
+    { text: 'The world is yours.', accent: 'yours' },                 // period
+    { text: 'What are you so afraid of?', accent: 'afraid' },         // question
+    { text: 'Volume Negates Luck', accent: 'Luck' }                    // no punctuation at end
   ];
-  function render(filter=''){
-    list.innerHTML='';
-    commands
-      .filter(c => c.label.toLowerCase().includes(filter.toLowerCase()))
-      .forEach((c,i)=>{
-        const item = document.createElement('div');
-        item.className='pal-item'; item.textContent = c.label;
-        item.addEventListener('click', ()=> { c.run(); hide(); });
-        list.appendChild(item);
-        if (i===0) item.style.background='rgba(153,0,255,0.12)';
-      });
+
+  const typeDelay = 80;   // ms per char
+  const delDelay  = 40;   // ms per char
+  const holdDelay = 1200; // ms before delete
+
+  let idx = 0;
+
+  function parts(msg){
+    // returns array of tokens with {str, isAccent}
+    const a = msg.accent;
+    const start = msg.text.indexOf(a);
+    if (start === -1) return [{str: msg.text, isAccent:false}];
+    return [
+      {str: msg.text.slice(0,start), isAccent:false},
+      {str: a, isAccent:true},
+      {str: msg.text.slice(start + a.length), isAccent:false},
+    ];
   }
-  function show(){ pal.classList.add('show'); inp.value=''; render(); inp.focus(); }
-  function hide(){ pal.classList.remove('show'); }
 
-  function openWin(sel){ const w = document.querySelector(sel); w && w.classList.add('show'); w && (w.style.zIndex = 999); }
-
-  addEventListener('keydown', (e)=>{
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); pal.classList.contains('show')?hide():show(); }
-    if (e.key==='Escape') hide();
-    if (pal.classList.contains('show') && e.key==='Enter'){
-      const first = list.querySelector('.pal-item'); if (first){ first.click(); }
+  function renderTyped(tokens, count){
+    // Build HTML up to 'count' characters, wrapping accent span when reached
+    let out = '', left = count;
+    for(const t of tokens){
+      if(left <= 0) break;
+      const chunk = t.str.slice(0, Math.min(left, t.str.length));
+      if (t.isAccent) out += `<span class="accent">${chunk}</span>`;
+      else out += chunk;
+      left -= chunk.length;
     }
-  });
-  cmdBtn.addEventListener('click', show);
-  inp.addEventListener('input', ()=> render(inp.value));
+    return out + CUR;
+  }
+
+  async function typeMsg(msg){
+    const tokens = parts(msg);
+    const fullLen = msg.text.length;
+    for(let i=1;i<=fullLen;i++){
+      lineEl.innerHTML = renderTyped(tokens, i);
+      await wait(typeDelay);
+    }
+    await wait(holdDelay);
+    for(let i=fullLen-1;i>=0;i--){
+      lineEl.innerHTML = renderTyped(tokens, i);
+      await wait(delDelay);
+    }
+  }
+
+  function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+  (async function loop(){
+    while(true){
+      const m = messages[idx % messages.length];
+      await typeMsg(m);
+      idx++;
+    }
+  })();
 })();
 
-/* ================================================================
-   HERO GLITCH / JOLT
-================================================================ */
-function glitchHero(){
-  const h = document.getElementById('hero');
-  h.animate([
-    { filter: 'none', transform: 'none' },
-    { filter: 'contrast(2) saturate(1.6) hue-rotate(20deg)', transform: 'translateX(-2px)' },
-    { filter: 'contrast(1.2) saturate(1.2) hue-rotate(-10deg)', transform: 'translateX(2px)' },
-    { filter: 'none', transform: 'none' }
-  ], { duration: 280, iterations: 1, easing: 'cubic-bezier(.2,.9,.2,1)' });
-}
-
-/* ================================================================
-   KONAMI CODE → Overlay Burst
-================================================================ */
+/* ======================= SUBTLE HERO JOLT EACH MINUTE ======================= */
 (function(){
-  const seq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-  const buf = [];
-  const ov = document.getElementById('konami');
-  addEventListener('keydown', e=>{
-    buf.push(e.key); if (buf.length > seq.length) buf.shift();
-    if (seq.every((k,i)=>buf[i]===k)){
-      ov.classList.add('show'); glitchHero();
-      setTimeout(()=> ov.classList.remove('show'), 1400);
-    }
-  });
-})();
-
-/* ================================================================
-   OPEN WINDOWS VIA DOCK
-================================================================ */
-document.querySelectorAll('.btn[data-open]').forEach(b=>{
-  b.addEventListener('click', ()=>{
-    const sel = b.getAttribute('data-open');
-    const w = document.querySelector(sel);
-    if (!w) return;
-    w.classList.add('show');
-    w.style.zIndex = 999;
-  });
-});
-
-/* ================================================================
-   LIVE CLOCK CHIP UPDATES HERO ON MINUTE CHANGE (subtle)
-================================================================ */
-(function(){
-  let lastMin = new Date().getMinutes();
+  const hero = document.getElementById('hero');
+  function glitch(){
+    hero.animate([
+      { filter:'none', transform: hero.style.transform || 'none' },
+      { filter:'contrast(1.3) saturate(1.3) hue-rotate(12deg)' },
+      { filter:'none' }
+    ], { duration:280, easing:'cubic-bezier(.2,.9,.2,1)' });
+  }
+  let last = new Date().getMinutes();
   setInterval(()=>{
     const now = new Date();
-    if (now.getMinutes() !== lastMin){
-      lastMin = now.getMinutes();
-      glitchHero();
-    }
-  }, 1000);
+    if(now.getMinutes()!==last){ last=now.getMinutes(); glitch(); }
+  },1000);
 })();
 </script>
 </body>
