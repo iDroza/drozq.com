@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>THE WORLD IS YOURS.</title>
+  <meta name="description" content="A digital proclamation of ambition." />
+  <style>
+    :root {
+      --purple: #9900FF;
+      --white: #FFFFFF;
+      --bg: #000000;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--white);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                   "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .wrap {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .line {
+      font-size: clamp(28px, 6vw, 56px);
+      line-height: 1.1;
+      letter-spacing: 0.2px;
+      margin: 0;
+      text-transform: uppercase;
+    }
+    .purple {
+      color: var(--purple);
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap" role="main" aria-label="Motivational message">
+    <h1 class="line">
+      <span>THE WORLD IS </span><span class="purple">YOURS</span><span>.</span>
+    </h1>
+  </main>
+</body>
+</html>
