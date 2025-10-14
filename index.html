@@ -9,7 +9,7 @@
   :root{
     --bg:#000; --fg:#fff; --muted:#9aa0a6;
     --accent:#9900FF;           /* purple */
-    --accent-2:#FFA500;         /* your orange palette kept for future */
+    --accent-2:#FFA500;         /* kept for future use */
     --glass:rgba(255,255,255,.06);
     --glass-2:rgba(255,255,255,.1);
     --border:rgba(255,255,255,.14);
@@ -63,7 +63,7 @@
   }
   .line{
     margin:0; letter-spacing:.2px; line-height:1.05;
-    font-size:clamp(32px,6vw,72px);
+    font-size:clamp(28px,6vw,72px);
     text-shadow:0 0 10px rgba(153,0,255,.18), 0 0 35px rgba(153,0,255,.12);
     white-space:pre-wrap;
   }
@@ -175,43 +175,80 @@
   const lineEl = document.getElementById('line');
   const CUR = '<span class="cursor-glitch"></span>';
 
-  // Messages with accent word and punctuation
   const messages = [
-    { text: 'The world is yours.', accent: 'yours' },                 // period
-    { text: 'What are you so afraid of?', accent: 'afraid' },         // question
-    { text: 'Volume Negates Luck', accent: 'Luck' }                    // no punctuation at end
+    { text: `The world is yours.`, accent: `yours` },
+    { text: `What are you so afraid of?`, accent: `afraid` },
+    { text: `Volume Negates Luck.`, accent: `Luck` },
+    { text: `Unreasonable within reason.`, accent: `reason` },
+    { text: `Obedience begets mediocrity.`, accent: `begets` },
+    { text: `Poverty loves balance.`, accent: `balance` },
+    { text: `Weak men hide behind fairness.`, accent: `fairness` },
+    { text: `Cowards speak loudest of failure.`, accent: `failure` },
+    { text: `Ask permission from the forgotten.`, accent: `forgotten` },
+    { text: `An undefined problem cannot be solved.`, accent: `solved` },
+    { text: `You claim ideologies you do not understand.`, accent: `claim` },
+    { text: `Are you not entertained?`, accent: `entertained` },
+    { text: `Half of my heart is in your chest.`, accent: `heart` },
+    { text: `You have choices but rarely question them.`, accent: `question` },
+    { text: `Second best is failure.`, accent: `failure` },
+    { text: `I feel saturated by it.`, accent: `saturated` },
+    { text: `I wanted to destroy something beautiful.`, accent: `beautiful` },
+    { text: `Jog in the middle of a hurricane.`, accent: `hurricane` },
+    { text: `It's too late now.`, accent: `now` },
+    { text: `If he kills an elephant his poverty ends.`, accent: `elephant` },
+    { text: `Why do you watch the concert through your camera?`, accent: `camera` },
+    { text: `Cannibalize your fears.`, accent: `fears` },
+    { text: `I am invincible.`, accent: `invincible` },
+    { text: `Every mistake rots in my brain.`, accent: `brain` },
+    { text: `Pursue suffering.`, accent: `suffering` },
+    { text: `No one is coming to save you.`, accent: `save` },
+    { text: `You can easily return to the past, but no one is there anymore.`, accent: `anymore` },
+    { text: `A deaf man doesn't listen to bad news.`, accent: `listen` },
+    { text: `Every action, breath, argument, on this planet is in vain.`, accent: `vain` },
+    { text: `I hate all my fattened calf equally.`, accent: `equally` },
+    { text: `Behind mountains are more mountains.`, accent: `mountains` },
+    { text: `Something to hold when there is nothing to say.`, accent: `nothing` },
+    { text: `I live three days at a time.`, accent: `time` },
+    { text: `Nothing can be gained without sacrifice.`, accent: `sacrifice` },
+    { text: `Having things isn't fun, getting things is fun.`, accent: `getting` },
+    { text: `This isn't real, you're dreaming.`, accent: `dreaming` },
+    { text: `No one is listening.`, accent: `listening` },
+    { text: `I don't believe in yesterday.`, accent: `yesterday` },
+    { text: `I don't feel it.`, accent: `feel` },
+    { text: `Whoever digs a pit will fall into it.`, accent: `fall` },
+    { text: `I cut off my nose to spite my face.`, accent: `spite` },
+    { text: `Until death all defeat is psychological.`, accent: `psychological` },
+    { text: `You don't win silver, you lose gold.`, accent: `lose` },
+    { text: `Have I led a compelling narrative?`, accent: `narrative` },
   ];
 
   const typeDelay = 80;   // ms per char
   const delDelay  = 40;   // ms per char
   const holdDelay = 1200; // ms before delete
 
-  let idx = 0;
-
   function parts(msg){
-    // returns array of tokens with {str, isAccent}
     const a = msg.accent;
-    const start = msg.text.indexOf(a);
-    if (start === -1) return [{str: msg.text, isAccent:false}];
+    const i = msg.text.indexOf(a);
+    if (i === -1) return [{str: msg.text, isAccent:false}];
     return [
-      {str: msg.text.slice(0,start), isAccent:false},
+      {str: msg.text.slice(0,i), isAccent:false},
       {str: a, isAccent:true},
-      {str: msg.text.slice(start + a.length), isAccent:false},
+      {str: msg.text.slice(i + a.length), isAccent:false},
     ];
   }
 
   function renderTyped(tokens, count){
-    // Build HTML up to 'count' characters, wrapping accent span when reached
     let out = '', left = count;
     for(const t of tokens){
       if(left <= 0) break;
       const chunk = t.str.slice(0, Math.min(left, t.str.length));
-      if (t.isAccent) out += `<span class="accent">${chunk}</span>`;
-      else out += chunk;
+      out += t.isAccent ? `<span class="accent">${chunk}</span>` : chunk;
       left -= chunk.length;
     }
     return out + CUR;
   }
+
+  function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
   async function typeMsg(msg){
     const tokens = parts(msg);
@@ -227,14 +264,8 @@
     }
   }
 
-  function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
   (async function loop(){
-    while(true){
-      const m = messages[idx % messages.length];
-      await typeMsg(m);
-      idx++;
-    }
+    while(true){ for(const m of messages){ await typeMsg(m); } }
   })();
 })();
 
