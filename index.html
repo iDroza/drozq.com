@@ -6,61 +6,38 @@
 <title>The world is yours.</title>
 <style>
   :root{
-    --bg:#000;
-    --fg:#fff;
-    --accent:#9900FF;
+    --bg:#000; --fg:#fff; --accent:#9900FF;
     --border:rgba(255,255,255,.14);
     --shadow:0 10px 30px rgba(0,0,0,.45);
   }
   html,body{
-    height:100%;
-    margin:0;
-    background:var(--bg);
-    color:var(--fg);
+    height:100%; margin:0; background:var(--bg); color:var(--fg);
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-weight:700;
-    -webkit-font-smoothing:antialiased;
-    overflow:hidden;
+    font-weight:700; -webkit-font-smoothing:antialiased; overflow:hidden;
   }
-  .wrap{
-    position:relative;
-    z-index:2;
-    min-height:100%;
-    display:grid;
-    place-items:center;
-    text-align:center;
-    padding:2rem;
-  }
+  .wrap{ position:relative; z-index:2; min-height:100%; display:grid; place-items:center; text-align:center; padding:2rem; }
   .hero{
-    display:inline-block;
-    user-select:none;
-    pointer-events:auto;
-    border:1px solid var(--border);
-    border-radius:24px;
+    display:inline-block; user-select:none; pointer-events:auto;
+    border:1px solid var(--border); border-radius:24px;
     padding:clamp(16px,3vw,32px) clamp(18px,4vw,52px);
-    box-shadow:var(--shadow);
-    transform-style:preserve-3d;
-    transition:filter .15s ease;
+    box-shadow:var(--shadow); transform-style:preserve-3d; transition:filter .15s ease;
   }
   .line{
-    margin:0;
-    letter-spacing:.2px;
-    line-height:1.05;
+    margin:0; letter-spacing:.2px; line-height:1.05;
     font-size:clamp(28px,6vw,72px);
     text-shadow:0 0 10px rgba(153,0,255,.18),0 0 35px rgba(153,0,255,.12);
     white-space:pre-wrap;
   }
-  .accent{color:var(--accent);}
+  .accent{ color:var(--accent); }
   .cursor-glitch{
-    display:inline-block;
-    width:.55em;
-    height:.9em;
-    vertical-align:-0.05em;
-    margin-left:.06em;
-    background:currentColor;
-    animation:blink 1s steps(1) infinite;
+    display:inline-block; width:.55em; height:.9em; vertical-align:-0.05em; margin-left:.06em;
+    background:currentColor; animation:blink 1s steps(1) infinite;
   }
   @keyframes blink{50%{opacity:0}}
+
+  /* Slow flash for the final message */
+  .flash { animation: fadePulse 2.6s ease-in-out infinite alternate; }
+  @keyframes fadePulse { from { opacity: .28 } to { opacity: 1 } }
 </style>
 </head>
 <body>
@@ -92,11 +69,12 @@
   });
 })();
 
-/* TYPE/DELETE loop */
+/* RANDOM non-repeating sequence ONCE, then slow flashing final message */
 (function(){
-  const lineEl=document.getElementById('line');
-  const CUR='<span class="cursor-glitch"></span>';
-  const msgs=[
+  const lineEl = document.getElementById('line');
+  const CUR = '<span class="cursor-glitch"></span>';
+
+  const msgs = [
     {text:`The world is yours.`,accent:`yours`},
     {text:`What are you so afraid of?`,accent:`afraid`},
     {text:`Volume Negates Luck.`,accent:`Luck`},
@@ -142,31 +120,65 @@
     {text:`You don't win silver, you lose gold.`,accent:`lose`},
     {text:`Have I led a compelling narrative?`,accent:`narrative`}
   ];
-  const typeDelay=80,delDelay=40,holdDelay=1200;
-  const wait=ms=>new Promise(r=>setTimeout(r,ms));
 
-  function parts(m){
-    const a=m.accent,i=m.text.indexOf(a);
-    if(i<0)return[{str:m.text,isAccent:false}];
-    return[{str:m.text.slice(0,i),isAccent:false},{str:a,isAccent:true},{str:m.text.slice(i+a.length),isAccent:false}];
+  const FINAL_LINE = `What are you looking for?`; // slow flashing, no cursor
+  const BASE_TYPE = 80, BASE_DEL = 40, HOLD = 1200;
+  const wait = ms => new Promise(r=>setTimeout(r,ms));
+  const jitter = (base, spread=20) => base + Math.floor((Math.random()*spread) - spread/2);
+
+  function parts(msg){
+    const a=msg.accent, i=msg.text.indexOf(a);
+    if(i<0) return [{str:msg.text,isAccent:false}];
+    return [
+      {str: msg.text.slice(0,i), isAccent:false},
+      {str: a, isAccent:true},
+      {str: msg.text.slice(i+a.length), isAccent:false}
+    ];
   }
-  function render(toks,c){
-    let out='',left=c;
-    for(const t of toks){
-      if(left<=0)break;
-      const chunk=t.str.slice(0,Math.min(left,t.str.length));
-      out+=t.isAccent?`<span class="accent">${chunk}</span>`:chunk;
-      left-=chunk.length;
+  function render(tokens, count){
+    let out='', left=count;
+    for(const t of tokens){
+      if(left<=0) break;
+      const chunk = t.str.slice(0, Math.min(left, t.str.length));
+      out += t.isAccent ? `<span class="accent">${chunk}</span>` : chunk;
+      left -= chunk.length;
     }
-    return out+CUR;
+    return out + '<span class="cursor-glitch"></span>';
   }
-  async function typeOne(m){
-    const t=parts(m),n=m.text.length;
-    for(let i=1;i<=n;i++){lineEl.innerHTML=render(t,i);await wait(typeDelay);}
-    await wait(holdDelay);
-    for(let i=n-1;i>=0;i--){lineEl.innerHTML=render(t,i);await wait(delDelay);}
+
+  async function typeMsg(m){
+    const tokens = parts(m);
+    const n = m.text.length;
+    for(let i=1;i<=n;i++){
+      lineEl.innerHTML = render(tokens, i);
+      await wait(jitter(BASE_TYPE));
+    }
+    await wait(HOLD);
+    for(let i=n-1;i>=0;i--){
+      lineEl.innerHTML = render(tokens, i);
+      await wait(jitter(BASE_DEL));
+    }
   }
-  (async()=>{while(true){for(const m of msgs)await typeOne(m);}})();
+
+  // Fisher–Yates shuffle for true non-repeating random order
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1; i>0; i--){
+      const j = (Math.random()* (i+1))|0;
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  (async function runOnceThenFlash(){
+    const order = shuffle(msgs);
+    for (const m of order){
+      await typeMsg(m);
+    }
+    // Stop cycling; show slow flashing final line (no cursor)
+    lineEl.classList.add('flash');
+    lineEl.innerHTML = FINAL_LINE;
+  })();
 })();
 </script>
 </body>
