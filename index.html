@@ -4,6 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>The world is yours.</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="32x32" href="flavicon.png" />
+<!-- (Optional cache-buster) <link rel="icon" type="image/png" href="flavicon.png?v=1" /> -->
+
 <style>
   :root{
     --bg:#000; --fg:#fff; --accent:#9900FF;
@@ -241,7 +246,7 @@
     // Fade to black before final message
     const fade = document.getElementById('fade');
     fade.classList.add('active');
-    await wait(2000); // adjust fade duration as you like
+    await wait(2000);
 
     // Show final flashing line (no cursor)
     lineEl.classList.add('flash');
@@ -254,4 +259,3 @@
 </script>
 </body>
 </html>
-
