@@ -7,57 +7,95 @@
 
 <!-- Favicon -->
 <link rel="icon" type="image/png" sizes="32x32" href="flavicon.png" />
-<!-- (Optional cache-buster) <link rel="icon" type="image/png" href="flavicon.png?v=1" /> -->
 
 <style>
   :root{
-    --bg:#000; --fg:#fff; --accent:#9900FF;
+    --bg:#000;
+    --fg:#fff;
+    --accent:#9900FF;
     --border:rgba(255,255,255,.14);
     --shadow:0 10px 30px rgba(0,0,0,.45);
-    --blink:0.9s;            /* medium blink speed */
+    --caret-y:0.30em; /* adjust this value to raise/lower the caret */
   }
+
   html,body{
-    height:100%; margin:0; background:var(--bg); color:var(--fg);
+    height:100%;
+    margin:0;
+    background:var(--bg);
+    color:var(--fg);
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-weight:700; -webkit-font-smoothing:antialiased; overflow:hidden;
+    font-weight:700;
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden;
   }
-  .wrap{ position:relative; z-index:2; min-height:100%; display:grid; place-items:center; text-align:center; padding:2rem; }
+
+  .wrap{
+    position:relative;
+    z-index:2;
+    min-height:100%;
+    display:grid;
+    place-items:center;
+    text-align:center;
+    padding:2rem;
+  }
+
   .hero{
-    display:inline-block; user-select:none; pointer-events:auto;
-    border:1px solid var(--border); border-radius:24px;
+    display:inline-block;
+    user-select:none;
+    pointer-events:auto;
+    border:1px solid var(--border);
+    border-radius:24px;
     padding:clamp(16px,3vw,32px) clamp(18px,4vw,52px);
-    box-shadow:var(--shadow); transform-style:preserve-3d; transition:filter .15s ease;
+    box-shadow:var(--shadow);
+    transform-style:preserve-3d;
+    transition:filter .15s ease;
   }
+
   .line{
-    margin:0; letter-spacing:.2px; line-height:1.05;
+    margin:0;
+    letter-spacing:.2px;
+    line-height:1.05;
     font-size:clamp(28px,6vw,72px);
     text-shadow:0 0 10px rgba(153,0,255,.18),0 0 35px rgba(153,0,255,.12);
     white-space:pre-wrap;
   }
+
   .accent{ color:var(--accent); }
 
-  /* HEAVY WHITE UNDERLINE CARET */
+  /* Heavy underline caret */
   .caret{
-    display:inline-block; width:.7em; height:4px;   /* heavy thickness */
-    background:#fff;                                 /* white color */
-    vertical-align:baseline; transform:translateY(.45em);
-    margin-left:.06em; border-radius:2px;
-    animation:blink var(--blink) steps(1) infinite;
+    display:inline-block;
+    width:.7em;
+    height:4px;
+    background:var(--fg);
+    vertical-align:baseline;
+    transform:translateY(var(--caret-y));
+    margin-left:.06em;
+    border-radius:2px;
+    animation:blink 1s steps(1) infinite;
   }
-  @keyframes blink{50%{opacity:0}}
 
-  /* Slow flash for the final message */
+  @keyframes blink { 50%{ opacity:0 } }
+
+  /* Fade overlay for final transition */
+  .fadeout{
+    position:fixed;
+    inset:0;
+    background:#000;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 1.5s ease;
+    z-index:999;
+  }
+  .fadeout.active{ opacity:1; }
+
+  /* Slow flash for final message */
   .flash { animation: fadePulse 2.6s ease-in-out infinite alternate; }
   @keyframes fadePulse { from { opacity: .28 } to { opacity: 1 } }
 
-  /* Fade-to-black overlay */
-  .fadeout{
-    position:fixed; inset:0; background:#000; opacity:0; pointer-events:none;
-    transition:opacity 1.5s ease; z-index:999;
-  }
-  .fadeout.active{ opacity:1; }
 </style>
 </head>
+
 <body>
 <div class="wrap">
   <div class="hero" id="hero" aria-live="polite" aria-atomic="true">
@@ -67,7 +105,6 @@
   </div>
 </div>
 
-<!-- Fade overlay -->
 <div id="fade" class="fadeout"></div>
 
 <script>
@@ -93,7 +130,7 @@
 /* RANDOM non-repeating sequence ONCE, then fade-to-black, then slow flashing final message */
 (function(){
   const lineEl = document.getElementById('line');
-  const CUR = '<span class="caret"></span>';  // heavy white underline caret
+  const CUR = '<span class="cursor-glitch"></span>';
 
   const msgs = [
     {text:`The world is yours.`,accent:`yours`},
@@ -218,70 +255,44 @@
     {text:`Have I led a compelling narrative?`,accent:`narrative`}
   ];
 
-  const FINAL_LINE = `Just Win.`; // slow flashing, no cursor
-  const BASE_TYPE = 80, BASE_DEL = 40, HOLD = 1200;
-  const wait = ms => new Promise(r=>setTimeout(r,ms));
-  const jitter = (base, spread=20) => base + Math.floor((Math.random()*spread) - spread/2);
+  const FINAL_LINE='Just Win.';
+  const BASE_TYPE=80,BASE_DEL=40,HOLD=1200;
+  const wait=ms=>new Promise(r=>setTimeout(r,ms));
+  const jitter=(b,s=20)=>b+Math.floor((Math.random()*s)-s/2);
 
-  function parts(msg){
-    const a=msg.accent, i=msg.text.indexOf(a);
-    if(i<0) return [{str:msg.text,isAccent:false}];
-    return [
-      {str: msg.text.slice(0,i), isAccent:false},
-      {str: a, isAccent:true},
-      {str: msg.text.slice(i+a.length), isAccent:false}
-    ];
+  function parts(m){
+    const a=m.accent,i=m.text.indexOf(a);
+    if(i<0)return[{str:m.text,isAccent:false}];
+    return[{str:m.text.slice(0,i),isAccent:false},{str:a,isAccent:true},{str:m.text.slice(i+a.length),isAccent:false}];
   }
-  function render(tokens, count){
-    let out='', left=count;
-    for(const t of tokens){
-      if(left<=0) break;
-      const chunk = t.str.slice(0, Math.min(left, t.str.length));
-      out += t.isAccent ? `<span class="accent">${chunk}</span>` : chunk;
-      left -= chunk.length;
+
+  function render(toks,c){
+    let out='',left=c;
+    for(const t of toks){
+      if(left<=0)break;
+      const chunk=t.str.slice(0,Math.min(left,t.str.length));
+      out+=t.isAccent?`<span class="accent">${chunk}</span>`:chunk;
+      left-=chunk.length;
     }
-    return out + CUR;  // append heavy underline caret
+    return out+CUR;
   }
 
   async function typeMsg(m){
-    const tokens = parts(m);
-    const n = m.text.length;
-    for(let i=1;i<=n;i++){
-      lineEl.innerHTML = render(tokens, i);
-      await wait(jitter(BASE_TYPE));
-    }
+    const toks=parts(m); const n=m.text.length;
+    for(let i=1;i<=n;i++){lineEl.innerHTML=render(toks,i);await wait(jitter(BASE_TYPE));}
     await wait(HOLD);
-    for(let i=n-1;i>=0;i--){
-      lineEl.innerHTML = render(tokens, i);
-      await wait(jitter(BASE_DEL));
-    }
+    for(let i=n-1;i>=0;i--){lineEl.innerHTML=render(toks,i);await wait(jitter(BASE_DEL));}
   }
 
-  function shuffle(arr){
-    const a = arr.slice();
-    for(let i=a.length-1; i>0; i--){
-      const j = (Math.random()*(i+1))|0;
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
+  function shuffle(a){const arr=a.slice();for(let i=arr.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
 
-  (async function runOnceThenFlash(){
-    const order = shuffle(msgs);
-    for (const m of order){
-      await typeMsg(m);
-    }
-
-    // Fade to black before final message
-    const fade = document.getElementById('fade');
-    fade.classList.add('active');
-    await wait(2000);
-
-    // Show final flashing line (no caret)
+  (async function run(){
+    const order=shuffle(msgs);
+    for(const m of order){await typeMsg(m);}
+    const fade=document.getElementById('fade');
+    fade.classList.add('active'); await wait(2000);
     lineEl.classList.add('flash');
-    lineEl.innerHTML = FINAL_LINE;
-
-    // Remove the overlay so the flashing text is visible
+    lineEl.innerHTML=FINAL_LINE;
     fade.classList.remove('active');
   })();
 })();
