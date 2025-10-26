@@ -14,6 +14,7 @@
     --bg:#000; --fg:#fff; --accent:#9900FF;
     --border:rgba(255,255,255,.14);
     --shadow:0 10px 30px rgba(0,0,0,.45);
+    --blink:0.9s;            /* medium blink speed */
   }
   html,body{
     height:100%; margin:0; background:var(--bg); color:var(--fg);
@@ -34,9 +35,14 @@
     white-space:pre-wrap;
   }
   .accent{ color:var(--accent); }
-  .cursor-glitch{
-    display:inline-block; width:.55em; height:.9em; vertical-align:-0.05em; margin-left:.06em;
-    background:currentColor; animation:blink 1s steps(1) infinite;
+
+  /* HEAVY WHITE UNDERLINE CARET */
+  .caret{
+    display:inline-block; width:.7em; height:4px;   /* heavy thickness */
+    background:#fff;                                 /* white color */
+    vertical-align:baseline; transform:translateY(.45em);
+    margin-left:.06em; border-radius:2px;
+    animation:blink var(--blink) steps(1) infinite;
   }
   @keyframes blink{50%{opacity:0}}
 
@@ -56,7 +62,7 @@
 <div class="wrap">
   <div class="hero" id="hero" aria-live="polite" aria-atomic="true">
     <h1 class="line" id="line">
-      <span>The world is </span><span class="accent">yours</span><span>.</span><span class="cursor-glitch"></span>
+      <span>The world is </span><span class="accent">yours</span><span>.</span><span class="caret"></span>
     </h1>
   </div>
 </div>
@@ -87,7 +93,7 @@
 /* RANDOM non-repeating sequence ONCE, then fade-to-black, then slow flashing final message */
 (function(){
   const lineEl = document.getElementById('line');
-  const CUR = '<span class="cursor-glitch"></span>';
+  const CUR = '<span class="caret"></span>';  // heavy white underline caret
 
   const msgs = [
     {text:`The world is yours.`,accent:`yours`},
@@ -234,7 +240,7 @@
       out += t.isAccent ? `<span class="accent">${chunk}</span>` : chunk;
       left -= chunk.length;
     }
-    return out + '<span class="cursor-glitch"></span>';
+    return out + CUR;  // append heavy underline caret
   }
 
   async function typeMsg(m){
@@ -271,7 +277,7 @@
     fade.classList.add('active');
     await wait(2000);
 
-    // Show final flashing line (no cursor)
+    // Show final flashing line (no caret)
     lineEl.classList.add('flash');
     lineEl.innerHTML = FINAL_LINE;
 
@@ -282,10 +288,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
