@@ -106,24 +106,6 @@
 <div id="fade" class="fadeout"></div>
 
 <script>
-/* HERO tilt */
-(function(){
-  const hero=document.getElementById('hero');
-  const MAX=10;
-  hero.addEventListener('pointermove',(e)=>{
-    const r=hero.getBoundingClientRect();
-    const x=(e.clientX-(r.left+r.width/2))/(r.width/2);
-    const y=(e.clientY-(r.top+r.height/2))/(r.height/2);
-    const rx=(-y*MAX).toFixed(2);
-    const ry=(x*MAX).toFixed(2);
-    hero.style.transform=`perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-    hero.style.filter='contrast(1.08) saturate(1.08)';
-  });
-  hero.addEventListener('pointerleave',()=>{
-    hero.style.transform='perspective(900px) rotateX(0) rotateY(0)';
-    hero.style.filter='none';
-  });
-})();
 
 /* RANDOM non-repeating sequence ONCE, then fade-to-black, then slow flashing final message */
 (function(){
@@ -309,4 +291,5 @@
 </script>
 </body>
 </html>
+
 
