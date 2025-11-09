@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The world is yours.</title>
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="flavicon.png" />
-
-  <!-- External CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -21,14 +18,38 @@
     </div>
   </div>
 
+  <!-- footer -->
+  <footer class="footer">
+    <nav class="footer-nav" id="footerNav">
+      <span class="footer-link active" data-page="philanthropy">Philanthropy</span>
+      <span class="footer-link" data-page="privacy">Privacy</span>
+      <span class="footer-link" data-page="decade">Decade</span>
+      <span class="footer-link" data-page="constraint">Constraint</span>
+      <span class="footer-link" data-page="platforms">Platforms</span>
+    </nav>
+  </footer>
+
   <div id="fade" class="fadeout"></div>
 
   <script>
-  /* RANDOM non-repeating sequence ONCE, then fade-to-black, then slow flashing final message */
+  /* footer active handling */
+  (function () {
+    const footer = document.getElementById('footerNav');
+    const links = footer.querySelectorAll('.footer-link');
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        // here is where you'd navigate or swap content if you wanted
+      });
+    });
+  })();
+  </script>
+
+  <script>
+  /* your existing rotating-message logic (unchanged) */
   (function () {
     const lineEl = document.getElementById('line');
-
-    /* IMPORTANT: Use the heavy underline caret for the cursor */
     const CUR = '<span class="caret"></span>';
 
     const msgs = [
@@ -210,7 +231,7 @@
         out += t.isAccent ? `<span class="accent">${chunk}</span>` : chunk;
         left -= chunk.length;
       }
-      return out + CUR;  // append heavy underline caret
+      return out + CUR;
     }
 
     async function typeMsg(m) {
