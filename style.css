@@ -1,0 +1,110 @@
+:root {
+  --bg: #000;
+  --fg: #fff;
+  --accent: #9900FF;
+  --border: rgba(255, 255, 255, .14);
+  --shadow: 0 10px 30px rgba(0, 0, 0, .45);
+  --caret-y: 0.20em; /* adjust to raise/lower the underline caret */
+}
+
+/* Base layout */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* Centered wrapper */
+.wrap {
+  position: relative;
+  z-index: 2;
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Card/hero */
+.hero {
+  display: inline-block;
+  user-select: text;
+  pointer-events: auto;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: clamp(16px, 3vw, 32px) clamp(18px, 4vw, 52px);
+  box-shadow: var(--shadow);
+  transform-style: preserve-3d;
+  transition: filter .15s ease;
+}
+
+/* Line of text */
+.line {
+  margin: 0;
+  letter-spacing: .2px;
+  line-height: 1.05;
+  font-size: clamp(28px, 6vw, 72px);
+  text-shadow:
+    0 0 10px rgba(153, 0, 255, .18),
+    0 0 35px rgba(153, 0, 255, .12);
+  white-space: pre-wrap;
+}
+
+/* Accent word */
+.accent {
+  color: var(--accent);
+}
+
+/* Heavy underline caret (white, medium blink) */
+.caret {
+  display: inline-block;
+  width: .6em;
+  height: 9px;
+  background: var(--fg);
+  vertical-align: baseline;
+  transform: translateY(var(--caret-y));
+  margin-left: .06em;
+  border-radius: 2px;
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Fullscreen fade overlay */
+.fadeout {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.5s ease;
+  z-index: 999;
+}
+
+.fadeout.active {
+  opacity: 1;
+}
+
+/* Slow flash for final message */
+.flash {
+  animation: fadePulse 2.6s ease-in-out infinite alternate;
+}
+
+@keyframes fadePulse {
+  from {
+    opacity: .28;
+  }
+  to {
+    opacity: 1;
+  }
+}
