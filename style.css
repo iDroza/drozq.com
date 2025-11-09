@@ -4,7 +4,7 @@
   --accent: #9900FF;
   --border: rgba(255, 255, 255, .14);
   --shadow: 0 10px 30px rgba(0, 0, 0, .45);
-  --caret-y: 0.20em; /* adjust to raise/lower the underline caret */
+  --caret-y: 0.20em;
 }
 
 /* Base layout */
@@ -18,9 +18,10 @@ body {
   font-weight: 700;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
+  position: relative;
 }
 
-/* Centered wrapper */
+/* Centered wrapper (hero) */
 .wrap {
   position: relative;
   z-index: 2;
@@ -107,4 +108,62 @@ body {
   to {
     opacity: 1;
   }
+}
+
+/* ========= FOOTER ========= */
+.footer {
+  position: fixed;
+  inset: auto 0 0 0;
+  height: 56px;
+  background: radial-gradient(circle at top, rgba(255,255,255,.04), rgba(0,0,0,0));
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  z-index: 20;
+  padding-inline: 1.5rem;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-link {
+  position: relative;
+  font-weight: 600;
+  font-size: .78rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .85);
+  cursor: pointer;
+  transition: opacity .2s ease;
+  padding-block: .3rem;
+}
+
+/* hover: dim + animate underline */
+.footer-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.45rem;
+  height: 1px;
+  width: 0;
+  background: #fff;
+  transition: width .22s ease-out;
+  opacity: 1;
+}
+
+.footer-link:hover {
+  opacity: .5;
+}
+
+.footer-link:hover::after {
+  width: 100%;
+}
+
+/* active state: keep underline */
+.footer-link.active::after {
+  width: 100%;
 }
