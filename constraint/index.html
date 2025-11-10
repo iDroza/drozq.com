@@ -21,7 +21,7 @@
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       min-height:100vh;
-      padding-bottom:5.5rem; /* for footer */
+      padding-bottom:5.5rem; /* for footer on desktop */
     }
     .topbar{
       display:flex;
@@ -61,7 +61,6 @@
       font-size:1.1rem;
       line-height:1;
     }
-    /* match decade page width/padding */
     main{
       max-width:880px;
       margin:1.5rem auto 0;
@@ -128,9 +127,18 @@
     .footer-link:hover::after{
       width:100%;
     }
+
+    /* mobile adjustments */
     @media (max-width:540px){
+      body{
+        padding-bottom:0; /* footer no longer fixed on mobile */
+      }
       footer.site-footer{
-        gap:1.2rem;
+        position:static;
+        flex-wrap:wrap;
+        justify-content:flex-start;
+        gap:1rem 1.5rem;
+        padding:1.1rem 1.4rem 1.4rem;
       }
     }
   </style>
