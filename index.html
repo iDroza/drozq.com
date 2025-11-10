@@ -37,6 +37,7 @@
     place-items:center;
     text-align:center;
     padding:2rem;
+    padding-bottom:5.5rem; /* make room for footer */
   }
 
   .hero{
@@ -91,6 +92,69 @@
   /* Slow flash for the final message */
   .flash { animation: fadePulse 2.6s ease-in-out infinite alternate; }
   @keyframes fadePulse { from { opacity: .28 } to { opacity: 1 } }
+
+  /* ===== Footer ===== */
+  footer.site-footer{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:5;
+    background:rgba(0,0,0,.4);
+    backdrop-filter:blur(8px);
+    display:flex;
+    justify-content:center;
+    gap:2.5rem;
+    padding:1.35rem 1.5rem 1.1rem;
+  }
+
+  .footer-link{
+    position:relative;
+    color:#fff;
+    text-decoration:none;
+    font-weight:600;
+    letter-spacing:.02em;
+    transition:opacity .2s ease;
+    cursor:pointer;
+    padding-bottom:.35rem;
+  }
+
+  .footer-link::after{
+    content:'';
+    position:absolute;
+    left:0;
+    bottom:-0.35rem;
+    height:2px;
+    width:0;
+    background:#fff;
+    transition:width .2s ease-out;
+  }
+
+  .footer-link:hover{
+    opacity:.55; /* dim on hover */
+  }
+
+  .footer-link:hover::after{
+    width:100%; /* draw underline on hover */
+  }
+
+  .footer-link.active{
+    opacity:1;
+  }
+
+  .footer-link.active::after{
+    width:100%; /* keep underline once clicked */
+  }
+
+  @media (max-width: 540px){
+    footer.site-footer{
+      gap:1.2rem;
+      padding-bottom:1.3rem;
+    }
+    .footer-link{
+      font-size:.85rem;
+    }
+  }
 </style>
 </head>
 
@@ -103,10 +167,17 @@
   </div>
 </div>
 
+<footer class="site-footer" id="footer">
+  <a class="footer-link active" data-name="Philanthropy">Philanthropy</a>
+  <a class="footer-link" data-name="Privacy">Privacy</a>
+  <a class="footer-link" data-name="Decade">Decade</a>
+  <a class="footer-link" data-name="Constraint">Constraint</a>
+  <a class="footer-link" data-name="Platforms">Platforms</a>
+</footer>
+
 <div id="fade" class="fadeout"></div>
 
 <script>
-
 /* RANDOM non-repeating sequence ONCE, then fade-to-black, then slow flashing final message */
 (function(){
   const lineEl = document.getElementById('line');
@@ -320,6 +391,21 @@
     lineEl.innerHTML=FINAL_LINE;
     fade.classList.remove('active');
   })();
+})();
+</script>
+
+<script>
+/* footer active underline handler */
+(function(){
+  const links = document.querySelectorAll('.footer-link');
+  links.forEach(link=>{
+    link.addEventListener('click',()=>{
+      links.forEach(l=>l.classList.remove('active'));
+      link.classList.add('active');
+      // if you later want to hook into your hero and change text based on footer,
+      // you can do it here using link.dataset.name
+    });
+  });
 })();
 </script>
 </body>
