@@ -24,7 +24,7 @@
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       min-height:100vh;
-      padding-bottom:5.5rem; /* footer space */
+      padding-bottom:5.5rem;
     }
     .topbar{
       display:flex;
@@ -107,7 +107,6 @@
       background:rgba(0,0,0,.3);
       border:1px solid rgba(255,255,255,.08);
     }
-    /* PASSED YEARS (before Nov 2025) */
     .year-block.past{
       background:linear-gradient(135deg, rgba(0,0,0,.35) 0%, rgba(0,255,153,.07) 100%);
       border-color:rgba(0,255,153,.32);
@@ -118,7 +117,6 @@
       border-color:rgba(0,255,153,.45);
       color:#fff;
     }
-    /* CURRENT YEAR (Nov 2025 -> in Year 2) */
     .year-block.current{
       background:radial-gradient(circle at top, rgba(153,0,255,.32) 0%, rgba(0,0,0,.4) 58%);
       border-color:rgba(153,0,255,.6);
@@ -128,7 +126,6 @@
       background:rgba(153,0,255,.24);
       border-color:rgba(153,0,255,.6);
     }
-    /* UPCOMING YEARS */
     .year-block.upcoming{
       background:rgba(255,255,255,.007);
       border-color:rgba(255,255,255,.06);
@@ -139,13 +136,12 @@
       gap:1rem;
       font-weight:600;
       margin-bottom:.35rem;
-      padding-right:4rem; /* room for tag */
+      padding-right:4rem;
     }
-    .year-title small{
+    .income{
+      font-size:.68rem;
       color:var(--muted);
-      font-weight:500;
-      font-size:.7rem;
-      white-space:nowrap;
+      margin-bottom:.45rem;
     }
     .pill{
       display:inline-block;
@@ -252,13 +248,13 @@
       Over the next 10 years the impact I have on reality will be objectively measured. Skill acquisition and capital compounding will act as the main drivers here. Theory of Constraints identifies the points of greatest leverage.
     </div>
 
-    <!-- Year 1: PASSED (we are in Nov 2025) -->
+    <!-- Year 1: PASSED -->
     <section class="year-block past">
       <span class="status-tag">Completed</span>
       <div class="year-title">
         <div>Year 1 (August 2024 – August 2025) ✔</div>
-        <small>$12k/mo</small>
       </div>
+      <div class="income">$12k/mo</div>
       <div class="field-label">Skill</div>
       <div class="pill">Sales ✔</div>
       <div class="field-label">Objective</div>
@@ -267,13 +263,13 @@
       <div>Honda of Vallejo ✔</div>
     </section>
 
-    <!-- Year 2: CURRENT (Nov 2025 sits inside Aug 2025–Aug 2026) -->
+    <!-- Year 2: CURRENT -->
     <section class="year-block current">
       <span class="status-tag">Current</span>
       <div class="year-title">
         <div>Year 2 (August 2025 – August 2026)</div>
-        <small>$25k/mo</small>
       </div>
+      <div class="income">$25k/mo</div>
       <div class="field-label">Skills</div>
       <div>
         <span class="pill">Sales (Mastery)</span>
@@ -285,7 +281,7 @@
       <div>Norm Reeves Honda of Los Angeles ✔</div>
     </section>
 
-    <!-- Year 3: UPCOMING -->
+    <!-- Year 3 -->
     <section class="year-block upcoming">
       <span class="status-tag">Upcoming</span>
       <div class="year-title">
