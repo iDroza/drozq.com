@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Decade | drozq</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
+  <style>
+    :root{
+      --bg:#000;
+      --fg:#fff;
+      --muted:rgba(255,255,255,.65);
+      --border:rgba(255,255,255,.12);
+      --accent:#9900FF;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;
+      padding-bottom:5.5rem; /* footer space */
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      padding:1.2rem 1.4rem 0.4rem;
+    }
+    .back-link{
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.01em;
+    }
+    .back-link span.arrow{
+      font-size:1.1rem;
+      line-height:1;
+    }
+    main{
+      max-width:880px;
+      margin:1.5rem auto 0;
+      padding:0 1.4rem 3rem;
+    }
+    h1{
+      font-size:1.5rem;
+      margin-bottom:.4rem;
+      font-weight:700;
+    }
+    .subtitle{
+      color:var(--muted);
+      max-width:560px;
+      line-height:1.4;
+      margin-bottom:1.4rem;
+    }
+    .decade-meta{
+      margin-bottom:1.2rem;
+      padding:.6rem .8rem;
+      border-left:3px solid var(--accent);
+      background:rgba(153,0,255,.06);
+      font-size:.83rem;
+    }
+    .year-block{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:1rem 1.1rem .9rem;
+      margin-bottom:.9rem;
+      background:rgba(255,255,255,.01);
+    }
+    .year-title{
+      display:flex;
+      justify-content:space-between;
+      gap:1rem;
+      font-weight:600;
+      margin-bottom:.35rem;
+    }
+    .year-title small{
+      color:var(--muted);
+      font-weight:500;
+      font-size:.7rem;
+      white-space:nowrap;
+    }
+    .pill{
+      display:inline-block;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.04);
+      border-radius:999px;
+      padding:.25rem .7rem;
+      font-size:.68rem;
+      margin-right:.35rem;
+      margin-bottom:.35rem;
+    }
+    .field-label{
+      font-size:.68rem;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      color:var(--muted);
+      margin-top:.35rem;
+      margin-bottom:.1rem;
+    }
+    .networth{
+      margin-top:1.6rem;
+      padding:1.1rem 1.1rem 1rem;
+      border:1px solid rgba(153,0,255,.5);
+      border-radius:16px;
+      background:radial-gradient(circle at top, rgba(153,0,255,.35) 0%, rgba(0,0,0,0) 58%);
+    }
+    .networth h2{
+      margin:0 0 .4rem;
+      font-size:1rem;
+    }
+    .networth p{
+      margin:0;
+      color:var(--muted);
+    }
+    footer.site-footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:5;
+      background:rgba(0,0,0,.4);
+      backdrop-filter:blur(8px);
+      display:flex;
+      justify-content:center;
+      gap:2.5rem;
+      padding:1.35rem 1.5rem 1.1rem;
+    }
+    .footer-link{
+      position:relative;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.02em;
+      cursor:pointer;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+    .footer-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .footer-link:hover{
+      opacity:.55;
+    }
+    .footer-link:hover::after{
+      width:100%;
+    }
+    @media (max-width:540px){
+      .year-title{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      footer.site-footer{
+        gap:1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="/" class="back-link">
+      <span class="arrow">←</span>
+      <span>Return to Home</span>
+    </a>
+  </header>
+
+  <main>
+    <h1>Decade Plan | Age 20 to Age 30</h1>
+    <p class="subtitle">As you take a step, the next step is illuminated. In the beginning you must be directionally correct.</p>
+
+    <div class="decade-meta">
+      This is a 10-year skill-acquisition and capital-compounding sequence. It assumes the constraint is advertising-funded real estate acquisition and the vehicle is a brokerage you own.
+    </div>
+
+    <!-- Year 1 -->
+    <section class="year-block">
+      <div class="year-title">
+        <div>Year 1 (August 2024 – August 2025) ✔</div>
+        <small>$12k/mo</small>
+      </div>
+      <div class="field-label">Skill</div>
+      <div class="pill">Sales ✔</div>
+      <div class="field-label">Objective</div>
+      <div>Learn</div>
+      <div class="field-label">Place</div>
+      <div>Honda of Vallejo ✔</div>
+    </section>
+
+    <!-- Year 2 -->
+    <section class="year-block">
+      <div class="year-title">
+        <div>Year 2 (August 2025 – August 2026)</div>
+        <small>$25k/mo</small>
+      </div>
+      <div class="field-label">Skills</div>
+      <div>
+        <span class="pill">Sales (Mastery)</span>
+        <span class="pill">Lead Generation (Real Estate)</span>
+      </div>
+      <div class="field-label">Objective</div>
+      <div>Full Pivot to Real Estate</div>
+      <div class="field-label">Place</div>
+      <div>Norm Reeves Honda of Los Angeles ✔</div>
+    </section>
+
+    <!-- Year 3 -->
+    <section class="year-block">
+      <div class="year-title">
+        <div>Year 3 (August 2026 – August 2027)</div>
+      </div>
+      <div class="field-label">Skill</div>
+      <div class="pill">Lead Generation | Marketing</div>
+      <div class="field-label">Objective</div>
+      <div>Learn</div>
+      <div class="field-label">Place</div>
+      <div>Real Estate Brokerage in Los Angeles</div>
+    </section>
+
+    <!-- Year 4 -->
+    <section class="year-block">
+      <div class="year-title">
+        <div>Year 4 (August 2027 – August 2028)</div>
+      </div>
+      <div class="field-label">Skill</div>
+      <div class="pill">Lead Generation | Marketing (Mastery)</div>
+      <div class="field-label">Objective</div>
+      <div>Learn</div>
+      <div class="field-label">Place</div>
+      <div>Real Estate Brokerage in Los Angeles</div>
+    </section>
+
+    <!-- Year 5 -->
+    <section class="year-block">
+      <div class="year-title">
+        <div>Year 5 (August 2028 – August 2029)</div>
+      </div>
+      <div class="field-label">Skill</div>
+      <div class="pill">Recruiting</div>
+      <div class="pill">Product</div>
+      <div class="field-label">Objective</div>
+      <div>Open Real Estate Brokerage <strong>VIRELLO</strong></div>
+      <div class="field-label">Place</div>
+      <div>Los Angeles</div>
+    </section>
+
+    <!-- Year 6 -->
+    <section class="year-block">
+      <div class="year-title">
+        <div>Year 6 (August 2029 – August 2030)</div>
+      </div>
+      <div class="field-label">Skill</div>
+      <div class="pill">Operations</div>
+      <div class="field-label">Objective</div>
+      <div>Learn</div>
+      <div class="field-label">Place</div>
+      <div>Los Angeles</div>
+    </section>
+
+    <!-- Year 7 -->
+    <section class="year-block">
+      <div class="year-title">
+        <div>Year 7 (August 2030 – August 2031)</div>
+      </div>
+      <div class="field-label">Skill</div>
+      <div class="pill">Product (Mastery)</div>
+      <div class="field-label">Objective</div>
+      <div>Trim fat, Hire Executives, Create Decade Model, Prepare for Scale</div>
+      <div class="field-label">Place</div>
+      <div>Los Angeles</div>
+    </section>
+
+    <!-- Year 8 -->
+    <section class="year-block">
+      <div class="year-title">
+        <div>Year 8 (August 2031 – August 2032)</div>
+      </div>
+      <div class="field-label">Skill</div>
+      <div class="pill">Acquisitions</div>
+      <div class="field-label">Objective</div>
+      <div>Buying other brokerages to own their respective agents. Learn.</div>
+      <div class="field-label">Place</div>
+      <div>San Francisco &amp; Los Angeles</div>
+    </section>
+
+    <!-- Year 9 -->
+    <section class="year-block">
+      <div class="year-title">
+        <div>Year 9 (August 2032 – August 2033)</div>
+      </div>
+      <div class="field-label">Skill</div>
+      <div class="pill">Acquisitions (Mastery)</div>
+      <div class="field-label">Objective</div>
+      <div>Earn</div>
+      <div class="field-label">Place</div>
+      <div>San Francisco &amp; Los Angeles</div>
+    </section>
+
+    <!-- Year 10 -->
+    <section class="year-block">
+      <div class="year-title">
+        <div>Year 10 (August 2033 – August 2034)</div>
+      </div>
+      <div class="field-label">Skill</div>
+      <div class="pill">Scale</div>
+      <div class="field-label">Objective</div>
+      <div>Increase TAM across California → Break into surrounding states</div>
+      <div class="field-label">Place</div>
+      <div>Nationwide</div>
+    </section>
+
+    <div class="networth">
+      <h2>End of Decade Net Worth: $1 Billion</h2>
+      <p>This assumes owned brokerage, acquisitions of producing agents, and advertising no longer being the constraint.</p>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="footer">
+    <a class="footer-link" href="/philanthropy/">Philanthropy</a>
+    <a class="footer-link" href="/privacy/">Privacy</a>
+    <a class="footer-link" href="/decade/">Decade</a>
+    <a class="footer-link" href="/constraint/">Constraint</a>
+    <a class="footer-link" href="/platforms/">Platforms</a>
+  </footer>
+
+</body>
+</html>
