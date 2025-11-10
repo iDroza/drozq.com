@@ -15,7 +15,7 @@
     --accent:#9900FF;
     --border:rgba(255,255,255,.14);
     --shadow:0 10px 30px rgba(0,0,0,.45);
-    --caret-y:0.20em; /* adjust to raise/lower the underline caret */
+    --caret-y:0.20em;
   }
 
   html,body{
@@ -37,7 +37,7 @@
     place-items:center;
     text-align:center;
     padding:2rem;
-    padding-bottom:5.5rem; /* make room for footer */
+    padding-bottom:5.5rem; /* space for footer */
   }
 
   .hero{
@@ -48,8 +48,6 @@
     border-radius:24px;
     padding:clamp(16px,3vw,32px) clamp(18px,4vw,52px);
     box-shadow:var(--shadow);
-    transform-style:preserve-3d;
-    transition:filter .15s ease;
   }
 
   .line{
@@ -63,7 +61,6 @@
 
   .accent{ color:var(--accent); }
 
-  /* Heavy underline caret (white, medium blink) */
   .caret{
     display:inline-block;
     width:.6em;
@@ -77,7 +74,6 @@
   }
   @keyframes blink { 50%{ opacity:0 } }
 
-  /* Fade overlay for final transition */
   .fadeout{
     position:fixed;
     inset:0;
@@ -89,11 +85,10 @@
   }
   .fadeout.active{ opacity:1; }
 
-  /* Slow flash for the final message */
   .flash { animation: fadePulse 2.6s ease-in-out infinite alternate; }
   @keyframes fadePulse { from { opacity: .28 } to { opacity: 1 } }
 
-  /* ===== Footer ===== */
+  /* footer */
   footer.site-footer{
     position:fixed;
     left:0;
@@ -114,11 +109,12 @@
     text-decoration:none;
     font-weight:600;
     letter-spacing:.02em;
-    transition:opacity .2s ease;
     cursor:pointer;
     padding-bottom:.35rem;
+    transition:opacity .2s ease;
   }
 
+  /* underline only on hover */
   .footer-link::after{
     content:'';
     position:absolute;
@@ -131,19 +127,11 @@
   }
 
   .footer-link:hover{
-    opacity:.55; /* dim on hover */
+    opacity:.55;
   }
 
   .footer-link:hover::after{
-    width:100%; /* draw underline on hover */
-  }
-
-  .footer-link.active{
-    opacity:1;
-  }
-
-  .footer-link.active::after{
-    width:100%; /* keep underline once clicked */
+    width:100%;
   }
 
   @media (max-width: 540px){
@@ -168,7 +156,7 @@
 </div>
 
 <footer class="site-footer" id="footer">
-  <a class="footer-link active" data-name="Philanthropy">Philanthropy</a>
+  <a class="footer-link" data-name="Philanthropy">Philanthropy</a>
   <a class="footer-link" data-name="Privacy">Privacy</a>
   <a class="footer-link" data-name="Decade">Decade</a>
   <a class="footer-link" data-name="Constraint">Constraint</a>
@@ -178,11 +166,8 @@
 <div id="fade" class="fadeout"></div>
 
 <script>
-/* RANDOM non-repeating sequence ONCE, then fade-to-black, then slow flashing final message */
 (function(){
   const lineEl = document.getElementById('line');
-
-  /* IMPORTANT: Use the heavy underline caret for the cursor */
   const CUR = '<span class="caret"></span>';
 
   const msgs = [
@@ -364,7 +349,7 @@
       out+=t.isAccent?`<span class="accent">${chunk}</span>`:chunk;
       left-=chunk.length;
     }
-    return out + CUR;  // append heavy underline caret
+    return out + CUR;
   }
 
   async function typeMsg(m){
@@ -391,21 +376,6 @@
     lineEl.innerHTML=FINAL_LINE;
     fade.classList.remove('active');
   })();
-})();
-</script>
-
-<script>
-/* footer active underline handler */
-(function(){
-  const links = document.querySelectorAll('.footer-link');
-  links.forEach(link=>{
-    link.addEventListener('click',()=>{
-      links.forEach(l=>l.classList.remove('active'));
-      link.classList.add('active');
-      // if you later want to hook into your hero and change text based on footer,
-      // you can do it here using link.dataset.name
-    });
-  });
 })();
 </script>
 </body>
