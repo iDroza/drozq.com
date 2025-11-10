@@ -135,15 +135,21 @@
   /* mobile adjustments */
   @media (max-width: 540px){
     html,body{
-      overflow:auto; /* allow scroll on small screens */
+      overflow:auto;     /* allow scroll */
       height:auto;
     }
     .wrap{
-      min-height:auto;
-      padding-bottom:0; /* footer will flow */
+      min-height:calc(100vh - 120px); /* keep hero vertically centered above footer */
+      display:grid;
+      place-items:center;
+      padding:1.6rem 1.4rem 0;        /* restore padding around hero */
+    }
+    .hero{
+      width:100%;
+      max-width:520px;
     }
     footer.site-footer{
-      position:static;
+      position:static;               /* footer flows to bottom */
       flex-wrap:wrap;
       justify-content:flex-start;
       gap:1rem 1.5rem;
