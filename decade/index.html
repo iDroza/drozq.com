@@ -12,6 +12,9 @@
       --muted:rgba(255,255,255,.65);
       --border:rgba(255,255,255,.12);
       --accent:#9900FF;
+      --past:rgba(0,255,153,.12);
+      --current:rgba(153,0,255,.18);
+      --upcoming:rgba(255,255,255,.01);
     }
     *{box-sizing:border-box;}
     body{
@@ -85,11 +88,50 @@
       font-size:.83rem;
     }
     .year-block{
+      position:relative;
       border:1px solid var(--border);
       border-radius:14px;
       padding:1rem 1.1rem .9rem;
       margin-bottom:.9rem;
-      background:rgba(255,255,255,.01);
+      background:var(--upcoming);
+    }
+    .year-block .status-tag{
+      position:absolute;
+      top:.7rem;
+      right:.85rem;
+      font-size:.62rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      padding:.25rem .55rem .2rem;
+      border-radius:999px;
+      background:rgba(0,0,0,.3);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    /* PASSED YEARS (before Nov 2025) */
+    .year-block.past{
+      background:linear-gradient(135deg, rgba(0,0,0,.35) 0%, rgba(0,255,153,.07) 100%);
+      border-color:rgba(0,255,153,.32);
+      opacity:.9;
+    }
+    .year-block.past .status-tag{
+      background:rgba(0,255,153,.14);
+      border-color:rgba(0,255,153,.45);
+      color:#fff;
+    }
+    /* CURRENT YEAR (Nov 2025 -> in Year 2) */
+    .year-block.current{
+      background:radial-gradient(circle at top, rgba(153,0,255,.32) 0%, rgba(0,0,0,.4) 58%);
+      border-color:rgba(153,0,255,.6);
+      box-shadow:0 12px 35px rgba(0,0,0,.35);
+    }
+    .year-block.current .status-tag{
+      background:rgba(153,0,255,.24);
+      border-color:rgba(153,0,255,.6);
+    }
+    /* UPCOMING YEARS */
+    .year-block.upcoming{
+      background:rgba(255,255,255,.007);
+      border-color:rgba(255,255,255,.06);
     }
     .year-title{
       display:flex;
@@ -97,6 +139,7 @@
       gap:1rem;
       font-weight:600;
       margin-bottom:.35rem;
+      padding-right:4rem; /* room for tag */
     }
     .year-title small{
       color:var(--muted);
@@ -180,6 +223,11 @@
       .year-title{
         flex-direction:column;
         align-items:flex-start;
+        padding-right:0;
+      }
+      .year-block .status-tag{
+        top:.6rem;
+        right:.6rem;
       }
       footer.site-footer{
         gap:1.2rem;
@@ -204,8 +252,9 @@
       Over the next 10 years the impact I have on reality will be objectively measured. Skill acquisition and capital compounding will act as the main drivers here. Theory of Constraints identifies the points of greatest leverage.
     </div>
 
-    <!-- Year 1 -->
-    <section class="year-block">
+    <!-- Year 1: PASSED (we are in Nov 2025) -->
+    <section class="year-block past">
+      <span class="status-tag">Completed</span>
       <div class="year-title">
         <div>Year 1 (August 2024 – August 2025) ✔</div>
         <small>$12k/mo</small>
@@ -218,8 +267,9 @@
       <div>Honda of Vallejo ✔</div>
     </section>
 
-    <!-- Year 2 -->
-    <section class="year-block">
+    <!-- Year 2: CURRENT (Nov 2025 sits inside Aug 2025–Aug 2026) -->
+    <section class="year-block current">
+      <span class="status-tag">Current</span>
       <div class="year-title">
         <div>Year 2 (August 2025 – August 2026)</div>
         <small>$25k/mo</small>
@@ -235,8 +285,9 @@
       <div>Norm Reeves Honda of Los Angeles ✔</div>
     </section>
 
-    <!-- Year 3 -->
-    <section class="year-block">
+    <!-- Year 3: UPCOMING -->
+    <section class="year-block upcoming">
+      <span class="status-tag">Upcoming</span>
       <div class="year-title">
         <div>Year 3 (August 2026 – August 2027)</div>
       </div>
@@ -249,7 +300,8 @@
     </section>
 
     <!-- Year 4 -->
-    <section class="year-block">
+    <section class="year-block upcoming">
+      <span class="status-tag">Upcoming</span>
       <div class="year-title">
         <div>Year 4 (August 2027 – August 2028)</div>
       </div>
@@ -262,7 +314,8 @@
     </section>
 
     <!-- Year 5 -->
-    <section class="year-block">
+    <section class="year-block upcoming">
+      <span class="status-tag">Upcoming</span>
       <div class="year-title">
         <div>Year 5 (August 2028 – August 2029)</div>
       </div>
@@ -276,7 +329,8 @@
     </section>
 
     <!-- Year 6 -->
-    <section class="year-block">
+    <section class="year-block upcoming">
+      <span class="status-tag">Upcoming</span>
       <div class="year-title">
         <div>Year 6 (August 2029 – August 2030)</div>
       </div>
@@ -289,7 +343,8 @@
     </section>
 
     <!-- Year 7 -->
-    <section class="year-block">
+    <section class="year-block upcoming">
+      <span class="status-tag">Upcoming</span>
       <div class="year-title">
         <div>Year 7 (August 2030 – August 2031)</div>
       </div>
@@ -302,7 +357,8 @@
     </section>
 
     <!-- Year 8 -->
-    <section class="year-block">
+    <section class="year-block upcoming">
+      <span class="status-tag">Upcoming</span>
       <div class="year-title">
         <div>Year 8 (August 2031 – August 2032)</div>
       </div>
@@ -315,7 +371,8 @@
     </section>
 
     <!-- Year 9 -->
-    <section class="year-block">
+    <section class="year-block upcoming">
+      <span class="status-tag">Upcoming</span>
       <div class="year-title">
         <div>Year 9 (August 2032 – August 2033)</div>
       </div>
@@ -328,7 +385,8 @@
     </section>
 
     <!-- Year 10 -->
-    <section class="year-block">
+    <section class="year-block upcoming">
+      <span class="status-tag">Upcoming</span>
       <div class="year-title">
         <div>Year 10 (August 2033 – August 2034)</div>
       </div>
