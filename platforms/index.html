@@ -30,7 +30,9 @@
       gap:.5rem;
       padding:1.2rem 1.4rem 0.4rem;
     }
+    /* make return link behave like footer links */
     .back-link{
+      position:relative;
       display:inline-flex;
       align-items:center;
       gap:.5rem;
@@ -38,6 +40,24 @@
       text-decoration:none;
       font-weight:600;
       letter-spacing:.01em;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+    .back-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .back-link:hover{
+      opacity:.55;
+    }
+    .back-link:hover::after{
+      width:100%;
     }
     .back-link span.arrow{
       font-size:1.1rem;
@@ -49,16 +69,16 @@
       padding:0 1.4rem 3rem;
     }
     .headline{
-      text-align:center;
-      font-size:1.7rem;
+      text-align:left;
+      font-size:1.55rem;
       font-weight:700;
-      margin-bottom:.35rem;
+      margin-bottom:.25rem;
     }
     .subtitle{
-      text-align:center;
+      text-align:left;
       color:var(--muted);
-      margin-bottom:1.6rem;
-      line-height:1.4;
+      margin-bottom:1.4rem;
+      line-height:1.35;
     }
     .grid{
       display:grid;
@@ -72,20 +92,11 @@
       padding:1rem 1rem 1.05rem;
       display:flex;
       flex-direction:column;
-      gap:.45rem;
-      min-height:145px;
+      gap:.75rem;
+      min-height:120px;
     }
     .platform-title{
       font-weight:600;
-      display:flex;
-      align-items:center;
-      gap:.4rem;
-    }
-    .platform-desc{
-      font-size:.78rem;
-      color:var(--muted);
-      line-height:1.35;
-      flex:1;
     }
     .platform-link{
       display:inline-flex;
@@ -154,9 +165,6 @@
       footer.site-footer{
         gap:1.2rem;
       }
-      .headline{
-        font-size:1.4rem;
-      }
     }
   </style>
 </head>
@@ -170,42 +178,39 @@
   </header>
 
   <main>
-    <h1 class="headline">What are you looking for?</h1>
-    <p class="subtitle">Core public surfaces. Instagram and Facebook are live. The rest will be connected as they activate.</p>
+    <h1 class="headline">Platforms</h1>
+    <p class="subtitle">I hope you find what you are looking for.</p>
 
     <div class="grid">
-      <!-- Instagram -->
+      <!-- top row -->
       <div class="platform-card">
         <div class="platform-title">Instagram</div>
-        <div class="platform-desc">Short-form, brand-forward, daily signal.</div>
         <a class="platform-link" href="https://www.instagram.com/drozq/" target="_blank" rel="noreferrer">Visit Instagram →</a>
       </div>
 
-      <!-- Facebook -->
       <div class="platform-card">
         <div class="platform-title">Facebook</div>
-        <div class="platform-desc">Personal network, legacy contacts, warm reach.</div>
         <a class="platform-link" href="https://www.facebook.com/joshua.guerrero.71404976/" target="_blank" rel="noreferrer">Visit Facebook →</a>
       </div>
 
-      <!-- YouTube -->
+      <div class="platform-card">
+        <div class="platform-title">LinkedIn</div>
+        <a class="platform-link" href="https://www.linkedin.com/in/guerrero-joshua/" target="_blank" rel="noreferrer">Visit LinkedIn →</a>
+      </div>
+
+      <!-- bottom row -->
       <div class="platform-card">
         <div class="platform-title">YouTube</div>
-        <div class="platform-desc">Long-form authority. Documenting the decade plan.</div>
         <a class="platform-link is-disabled" href="">Coming soon</a>
       </div>
 
-      <!-- Twitter / X -->
       <div class="platform-card">
         <div class="platform-title">Twitter / X</div>
-        <div class="platform-desc">High-frequency thoughts, experiments, and offer testing.</div>
         <a class="platform-link is-disabled" href="">Coming soon</a>
       </div>
 
-      <!-- Podcast -->
       <div class="platform-card">
         <div class="platform-title">Podcast</div>
-        <div class="platform-desc">Long-form conversations, founder psychology, leverage.</div>
         <a class="platform-link is-disabled" href="">Coming soon</a>
       </div>
     </div>
