@@ -21,7 +21,7 @@
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       min-height:100vh;
-      padding-bottom:5.5rem; /* footer space */
+      padding-bottom:5.5rem; /* for fixed footer on desktop */
     }
     .topbar{
       display:flex;
@@ -149,9 +149,18 @@
     .footer-link:hover::after{
       width:100%;
     }
+
+    /* mobile: let footer flow and wrap */
     @media (max-width:540px){
+      body{
+        padding-bottom:0;
+      }
       footer.site-footer{
-        gap:1.2rem;
+        position:static;
+        flex-wrap:wrap;
+        justify-content:flex-start;
+        gap:1rem 1.5rem;
+        padding:1.1rem 1.4rem 1.4rem;
       }
     }
   </style>
@@ -179,7 +188,7 @@
       <h2>Principles</h2>
       <ul>
         <li><strong>1. Proximity:</strong> start with Los Angeles / California, where the business operates and the data is clean.</li>
-        <li><strong>2. Leverage:</strong> favor interventions where $1 unlocks > $1 in value (scholarships tied to performance, business tools, housing stability that preserves income).</li>
+        <li><strong>2. Leverage:</strong> favor interventions where $1 unlocks &gt; $1 in value (scholarships tied to performance, business tools, housing stability that preserves income).</li>
         <li><strong>3. Accountability:</strong> recipients, partners, and operators must report outcomes. Sentiment is not enough.</li>
         <li><strong>4. Alignment:</strong> giving should not weaken the recipient. It should increase agency.</li>
       </ul>
