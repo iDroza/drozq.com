@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>The world is yours.</title>
 
-<!-- Favicon -->
 <link rel="icon" type="image/png" sizes="32x32" href="flavicon.png" />
 
 <style>
@@ -26,7 +25,7 @@
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
     font-weight:700;
     -webkit-font-smoothing:antialiased;
-    overflow:hidden;
+    overflow:hidden; /* desktop: lock viewport */
   }
 
   .wrap{
@@ -37,7 +36,7 @@
     place-items:center;
     text-align:center;
     padding:2rem;
-    padding-bottom:5.5rem; /* space for footer */
+    padding-bottom:5.5rem; /* desktop: space for fixed footer */
   }
 
   .hero{
@@ -88,7 +87,7 @@
   .flash { animation: fadePulse 2.6s ease-in-out infinite alternate; }
   @keyframes fadePulse { from { opacity: .28 } to { opacity: 1 } }
 
-  /* footer */
+  /* footer (desktop) */
   footer.site-footer{
     position:fixed;
     left:0;
@@ -114,7 +113,6 @@
     transition:opacity .2s ease;
   }
 
-  /* underline only on hover */
   .footer-link::after{
     content:'';
     position:absolute;
@@ -134,10 +132,22 @@
     width:100%;
   }
 
+  /* mobile adjustments */
   @media (max-width: 540px){
+    html,body{
+      overflow:auto; /* allow scroll on small screens */
+      height:auto;
+    }
+    .wrap{
+      min-height:auto;
+      padding-bottom:0; /* footer will flow */
+    }
     footer.site-footer{
-      gap:1.2rem;
-      padding-bottom:1.3rem;
+      position:static;
+      flex-wrap:wrap;
+      justify-content:flex-start;
+      gap:1rem 1.5rem;
+      padding:1.1rem 1.4rem 1.4rem;
     }
     .footer-link{
       font-size:.85rem;
@@ -380,4 +390,3 @@
 </script>
 </body>
 </html>
-
