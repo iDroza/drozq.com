@@ -1,160 +1,142 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Constraint — drozq</title>
-<link rel="icon" type="image/png" sizes="32x32" href="../flavicon.png" />
-<style>
-  :root{
-    --bg:#000;
-    --fg:#fff;
-    --accent:#9900FF;
-    --border:rgba(255,255,255,.14);
-    --shadow:0 10px 30px rgba(0,0,0,.45);
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--fg);
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
-    -webkit-font-smoothing:antialiased;
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-  }
-  header{
-    padding:1.25rem 1.5rem 0;
-  }
-  .back-link{
-    display:inline-flex;
-    gap:.5rem;
-    align-items:center;
-    color:var(--fg);
-    text-decoration:none;
-    font-weight:600;
-    opacity:.65;
-    transition:opacity .15s ease;
-  }
-  .back-link:hover{opacity:1;}
-  .wrap{
-    flex:1;
-    display:flex;
-    justify-content:center;
-    padding:1.5rem 1.5rem 3rem;
-  }
-  .journal{
-    max-width:780px;
-    width:100%;
-    border:1px solid var(--border);
-    border-radius:24px;
-    background:rgba(0,0,0,.35);
-    backdrop-filter:blur(12px);
-    box-shadow:var(--shadow);
-    padding:1.75rem 1.75rem 1.5rem;
-  }
-  .entry-meta{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:1rem;
-    margin-bottom:1.2rem;
-  }
-  .date{
-    font-weight:700;
-    letter-spacing:.04em;
-  }
-  .tag{
-    background:rgba(153,0,255,.15);
-    border:1px solid rgba(153,0,255,.45);
-    color:var(--fg);
-    font-size:.65rem;
-    text-transform:uppercase;
-    letter-spacing:.08em;
-    border-radius:999px;
-    padding:.35rem .7rem;
-    white-space:nowrap;
-  }
-  h1{
-    font-size:1.45rem;
-    margin:0 0 .75rem;
-    letter-spacing:.02em;
-  }
-  .accent{
-    color:var(--accent);
-  }
-  p{
-    margin:0 0 1rem;
-    line-height:1.5;
-    font-weight:500;
-  }
-  .block{
-    background:rgba(255,255,255,.015);
-    border:1px solid rgba(255,255,255,.03);
-    border-radius:18px;
-    padding:1rem 1.1rem .6rem;
-    margin-top:1.25rem;
-  }
-  .block-title{
-    font-size:.7rem;
-    text-transform:uppercase;
-    letter-spacing:.1em;
-    opacity:.55;
-    margin-bottom:.5rem;
-  }
-  ul{
-    margin:.5rem 0 0 1.2rem;
-    padding:0;
-  }
-  li{margin-bottom:.35rem;}
-  footer{
-    text-align:center;
-    padding:0 0 1.35rem;
-    font-size:.65rem;
-    opacity:.25;
-  }
-  @media(max-width:720px){
-    .journal{padding:1.25rem 1.1rem 1.1rem;}
-    .entry-meta{flex-direction:column;align-items:flex-start;}
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Constraint | drozq</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
+  <style>
+    :root{
+      --bg:#000;
+      --fg:#fff;
+      --accent:#9900FF;
+      --border:rgba(255,255,255,.14);
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;
+      padding-bottom:5.5rem; /* for footer */
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      padding:1.2rem 1.4rem 0.4rem;
+    }
+    .back-link{
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.01em;
+    }
+    .back-link span.arrow{
+      font-size:1.1rem;
+      line-height:1;
+    }
+    main{
+      max-width:780px;
+      margin:1.5rem auto 0;
+      padding:0 1.4rem;
+    }
+    h1{
+      font-size:1.35rem;
+      margin-bottom:.3rem;
+      font-weight:700;
+    }
+    .date{
+      font-size:.8rem;
+      opacity:.6;
+      margin-bottom:1.4rem;
+    }
+    p{
+      line-height:1.55;
+      margin-bottom:1rem;
+      font-weight:500;
+    }
+    strong{font-weight:700;}
+    footer.site-footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:5;
+      background:rgba(0,0,0,.4);
+      backdrop-filter:blur(8px);
+      display:flex;
+      justify-content:center;
+      gap:2.5rem;
+      padding:1.35rem 1.5rem 1.1rem;
+    }
+    .footer-link{
+      position:relative;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.02em;
+      cursor:pointer;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+    .footer-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .footer-link:hover{
+      opacity:.55;
+    }
+    .footer-link:hover::after{
+      width:100%;
+    }
+    @media (max-width:540px){
+      footer.site-footer{
+        gap:1.2rem;
+      }
+    }
+  </style>
 </head>
 <body>
-<header>
-  <a href="/" class="back-link">
-    <span style="font-size:1rem;line-height:1">←</span>
-    <span>Return to hero</span>
-  </a>
-</header>
 
-<main class="wrap">
-  <article class="journal">
-    <div class="entry-meta">
-      <div class="date">11/10/2025</div>
-      <div class="tag">constraint log</div>
-    </div>
-    <h1>The current constraint is <span class="accent">cash in the first 30 days.</span></h1>
-    <p>
-      The current constraint is liquidating the cost to acquire a customer within the first 30 days.
-      Currently the cost to acquire a customer is <span class="accent">$1,500</span>.
-      The proposal to eliminate this constraint is to pull cash forward via a set up fee that is credited
-      back to the seller after we close on their property. If I can fix this constraint it will unlock an
-      unlimited advertising spend.
-    </p>
-    <p>
-      Within the Decade roadmap I have carved out, I need to fully pivot into real estate.
-      If I fail to do this within 6 months from today my previous efforts will have been in vain.
-    </p>
-    <div class="block">
-      <div class="block-title">operating doctrine</div>
-      <p style="margin-bottom:.5rem;">1 Product, 1 Channel, 1 Avatar.</p>
-    </div>
-  </article>
-</main>
+  <header class="topbar">
+    <a href="/" class="back-link">
+      <span class="arrow">←</span>
+      <span>Return to Home</span>
+    </a>
+  </header>
 
-<footer>
-  drozq.com / constraint
-</footer>
+  <main>
+    <h1>Constraint</h1>
+    <div class="date">11/10/2025</div>
+
+    <p><strong>The current constraint is liquidating the cost to acquire a customer within the first 30 days.</strong> Currently the cost to acquire a customer is $1,500.</p>
+
+    <p>The proposal to eliminate this constraint is to pull cash forward via a setup fee that is credited back to the seller after we close on their property. If this works, CAC is effectively front-loaded, and the ad budget stops being the bottleneck. If I can fix this constraint it will unlock an unlimited advertising spend.</p>
+
+    <p>Within the Decade roadmap I have carved out, I need to fully pivot into real estate. <strong>If I fail to do this within 6 months from today my previous efforts will have been in vain.</strong></p>
+
+    <p><strong>1 Product, 1 Channel, 1 Avatar.</strong></p>
+  </main>
+
+  <footer class="site-footer" id="footer">
+    <a class="footer-link" href="/philanthropy/">Philanthropy</a>
+    <a class="footer-link" href="/privacy/">Privacy</a>
+    <a class="footer-link" href="/decade/">Decade</a>
+    <a class="footer-link" href="/constraint/">Constraint</a>
+    <a class="footer-link" href="/platforms/">Platforms</a>
+  </footer>
+
 </body>
 </html>
