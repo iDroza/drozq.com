@@ -1,166 +1,205 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>The world is yours.</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Joshua Guerrero | VIRELLO | Los Angeles Real Estate Operator</title>
+  <meta name="description" content="Homepage of Joshua Guerrero (drozq) — Los Angeles-based real estate and sales operator, building VIRELLO Brokerage. Current focus: liquidating real estate customer acquisition cost within 30 days." />
+  <link rel="canonical" href="https://drozq.com/" />
+  <meta property="og:title" content="Joshua Guerrero | VIRELLO | Los Angeles Real Estate Operator" />
+  <meta property="og:description" content="Real estate, customer acquisition, decade plan, and platforms from Joshua Guerrero (drozq) in Los Angeles." />
+  <meta property="og:url" content="https://drozq.com/" />
+  <meta property="og:type" content="website" />
+  <meta name="robots" content="index,follow" />
 
-<link rel="icon" type="image/png" sizes="32x32" href="flavicon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="flavicon.png" />
 
-<style>
-  :root{
-    --bg:#000;
-    --fg:#fff;
-    --accent:#9900FF;
-    --border:rgba(255,255,255,.14);
-    --shadow:0 10px 30px rgba(0,0,0,.45);
-    --caret-y:0.20em;
-  }
-
-  html,body{
-    height:100%;
-    margin:0;
-    background:var(--bg);
-    color:var(--fg);
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-weight:700;
-    -webkit-font-smoothing:antialiased;
-    overflow:hidden; /* desktop: lock viewport */
-  }
-
-  .wrap{
-    position:relative;
-    z-index:2;
-    min-height:100%;
-    display:grid;
-    place-items:center;
-    text-align:center;
-    padding:2rem;
-    padding-bottom:5.5rem; /* desktop: space for fixed footer */
-  }
-
-  .hero{
-    display:inline-block;
-    user-select:text;
-    pointer-events:auto;
-    border:1px solid var(--border);
-    border-radius:24px;
-    padding:clamp(16px,3vw,32px) clamp(18px,4vw,52px);
-    box-shadow:var(--shadow);
-    /* no fixed width: let it expand with typed text */
-  }
-
-  .line{
-    margin:0;
-    letter-spacing:.2px;
-    line-height:1.05;
-    font-size:clamp(28px,6vw,72px);
-    text-shadow:0 0 10px rgba(153,0,255,.18),0 0 35px rgba(153,0,255,.12);
-    white-space:pre-wrap;
-  }
-
-  .accent{ color:var(--accent); }
-
-  .caret{
-    display:inline-block;
-    width:.6em;
-    height:9px;
-    background:var(--fg);
-    vertical-align:baseline;
-    transform:translateY(var(--caret-y));
-    margin-left:.06em;
-    border-radius:2px;
-    animation:blink 1s steps(1) infinite;
-  }
-  @keyframes blink { 50%{ opacity:0 } }
-
-  .fadeout{
-    position:fixed;
-    inset:0;
-    background:#000;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 1.5s ease;
-    z-index:999;
-  }
-  .fadeout.active{ opacity:1; }
-
-  .flash { animation: fadePulse 2.6s ease-in-out infinite alternate; }
-  @keyframes fadePulse { from { opacity: .28 } to { opacity: 1 } }
-
-  /* footer (desktop) */
-  footer.site-footer{
-    position:fixed;
-    left:0;
-    right:0;
-    bottom:0;
-    z-index:5;
-    background:rgba(0,0,0,.4);
-    backdrop-filter:blur(8px);
-    display:flex;
-    justify-content:center;
-    gap:2.5rem;
-    padding:1.35rem 1.5rem 1.1rem;
-  }
-
-  .footer-link{
-    position:relative;
-    color:#fff;
-    text-decoration:none;
-    font-weight:600;
-    letter-spacing:.02em;
-    cursor:pointer;
-    padding-bottom:.35rem;
-    transition:opacity .2s ease;
-  }
-
-  .footer-link::after{
-    content:'';
-    position:absolute;
-    left:0;
-    bottom:-0.35rem;
-    height:2px;
-    width:0;
-    background:#fff;
-    transition:width .2s ease-out;
-  }
-
-  .footer-link:hover{
-    opacity:.55;
-  }
-
-  .footer-link:hover::after{
-    width:100%;
-  }
-
-  /* mobile adjustments */
-  @media (max-width: 540px){
-    html,body{
-      overflow:auto;     /* allow scroll */
-      height:auto;
+  <style>
+    :root{
+      --bg:#000;
+      --fg:#fff;
+      --accent:#9900FF;
+      --border:rgba(255,255,255,.14);
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+      --caret-y:0.20em;
     }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:700;
+      -webkit-font-smoothing:antialiased;
+      overflow:hidden; /* desktop: lock viewport */
+    }
+
     .wrap{
-      min-height:calc(100vh - 120px); /* hero centered above footer */
+      position:relative;
+      z-index:2;
+      min-height:100%;
       display:grid;
       place-items:center;
-      padding:1.6rem 1.4rem 0;
+      text-align:center;
+      padding:2rem;
+      padding-bottom:5.5rem; /* desktop: space for fixed footer */
     }
-    /* IMPORTANT: do not force width on .hero so it can grow with text */
+
     .hero{
-      max-width:100%;
+      display:inline-block;
+      user-select:text;
+      pointer-events:auto;
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:clamp(16px,3vw,32px) clamp(18px,4vw,52px);
+      box-shadow:var(--shadow);
     }
+
+    .line{
+      margin:0;
+      letter-spacing:.2px;
+      line-height:1.05;
+      font-size:clamp(28px,6vw,72px);
+      text-shadow:0 0 10px rgba(153,0,255,.18),0 0 35px rgba(153,0,255,.12);
+      white-space:pre-wrap;
+    }
+
+    .accent{ color:var(--accent); }
+
+    .caret{
+      display:inline-block;
+      width:.6em;
+      height:9px;
+      background:var(--fg);
+      vertical-align:baseline;
+      transform:translateY(var(--caret-y));
+      margin-left:.06em;
+      border-radius:2px;
+      animation:blink 1s steps(1) infinite;
+    }
+    @keyframes blink { 50%{ opacity:0 } }
+
+    .fadeout{
+      position:fixed;
+      inset:0;
+      background:#000;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 1.5s ease;
+      z-index:999;
+    }
+    .fadeout.active{ opacity:1; }
+
+    .flash { animation: fadePulse 2.6s ease-in-out infinite alternate; }
+    @keyframes fadePulse { from { opacity: .28 } to { opacity: 1 } }
+
+    /* footer (desktop) */
     footer.site-footer{
-      position:static;
-      flex-wrap:wrap;
-      justify-content:flex-start;
-      gap:1rem 1.5rem;
-      padding:1.1rem 1.4rem 1.4rem;
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:5;
+      background:rgba(0,0,0,.4);
+      backdrop-filter:blur(8px);
+      display:flex;
+      justify-content:center;
+      gap:2.5rem;
+      padding:1.35rem 1.5rem 1.1rem;
     }
+
     .footer-link{
-      font-size:.85rem;
+      position:relative;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.02em;
+      cursor:pointer;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
     }
+
+    .footer-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+
+    .footer-link:hover{
+      opacity:.55;
+    }
+
+    .footer-link:hover::after{
+      width:100%;
+    }
+
+    /* visually hidden SEO block */
+    .sr-only{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      border:0;
+    }
+
+    /* mobile adjustments */
+    @media (max-width: 540px){
+      html,body{
+        overflow:auto;     /* allow scroll */
+        height:auto;
+      }
+      .wrap{
+        min-height:calc(100vh - 120px); /* hero centered above footer */
+        display:grid;
+        place-items:center;
+        padding:1.6rem 1.4rem 0;
+      }
+      .hero{
+        max-width:100%;
+      }
+      footer.site-footer{
+        position:static;
+        flex-wrap:wrap;
+        justify-content:flex-start;
+        gap:1rem 1.5rem;
+        padding:1.1rem 1.4rem 1.4rem;
+      }
+      .footer-link{
+        font-size:.85rem;
+      }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Joshua Guerrero",
+    "alternateName": "drozq",
+    "url": "https://drozq.com/",
+    "jobTitle": "Real Estate Operator, Founder of VIRELLO (planned)",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Los Angeles",
+      "addressRegion": "CA",
+      "addressCountry": "US"
+    },
+    "sameAs": [
+      "https://www.instagram.com/drozq/",
+      "https://www.facebook.com/joshua.guerrero.71404976/",
+      "https://www.linkedin.com/in/guerrero-joshua/"
+    ]
   }
-</style>
+  </script>
 </head>
 
 <body>
@@ -169,6 +208,20 @@
     <h1 class="line" id="line">
       <span>The world is </span><span class="accent">yours</span><span>.</span><span class="caret"></span>
     </h1>
+  </div>
+
+  <!-- SEO-readable static summary -->
+  <div class="sr-only">
+    <h2>Los Angeles Real Estate, Brokerage, and Customer Acquisition</h2>
+    <p>This is the homepage of Joshua Guerrero, also known as drozq, currently operating in Los Angeles, California. The current business focus is building toward VIRELLO Brokerage, removing the constraint of real estate customer acquisition cost inside 30 days, and executing a decade plan built on sales, lead generation, and acquisitions.</p>
+    <p>Explore core pages:</p>
+    <ul>
+      <li><a href="/constraint/">Current Constraint</a></li>
+      <li><a href="/decade/">Decade Plan</a></li>
+      <li><a href="/platforms/">Platforms</a></li>
+      <li><a href="/philanthropy/">Philanthropy</a></li>
+      <li><a href="/privacy/">Privacy</a></li>
+    </ul>
   </div>
 </div>
 
