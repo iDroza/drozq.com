@@ -47,6 +47,7 @@
     border-radius:24px;
     padding:clamp(16px,3vw,32px) clamp(18px,4vw,52px);
     box-shadow:var(--shadow);
+    /* no fixed width: let it expand with typed text */
   }
 
   .line{
@@ -139,17 +140,17 @@
       height:auto;
     }
     .wrap{
-      min-height:calc(100vh - 120px); /* keep hero vertically centered above footer */
+      min-height:calc(100vh - 120px); /* hero centered above footer */
       display:grid;
       place-items:center;
-      padding:1.6rem 1.4rem 0;        /* restore padding around hero */
+      padding:1.6rem 1.4rem 0;
     }
+    /* IMPORTANT: do not force width on .hero so it can grow with text */
     .hero{
-      width:100%;
-      max-width:520px;
+      max-width:100%;
     }
     footer.site-footer{
-      position:static;               /* footer flows to bottom */
+      position:static;
       flex-wrap:wrap;
       justify-content:flex-start;
       gap:1rem 1.5rem;
@@ -370,9 +371,15 @@
 
   async function typeMsg(m){
     const toks=parts(m); const n=m.text.length;
-    for(let i=1;i<=n;i++){ lineEl.innerHTML=render(toks,i); await wait(jitter(BASE_TYPE)); }
+    for(let i=1;i<=n;i++){
+      lineEl.innerHTML=render(toks,i);
+      await wait(jitter(BASE_TYPE));
+    }
     await wait(HOLD);
-    for(let i=n-1;i>=0;i--){ lineEl.innerHTML=render(toks,i); await wait(jitter(BASE_DEL)); }
+    for(let i=n-1;i>=0;i--){
+      lineEl.innerHTML=render(toks,i);
+      await wait(jitter(BASE_DEL));
+    }
   }
 
   function shuffle(a){
