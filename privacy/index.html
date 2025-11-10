@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy | drozq</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
+  <style>
+    :root{
+      --bg:#000;
+      --fg:#fff;
+      --muted:rgba(255,255,255,.65);
+      --border:rgba(255,255,255,.12);
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;
+      padding-bottom:5.5rem; /* footer space */
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      padding:1.2rem 1.4rem 0.4rem;
+    }
+    .back-link{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.01em;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+    .back-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .back-link:hover{
+      opacity:.55;
+    }
+    .back-link:hover::after{
+      width:100%;
+    }
+    .back-link .arrow{
+      font-size:1.1rem;
+      line-height:1;
+    }
+    main{
+      max-width:880px;
+      margin:1.5rem auto 0;
+      padding:0 1.4rem 3rem;
+    }
+    h1{
+      font-size:1.5rem;
+      margin-bottom:.4rem;
+      font-weight:700;
+    }
+    .meta{
+      color:var(--muted);
+      font-size:.8rem;
+      margin-bottom:1.4rem;
+    }
+    section{
+      margin-bottom:1.25rem;
+      border:1px solid rgba(255,255,255,.04);
+      background:rgba(255,255,255,.012);
+      border-radius:12px;
+      padding:1rem 1rem .2rem;
+    }
+    h2{
+      font-size:.88rem;
+      margin-bottom:.4rem;
+    }
+    p{
+      line-height:1.55;
+      margin-bottom:.65rem;
+      font-weight:500;
+    }
+    ul{
+      margin:0 0 .8rem 1.2rem;
+      padding:0;
+      line-height:1.45;
+    }
+    li{
+      margin-bottom:.4rem;
+    }
+    footer.site-footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:5;
+      background:rgba(0,0,0,.4);
+      backdrop-filter:blur(8px);
+      display:flex;
+      justify-content:center;
+      gap:2.5rem;
+      padding:1.35rem 1.5rem 1.1rem;
+    }
+    .footer-link{
+      position:relative;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.02em;
+      cursor:pointer;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+    .footer-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .footer-link:hover{
+      opacity:.55;
+    }
+    .footer-link:hover::after{
+      width:100%;
+    }
+    @media (max-width:540px){
+      footer.site-footer{
+        gap:1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="/" class="back-link">
+      <span class="arrow">←</span>
+      <span>Return to Home</span>
+    </a>
+  </header>
+
+  <main>
+    <h1>Privacy Policy</h1>
+    <div class="meta">Effective date: 11/10/2025 • drozq.com</div>
+
+    <section>
+      <h2>1. Purpose</h2>
+      <p>This page explains what information may be collected when you visit this site, how it may be used, and the principles under which it will be protected. This is a simple, builder-first site, not an ad network.</p>
+    </section>
+
+    <section>
+      <h2>2. Information We Collect</h2>
+      <p>Depending on how the site is configured, we may collect:</p>
+      <ul>
+        <li><strong>Technical data:</strong> browser, device, approximate location, pages viewed.</li>
+        <li><strong>Form data (if present):</strong> name, email, phone, and any message you send.</li>
+      </ul>
+      <p>If you do not submit a form, the only information processed is the standard technical data your browser sends.</p>
+    </section>
+
+    <section>
+      <h2>3. How We Use Information</h2>
+      <p>Information is used to:</p>
+      <ul>
+        <li>Respond to you if you contact us.</li>
+        <li>Maintain security and performance of the site.</li>
+        <li>Understand which pages are being viewed so we can improve them.</li>
+      </ul>
+      <p>We do <strong>not</strong> sell your personal information.</p>
+    </section>
+
+    <section>
+      <h2>4. Cookies / Analytics</h2>
+      <p>This site may use basic analytics to understand traffic. If enabled, it will be used only to view aggregate behavior (page views, time on page, referrers). You can block cookies at the browser level.</p>
+    </section>
+
+    <section>
+      <h2>5. Data Sharing</h2>
+      <p>We may share data only in these cases:</p>
+      <ul>
+        <li>With service providers that help us host or maintain the site.</li>
+        <li>If required by law, subpoena, or to protect our rights.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>6. Data Retention</h2>
+      <p>Form submissions (if any) are kept only as long as needed to answer you or maintain business records. Technical logs may be kept longer for security.</p>
+    </section>
+
+    <section>
+      <h2>7. Your Choices</h2>
+      <p>If you submitted data and want it removed, contact the owner of this site and reference the date and method of submission. If the data can be identified, it will be deleted.</p>
+    </section>
+
+    <section>
+      <h2>8. Changes</h2>
+      <p>This privacy policy may be updated to match how the site evolves. The effective date at the top will be updated when that happens.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="footer">
+    <a class="footer-link" href="/philanthropy/">Philanthropy</a>
+    <a class="footer-link" href="/privacy/">Privacy</a>
+    <a class="footer-link" href="/decade/">Decade</a>
+    <a class="footer-link" href="/constraint/">Constraint</a>
+    <a class="footer-link" href="/platforms/">Platforms</a>
+  </footer>
+
+</body>
+</html>
