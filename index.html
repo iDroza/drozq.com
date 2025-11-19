@@ -63,6 +63,8 @@
       font-size:clamp(28px,6vw,72px);
       text-shadow:0 0 10px rgba(153,0,255,.18),0 0 35px rgba(153,0,255,.12);
       white-space:pre-wrap;
+      opacity:0;
+      transition:opacity .6s ease-in-out; /* fade in/out whole line */
     }
 
     .accent{ color:var(--accent); }
@@ -92,7 +94,7 @@
     .fadeout.active{ opacity:1; }
 
     .flash { animation: fadePulse 2.6s ease-in-out infinite alternate; }
-    @keyframes fadePulse { from { opacity: .28 } to { opacity: 1 } }
+    @keyframes fadePulse { from { opacity:.28 } to { opacity:1 } }
 
     /* footer (desktop) */
     footer.site-footer{
@@ -427,13 +429,16 @@
   ];
 
   const FINAL_LINE = 'Just Win.';
-  const BASE_TYPE = 80, BASE_DEL = 40, HOLD = 1200;
+  const FADE_IN = 600;
+  const FADE_OUT = 600;
+  const HOLD = 1000;
+
   const wait = ms => new Promise(r => setTimeout(r, ms));
-  const jitter = (b, s = 20) => b + Math.floor((Math.random() * s) - s / 2);
 
   function parts(m){
     const a = m.accent;
-    const i = a ? m.text.indexOf(a) : -1;
+    if(!a) return [{str:m.text, isAccent:false}];
+    const i = m.text.indexOf(a);
     if(i < 0) return [{str:m.text, isAccent:false}];
     return [
       {str:m.text.slice(0,i), isAccent:false},
@@ -442,40 +447,35 @@
     ];
   }
 
-  function render(toks, c){
-    let out = '', left = c;
+  function buildHTML(m){
+    const toks = parts(m);
+    let out = '';
     for(const t of toks){
-      if(left <= 0) break;
-      const chunk = t.str.slice(0, Math.min(left, t.str.length));
-      out += t.isAccent ? `<span class="accent">${chunk}</span>` : chunk;
-      left -= chunk.length;
+      if(t.isAccent){
+        out += `<span class="accent">${t.str}</span>`;
+      }else{
+        out += t.str;
+      }
     }
     return out + CUR;
   }
 
-  async function typeMsg(m){
-    const toks = parts(m);
-    const n = m.text.length;
+  async function showMsg(m){
+    // full message, no typewriter
+    lineEl.style.opacity = 0;
+    lineEl.classList.remove('flash'); // make sure nothing leftover
+    lineEl.innerHTML = buildHTML(m);
 
-    // ensure no leftover flash from previous msg
-    lineEl.classList.remove('flash');
+    // force reflow so opacity transition fires
+    void lineEl.offsetWidth;
 
-    // type forward
-    for(let i = 1; i <= n; i++){
-      lineEl.innerHTML = render(toks, i);
-      await wait(jitter(BASE_TYPE));
-    }
+    // fade in
+    lineEl.style.opacity = 1;
+    await wait(FADE_IN + HOLD);
 
-    // flash while the full line is displayed
-    lineEl.classList.add('flash');
-    await wait(HOLD);
-    lineEl.classList.remove('flash');
-
-    // delete backwards
-    for(let i = n - 1; i >= 0; i--){
-      lineEl.innerHTML = render(toks, i);
-      await wait(jitter(BASE_DEL));
-    }
+    // fade out
+    lineEl.style.opacity = 0;
+    await wait(FADE_OUT);
   }
 
   function shuffle(a){
@@ -490,15 +490,20 @@
   (async function run(){
     const order = shuffle(msgs);
     for(const m of order){
-      await typeMsg(m);
+      await showMsg(m);
     }
 
-    // keep the dramatic final sequence
+    // final "Just Win." flash with overlay like before
     const fade = document.getElementById('fade');
     fade.classList.add('active');
     await wait(2000);
+
+    // kill transition so flash animation owns opacity
+    lineEl.style.transition = 'none';
+    lineEl.style.opacity = 1;
     lineEl.classList.add('flash');
-    lineEl.innerHTML = FINAL_LINE;
+    lineEl.innerHTML = FINAL_LINE; // no caret on the last line
+
     fade.classList.remove('active');
   })();
 })();
