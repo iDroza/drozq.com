@@ -69,19 +69,6 @@
 
     .accent{ color:var(--accent); }
 
-    .caret{
-      display:inline-block;
-      width:.6em;
-      height:9px;
-      background:var(--fg);
-      vertical-align:baseline;
-      transform:translateY(var(--caret-y));
-      margin-left:.06em;
-      border-radius:2px;
-      animation:blink 1s steps(1) infinite;
-    }
-    @keyframes blink { 50%{ opacity:0 } }
-
     .fadeout{
       position:fixed;
       inset:0;
@@ -208,7 +195,7 @@
 <div class="wrap">
   <div class="hero" id="hero" aria-live="polite" aria-atomic="true">
     <h1 class="line" id="line">
-      <span>The world is </span><span class="accent">yours</span><span>.</span><span class="caret"></span>
+      <span>The world is </span><span class="accent">yours</span><span>.</span>
     </h1>
   </div>
 
@@ -240,7 +227,6 @@
 <script>
 (function(){
   const lineEl = document.getElementById('line');
-  const CUR = '<span class="caret"></span>';
 
   const msgs = [
     {text:`The world is yours.`,accent:`yours`},
@@ -451,29 +437,22 @@
     const toks = parts(m);
     let out = '';
     for(const t of toks){
-      if(t.isAccent){
-        out += `<span class="accent">${t.str}</span>`;
-      }else{
-        out += t.str;
-      }
+      out += t.isAccent ? `<span class="accent">${t.str}</span>` : t.str;
     }
-    return out + CUR;
+    return out;
   }
 
   async function showMsg(m){
-    // full message, no typewriter
     lineEl.style.opacity = 0;
-    lineEl.classList.remove('flash'); // make sure nothing leftover
+    lineEl.classList.remove('flash');
     lineEl.innerHTML = buildHTML(m);
 
-    // force reflow so opacity transition fires
+    // reflow to trigger transition
     void lineEl.offsetWidth;
 
-    // fade in
     lineEl.style.opacity = 1;
     await wait(FADE_IN + HOLD);
 
-    // fade out
     lineEl.style.opacity = 0;
     await wait(FADE_OUT);
   }
@@ -493,16 +472,14 @@
       await showMsg(m);
     }
 
-    // final "Just Win." flash with overlay like before
     const fade = document.getElementById('fade');
     fade.classList.add('active');
     await wait(2000);
 
-    // kill transition so flash animation owns opacity
     lineEl.style.transition = 'none';
     lineEl.style.opacity = 1;
     lineEl.classList.add('flash');
-    lineEl.innerHTML = FINAL_LINE; // no caret on the last line
+    lineEl.innerHTML = FINAL_LINE;
 
     fade.classList.remove('active');
   })();
