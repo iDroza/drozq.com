@@ -153,9 +153,10 @@
       margin-bottom:.4rem;
     }
     .archive-list{
+      /* CHANGED: stack links vertically instead of side-by-side */
       display:flex;
-      flex-wrap:wrap;
-      gap:.4rem .75rem;
+      flex-direction:column;
+      gap:.25rem;
     }
     .archive-link{
       font-size:.75rem;
@@ -164,6 +165,8 @@
       border-bottom:1px solid rgba(255,255,255,.18);
       padding-bottom:.06rem;
       opacity:.8;
+      /* optional: keep them tight instead of full-width blocks */
+      align-self:flex-start;
     }
     .archive-link:hover{
       opacity:1;
@@ -243,14 +246,14 @@
         <strong>Yet to identify.</strong>
       </p>
 
-
-    <section class="archive" aria-label="Previous constraints">
-      <div class="archive-header">Previous constraints</div>
-      <div class="archive-list">
-        <a class="archive-link" href="/constraint/11-21-2025/">11/21/2025</a>
-        <a class="archive-link" href="/constraint/11-10-2025/">11/10/2025</a>
-      </div>
-    </section>
+      <section class="archive" aria-label="Previous constraints">
+        <div class="archive-header">Previous constraints</div>
+        <div class="archive-list">
+          <a class="archive-link" href="/constraint/11-21-2025/">11/21/2025</a>
+          <a class="archive-link" href="/constraint/11-10-2025/">11/10/2025</a>
+        </div>
+      </section>
+    </div>
   </main>
 
   <footer class="site-footer" id="footer">
