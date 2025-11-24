@@ -9,9 +9,6 @@
     :root{
       --bg:#000;
       --fg:#fff;
-      --muted:rgba(255,255,255,.65);
-      --border:rgba(255,255,255,.12);
-      --accent:#9900FF;
     }
     *{box-sizing:border-box;}
     body{
@@ -21,215 +18,24 @@
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       min-height:100vh;
-      padding-bottom:5.5rem; /* for fixed footer on desktop */
-    }
-    .topbar{
       display:flex;
       align-items:center;
-      gap:.5rem;
-      padding:1.2rem 1.4rem 0.4rem;
-    }
-    .back-link{
-      position:relative;
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.01em;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .back-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .back-link:hover{
-      opacity:.55;
-    }
-    .back-link:hover::after{
-      width:100%;
-    }
-    .back-link .arrow{
-      font-size:1.1rem;
-      line-height:1;
-    }
-    main{
-      max-width:880px;
-      margin:1.5rem auto 0;
-      padding:0 1.4rem 3rem;
-    }
-    h1{
-      font-size:1.5rem;
-      margin-bottom:.4rem;
-      font-weight:700;
-    }
-    .meta{
-      color:var(--muted);
-      font-size:.8rem;
-      margin-bottom:1.4rem;
-    }
-    section{
-      margin-bottom:1.15rem;
-      border:1px solid rgba(255,255,255,.04);
-      background:rgba(255,255,255,.012);
-      border-radius:12px;
-      padding:1rem 1rem .35rem;
-    }
-    h2{
-      font-size:.9rem;
-      margin-bottom:.4rem;
-      font-weight:650;
-    }
-    p{
-      line-height:1.55;
-      margin-bottom:.65rem;
-      font-weight:500;
-    }
-    ul{
-      margin:0 0 .9rem 1.2rem;
-      padding:0;
-    }
-    li{
-      margin-bottom:.4rem;
-      line-height:1.45;
-    }
-    .badge{
-      display:inline-block;
-      background:rgba(153,0,255,.09);
-      border:1px solid rgba(153,0,255,.25);
-      border-radius:999px;
-      padding:.25rem .65rem;
-      font-size:.68rem;
-      margin-bottom:.6rem;
-    }
-    footer.site-footer{
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
-      z-index:5;
-      background:rgba(0,0,0,.4);
-      backdrop-filter:blur(8px);
-      display:flex;
       justify-content:center;
-      gap:2.5rem;
-      padding:1.35rem 1.5rem 1.1rem;
+      text-align:center;
     }
-    .footer-link{
-      position:relative;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.02em;
-      cursor:pointer;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
+    .message{
+      font-size:2.2rem;
+      font-weight:800;
+      letter-spacing:.04em;
     }
-    .footer-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .footer-link:hover{
-      opacity:.55;
-    }
-    .footer-link:hover::after{
-      width:100%;
-    }
-
-    /* mobile: let footer flow and wrap */
     @media (max-width:540px){
-      body{
-        padding-bottom:0;
-      }
-      footer.site-footer{
-        position:static;
-        flex-wrap:wrap;
-        justify-content:flex-start;
-        gap:1rem 1.5rem;
-        padding:1.1rem 1.4rem 1.4rem;
+      .message{
+        font-size:1.7rem;
       }
     }
   </style>
 </head>
 <body>
-
-  <header class="topbar">
-    <a href="/" class="back-link">
-      <span class="arrow">←</span>
-      <span>Return to Home</span>
-    </a>
-  </header>
-
-  <main>
-    <h1>Philanthropy</h1>
-    <div class="meta">A working statement on how surplus will be deployed.</div>
-
-    <section>
-      <div class="badge">Premise</div>
-      <h2>Wealth is a tool, not an altar.</h2>
-      <p>The objective is to build an engine that throws off cash reliably and at scale. Once that exists, excess should be directed toward outcomes that compound in human terms: education, capability, and the removal of avoidable suffering. Philanthropy here is not charity-as-virtue; it is capital allocated for maximum effect.</p>
-    </section>
-
-    <section>
-      <h2>Principles</h2>
-      <ul>
-        <li><strong>1. Proximity:</strong> start with Los Angeles / California, where the business operates and the data is clean.</li>
-        <li><strong>2. Leverage:</strong> favor interventions where $1 unlocks &gt; $1 in value (scholarships tied to performance, business tools, housing stability that preserves income).</li>
-        <li><strong>3. Accountability:</strong> recipients, partners, and operators must report outcomes. Sentiment is not enough.</li>
-        <li><strong>4. Alignment:</strong> giving should not weaken the recipient. It should increase agency.</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>Early Targets</h2>
-      <p>Because the company is still in its build phase, the initial philanthropic moves should be simple and tightly measured:</p>
-      <ul>
-        <li><strong>Operator-first grants:</strong> tools, licenses, or course access for people selling, leasing, or breaking into real estate.</li>
-        <li><strong>Emergency velocity support:</strong> small, fast disbursements that prevent a good operator from stalling (rent gap, transport, childcare for a certification window).</li>
-        <li><strong>Education access:</strong> underwriting certifications or college costs where there is a clear ROI on the individual.</li>
-      </ul>
-      <p>These are deliberately narrow so they can run in parallel with business growth.</p>
-    </section>
-
-    <section>
-      <h2>Future Structure</h2>
-      <p>When brokerage revenue is consistent, philanthropic activity can be formalized into a dedicated vehicle (foundation or donor-advised fund) with:</p>
-      <ul>
-        <li>Clear intake criteria.</li>
-        <li>Quarterly reporting on dollars out vs. outcomes.</li>
-        <li>Public list of initiatives funded.</li>
-      </ul>
-      <p>The point is permanence: not one-off generosity, but a line item that survives market cycles.</p>
-    </section>
-
-    <section>
-      <h2>Why Do This at All?</h2>
-      <p>Because if the only outcome of high-output years is lifestyle expansion, it is a wasted run. Power without obligation decays into vanity. The world is large; your circle of responsibility does not have to be small.</p>
-    </section>
-  </main>
-
-  <footer class="site-footer" id="footer">
-    <a class="footer-link" href="/constraint/">Constraint</a>
-    <a class="footer-link" href="/decade/">Decade</a>
-    <a class="footer-link" href="/answers/">Answers</a>
-    <a class="footer-link" href="/platforms/">Platforms</a>
-    <a class="footer-link" href="/philanthropy/">Philanthropy</a>
-    <a class="footer-link" href="/privacy/">Privacy</a>
-  </footer>
-
+  <div class="message">Create Homelessness</div>
 </body>
 </html>
