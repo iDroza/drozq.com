@@ -62,9 +62,10 @@
       line-height:1;
     }
 
+    /* FULL-WIDTH MAIN, CENTERED CONTENT */
     main{
-      max-width:880px;
-      margin:0 auto;
+      width:100%;
+      margin:0;
       padding:0 1.4rem 3rem;
       min-height:calc(100vh - 7rem);
       display:flex;
@@ -77,6 +78,7 @@
       font-weight:700;
       font-size:clamp(28px,6vw,72px);
       letter-spacing:.03em;
+      white-space:nowrap; /* force single line */
     }
 
     footer.site-footer{
