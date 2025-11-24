@@ -12,7 +12,8 @@
       --muted:rgba(255,255,255,.65);
       --accent:#9900FF;
       --border:rgba(255,255,255,.14);
-      --faq-bg:#0b0b14; /* dark slate with slight purple bias for cards */
+      --faq-bg:#0b0b14; /* base card bg */
+      --faq-bg-hover:#15151f; /* hover bg */
     }
     *{box-sizing:border-box;}
     body{
@@ -90,22 +91,23 @@
     details.faq-item{
       border-radius:16px;
       background:var(--faq-bg);
-      border:1px solid rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.08);
       overflow:hidden;
-      transition:border-color .18s ease, box-shadow .18s ease, transform .12s ease;
+      transition:
+        background-color .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease,
+        transform .12s ease;
     }
 
     details.faq-item:hover{
-      border-color:rgba(153,0,255,.6);
+      background:var(--faq-bg-hover);
+      border-color:rgba(255,255,255,.18);
       box-shadow:0 18px 40px rgba(0,0,0,.75);
       transform:translateY(-1px);
     }
 
-    details[open].faq-item{
-      border-color:var(--accent);
-      box-shadow:0 20px 50px rgba(0,0,0,.85);
-    }
-
+    /* no persistent "clicked" color; open state only rotates arrow */
     summary{
       cursor:pointer;
       list-style:none;
@@ -132,7 +134,7 @@
 
     details[open] summary::before{
       transform:rotate(90deg);
-      color:var(--accent);
+      color:var(--fg);
     }
 
     .faq-question{
