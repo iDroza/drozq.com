@@ -9,6 +9,9 @@
     :root{
       --bg:#000;
       --fg:#fff;
+      --muted:rgba(255,255,255,.65);
+      --border:rgba(255,255,255,.12);
+      --accent:#9900FF;
     }
     *{box-sizing:border-box;}
     body{
@@ -18,24 +21,143 @@
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       min-height:100vh;
+      padding-bottom:5.5rem; /* for fixed footer on desktop */
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      padding:1.2rem 1.4rem 0.4rem;
+    }
+    .back-link{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.01em;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+    .back-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .back-link:hover{
+      opacity:.55;
+    }
+    .back-link:hover::after{
+      width:100%;
+    }
+    .back-link .arrow{
+      font-size:1.1rem;
+      line-height:1;
+    }
+
+    main{
+      max-width:880px;
+      margin:0 auto;
+      padding:0 1.4rem 3rem;
+      min-height:calc(100vh - 7rem);
       display:flex;
       align-items:center;
       justify-content:center;
       text-align:center;
     }
-    .message{
-      font-size:2.2rem;
+
+    .hero-message{
       font-weight:800;
-      letter-spacing:.04em;
+      font-size:clamp(2.5rem, 6vw, 4rem);
+      letter-spacing:.03em;
     }
+
+    footer.site-footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:5;
+      background:rgba(0,0,0,.4);
+      backdrop-filter:blur(8px);
+      display:flex;
+      justify-content:center;
+      gap:2.5rem;
+      padding:1.35rem 1.5rem 1.1rem;
+    }
+    .footer-link{
+      position:relative;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.02em;
+      cursor:pointer;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+    .footer-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .footer-link:hover{
+      opacity:.55;
+    }
+    .footer-link:hover::after{
+      width:100%;
+    }
+
+    /* mobile: let footer flow and wrap */
     @media (max-width:540px){
-      .message{
-        font-size:1.7rem;
+      body{
+        padding-bottom:0;
+      }
+      footer.site-footer{
+        position:static;
+        flex-wrap:wrap;
+        justify-content:flex-start;
+        gap:1rem 1.5rem;
+        padding:1.1rem 1.4rem 1.4rem;
+      }
+      main{
+        min-height:calc(100vh - 4rem);
       }
     }
   </style>
 </head>
 <body>
-  <div class="message">Create Homelessness</div>
+
+  <header class="topbar">
+    <a href="/" class="back-link">
+      <span class="arrow">←</span>
+      <span>Return to Home</span>
+    </a>
+  </header>
+
+  <main>
+    <div class="hero-message">Create Homelessness</div>
+  </main>
+
+  <footer class="site-footer" id="footer">
+    <a class="footer-link" href="/constraint/">Constraint</a>
+    <a class="footer-link" href="/decade/">Decade</a>
+    <a class="footer-link" href="/answers/">Answers</a>
+    <a class="footer-link" href="/platforms/">Platforms</a>
+    <a class="footer-link" href="/philanthropy/">Philanthropy</a>
+    <a class="footer-link" href="/privacy/">Privacy</a>
+  </footer>
+
 </body>
 </html>
