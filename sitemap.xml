@@ -3,25 +3,42 @@
   <url>
     <loc>https://drozq.com/</loc>
     <priority>1.0</priority>
+    <changefreq>weekly</changefreq>
   </url>
-  <url>
-    <loc>https://drozq.com/constraint/</loc>
-    <priority>0.8</priority>
-  </url>
+
   <url>
     <loc>https://drozq.com/decade/</loc>
     <priority>0.85</priority>
+    <changefreq>monthly</changefreq>
   </url>
+
+  <url>
+    <loc>https://drozq.com/constraint/</loc>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://drozq.com/answers/</loc>
+    <priority>0.75</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
   <url>
     <loc>https://drozq.com/platforms/</loc>
     <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
   </url>
-  <url>
-    <loc>https://drozq.com/privacy/</loc>
-    <priority>0.4</priority>
-  </url>
+
   <url>
     <loc>https://drozq.com/philanthropy/</loc>
     <priority>0.6</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+
+  <url>
+    <loc>https://drozq.com/privacy/</loc>
+    <priority>0.4</priority>
+    <changefreq>yearly</changefreq>
   </url>
 </urlset>
