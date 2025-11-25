@@ -14,15 +14,22 @@
       --accent:#9900FF;
     }
     *{box-sizing:border-box;}
-    body{
+    html, body{
       margin:0;
+      padding:0;
+      height:100%;
+    }
+    body{
       background:var(--bg);
       color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       min-height:100vh;
-      padding-bottom:5.5rem; /* for fixed footer on desktop */
+      /* REMOVE the padding that caused scroll */
+      /* padding-bottom:5.5rem; */
+      overflow:hidden; /* hard kill scrolling */
     }
+
     .topbar{
       display:flex;
       align-items:center;
@@ -77,8 +84,8 @@
     .hero-message{
       font-weight:700;
       font-size:clamp(28px,6vw,72px);
+      white-space:nowrap;
       letter-spacing:.03em;
-      white-space:nowrap; /* force single line */
     }
 
     footer.site-footer{
@@ -121,10 +128,9 @@
       width:100%;
     }
 
-    /* mobile: let footer flow and wrap */
     @media (max-width:540px){
       body{
-        padding-bottom:0;
+        overflow:auto; /* let mobile deal with weird 100vh behavior */
       }
       footer.site-footer{
         position:static;
