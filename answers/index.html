@@ -256,11 +256,7 @@
       transform:translateY(-1px);
     }
 
-    details.faq-item[open]{
-      border-color:rgba(153,0,255,.8);
-      box-shadow:0 18px 40px rgba(0,0,0,.9);
-    }
-
+    /* summary row with icon on the right */
     summary{
       cursor:pointer;
       list-style:none;
@@ -275,18 +271,20 @@
       display:none;
     }
 
-    summary::before{
-      content:'▸';
-      font-size:.9rem;
+    /* plus / minus symbol on the right */
+    summary::after{
+      content:'+';
+      font-size:1.05rem;
       line-height:1;
-      margin-top:.2rem;
       color:var(--muted);
+      margin-left:auto;
+      margin-top:.1rem;
       flex-shrink:0;
-      transition:transform .18s ease, color .18s ease;
+      transition:color .18s ease;
     }
 
-    details[open] summary::before{
-      transform:rotate(90deg);
+    details[open] summary::after{
+      content:'−';
       color:var(--fg);
     }
 
