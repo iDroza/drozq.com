@@ -230,11 +230,58 @@
       color:var(--muted);
     }
 
+    /* Break between dichotomies and FAQ */
+    .faq-break{
+      margin:2.8rem 0 1.6rem;
+      padding-top:2.4rem;
+      border-top:1px solid rgba(255,255,255,.14);
+      position:relative;
+    }
+
+    .faq-break::before{
+      content:'';
+      position:absolute;
+      top:-1px;
+      left:0;
+      width:96px;
+      height:2px;
+      background:linear-gradient(90deg, var(--accent), rgba(255,255,255,0));
+      opacity:.9;
+    }
+
+    .faq-break-label{
+      font-size:.72rem;
+      text-transform:uppercase;
+      letter-spacing:.2em;
+      color:var(--muted);
+      margin-bottom:.35rem;
+    }
+
+    .faq-break-title{
+      font-size:1.5rem;
+      letter-spacing:.02em;
+      line-height:1.25;
+      margin:0 0 .4rem;
+      font-weight:650;
+    }
+
+    .faq-break-title span{
+      opacity:.7;
+    }
+
+    .faq-break-subtitle{
+      font-size:.9rem;
+      color:var(--muted);
+      max-width:34rem;
+      line-height:1.7;
+      margin:0;
+    }
+
     .faq-list{
       display:flex;
       flex-direction:column;
       gap:1rem;
-      margin-top:.6rem;
+      margin-top:.8rem;
     }
 
     details.faq-item{
@@ -364,6 +411,13 @@
         gap:1rem 1.5rem;
         padding:1.1rem 1.4rem 1.4rem;
       }
+      .faq-break{
+        margin:2.4rem 0 1.4rem;
+        padding-top:2rem;
+      }
+      .faq-break-title{
+        font-size:1.35rem;
+      }
     }
   </style>
 </head>
@@ -481,6 +535,17 @@
 
         </div>
       </section>
+
+      <!-- Page break / intro for FAQ -->
+      <div class="faq-break">
+        <div class="faq-break-label">Section two</div>
+        <h2 class="faq-break-title">
+          Frequently asked questions <span>that refused to stay quiet.</span>
+        </h2>
+        <p class="faq-break-subtitle">
+          The dichotomies set the coordinates. What follows are the recurring questions that keep surviving contact with reality long enough to deserve an answer.
+        </p>
+      </div>
 
       <!-- Then: existential FAQ -->
       <section class="answers-column" aria-label="Existential FAQ">
