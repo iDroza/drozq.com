@@ -106,10 +106,135 @@
       font-weight:500;
     }
 
+    /* Two-column layout: FAQ + dichotomies */
+    .answers-layout{
+      display:grid;
+      grid-template-columns:minmax(0,1.4fr) minmax(0,1.05fr);
+      gap:2.1rem;
+      align-items:flex-start;
+      margin-top:1.75rem;
+    }
+
+    .answers-column{}
+    .dichotomy-column{
+      position:relative;
+    }
+
+    .section-heading{
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--muted);
+      margin-bottom:.5rem;
+    }
+    .section-heading .tag-dot{
+      display:inline-block;
+      width:.4rem;
+      height:.4rem;
+      border-radius:999px;
+      background:var(--accent);
+      margin-right:.35rem;
+      vertical-align:middle;
+    }
+
+    .dichotomy-lead{
+      font-size:.85rem;
+      color:var(--muted);
+      line-height:1.7;
+      margin-bottom:1rem;
+    }
+
+    .draft-note{
+      font-size:.78rem;
+      color:var(--muted);
+      opacity:.8;
+      margin-top:.3rem;
+    }
+
+    .dichotomy-list{
+      display:flex;
+      flex-direction:column;
+      gap:.9rem;
+      margin-top:.8rem;
+    }
+
+    .dichotomy-item{
+      background:var(--faq-bg);
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      padding:.95rem 1.05rem .95rem;
+      transition:
+        background-color .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease,
+        transform .12s ease;
+    }
+
+    .dichotomy-item:hover{
+      background:var(--faq-bg-hover);
+      border-color:rgba(255,255,255,.2);
+      box-shadow:0 14px 36px rgba(0,0,0,.85);
+      transform:translateY(-1px);
+    }
+
+    .dichotomy-label{
+      font-size:.95rem;
+      font-weight:600;
+      letter-spacing:.02em;
+      margin-bottom:.25rem;
+    }
+
+    .dichotomy-copy{
+      font-size:.8rem;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+    .dichotomy-scale{
+      position:relative;
+      margin-top:.7rem;
+      height:4px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      overflow:hidden;
+    }
+
+    .dichotomy-scale::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg, rgba(153,0,255,.9), rgba(255,255,255,.08));
+      opacity:.6;
+    }
+
+    .dichotomy-scale::after{
+      content:'';
+      position:absolute;
+      top:50%;
+      left:var(--position,50%);
+      transform:translate(-50%,-50%);
+      width:14px;
+      height:14px;
+      border-radius:999px;
+      background:#fff;
+      box-shadow:0 0 0 4px rgba(153,0,255,.32);
+    }
+
+    .dichotomy-ends{
+      display:flex;
+      justify-content:space-between;
+      margin-top:.45rem;
+      font-size:.76rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--muted);
+    }
+
     .faq-list{
       display:flex;
       flex-direction:column;
       gap:1rem;
+      margin-top:.6rem;
     }
 
     details.faq-item{
@@ -129,6 +254,11 @@
       border-color:rgba(255,255,255,.18);
       box-shadow:0 18px 40px rgba(0,0,0,.75);
       transform:translateY(-1px);
+    }
+
+    details.faq-item[open]{
+      border-color:rgba(153,0,255,.8);
+      box-shadow:0 18px 40px rgba(0,0,0,.9);
     }
 
     /* no persistent "clicked" color; open state only rotates arrow */
@@ -220,6 +350,16 @@
       width:100%;
     }
 
+    @media (max-width:900px){
+      .answers-layout{
+        grid-template-columns:1fr;
+        gap:1.75rem;
+      }
+      .dichotomy-column{
+        order:-1; /* dichotomies first on mobile */
+      }
+    }
+
     @media (max-width:540px){
       body{
         padding-bottom:0;
@@ -250,166 +390,287 @@
   </header>
 
   <main>
-    <h1>Frequently asked questions</h1>
+    <h1>Answers</h1>
     <p class="faq-intro">
       We question all of our beliefs except those we truly believe and those we never think to question.
     </p>
 
-    <div class="faq-list">
+    <div class="answers-layout">
 
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">How do I know if I am a good person?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>The dog who cries after it kills is no better than the dog who does not cry. Your guilt does not absolve you of sin.</p>
+      <!-- Right-hand column on desktop: common dichotomies -->
+      <section class="dichotomy-column" aria-label="Common dichotomies and where I stand">
+        <div class="section-heading">
+          <span class="tag-dot"></span>Common dichotomies
         </div>
-      </details>
+        <p class="dichotomy-lead">
+          Everyone claims to be beyond binary thinking. They are not. These are some of the fault lines I acknowledge explicitly and where I currently stand along them.
+        </p>
+        <p class="draft-note">
+          All positions are provisional. Examples below are placeholders and will be rewritten as the decade unfolds.
+        </p>
 
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">What if my suffering is in vain?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>Everything, every pursuit, every action, every breath, every love, every second of anger, each moment of agony, the countless seconds of desolation, the final gasps of air you take are all in vain. You can only enjoy the taste of blood in your mouth for a moment, then it is gone.</p>
+        <div class="dichotomy-list">
+
+          <article class="dichotomy-item" style="--position:78%;">
+            <div class="dichotomy-label">Comfort vs Truth</div>
+            <p class="dichotomy-copy">
+              I would rather be wounded by a true observation than sedated by a kind lie. Comfort is a side effect, not a goal.
+            </p>
+            <div class="dichotomy-scale"></div>
+            <div class="dichotomy-ends">
+              <span>Comfort</span>
+              <span>Truth</span>
+            </div>
+          </article>
+
+          <article class="dichotomy-item" style="--position:70%;">
+            <div class="dichotomy-label">Determinism vs Agency</div>
+            <p class="dichotomy-copy">
+              Circumstances are constraints, not verdicts. You did not choose the opening position, but you are responsible for every move after that.
+            </p>
+            <div class="dichotomy-scale"></div>
+            <div class="dichotomy-ends">
+              <span>Determinism</span>
+              <span>Agency</span>
+            </div>
+          </article>
+
+          <article class="dichotomy-item" style="--position:82%;">
+            <div class="dichotomy-label">Collective vs Individual</div>
+            <p class="dichotomy-copy">
+              I optimize for individual responsibility first. The “collective” is usually an alibi for people who refuse to stand alone.
+            </p>
+            <div class="dichotomy-scale"></div>
+            <div class="dichotomy-ends">
+              <span>Collective</span>
+              <span>Individual</span>
+            </div>
+          </article>
+
+          <article class="dichotomy-item" style="--position:74%;">
+            <div class="dichotomy-label">Short term vs Long term</div>
+            <p class="dichotomy-copy">
+              I am willing to kill the present version of myself if it increases the expected value of the decade.
+            </p>
+            <div class="dichotomy-scale"></div>
+            <div class="dichotomy-ends">
+              <span>Short term</span>
+              <span>Long term</span>
+            </div>
+          </article>
+
+          <article class="dichotomy-item" style="--position:68%;">
+            <div class="dichotomy-label">Mercy vs Judgment</div>
+            <p class="dichotomy-copy">
+              I extend mercy rarely and judgment often, starting with myself. Pity is cheap; consequences are not.
+            </p>
+            <div class="dichotomy-scale"></div>
+            <div class="dichotomy-ends">
+              <span>Mercy</span>
+              <span>Judgment</span>
+            </div>
+          </article>
+
+          <article class="dichotomy-item" style="--position:60%;">
+            <div class="dichotomy-label">Stability vs Volatility</div>
+            <p class="dichotomy-copy">
+              I prefer controlled volatility — enough chaos to force evolution, not enough to end the game early.
+            </p>
+            <div class="dichotomy-scale"></div>
+            <div class="dichotomy-ends">
+              <span>Stability</span>
+              <span>Volatility</span>
+            </div>
+          </article>
+
+          <article class="dichotomy-item" style="--position:52%;">
+            <div class="dichotomy-label">Compassion vs Ruthlessness</div>
+            <p class="dichotomy-copy">
+              Outwardly I default to ruthlessness; inwardly I am still negotiating how much compassion is compatible with results.
+            </p>
+            <div class="dichotomy-scale"></div>
+            <div class="dichotomy-ends">
+              <span>Compassion</span>
+              <span>Ruthlessness</span>
+            </div>
+          </article>
+
         </div>
-      </details>
+      </section>
 
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">How do I get lucky?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>Probability is distributed amongst the population evenly and without bias, in order to increase the liklihood of a desirable outcome occuring you must increase the number of primary inputs in the given domain.</p>
+      <!-- Left-hand column on desktop: existing FAQ -->
+      <section class="answers-column" aria-label="Existential FAQ">
+        <div class="section-heading">
+          <span class="tag-dot"></span>Existential FAQ
         </div>
-      </details>
 
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">How do I live with sacrifices I cannot undo?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>Understand that you have made these tradeoffs within a rational state of mind. You have chosen this path. Go All In.</p>
+        <div class="faq-list">
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">How do I know if I am a good person?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>The dog who cries after it kills is no better than the dog who does not cry. Your guilt does not absolve you of sin.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">What if my suffering is in vain?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Everything, every pursuit, every action, every breath, every love, every second of anger, each moment of agony, the countless seconds of desolation, the final gasps of air you take are all in vain. You can only enjoy the taste of blood in your mouth for a moment, then it is gone.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">How do I get lucky?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Probability is distributed amongst the population evenly and without bias. In order to increase the likelihood of a desirable outcome occurring you must increase the number of primary inputs in the given domain.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">How do I live with sacrifices I cannot undo?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Understand that you have made these tradeoffs within a rational state of mind. You have chosen this path. Go all in.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">What meaning is left if everything ends in decay?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>You must derive a meaning despite the futility.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">What if I am ordinary?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>You likely are. Reinvent yourself.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">How do I forgive myself for what I have done?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Do not forgive yourself.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">What if I do not have what it takes?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>The earth will swallow you whole.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">What if I never escape the life I was born into?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>You likely will not.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">Why do I feel alone despite being surrounded by people?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>I'm not sure.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">Who should I blame when everything in my life becomes rotten?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>You may only blame yourself. When you bleed I do not feel it.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">What am I supposed to do with my life?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Find the effort equivalent of a mechanical vice and fight against it until you lose. You may then witness the observers fight amongst themselves for your remains.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">How much of my life is actually my fault?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>All of it.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">Why do I feel inferior when others succeed?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>You haven't left everything out on the field. You have earned your inferiority.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">What if I never become the person I planned to be?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>You will likely convince yourself that your new life of failure is what you wanted all along. In reality you have earned your life of mediocrity.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">How do I know if I’m wasting my potential?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Every second rots between your fingertips. You have wasted your hours and days up until this point; humans are strangely consistent. If you would like to change you must reinvent yourself.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">Is my ambition a sickness?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>Yes.</p>
+            </div>
+          </details>
+
+          <!-- Placeholder / meta-question to be replaced later -->
+          <details class="faq-item">
+            <summary>
+              <span class="faq-question">What question should be here that I am not ready to answer yet?</span>
+            </summary>
+            <div class="faq-answer">
+              <p>I'm not sure. When I know, this line will disappear.</p>
+            </div>
+          </details>
+
         </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">What meaning is left if everything ends in decay?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>You must derive a meaning despite the futility.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">What if I am ordinary?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>You likley are. Reinvent yourself.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">How do I forgive myself for what I have done?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>Do not forgive yourself.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">What if I do not have what it takes?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>The earth will swallow you whole.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">What if I never escape the life I was born into?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>You likely will not.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">Why do I feel alone despite being surrounded by people?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>I am not sure.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">Who should I blame when everything in my life becomes rotten?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>You may only blame yourself. When you bleed I do not feel it.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">What am I supposed to do with my life?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>Find the effort equivalent of a mechanical vice and fight against it until you lose. You may then witness the observers fight amongst themselves for your remains.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">How much of my life is actually my fault?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>All of it.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">Why do I feel inferior when others succeed?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>You haven't left everything out on the field. You have earned your inferiority.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">What if I never become the person I planned to be?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>You will likley convince yourself that your new life of failure is what you wanted all along. In reality you have earned your life of mediocrity.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">How do I know if I’m wasting my potential?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>Every second rots between your finger tips. You have wasted your hours and days up until this point, humans are strangely consistent. If you would like to change you must reinvent yourself.</p>
-        </div>
-      </details>
-
-      <details class="faq-item">
-        <summary>
-          <span class="faq-question">Is my ambition a sickness?</span>
-        </summary>
-        <div class="faq-answer">
-          <p>Yes.</p>
-        </div>
-      </details>
-
+      </section>
     </div>
   </main>
 
