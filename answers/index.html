@@ -89,30 +89,29 @@
     }
     main{
       max-width:880px;
-      margin:1.5rem auto 0;
-      padding:0 1.4rem 3rem;
+      margin:2.1rem auto 0;
+      padding:0 1.4rem 3.4rem;
     }
     h1{
-      font-size:1.5rem;
+      font-size:1.6rem;
       margin-bottom:1rem;
       font-weight:700;
     }
 
     .faq-intro{
-      margin:0 0 1.4rem;
+      margin:0 0 1.8rem;
       font-size:.9rem;
       color:var(--muted);
       line-height:1.6;
       font-weight:500;
     }
 
-    /* Two-column layout: FAQ + dichotomies */
+    /* Vertical layout: dichotomies first, then FAQ, with air between */
     .answers-layout{
-      display:grid;
-      grid-template-columns:minmax(0,1.4fr) minmax(0,1.05fr);
-      gap:2.1rem;
-      align-items:flex-start;
-      margin-top:1.75rem;
+      display:flex;
+      flex-direction:column;
+      gap:2.8rem;
+      margin-top:1.5rem;
     }
 
     .answers-column{}
@@ -125,7 +124,7 @@
       text-transform:uppercase;
       letter-spacing:.16em;
       color:var(--muted);
-      margin-bottom:.5rem;
+      margin-bottom:.65rem;
     }
     .section-heading .tag-dot{
       display:inline-block;
@@ -149,13 +148,14 @@
       color:var(--muted);
       opacity:.8;
       margin-top:.3rem;
+      margin-bottom:.9rem;
     }
 
     .dichotomy-list{
       display:flex;
       flex-direction:column;
       gap:.9rem;
-      margin-top:.8rem;
+      margin-top:.3rem;
     }
 
     .dichotomy-item{
@@ -261,7 +261,6 @@
       box-shadow:0 18px 40px rgba(0,0,0,.9);
     }
 
-    /* no persistent "clicked" color; open state only rotates arrow */
     summary{
       cursor:pointer;
       list-style:none;
@@ -350,22 +349,12 @@
       width:100%;
     }
 
-    @media (max-width:900px){
-      .answers-layout{
-        grid-template-columns:1fr;
-        gap:1.75rem;
-      }
-      .dichotomy-column{
-        order:-1; /* dichotomies first on mobile */
-      }
-    }
-
     @media (max-width:540px){
       body{
         padding-bottom:0;
       }
       main{
-        margin-top:1.1rem;
+        margin-top:1.5rem;
       }
       .faq-answer{
         padding:0 1.1rem 1rem 2.1rem;
@@ -397,7 +386,7 @@
 
     <div class="answers-layout">
 
-      <!-- Right-hand column on desktop: common dichotomies -->
+      <!-- First: common dichotomies -->
       <section class="dichotomy-column" aria-label="Common dichotomies and where I stand">
         <div class="section-heading">
           <span class="tag-dot"></span>Common dichotomies
@@ -498,7 +487,7 @@
         </div>
       </section>
 
-      <!-- Left-hand column on desktop: existing FAQ -->
+      <!-- Then: existential FAQ -->
       <section class="answers-column" aria-label="Existential FAQ">
         <div class="section-heading">
           <span class="tag-dot"></span>Existential FAQ
