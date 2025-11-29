@@ -89,10 +89,27 @@
       line-height:1;
     }
     main{
-      max-width:880px;
+      max-width:1120px;
       margin:1.5rem auto 0;
       padding:0 1.4rem 3rem;
     }
+
+    /* ───────────── LAYOUT: HOURGLASS + DECADE PLAN ───────────── */
+    .decade-layout{
+      display:flex;
+      align-items:flex-start;
+      gap:1.75rem;
+    }
+    .decade-left{
+      flex:0 0 340px;
+      position:sticky;
+      top:1.4rem;
+    }
+    .decade-right{
+      flex:1;
+      min-width:0;
+    }
+
     h1{
       font-size:1.5rem;
       margin-bottom:.4rem;
@@ -241,6 +258,16 @@
     }
 
     /* mobile adjustments */
+    @media (max-width:900px){
+      .decade-layout{
+        flex-direction:column;
+      }
+      .decade-left{
+        position:static;
+        flex:none;
+        max-width:100%;
+      }
+    }
     @media (max-width:540px){
       body{
         padding-bottom:0; /* footer no longer fixed */
@@ -262,6 +289,104 @@
         padding:1.1rem 1.4rem 1.4rem;
       }
     }
+
+    /* ───────────── YEAR 2 HOURGLASS STYLES ───────────── */
+
+    .year2-hourglass {
+      background: radial-gradient(circle at top, #111827 0%, #020617 55%, #000000 100%);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 16px 18px 18px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .year2-hourglass-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .year2-header {
+      text-align: center;
+    }
+
+    .year2-title {
+      margin: 0;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .year2-dates {
+      margin: 4px 0 0;
+      font-size: 0.7rem;
+      color: #6b7280;
+    }
+
+    .year2-main {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    .year2-canvas-wrap {
+      display: flex;
+      justify-content: center;
+    }
+
+    #year2HourglassCanvas {
+      display: block;
+      width: 100%;
+      max-width: 320px;
+      height: auto;
+    }
+
+    .year2-metrics {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .year2-dhm {
+      font-weight: 700;
+      font-size: 1.4rem;
+    }
+
+    .year2-caption {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .year2-sub {
+      font-size: 0.7rem;
+      color: #6b7280;
+    }
+
+    .year2-footer {
+      margin-top: 4px;
+      font-size: 0.7rem;
+      color: #6b7280;
+    }
+
+    @media (max-width:480px){
+      .year2-hourglass {
+        padding: 14px 14px 16px;
+        border-radius: 14px;
+      }
+
+      .year2-title {
+        font-size: 0.8rem;
+      }
+
+      .year2-dhm {
+        font-size: 1.2rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -274,162 +399,192 @@
   </header>
 
   <main>
-    <h1>Decade Plan | Age 20 to Age 30</h1>
-    <p class="subtitle">As you take a step, the next step is illuminated. In the beginning you must be directionally correct.</p>
+    <div class="decade-layout">
+      <!-- LEFT: YEAR 2 HOURGLASS -->
+      <aside class="decade-left">
+        <!-- YEAR 2 HOURGLASS WIDGET – drozq.com/decade -->
+        <section class="year2-hourglass">
+          <div class="year2-hourglass-inner">
+            <header class="year2-header">
+              <h2 class="year2-title">YEAR 2 of 10 — Real Estate Pivot</h2>
+              <p class="year2-dates">Aug 31, 2025 → Aug 31, 2026</p>
+            </header>
 
-    <div class="decade-meta">
-      Over the next 10 years the impact I have on reality will be objectively measured. Skill acquisition and capital compounding will act as the main drivers here. Theory of Constraints identifies the points of greatest leverage.
-    </div>
+            <div class="year2-main">
+              <div class="year2-canvas-wrap">
+                <canvas id="year2HourglassCanvas" width="320" height="220"></canvas>
+              </div>
+              <div class="year2-metrics">
+                <div id="year2Dhm" class="year2-dhm">0d 0h 0m</div>
+                <div id="year2Pct" class="year2-caption">0% of Year 2 elapsed</div>
+                <div id="year2Sub" class="year2-sub">Sand is falling.</div>
+                <div id="year2Footer" class="year2-footer">Lead Gen → Lead Nurture → Sales.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </aside>
 
-    <!-- Year 1: PASSED -->
-    <section class="year-block past">
-      <span class="status-tag">Completed</span>
-      <div class="year-title">
-        <div>Year 1 (August 2024 – August 2025)</div>
-      </div>
-      <div class="income">$12k/mo</div>
-      <div class="field-label">Skill</div>
-      <div class="pill">Sales</div>
-      <div class="field-label">Objective</div>
-      <div>Learn</div>
-      <div class="field-label">Place</div>
-      <div>Honda of Vallejo</div>
-    </section>
+      <!-- RIGHT: DECADE PLAN -->
+      <section class="decade-right">
+        <h1>Decade Plan | Age 20 to Age 30</h1>
+        <p class="subtitle">As you take a step, the next step is illuminated. In the beginning you must be directionally correct.</p>
 
-    <!-- Year 2: CURRENT -->
-    <section class="year-block current">
-      <span class="status-tag">Current</span>
-      <div class="year-title">
-        <div>Year 2 (August 2025 – August 2026)</div>
-      </div>
-      <div class="income">$25k/mo</div>
-      <div class="field-label">Skills</div>
-      <div>
-        <span class="pill">Sales (Mastery)</span>
-        <span class="pill">Lead Generation (Real Estate)</span>
-      </div>
-      <div class="field-label">Objective</div>
-      <div>Full Pivot to Real Estate</div>
-      <div class="field-label">Place</div>
-      <div>Norm Reeves Honda of Los Angeles</div>
-    </section>
+        <div class="decade-meta">
+          Over the next 10 years the impact I have on reality will be objectively measured. Skill acquisition and capital compounding will act as the main drivers here. Theory of Constraints identifies the points of greatest leverage.
+        </div>
 
-    <!-- Year 3 -->
-    <section class="year-block upcoming">
-      <span class="status-tag">Upcoming</span>
-      <div class="year-title">
-        <div>Year 3 (August 2026 – August 2027)</div>
-      </div>
-      <div class="field-label">Skill</div>
-      <div class="pill">Lead Generation | Marketing</div>
-      <div class="field-label">Objective</div>
-      <div>Learn</div>
-      <div class="field-label">Place</div>
-      <div>Real Estate Brokerage in Los Angeles</div>
-    </section>
+        <!-- Year 1: PASSED -->
+        <section class="year-block past">
+          <span class="status-tag">Completed</span>
+          <div class="year-title">
+            <div>Year 1 (August 2024 – August 2025)</div>
+          </div>
+          <div class="income">$12k/mo</div>
+          <div class="field-label">Skill</div>
+          <div class="pill">Sales</div>
+          <div class="field-label">Objective</div>
+          <div>Learn</div>
+          <div class="field-label">Place</div>
+          <div>Honda of Vallejo</div>
+        </section>
 
-    <!-- Year 4 -->
-    <section class="year-block upcoming">
-      <span class="status-tag">Upcoming</span>
-      <div class="year-title">
-        <div>Year 4 (August 2027 – August 2028)</div>
-      </div>
-      <div class="field-label">Skill</div>
-      <div class="pill">Lead Generation | Marketing (Mastery)</div>
-      <div class="field-label">Objective</div>
-      <div>Learn</div>
-      <div class="field-label">Place</div>
-      <div>Real Estate Brokerage in Los Angeles</div>
-    </section>
+        <!-- Year 2: CURRENT -->
+        <section class="year-block current">
+          <span class="status-tag">Current</span>
+          <div class="year-title">
+            <div>Year 2 (August 2025 – August 2026)</div>
+          </div>
+          <div class="income">$25k/mo</div>
+          <div class="field-label">Skills</div>
+          <div>
+            <span class="pill">Sales (Mastery)</span>
+            <span class="pill">Lead Generation (Real Estate)</span>
+          </div>
+          <div class="field-label">Objective</div>
+          <div>Full Pivot to Real Estate</div>
+          <div class="field-label">Place</div>
+          <div>Norm Reeves Honda of Los Angeles</div>
+        </section>
 
-    <!-- Year 5 -->
-    <section class="year-block upcoming">
-      <span class="status-tag">Upcoming</span>
-      <div class="year-title">
-        <div>Year 5 (August 2028 – August 2029)</div>
-      </div>
-      <div class="field-label">Skill</div>
-      <div class="pill">Recruiting</div>
-      <div class="pill">Product</div>
-      <div class="field-label">Objective</div>
-      <div>Open Real Estate Brokerage <strong>VIRELLO</strong></div>
-      <div class="field-label">Place</div>
-      <div>Los Angeles</div>
-    </section>
+        <!-- Year 3 -->
+        <section class="year-block upcoming">
+          <span class="status-tag">Upcoming</span>
+          <div class="year-title">
+            <div>Year 3 (August 2026 – August 2027)</div>
+          </div>
+          <div class="field-label">Skill</div>
+          <div class="pill">Lead Generation | Marketing</div>
+          <div class="field-label">Objective</div>
+          <div>Learn</div>
+          <div class="field-label">Place</div>
+          <div>Real Estate Brokerage in Los Angeles</div>
+        </section>
 
-    <!-- Year 6 -->
-    <section class="year-block upcoming">
-      <span class="status-tag">Upcoming</span>
-      <div class="year-title">
-        <div>Year 6 (August 2029 – August 2030)</div>
-      </div>
-      <div class="field-label">Skill</div>
-      <div class="pill">Operations</div>
-      <div class="field-label">Objective</div>
-      <div>Learn</div>
-      <div class="field-label">Place</div>
-      <div>Los Angeles</div>
-    </section>
+        <!-- Year 4 -->
+        <section class="year-block upcoming">
+          <span class="status-tag">Upcoming</span>
+          <div class="year-title">
+            <div>Year 4 (August 2027 – August 2028)</div>
+          </div>
+          <div class="field-label">Skill</div>
+          <div class="pill">Lead Generation | Marketing (Mastery)</div>
+          <div class="field-label">Objective</div>
+          <div>Learn</div>
+          <div class="field-label">Place</div>
+          <div>Real Estate Brokerage in Los Angeles</div>
+        </section>
 
-    <!-- Year 7 -->
-    <section class="year-block upcoming">
-      <span class="status-tag">Upcoming</span>
-      <div class="year-title">
-        <div>Year 7 (August 2030 – August 2031)</div>
-      </div>
-      <div class="field-label">Skill</div>
-      <div class="pill">Product (Mastery)</div>
-      <div class="field-label">Objective</div>
-      <div>Trim fat, Hire Executives, Create Decade Model, Prepare for Scale</div>
-      <div class="field-label">Place</div>
-      <div>Los Angeles</div>
-    </section>
+        <!-- Year 5 -->
+        <section class="year-block upcoming">
+          <span class="status-tag">Upcoming</span>
+          <div class="year-title">
+            <div>Year 5 (August 2028 – August 2029)</div>
+          </div>
+          <div class="field-label">Skill</div>
+          <div class="pill">Recruiting</div>
+          <div class="pill">Product</div>
+          <div class="field-label">Objective</div>
+          <div>Open Real Estate Brokerage <strong>VIRELLO</strong></div>
+          <div class="field-label">Place</div>
+          <div>Los Angeles</div>
+        </section>
 
-    <!-- Year 8 -->
-    <section class="year-block upcoming">
-      <span class="status-tag">Upcoming</span>
-      <div class="year-title">
-        <div>Year 8 (August 2031 – August 2032)</div>
-      </div>
-      <div class="field-label">Skill</div>
-      <div class="pill">Acquisitions</div>
-      <div class="field-label">Objective</div>
-      <div>Buying other brokerages to own their respective agents. Learn.</div>
-      <div class="field-label">Place</div>
-      <div>San Francisco &amp; Los Angeles</div>
-    </section>
+        <!-- Year 6 -->
+        <section class="year-block upcoming">
+          <span class="status-tag">Upcoming</span>
+          <div class="year-title">
+            <div>Year 6 (August 2029 – August 2030)</div>
+          </div>
+          <div class="field-label">Skill</div>
+          <div class="pill">Operations</div>
+          <div class="field-label">Objective</div>
+          <div>Learn</div>
+          <div class="field-label">Place</div>
+          <div>Los Angeles</div>
+        </section>
 
-    <!-- Year 9 -->
-    <section class="year-block upcoming">
-      <span class="status-tag">Upcoming</span>
-      <div class="year-title">
-        <div>Year 9 (August 2032 – August 2033)</div>
-      </div>
-      <div class="field-label">Skill</div>
-      <div class="pill">Acquisitions (Mastery)</div>
-      <div class="field-label">Objective</div>
-      <div>Earn</div>
-      <div class="field-label">Place</div>
-      <div>San Francisco &amp; Los Angeles</div>
-    </section>
+        <!-- Year 7 -->
+        <section class="year-block upcoming">
+          <span class="status-tag">Upcoming</span>
+          <div class="year-title">
+            <div>Year 7 (August 2030 – August 2031)</div>
+          </div>
+          <div class="field-label">Skill</div>
+          <div class="pill">Product (Mastery)</div>
+          <div class="field-label">Objective</div>
+          <div>Trim fat, Hire Executives, Create Decade Model, Prepare for Scale</div>
+          <div class="field-label">Place</div>
+          <div>Los Angeles</div>
+        </section>
 
-    <!-- Year 10 -->
-    <section class="year-block upcoming">
-      <span class="status-tag">Upcoming</span>
-      <div class="year-title">
-        <div>Year 10 (August 2033 – August 2034)</div>
-      </div>
-      <div class="field-label">Skill</div>
-      <div class="pill">Scale</div>
-      <div class="field-label">Objective</div>
-      <div>Increase TAM across California → Break into surrounding states</div>
-      <div class="field-label">Place</div>
-      <div>Nationwide</div>
-    </section>
+        <!-- Year 8 -->
+        <section class="year-block upcoming">
+          <span class="status-tag">Upcoming</span>
+          <div class="year-title">
+            <div>Year 8 (August 2031 – August 2032)</div>
+          </div>
+          <div class="field-label">Skill</div>
+          <div class="pill">Acquisitions</div>
+          <div class="field-label">Objective</div>
+          <div>Buying other brokerages to own their respective agents. Learn.</div>
+          <div class="field-label">Place</div>
+          <div>San Francisco &amp; Los Angeles</div>
+        </section>
 
-    <div class="networth">
-      <h2>End of Decade Net Worth: $1 Billion</h2>
-      <p>Volume x Leverage = Output.</p>
+        <!-- Year 9 -->
+        <section class="year-block upcoming">
+          <span class="status-tag">Upcoming</span>
+          <div class="year-title">
+            <div>Year 9 (August 2032 – August 2033)</div>
+          </div>
+          <div class="field-label">Skill</div>
+          <div class="pill">Acquisitions (Mastery)</div>
+          <div class="field-label">Objective</div>
+          <div>Earn</div>
+          <div class="field-label">Place</div>
+          <div>San Francisco &amp; Los Angeles</div>
+        </section>
+
+        <!-- Year 10 -->
+        <section class="year-block upcoming">
+          <span class="status-tag">Upcoming</span>
+          <div class="year-title">
+            <div>Year 10 (August 2033 – August 2034)</div>
+          </div>
+          <div class="field-label">Skill</div>
+          <div class="pill">Scale</div>
+          <div class="field-label">Objective</div>
+          <div>Increase TAM across California → Break into surrounding states</div>
+          <div class="field-label">Place</div>
+          <div>Nationwide</div>
+        </section>
+
+        <div class="networth">
+          <h2>End of Decade Net Worth: $1 Billion</h2>
+          <p>Volume x Leverage = Output.</p>
+        </div>
+      </section>
     </div>
   </main>
 
@@ -442,5 +597,218 @@
     <a class="footer-link" href="/privacy/">Privacy</a>
   </footer>
 
+  <script>
+    // ───────────── YEAR 2 HOURGLASS LOGIC (LA TIME) ─────────────
+    (function () {
+      const MS_DAY = 86400000;
+      const YEAR2_START = new Date('2025-08-31T00:00:00-07:00');
+      const YEAR2_END   = new Date('2026-08-31T23:59:59-07:00');
+
+      const canvas = document.getElementById('year2HourglassCanvas');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+
+      const dhmEl   = document.getElementById('year2Dhm');
+      const pctEl   = document.getElementById('year2Pct');
+      const subEl   = document.getElementById('year2Sub');
+      const footEl  = document.getElementById('year2Footer');
+
+      function getNowInLA() {
+        const nowStr = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
+        return new Date(nowStr);
+      }
+
+      function breakdown(ms) {
+        if (ms < 0) ms = 0;
+        const d = Math.floor(ms / MS_DAY);
+        ms -= d * MS_DAY;
+        const h = Math.floor(ms / (1000 * 60 * 60));
+        ms -= h * (1000 * 60 * 60);
+        const m = Math.floor(ms / (1000 * 60));
+        const s = Math.floor((ms - m * 60 * 1000) / 1000);
+        return { d, h, m, s };
+      }
+
+      function phaseColor(msLeft, finished) {
+        if (finished) return '#ef4444'; // red
+        const daysLeft = msLeft / MS_DAY;
+        if (daysLeft > 300) return '#22c55e'; // green
+        if (daysLeft > 120) return '#eab308'; // yellow
+        return '#ef4444'; // red
+      }
+
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+
+      function drawHourglass(progress, finished) {
+        const width = canvas.width;
+        const height = canvas.height;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const COLOR_FRAME    = '#ffffff';
+        const COLOR_SAND     = '#f4d06f';
+        const COLOR_SAND_DIM = 'rgba(156,126,43,0.25)';
+
+        const pad   = 10;
+        const neckW = Math.max(8, Math.floor(width * 0.06));
+        const strokeW = 2;
+
+        const A = { x: pad,          y: pad };
+        const B = { x: width - pad,  y: pad };
+        const C = { x: width / 2,    y: height / 2 };
+        const D = { x: pad,          y: height - pad };
+        const E = { x: width - pad,  y: height - pad };
+
+        // frame outlines
+        ctx.strokeStyle = COLOR_FRAME;
+        ctx.lineWidth = strokeW;
+        ctx.fillStyle = 'rgba(0,0,0,0)';
+
+        // top triangle
+        ctx.beginPath();
+        ctx.moveTo(A.x, A.y);
+        ctx.lineTo(B.x, B.y);
+        ctx.lineTo(C.x, C.y);
+        ctx.closePath();
+        ctx.stroke();
+
+        // bottom triangle
+        ctx.beginPath();
+        ctx.moveTo(D.x, D.y);
+        ctx.lineTo(E.x, E.y);
+        ctx.lineTo(C.x, C.y);
+        ctx.closePath();
+        ctx.stroke();
+
+        // TOP SAND
+        const ft = 1 - progress; // fraction remaining
+        const topHeight = (height / 2 - pad);
+        const yTopFill  = pad + ft * topHeight;
+        const tTop      = (yTopFill - pad) / topHeight;
+
+        const L1 = { x: lerp(A.x, C.x, tTop), y: yTopFill };
+        const L2 = { x: lerp(B.x, C.x, tTop), y: yTopFill };
+
+        if (ft > 0) {
+          ctx.fillStyle = COLOR_SAND;
+          ctx.beginPath();
+          ctx.moveTo(A.x, A.y);
+          ctx.lineTo(B.x, B.y);
+          ctx.lineTo(L2.x, L2.y);
+          ctx.lineTo(L1.x, L1.y);
+          ctx.closePath();
+          ctx.fill();
+
+          // darker band
+          ctx.fillStyle = COLOR_SAND_DIM;
+          const bandY1 = Math.max(pad, yTopFill - 2);
+          const bandY2 = yTopFill;
+          const tBandY1 = (bandY1 - pad) / topHeight;
+          const L1a = { x: lerp(A.x, C.x, Math.max(0, tBandY1)), y: bandY1 };
+          const L2a = { x: lerp(B.x, C.x, Math.max(0, tBandY1)), y: bandY1 };
+
+          ctx.beginPath();
+          ctx.moveTo(L1a.x, L1a.y);
+          ctx.lineTo(L2a.x, L2a.y);
+          ctx.lineTo(L2.x,  L2.y);
+          ctx.lineTo(L1.x,  L1.y);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // BOTTOM SAND
+        const fb = progress; // fraction accumulated
+        const botHeight = (height / 2 - pad);
+        const yBotFill  = (height - pad) - fb * botHeight;
+        const tBot      = fb;
+
+        const P1 = { x: lerp(D.x, C.x, tBot), y: yBotFill };
+        const P2 = { x: lerp(E.x, C.x, tBot), y: yBotFill };
+
+        if (fb > 0) {
+          ctx.fillStyle = COLOR_SAND;
+          ctx.beginPath();
+          ctx.moveTo(D.x, D.y);
+          ctx.lineTo(E.x, E.y);
+          ctx.lineTo(P2.x, P2.y);
+          ctx.lineTo(P1.x, P1.y);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.fillStyle = COLOR_SAND_DIM;
+          const bandY1 = yBotFill;
+          const bandY2 = Math.min(height - pad, yBotFill + 2);
+          const ratio1 = (height - pad - bandY2) / botHeight;
+          const P1b = { x: lerp(D.x, C.x, Math.max(0, ratio1)), y: bandY2 };
+          const P2b = { x: lerp(E.x, C.x, Math.max(0, ratio1)), y: bandY2 };
+
+          ctx.beginPath();
+          ctx.moveTo(P1.x,  P1.y);
+          ctx.lineTo(P2.x,  P2.y);
+          ctx.lineTo(P2b.x, P2b.y);
+          ctx.lineTo(P1b.x, P1b.y);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // NECK trickle
+        if (!finished && progress > 0 && progress < 1) {
+          ctx.fillStyle = COLOR_SAND;
+          const neckH = Math.max(4, Math.floor(height * 0.04));
+          ctx.fillRect(C.x - neckW / 6, C.y - neckH / 2, neckW / 3, neckH);
+
+          // grain at bottom apex
+          ctx.beginPath();
+          ctx.arc(C.x, C.y + 3, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Neck frame accent
+        ctx.strokeStyle = COLOR_FRAME;
+        ctx.lineWidth = strokeW;
+        ctx.beginPath();
+        ctx.moveTo(C.x - neckW / 2, C.y);
+        ctx.lineTo(C.x + neckW / 2, C.y);
+        ctx.stroke();
+      }
+
+      function updateHourglass() {
+        const now = getNowInLA();
+        const totalMs = YEAR2_END - YEAR2_START;
+        const elapsedMs = now - YEAR2_START;
+        const clamped   = Math.max(0, Math.min(totalMs, elapsedMs));
+        const progress  = totalMs === 0 ? 1 : clamped / totalMs;
+        const msLeft    = Math.max(0, YEAR2_END - now);
+        const finished  = msLeft <= 0;
+
+        const left = breakdown(msLeft);
+        const color = phaseColor(msLeft, finished);
+
+        if (finished) {
+          dhmEl.textContent = 'TIME EXPIRED';
+          pctEl.textContent = '100% elapsed — pivot or perish.';
+          subEl.textContent = 'Outcome is binary.';
+          footEl.textContent = 'No alibis. Ship.';
+        } else {
+          dhmEl.textContent = `${left.d}d ${left.h}h ${left.m}m`;
+          const pct = Math.round(progress * 100);
+          pctEl.textContent = `${pct}% of Year 2 elapsed`;
+          subEl.textContent = 'Sand is falling.';
+          footEl.textContent = 'Lead Gen → Lead Nurture → Sales.';
+        }
+
+        dhmEl.style.color = color;
+
+        drawHourglass(progress, finished);
+      }
+
+      updateHourglass();
+      // second-level updates so the time feels alive
+      setInterval(updateHourglass, 1000);
+    })();
+  </script>
 </body>
 </html>
