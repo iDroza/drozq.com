@@ -597,218 +597,365 @@
     <a class="footer-link" href="/privacy/">Privacy</a>
   </footer>
 
-  <script>
-    // ───────────── YEAR 2 HOURGLASS LOGIC (LA TIME) ─────────────
-    (function () {
-      const MS_DAY = 86400000;
-      const YEAR2_START = new Date('2025-08-31T00:00:00-07:00');
-      const YEAR2_END   = new Date('2026-08-31T23:59:59-07:00');
+<script>
+  // ───────────── YEAR 2 HOURGLASS LOGIC (LA TIME) ─────────────
+  (function () {
+    const MS_DAY = 86400000;
+    const YEAR2_START = new Date('2025-08-31T00:00:00-07:00');
+    const YEAR2_END   = new Date('2026-08-31T23:59:59-07:00');
 
-      const canvas = document.getElementById('year2HourglassCanvas');
-      if (!canvas) return;
+    const canvas = document.getElementById('year2HourglassCanvas');
+    if (!canvas) return;
 
-      const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const logicalWidth  = 320;
+    const logicalHeight = 220;
 
-      const dhmEl   = document.getElementById('year2Dhm');
-      const pctEl   = document.getElementById('year2Pct');
-      const subEl   = document.getElementById('year2Sub');
-      const footEl  = document.getElementById('year2Footer');
+    // make the canvas sharp on retina
+    canvas.width  = logicalWidth * dpr;
+    canvas.height = logicalHeight * dpr;
+    canvas.style.width  = logicalWidth + 'px';
+    canvas.style.height = logicalHeight + 'px';
 
-      function getNowInLA() {
-        const nowStr = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
-        return new Date(nowStr);
-      }
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      function breakdown(ms) {
-        if (ms < 0) ms = 0;
-        const d = Math.floor(ms / MS_DAY);
-        ms -= d * MS_DAY;
-        const h = Math.floor(ms / (1000 * 60 * 60));
-        ms -= h * (1000 * 60 * 60);
-        const m = Math.floor(ms / (1000 * 60));
-        const s = Math.floor((ms - m * 60 * 1000) / 1000);
-        return { d, h, m, s };
-      }
+    const dhmEl   = document.getElementById('year2Dhm');
+    const pctEl   = document.getElementById('year2Pct');
+    const subEl   = document.getElementById('year2Sub');
+    const footEl  = document.getElementById('year2Footer');
 
-      function phaseColor(msLeft, finished) {
-        if (finished) return '#ef4444'; // red
-        const daysLeft = msLeft / MS_DAY;
-        if (daysLeft > 300) return '#22c55e'; // green
-        if (daysLeft > 120) return '#eab308'; // yellow
-        return '#ef4444'; // red
-      }
+    function getNowInLA() {
+      const nowStr = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
+      return new Date(nowStr);
+    }
 
-      function lerp(a, b, t) {
-        return a + (b - a) * t;
-      }
+    function breakdown(ms) {
+      if (ms < 0) ms = 0;
+      const d = Math.floor(ms / MS_DAY);
+      ms -= d * MS_DAY;
+      const h = Math.floor(ms / (1000 * 60 * 60));
+      ms -= h * (1000 * 60 * 60);
+      const m = Math.floor(ms / (1000 * 60));
+      const s = Math.floor((ms - m * 60 * 1000) / 1000);
+      return { d, h, m, s };
+    }
 
-      function drawHourglass(progress, finished) {
-        const width = canvas.width;
-        const height = canvas.height;
+    function phaseColor(msLeft, finished) {
+      if (finished) return '#ef4444'; // red
+      const daysLeft = msLeft / MS_DAY;
+      if (daysLeft > 300) return '#22c55e'; // green
+      if (daysLeft > 120) return '#eab308'; // yellow
+      return '#ef4444'; // red
+    }
 
-        ctx.clearRect(0, 0, width, height);
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
 
-        const COLOR_FRAME    = '#ffffff';
-        const COLOR_SAND     = '#f4d06f';
-        const COLOR_SAND_DIM = 'rgba(156,126,43,0.25)';
+    // improved hourglass: glass body + smoother sand + animated stream
+    function drawHourglass(progress, finished, animPhase) {
+      const width  = logicalWidth;
+      const height = logicalHeight;
 
-        const pad   = 10;
-        const neckW = Math.max(8, Math.floor(width * 0.06));
-        const strokeW = 2;
+      ctx.clearRect(0, 0, width, height);
 
-        const A = { x: pad,          y: pad };
-        const B = { x: width - pad,  y: pad };
-        const C = { x: width / 2,    y: height / 2 };
-        const D = { x: pad,          y: height - pad };
-        const E = { x: width - pad,  y: height - pad };
+      const COLOR_FRAME      = 'rgba(255,255,255,0.9)';
+      const COLOR_GLASS_EDGE = 'rgba(255,255,255,0.18)';
+      const COLOR_GLASS_FILL = 'rgba(15,23,42,0.75)';
+      const COLOR_SAND       = '#f4d06f';
+      const COLOR_SAND_DIM   = 'rgba(156,126,43,0.25)';
 
-        // frame outlines
-        ctx.strokeStyle = COLOR_FRAME;
-        ctx.lineWidth = strokeW;
-        ctx.fillStyle = 'rgba(0,0,0,0)';
+      const pad   = 16;
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const topY = pad;
+      const bottomY = height - pad;
+      const neckY = centerY;
+      const maxBulbWidth = width * 0.55;
+      const neckWidth    = width * 0.09;
 
-        // top triangle
+      // ── background glow behind glass
+      const bgGrad = ctx.createRadialGradient(
+        centerX, centerY, 0,
+        centerX, centerY, width * 0.6
+      );
+      bgGrad.addColorStop(0, 'rgba(15,23,42,0.9)');
+      bgGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // ── hourglass outer shape (curved glass)
+      ctx.save();
+      ctx.translate(centerX, 0);
+
+      // path for clipping (so sand stays inside)
+      const glassPath = new Path2D();
+      const halfW = maxBulbWidth / 2;
+      const bulbHeight = (bottomY - topY) * 0.38;
+
+      // top bulb outline
+      glassPath.moveTo(-halfW, topY + bulbHeight * 0.3);
+      glassPath.quadraticCurveTo(
+        -halfW * 0.9, topY,
+        0, topY
+      );
+      glassPath.quadraticCurveTo(
+        halfW * 0.9, topY,
+        halfW, topY + bulbHeight * 0.3
+      );
+      glassPath.quadraticCurveTo(
+        halfW * 0.45, neckY - 6,
+        neckWidth / 2, neckY
+      );
+      glassPath.lineTo(-neckWidth / 2, neckY);
+      glassPath.quadraticCurveTo(
+        -halfW * 0.45, neckY - 6,
+        -halfW, topY + bulbHeight * 0.3
+      );
+
+      // bottom bulb outline
+      glassPath.moveTo(-neckWidth / 2, neckY);
+      glassPath.quadraticCurveTo(
+        -halfW * 0.45, neckY + 6,
+        -halfW, bottomY - bulbHeight * 0.3
+      );
+      glassPath.quadraticCurveTo(
+        -halfW * 0.9, bottomY,
+        0, bottomY
+      );
+      glassPath.quadraticCurveTo(
+        halfW * 0.9, bottomY,
+        halfW, bottomY - bulbHeight * 0.3
+      );
+      glassPath.quadraticCurveTo(
+        halfW * 0.45, neckY + 6,
+        neckWidth / 2, neckY
+      );
+      glassPath.closePath();
+
+      // glass interior
+      ctx.save();
+      ctx.clip(glassPath);
+      const glassGrad = ctx.createLinearGradient(0, topY, 0, bottomY);
+      glassGrad.addColorStop(0, 'rgba(15,23,42,0.96)');
+      glassGrad.addColorStop(0.5, 'rgba(15,23,42,0.85)');
+      glassGrad.addColorStop(1, 'rgba(15,23,42,0.96)');
+      ctx.fillStyle = glassGrad;
+      ctx.fillRect(-width, topY, width * 2, bottomY - topY);
+
+      // subtle vertical highlight
+      const highlightGrad = ctx.createLinearGradient(-halfW, 0, halfW, 0);
+      highlightGrad.addColorStop(0.1, 'rgba(255,255,255,0.05)');
+      highlightGrad.addColorStop(0.5, 'rgba(255,255,255,0.15)');
+      highlightGrad.addColorStop(0.9, 'rgba(255,255,255,0.05)');
+      ctx.fillStyle = highlightGrad;
+      ctx.fillRect(-halfW, topY, maxBulbWidth, bottomY - topY);
+
+      // ── sand math
+      const fullSand = 1;
+      const used = progress;
+      const remaining = Math.max(0, fullSand - used);
+
+      const topAreaFrac = remaining; // fraction of total sand in top (by "mass")
+      const bottomAreaFrac = used;
+
+      // we keep mapping linear in height; visually it's fine & time-accurate.
+      const topMaxHeight    = bulbHeight * 0.8;
+      const bottomMaxHeight = bulbHeight * 0.9;
+
+      const topFillHeight    = topMaxHeight * topAreaFrac;
+      const bottomFillHeight = bottomMaxHeight * bottomAreaFrac;
+
+      const sandTopBaseY = neckY - 4;
+      const sandTopMinY  = sandTopBaseY - topMaxHeight;
+      const sandTopY     = sandTopBaseY - topFillHeight;
+
+      const sandBottomBaseY = neckY + 4;
+      const sandBottomMaxY  = sandBottomBaseY + bottomMaxHeight;
+      const sandBottomY     = sandBottomBaseY + bottomFillHeight;
+
+      // sand color gradients
+      const sandGradTop = ctx.createLinearGradient(0, sandTopY, 0, sandTopBaseY);
+      sandGradTop.addColorStop(0, COLOR_SAND);
+      sandGradTop.addColorStop(1, '#e0b94a');
+
+      const sandGradBottom = ctx.createLinearGradient(0, sandBottomBaseY, 0, sandBottomY);
+      sandGradBottom.addColorStop(0, '#e0b94a');
+      sandGradBottom.addColorStop(1, COLOR_SAND);
+
+      // ── TOP SAND (soft rounded mass)
+      if (topAreaFrac > 0.001) {
+        ctx.fillStyle = sandGradTop;
+        const topBulge = halfW * 0.85;
+        const shrinkFactor = 0.35 + 0.65 * (topFillHeight / topMaxHeight); // wider when fuller
+        const topWidthAtBase = topBulge * shrinkFactor;
+        const topWidthAtTop  = topWidthAtBase * 0.65;
+
         ctx.beginPath();
-        ctx.moveTo(A.x, A.y);
-        ctx.lineTo(B.x, B.y);
-        ctx.lineTo(C.x, C.y);
+        ctx.moveTo(-topWidthAtTop, sandTopY);
+        ctx.quadraticCurveTo(
+          0, sandTopY - 6,
+          topWidthAtTop, sandTopY
+        );
+        ctx.quadraticCurveTo(
+          topWidthAtBase, sandTopBaseY,
+          neckWidth * 0.7, sandTopBaseY
+        );
+        ctx.lineTo(-neckWidth * 0.7, sandTopBaseY);
+        ctx.quadraticCurveTo(
+          -topWidthAtBase, sandTopBaseY,
+          -topWidthAtTop, sandTopY
+        );
         ctx.closePath();
-        ctx.stroke();
+        ctx.fill();
 
-        // bottom triangle
+        // darker rim for definition
+        ctx.strokeStyle = COLOR_SAND_DIM;
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(D.x, D.y);
-        ctx.lineTo(E.x, E.y);
-        ctx.lineTo(C.x, C.y);
+        ctx.moveTo(-topWidthAtTop, sandTopY);
+        ctx.quadraticCurveTo(
+          0, sandTopY - 6,
+          topWidthAtTop, sandTopY
+        );
+        ctx.stroke();
+      }
+
+      // ── BOTTOM SAND (pile)
+      if (bottomAreaFrac > 0.001) {
+        ctx.fillStyle = sandGradBottom;
+
+        const bottomBulge = halfW * 0.9;
+        const pileHeightRatio = bottomFillHeight / bottomMaxHeight;
+        const baseWidth = bottomBulge * (0.45 + 0.55 * pileHeightRatio);
+        const neckWidthBottom = neckWidth * 0.9;
+
+        const moundPeakY = sandBottomBaseY + Math.max(6, bottomFillHeight * 0.2);
+
+        ctx.beginPath();
+        ctx.moveTo(-baseWidth, sandBottomY);
+        ctx.quadraticCurveTo(
+          -baseWidth * 0.7, moundPeakY,
+          0, moundPeakY
+        );
+        ctx.quadraticCurveTo(
+          baseWidth * 0.7, moundPeakY,
+          baseWidth, sandBottomY
+        );
+        ctx.quadraticCurveTo(
+          neckWidthBottom, sandBottomBaseY,
+          neckWidthBottom * 0.5, sandBottomBaseY
+        );
+        ctx.lineTo(-neckWidthBottom * 0.5, sandBottomBaseY);
+        ctx.quadraticCurveTo(
+          -neckWidthBottom, sandBottomBaseY,
+          -baseWidth, sandBottomY
+        );
         ctx.closePath();
-        ctx.stroke();
+        ctx.fill();
 
-        // TOP SAND
-        const ft = 1 - progress; // fraction remaining
-        const topHeight = (height / 2 - pad);
-        const yTopFill  = pad + ft * topHeight;
-        const tTop      = (yTopFill - pad) / topHeight;
-
-        const L1 = { x: lerp(A.x, C.x, tTop), y: yTopFill };
-        const L2 = { x: lerp(B.x, C.x, tTop), y: yTopFill };
-
-        if (ft > 0) {
-          ctx.fillStyle = COLOR_SAND;
-          ctx.beginPath();
-          ctx.moveTo(A.x, A.y);
-          ctx.lineTo(B.x, B.y);
-          ctx.lineTo(L2.x, L2.y);
-          ctx.lineTo(L1.x, L1.y);
-          ctx.closePath();
-          ctx.fill();
-
-          // darker band
-          ctx.fillStyle = COLOR_SAND_DIM;
-          const bandY1 = Math.max(pad, yTopFill - 2);
-          const bandY2 = yTopFill;
-          const tBandY1 = (bandY1 - pad) / topHeight;
-          const L1a = { x: lerp(A.x, C.x, Math.max(0, tBandY1)), y: bandY1 };
-          const L2a = { x: lerp(B.x, C.x, Math.max(0, tBandY1)), y: bandY1 };
-
-          ctx.beginPath();
-          ctx.moveTo(L1a.x, L1a.y);
-          ctx.lineTo(L2a.x, L2a.y);
-          ctx.lineTo(L2.x,  L2.y);
-          ctx.lineTo(L1.x,  L1.y);
-          ctx.closePath();
-          ctx.fill();
-        }
-
-        // BOTTOM SAND
-        const fb = progress; // fraction accumulated
-        const botHeight = (height / 2 - pad);
-        const yBotFill  = (height - pad) - fb * botHeight;
-        const tBot      = fb;
-
-        const P1 = { x: lerp(D.x, C.x, tBot), y: yBotFill };
-        const P2 = { x: lerp(E.x, C.x, tBot), y: yBotFill };
-
-        if (fb > 0) {
-          ctx.fillStyle = COLOR_SAND;
-          ctx.beginPath();
-          ctx.moveTo(D.x, D.y);
-          ctx.lineTo(E.x, E.y);
-          ctx.lineTo(P2.x, P2.y);
-          ctx.lineTo(P1.x, P1.y);
-          ctx.closePath();
-          ctx.fill();
-
-          ctx.fillStyle = COLOR_SAND_DIM;
-          const bandY1 = yBotFill;
-          const bandY2 = Math.min(height - pad, yBotFill + 2);
-          const ratio1 = (height - pad - bandY2) / botHeight;
-          const P1b = { x: lerp(D.x, C.x, Math.max(0, ratio1)), y: bandY2 };
-          const P2b = { x: lerp(E.x, C.x, Math.max(0, ratio1)), y: bandY2 };
-
-          ctx.beginPath();
-          ctx.moveTo(P1.x,  P1.y);
-          ctx.lineTo(P2.x,  P2.y);
-          ctx.lineTo(P2b.x, P2b.y);
-          ctx.lineTo(P1b.x, P1b.y);
-          ctx.closePath();
-          ctx.fill();
-        }
-
-        // NECK trickle
-        if (!finished && progress > 0 && progress < 1) {
-          ctx.fillStyle = COLOR_SAND;
-          const neckH = Math.max(4, Math.floor(height * 0.04));
-          ctx.fillRect(C.x - neckW / 6, C.y - neckH / 2, neckW / 3, neckH);
-
-          // grain at bottom apex
-          ctx.beginPath();
-          ctx.arc(C.x, C.y + 3, 1.5, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // Neck frame accent
-        ctx.strokeStyle = COLOR_FRAME;
-        ctx.lineWidth = strokeW;
+        // subtle darker base
+        ctx.fillStyle = COLOR_SAND_DIM;
         ctx.beginPath();
-        ctx.moveTo(C.x - neckW / 2, C.y);
-        ctx.lineTo(C.x + neckW / 2, C.y);
-        ctx.stroke();
+        ctx.ellipse(0, sandBottomY, baseWidth * 0.7, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
       }
 
-      function updateHourglass() {
-        const now = getNowInLA();
-        const totalMs = YEAR2_END - YEAR2_START;
-        const elapsedMs = now - YEAR2_START;
-        const clamped   = Math.max(0, Math.min(totalMs, elapsedMs));
-        const progress  = totalMs === 0 ? 1 : clamped / totalMs;
-        const msLeft    = Math.max(0, YEAR2_END - now);
-        const finished  = msLeft <= 0;
+      // ── NECK sand stream (animated)
+      if (!finished && progress > 0 && progress < 1) {
+        const streamWidth = neckWidth * 0.35;
+        const streamHeight = 18;
 
-        const left = breakdown(msLeft);
-        const color = phaseColor(msLeft, finished);
+        // pulsing opacity
+        const pulse = 0.6 + 0.3 * Math.sin(animPhase * 4.0);
+        const streamGrad = ctx.createLinearGradient(0, neckY - streamHeight / 2, 0, neckY + streamHeight / 2);
+        streamGrad.addColorStop(0, `rgba(244,208,111,${0.15 * pulse})`);
+        streamGrad.addColorStop(0.5, `rgba(244,208,111,${0.7 * pulse})`);
+        streamGrad.addColorStop(1, `rgba(244,208,111,${0.15 * pulse})`);
 
-        if (finished) {
-          dhmEl.textContent = 'TIME EXPIRED';
-          pctEl.textContent = '100% elapsed — pivot or perish.';
-          subEl.textContent = 'Outcome is binary.';
-          footEl.textContent = 'No alibis. Ship.';
-        } else {
-          dhmEl.textContent = `${left.d}d ${left.h}h ${left.m}m`;
-          const pct = Math.round(progress * 100);
-          pctEl.textContent = `${pct}% of Year 2 elapsed`;
-          subEl.textContent = 'Sand is falling.';
-          footEl.textContent = 'Lead Gen → Lead Nurture → Sales.';
+        ctx.fillStyle = streamGrad;
+        ctx.beginPath();
+        ctx.roundRect(
+          -streamWidth / 2,
+          neckY - streamHeight / 2,
+          streamWidth,
+          streamHeight,
+          streamWidth / 2
+        );
+        ctx.fill();
+
+        // a few falling grains cycling
+        const grainCount = 5;
+        for (let i = 0; i < grainCount; i++) {
+          const localT = (animPhase * 0.8 + i / grainCount) % 1;
+          const gy = neckY - 3 + localT * 22;
+          const sway = Math.sin((animPhase * 3.0) + i) * 1.2;
+          ctx.beginPath();
+          ctx.fillStyle = 'rgba(244,208,111,0.9)';
+          ctx.arc(sway, gy, 1.2, 0, Math.PI * 2);
+          ctx.fill();
         }
-
-        dhmEl.style.color = color;
-
-        drawHourglass(progress, finished);
       }
 
+      ctx.restore(); // end clip
+
+      // outer glass edge
+      ctx.strokeStyle = COLOR_GLASS_EDGE;
+      ctx.lineWidth = 2;
+      ctx.stroke(glassPath);
+
+      // inner bright rim
+      ctx.strokeStyle = COLOR_FRAME;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.7;
+      ctx.stroke(glassPath);
+      ctx.globalAlpha = 1.0;
+
+      ctx.restore();
+    }
+
+    function updateHourglass() {
+      const now = getNowInLA();
+      const totalMs = YEAR2_END - YEAR2_START;
+      const elapsedMs = now - YEAR2_START;
+      const clamped   = Math.max(0, Math.min(totalMs, elapsedMs));
+      const progress  = totalMs === 0 ? 1 : clamped / totalMs;
+      const msLeft    = Math.max(0, YEAR2_END - now);
+      const finished  = msLeft <= 0;
+
+      const left = breakdown(msLeft);
+      const color = phaseColor(msLeft, finished);
+
+      if (finished) {
+        dhmEl.textContent = 'TIME EXPIRED';
+        pctEl.textContent = '100% elapsed — pivot or perish.';
+        subEl.textContent = 'Outcome is binary.';
+        footEl.textContent = 'No alibis. Ship.';
+      } else {
+        dhmEl.textContent = `${left.d}d ${left.h}h ${left.m}m`;
+        const pct = Math.round(progress * 100);
+        pctEl.textContent = `${pct}% of Year 2 elapsed`;
+        subEl.textContent = 'Sand is falling.';
+        footEl.textContent = 'Lead Gen → Lead Nurture → Sales.';
+      }
+
+      dhmEl.style.color = color;
+
+      // live animation phase (not tied to year progress)
+      const animPhase = (Date.now() % 4000) / 4000; // 0 → 1 every 4s
+      drawHourglass(progress, finished, animPhase);
+    }
+
+    // drive both time accuracy & continuous animation
+    function loop() {
       updateHourglass();
-      // second-level updates so the time feels alive
-      setInterval(updateHourglass, 1000);
-    })();
-  </script>
+      requestAnimationFrame(loop);
+    }
+
+    loop();
+  })();
+</script>
+
 </body>
 </html>
