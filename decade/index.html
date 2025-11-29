@@ -598,7 +598,7 @@
   </footer>
 
 <script>
-  // ───────────── YEAR 2 HOURGLASS LOGIC (LA TIME) ─────────────
+  // ───────────── YEAR 2 HOURGLASS – LA TIME, LIVE, PHYSICALLY PLAUSIBLE ─────────────
   (function () {
     const MS_DAY = 86400000;
     const YEAR2_START = new Date('2025-08-31T00:00:00-07:00');
@@ -611,7 +611,7 @@
     const logicalWidth  = 320;
     const logicalHeight = 220;
 
-    // make the canvas sharp on retina
+    // High-DPI canvas
     canvas.width  = logicalWidth * dpr;
     canvas.height = logicalHeight * dpr;
     canvas.style.width  = logicalWidth + 'px';
@@ -624,6 +624,30 @@
     const pctEl   = document.getElementById('year2Pct');
     const subEl   = document.getElementById('year2Sub');
     const footEl  = document.getElementById('year2Footer');
+
+    // Geometry (fixed relative to canvas)
+    const W  = logicalWidth;
+    const H  = logicalHeight;
+    const PAD = 16;
+
+    const centerX = W / 2;
+    const topY    = PAD;
+    const bottomY = H - PAD;
+    const neckY   = H / 2;
+
+    const yTopInner    = topY + 6;
+    const yBottomInner = bottomY - 6;
+
+    const topBulbWidth    = W * 0.60;
+    const bottomBulbWidth = W * 0.70;
+    const neckInnerWidth  = W * 0.18;
+
+    const topHalf    = topBulbWidth / 2;
+    const bottomHalf = bottomBulbWidth / 2;
+    const neckHalf   = neckInnerWidth / 2;
+
+    const maxTopHeight    = neckY - yTopInner;
+    const maxBottomHeight = yBottomInner - neckY;
 
     function getNowInLA() {
       const nowStr = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
@@ -653,272 +677,198 @@
       return a + (b - a) * t;
     }
 
-    // improved hourglass: glass body + smoother sand + animated stream
-    function drawHourglass(progress, finished, animPhase) {
-      const width  = logicalWidth;
-      const height = logicalHeight;
+    // width of the glass interior at a given y (for top / bottom bulbs)
+    function widthAtYTop(y) {
+      const t = (y - yTopInner) / (neckY - yTopInner);
+      const clamped = Math.max(0, Math.min(1, t));
+      return lerp(topBulbWidth, neckInnerWidth, clamped);
+    }
+    function widthAtYBottom(y) {
+      const t = (y - neckY) / (yBottomInner - neckY);
+      const clamped = Math.max(0, Math.min(1, t));
+      return lerp(neckInnerWidth, bottomBulbWidth, clamped);
+    }
 
-      ctx.clearRect(0, 0, width, height);
+    // prebuild glass path once
+    const glassPath = (function () {
+      const p = new Path2D();
+      // Work in a centered coordinate system
+      // We'll translate the context to centerX before using this
+
+      // top bulb
+      p.moveTo(-topHalf, yTopInner);
+      p.quadraticCurveTo(-topHalf * 0.8, topY, 0, topY);
+      p.quadraticCurveTo(topHalf * 0.8, topY, topHalf, yTopInner);
+      p.quadraticCurveTo(topHalf * 0.4, neckY - 6, neckHalf, neckY);
+      p.lineTo(-neckHalf, neckY);
+      p.quadraticCurveTo(-topHalf * 0.4, neckY - 6, -topHalf, yTopInner);
+
+      // bottom bulb
+      p.moveTo(-neckHalf, neckY);
+      p.quadraticCurveTo(-bottomHalf * 0.4, neckY + 6, -bottomHalf, yBottomInner);
+      p.quadraticCurveTo(-bottomHalf * 0.8, bottomY, 0, bottomY);
+      p.quadraticCurveTo(bottomHalf * 0.8, bottomY, bottomHalf, yBottomInner);
+      p.quadraticCurveTo(bottomHalf * 0.4, neckY + 6, neckHalf, neckY);
+      p.closePath();
+      return p;
+    })();
+
+    function drawHourglass(progress, finished, animPhase) {
+      ctx.clearRect(0, 0, W, H);
+
+      ctx.save();
+      ctx.translate(centerX, 0); // x=0 at center
 
       const COLOR_FRAME      = 'rgba(255,255,255,0.9)';
-      const COLOR_GLASS_EDGE = 'rgba(255,255,255,0.18)';
-      const COLOR_GLASS_FILL = 'rgba(15,23,42,0.75)';
+      const COLOR_GLASS_EDGE = 'rgba(255,255,255,0.20)';
       const COLOR_SAND       = '#f4d06f';
-      const COLOR_SAND_DIM   = 'rgba(156,126,43,0.25)';
+      const COLOR_SAND_DIM   = 'rgba(156,126,43,0.3)';
 
-      const pad   = 16;
-      const centerX = width / 2;
-      const centerY = height / 2;
-      const topY = pad;
-      const bottomY = height - pad;
-      const neckY = centerY;
-      const maxBulbWidth = width * 0.55;
-      const neckWidth    = width * 0.09;
-
-      // ── background glow behind glass
+      // Background glow
       const bgGrad = ctx.createRadialGradient(
-        centerX, centerY, 0,
-        centerX, centerY, width * 0.6
+        0, neckY, 0,
+        0, neckY, W * 0.6
       );
       bgGrad.addColorStop(0, 'rgba(15,23,42,0.9)');
       bgGrad.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, width, height);
+      ctx.fillRect(-W, 0, W * 2, H);
 
-      // ── hourglass outer shape (curved glass)
-      ctx.save();
-      ctx.translate(centerX, 0);
-
-      // path for clipping (so sand stays inside)
-      const glassPath = new Path2D();
-      const halfW = maxBulbWidth / 2;
-      const bulbHeight = (bottomY - topY) * 0.38;
-
-      // top bulb outline
-      glassPath.moveTo(-halfW, topY + bulbHeight * 0.3);
-      glassPath.quadraticCurveTo(
-        -halfW * 0.9, topY,
-        0, topY
-      );
-      glassPath.quadraticCurveTo(
-        halfW * 0.9, topY,
-        halfW, topY + bulbHeight * 0.3
-      );
-      glassPath.quadraticCurveTo(
-        halfW * 0.45, neckY - 6,
-        neckWidth / 2, neckY
-      );
-      glassPath.lineTo(-neckWidth / 2, neckY);
-      glassPath.quadraticCurveTo(
-        -halfW * 0.45, neckY - 6,
-        -halfW, topY + bulbHeight * 0.3
-      );
-
-      // bottom bulb outline
-      glassPath.moveTo(-neckWidth / 2, neckY);
-      glassPath.quadraticCurveTo(
-        -halfW * 0.45, neckY + 6,
-        -halfW, bottomY - bulbHeight * 0.3
-      );
-      glassPath.quadraticCurveTo(
-        -halfW * 0.9, bottomY,
-        0, bottomY
-      );
-      glassPath.quadraticCurveTo(
-        halfW * 0.9, bottomY,
-        halfW, bottomY - bulbHeight * 0.3
-      );
-      glassPath.quadraticCurveTo(
-        halfW * 0.45, neckY + 6,
-        neckWidth / 2, neckY
-      );
-      glassPath.closePath();
-
-      // glass interior
+      // Clip to glass interior
       ctx.save();
       ctx.clip(glassPath);
+
+      // Glass interior background
       const glassGrad = ctx.createLinearGradient(0, topY, 0, bottomY);
       glassGrad.addColorStop(0, 'rgba(15,23,42,0.96)');
       glassGrad.addColorStop(0.5, 'rgba(15,23,42,0.85)');
       glassGrad.addColorStop(1, 'rgba(15,23,42,0.96)');
       ctx.fillStyle = glassGrad;
-      ctx.fillRect(-width, topY, width * 2, bottomY - topY);
+      ctx.fillRect(-W, topY, W * 2, bottomY - topY);
 
-      // subtle vertical highlight
-      const highlightGrad = ctx.createLinearGradient(-halfW, 0, halfW, 0);
-      highlightGrad.addColorStop(0.1, 'rgba(255,255,255,0.05)');
-      highlightGrad.addColorStop(0.5, 'rgba(255,255,255,0.15)');
-      highlightGrad.addColorStop(0.9, 'rgba(255,255,255,0.05)');
-      ctx.fillStyle = highlightGrad;
-      ctx.fillRect(-halfW, topY, maxBulbWidth, bottomY - topY);
+      // ---- Sand fractions ----
+      const bottomFrac = Math.max(0, Math.min(1, progress));
+      const topFrac    = 1 - bottomFrac;
 
-      // ── sand math
-      const fullSand = 1;
-      const used = progress;
-      const remaining = Math.max(0, fullSand - used);
+      // ---- TOP SAND (flat surface, wedge to neck) ----
+      if (topFrac > 0.0005) {
+        const fillHeightTop = maxTopHeight * topFrac;
+        const yLevel = neckY - fillHeightTop;
+        const widthLevel = widthAtYTop(yLevel);
+        const halfLevel  = widthLevel / 2;
 
-      const topAreaFrac = remaining; // fraction of total sand in top (by "mass")
-      const bottomAreaFrac = used;
-
-      // we keep mapping linear in height; visually it's fine & time-accurate.
-      const topMaxHeight    = bulbHeight * 0.8;
-      const bottomMaxHeight = bulbHeight * 0.9;
-
-      const topFillHeight    = topMaxHeight * topAreaFrac;
-      const bottomFillHeight = bottomMaxHeight * bottomAreaFrac;
-
-      const sandTopBaseY = neckY - 4;
-      const sandTopMinY  = sandTopBaseY - topMaxHeight;
-      const sandTopY     = sandTopBaseY - topFillHeight;
-
-      const sandBottomBaseY = neckY + 4;
-      const sandBottomMaxY  = sandBottomBaseY + bottomMaxHeight;
-      const sandBottomY     = sandBottomBaseY + bottomFillHeight;
-
-      // sand color gradients
-      const sandGradTop = ctx.createLinearGradient(0, sandTopY, 0, sandTopBaseY);
-      sandGradTop.addColorStop(0, COLOR_SAND);
-      sandGradTop.addColorStop(1, '#e0b94a');
-
-      const sandGradBottom = ctx.createLinearGradient(0, sandBottomBaseY, 0, sandBottomY);
-      sandGradBottom.addColorStop(0, '#e0b94a');
-      sandGradBottom.addColorStop(1, COLOR_SAND);
-
-      // ── TOP SAND (soft rounded mass)
-      if (topAreaFrac > 0.001) {
+        const sandGradTop = ctx.createLinearGradient(0, yLevel, 0, neckY);
+        sandGradTop.addColorStop(0, '#f8e19a');
+        sandGradTop.addColorStop(1, COLOR_SAND);
         ctx.fillStyle = sandGradTop;
-        const topBulge = halfW * 0.85;
-        const shrinkFactor = 0.35 + 0.65 * (topFillHeight / topMaxHeight); // wider when fuller
-        const topWidthAtBase = topBulge * shrinkFactor;
-        const topWidthAtTop  = topWidthAtBase * 0.65;
 
         ctx.beginPath();
-        ctx.moveTo(-topWidthAtTop, sandTopY);
-        ctx.quadraticCurveTo(
-          0, sandTopY - 6,
-          topWidthAtTop, sandTopY
-        );
-        ctx.quadraticCurveTo(
-          topWidthAtBase, sandTopBaseY,
-          neckWidth * 0.7, sandTopBaseY
-        );
-        ctx.lineTo(-neckWidth * 0.7, sandTopBaseY);
-        ctx.quadraticCurveTo(
-          -topWidthAtBase, sandTopBaseY,
-          -topWidthAtTop, sandTopY
-        );
+        // flat top surface
+        ctx.moveTo(-halfLevel, yLevel);
+        ctx.lineTo(halfLevel, yLevel);
+        // wedge towards neck
+        ctx.lineTo(neckHalf * 0.9, neckY);
+        ctx.lineTo(-neckHalf * 0.9, neckY);
         ctx.closePath();
         ctx.fill();
 
-        // darker rim for definition
+        // darker rim line at the top surface
         ctx.strokeStyle = COLOR_SAND_DIM;
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(-topWidthAtTop, sandTopY);
-        ctx.quadraticCurveTo(
-          0, sandTopY - 6,
-          topWidthAtTop, sandTopY
-        );
+        ctx.moveTo(-halfLevel, yLevel);
+        ctx.lineTo(halfLevel, yLevel);
         ctx.stroke();
       }
 
-      // ── BOTTOM SAND (pile)
-      if (bottomAreaFrac > 0.001) {
+      // ---- BOTTOM SAND (pile from bottom, obeying gravity) ----
+      let yTopOfPile = null; // we reuse this for stream impact
+
+      if (bottomFrac > 0.0005) {
+        const fillHeightBottom = maxBottomHeight * bottomFrac;
+        // apex moves upward from bottom towards neck
+        yTopOfPile = yBottomInner - fillHeightBottom;
+        // clamp so it never intersects the neck visually
+        yTopOfPile = Math.max(neckY + 6, yTopOfPile);
+
+        const baseWidth = bottomBulbWidth * 0.85;
+        const baseHalf  = baseWidth / 2;
+        const topWidth  = neckInnerWidth * 0.9;
+        const topHalf   = topWidth / 2;
+
+        const sandGradBottom = ctx.createLinearGradient(0, yTopOfPile, 0, yBottomInner);
+        sandGradBottom.addColorStop(0, '#f8e19a');
+        sandGradBottom.addColorStop(1, COLOR_SAND);
         ctx.fillStyle = sandGradBottom;
 
-        const bottomBulge = halfW * 0.9;
-        const pileHeightRatio = bottomFillHeight / bottomMaxHeight;
-        const baseWidth = bottomBulge * (0.45 + 0.55 * pileHeightRatio);
-        const neckWidthBottom = neckWidth * 0.9;
-
-        const moundPeakY = sandBottomBaseY + Math.max(6, bottomFillHeight * 0.2);
-
         ctx.beginPath();
-        ctx.moveTo(-baseWidth, sandBottomY);
-        ctx.quadraticCurveTo(
-          -baseWidth * 0.7, moundPeakY,
-          0, moundPeakY
-        );
-        ctx.quadraticCurveTo(
-          baseWidth * 0.7, moundPeakY,
-          baseWidth, sandBottomY
-        );
-        ctx.quadraticCurveTo(
-          neckWidthBottom, sandBottomBaseY,
-          neckWidthBottom * 0.5, sandBottomBaseY
-        );
-        ctx.lineTo(-neckWidthBottom * 0.5, sandBottomBaseY);
-        ctx.quadraticCurveTo(
-          -neckWidthBottom, sandBottomBaseY,
-          -baseWidth, sandBottomY
-        );
+        ctx.moveTo(-baseHalf, yBottomInner);
+        ctx.lineTo(baseHalf, yBottomInner);
+        ctx.lineTo(topHalf, yTopOfPile);
+        ctx.lineTo(-topHalf, yTopOfPile);
         ctx.closePath();
         ctx.fill();
 
-        // subtle darker base
+        // darker base ellipse
         ctx.fillStyle = COLOR_SAND_DIM;
         ctx.beginPath();
-        ctx.ellipse(0, sandBottomY, baseWidth * 0.7, 4, 0, 0, Math.PI * 2);
+        ctx.ellipse(0, yBottomInner, baseHalf * 0.7, 4, 0, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // ── NECK sand stream (animated)
-      if (!finished && progress > 0 && progress < 1) {
-        const streamWidth = neckWidth * 0.35;
-        const streamHeight = 18;
+      // ---- STREAM: continuous neck → pile/base ----
+      if (!finished && bottomFrac > 0 && bottomFrac < 1) {
+        const impactY = yTopOfPile != null ? yTopOfPile : yBottomInner;
+        const totalSpan = Math.max(10, impactY - neckY);
 
-        // pulsing opacity
-        const pulse = 0.6 + 0.3 * Math.sin(animPhase * 4.0);
-        const streamGrad = ctx.createLinearGradient(0, neckY - streamHeight / 2, 0, neckY + streamHeight / 2);
-        streamGrad.addColorStop(0, `rgba(244,208,111,${0.15 * pulse})`);
-        streamGrad.addColorStop(0.5, `rgba(244,208,111,${0.7 * pulse})`);
-        streamGrad.addColorStop(1, `rgba(244,208,111,${0.15 * pulse})`);
+        const streamWidth = neckInnerWidth * 0.25;
 
+        const pulse = 0.65 + 0.25 * Math.sin(animPhase * 4.0);
+        const streamGrad = ctx.createLinearGradient(0, neckY, 0, impactY);
+        streamGrad.addColorStop(0, `rgba(244,208,111,${0.05 * pulse})`);
+        streamGrad.addColorStop(0.4, `rgba(244,208,111,${0.6 * pulse})`);
+        streamGrad.addColorStop(1, `rgba(244,208,111,${0.18 * pulse})`);
         ctx.fillStyle = streamGrad;
+
         ctx.beginPath();
-        ctx.roundRect(
-          -streamWidth / 2,
-          neckY - streamHeight / 2,
-          streamWidth,
-          streamHeight,
-          streamWidth / 2
-        );
+        ctx.rect(-streamWidth / 2, neckY, streamWidth, totalSpan);
         ctx.fill();
 
-        // a few falling grains cycling
-        const grainCount = 5;
+        // falling grains that travel the full length
+        const grainCount = 6;
         for (let i = 0; i < grainCount; i++) {
-          const localT = (animPhase * 0.8 + i / grainCount) % 1;
-          const gy = neckY - 3 + localT * 22;
-          const sway = Math.sin((animPhase * 3.0) + i) * 1.2;
+          const localT = (animPhase * 0.9 + i / grainCount) % 1;
+          const gy = neckY + localT * (totalSpan - 4);
+          const sway = Math.sin(animPhase * 3.2 + i * 1.7) * 1.3;
+
           ctx.beginPath();
-          ctx.fillStyle = 'rgba(244,208,111,0.9)';
-          ctx.arc(sway, gy, 1.2, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(244,208,111,0.95)';
+          ctx.arc(sway, gy, 1.1, 0, Math.PI * 2);
           ctx.fill();
         }
       }
 
       ctx.restore(); // end clip
 
-      // outer glass edge
+      // glass outline on top
       ctx.strokeStyle = COLOR_GLASS_EDGE;
       ctx.lineWidth = 2;
       ctx.stroke(glassPath);
 
-      // inner bright rim
       ctx.strokeStyle = COLOR_FRAME;
       ctx.lineWidth = 1;
       ctx.globalAlpha = 0.7;
       ctx.stroke(glassPath);
-      ctx.globalAlpha = 1.0;
+      ctx.globalAlpha = 1;
 
-      ctx.restore();
+      ctx.restore(); // undo translate
     }
 
-    function updateHourglass() {
+    function frame() {
       const now = getNowInLA();
       const totalMs = YEAR2_END - YEAR2_START;
       const elapsedMs = now - YEAR2_START;
+
       const clamped   = Math.max(0, Math.min(totalMs, elapsedMs));
       const progress  = totalMs === 0 ? 1 : clamped / totalMs;
       const msLeft    = Math.max(0, YEAR2_END - now);
@@ -942,20 +892,16 @@
 
       dhmEl.style.color = color;
 
-      // live animation phase (not tied to year progress)
-      const animPhase = (Date.now() % 4000) / 4000; // 0 → 1 every 4s
+      const animPhase = (now.getTime() % 4000) / 4000; // 0→1 every 4s
       drawHourglass(progress, finished, animPhase);
+
+      requestAnimationFrame(frame);
     }
 
-    // drive both time accuracy & continuous animation
-    function loop() {
-      updateHourglass();
-      requestAnimationFrame(loop);
-    }
-
-    loop();
+    frame();
   })();
 </script>
+
 
 </body>
 </html>
