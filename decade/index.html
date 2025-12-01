@@ -665,7 +665,7 @@
 
     const topBulbWidth    = W * 0.60;
     const bottomBulbWidth = W * 0.70;
-    // THINNER NECK
+    // THIN NECK
     const neckInnerWidth  = W * 0.05;
 
     const topHalf    = topBulbWidth / 2;
@@ -754,14 +754,17 @@
       ctx.save();
       ctx.translate(centerX, 0); // center on X
 
-      // ───────── BACKGROUND / VIGNETTE ─────────
+      // ───────── MATCH WIDGET BACKGROUND (#141828) ─────────
+      ctx.fillStyle = '#141828';
+      ctx.fillRect(-W / 2, 0, W, H);
+
+      // subtle vignette overlay, but same base color at edges
       const vignette = ctx.createRadialGradient(
         0, H * 0.3, 10,
         0, H * 0.5, H * 0.9
       );
-      vignette.addColorStop(0.0, '#020617');
-      vignette.addColorStop(0.4, 'rgba(15,23,42,0.98)');
-      vignette.addColorStop(1.0, 'rgba(3,7,18,0.0)');
+      vignette.addColorStop(0.0, 'rgba(31,41,55,0.65)');
+      vignette.addColorStop(1.0, 'rgba(20,24,40,0)');
       ctx.fillStyle = vignette;
       ctx.fillRect(-W / 2, 0, W, H);
 
@@ -875,7 +878,8 @@
       if (topFrac > 0.0005) {
         const fillHeightTop = maxTopHeight * topFrac;
         const yLevel = neckY - fillHeightTop;
-        const widthLevel = widthAtYTop(yLevel);
+        // slightly overfill and let clip hug glass so it doesn't "hover"
+        const widthLevel = widthAtYTop(yLevel) * 1.02;
         const halfLevel  = widthLevel / 2;
         const surfaceDepth = Math.min(8, (neckY - yLevel) * 0.55);
 
@@ -888,8 +892,8 @@
         ctx.beginPath();
         ctx.moveTo(-halfLevel, yLevel);
         ctx.quadraticCurveTo(0, yLevel + surfaceDepth, halfLevel, yLevel);
-        ctx.lineTo(neckHalf * 0.9, neckY);
-        ctx.quadraticCurveTo(0, neckY + 2, -neckHalf * 0.9, neckY);
+        ctx.lineTo(neckHalf * 1.02, neckY);
+        ctx.quadraticCurveTo(0, neckY + 2, -neckHalf * 1.02, neckY);
         ctx.closePath();
         ctx.fill();
 
@@ -909,10 +913,11 @@
         yTopOfPile = yBottomInner - fillHeightBottom;
         yTopOfPile = Math.max(neckY + 6, yTopOfPile);
 
-        const baseWidth = bottomBulbWidth * 0.9;
+        // base widened to hug interior; clip keeps it inside glass
+        const baseWidth = bottomBulbWidth * 1.02;
         const baseHalf  = baseWidth / 2;
         const apexY     = yTopOfPile - 3;
-        const neckWidth = neckInnerWidth * 0.9;
+        const neckWidth = neckInnerWidth * 1.02;
         const neckHalfLocal  = neckWidth / 2;
 
         const sandBottomGrad = ctx.createLinearGradient(0, apexY - 6, 0, yBottomInner + 4);
@@ -947,7 +952,6 @@
         const impactY = yTopOfPile != null ? yTopOfPile - 2 : yBottomInner - 3;
         const totalSpan = Math.max(12, impactY - neckY);
 
-        // make stream a significant fraction of the very thin neck
         const streamWidth = neckInnerWidth * 0.5;
         const pulse = 0.65 + 0.25 * Math.sin(animPhase * 4.0);
 
@@ -993,28 +997,17 @@
       ctx.fillStyle = caustic;
       ctx.fillRect(-W, neckY, W * 2, bottomY - neckY);
 
-      // inner reflections
+      // inner soft shine (stays clipped, no ghost outline)
       const innerShine = ctx.createLinearGradient(topHalf * 0.2, topY, topHalf * 0.9, bottomY);
-      innerShine.addColorStop(0.0, 'rgba(255,255,255,0.20)');
-      innerShine.addColorStop(0.3, 'rgba(255,255,255,0.06)');
+      innerShine.addColorStop(0.0, 'rgba(255,255,255,0.18)');
+      innerShine.addColorStop(0.3, 'rgba(255,255,255,0.05)');
       innerShine.addColorStop(1.0, 'rgba(255,255,255,0.0)');
       ctx.fillStyle = innerShine;
       ctx.fillRect(topHalf * 0.1, topY, topHalf * 0.9, bottomY - topY);
 
-      // slender bright highlight on left
-      ctx.globalAlpha = 0.4;
-      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-      ctx.lineWidth = 1.0;
-      ctx.beginPath();
-      ctx.moveTo(-topHalf * 0.95, topY + 6);
-      ctx.quadraticCurveTo(-topHalf * 0.85, H * 0.35, -neckHalf * 1.05, neckY);
-      ctx.quadraticCurveTo(-bottomHalf * 0.9, H * 0.75, -bottomHalf * 0.8, bottomY - 6);
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-
       ctx.restore(); // end clip
 
-      // ───────── GLASS OUTER EDGES ─────────
+      // ───────── GLASS OUTER EDGES (NO GHOST OUTLINE) ─────────
       ctx.strokeStyle = 'rgba(148,163,184,0.85)';
       ctx.lineWidth = 2.4;
       ctx.stroke(glassPath);
