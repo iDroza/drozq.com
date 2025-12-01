@@ -751,22 +751,103 @@
       ctx.clearRect(0, 0, W, H);
 
       ctx.save();
-      ctx.translate(centerX, 0); // center x
+      ctx.translate(centerX, 0); // center on X axis
 
-      const COLOR_FRAME      = 'rgba(255,255,255,0.9)';
-      const COLOR_GLASS_EDGE = 'rgba(255,255,255,0.20)';
-      const COLOR_SAND       = '#f4d06f';
-      const COLOR_SAND_DIM   = 'rgba(156,126,43,0.3)';
+      // ───────────── BACKGROUND GLOW ─────────────
+      const bgGrad = ctx.createRadialGradient(
+        0, H * 0.25, 6,
+        0, H * 0.55, H * 0.9
+      );
+      bgGrad.addColorStop(0.0, 'rgba(15,23,42,1)');
+      bgGrad.addColorStop(0.5, 'rgba(15,23,42,0.95)');
+      bgGrad.addColorStop(1.0, 'rgba(15,23,42,0)');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(-W / 2, 0, W, H);
 
-      // Clip to glass interior
+      // ───────────── STAND (TOP / BOTTOM CAPS + PILLARS) ─────────────
+      const frameWidth   = bottomBulbWidth * 0.95;
+      const capHeight    = 8;
+      const pillarWidth  = 7;
+      const pillarOffset = frameWidth * 0.46;
+      const pillarTopY   = topY - 10;
+      const pillarBotY   = bottomY + 2;
+
+      // bottom cap
+      let capGrad = ctx.createLinearGradient(-frameWidth / 2, bottomY + 2, frameWidth / 2, bottomY + 2);
+      capGrad.addColorStop(0.0, '#020617');
+      capGrad.addColorStop(0.5, '#111827');
+      capGrad.addColorStop(1.0, '#020617');
+      ctx.fillStyle = capGrad;
+      ctx.beginPath();
+      if (ctx.roundRect) {
+        ctx.roundRect(-frameWidth / 2, bottomY + 2, frameWidth, capHeight, 4);
+      } else {
+        ctx.moveTo(-frameWidth / 2, bottomY + 2);
+        ctx.lineTo(frameWidth / 2, bottomY + 2);
+        ctx.lineTo(frameWidth / 2, bottomY + 2 + capHeight);
+        ctx.lineTo(-frameWidth / 2, bottomY + 2 + capHeight);
+        ctx.closePath();
+      }
+      ctx.fill();
+
+      // top cap
+      capGrad = ctx.createLinearGradient(-frameWidth / 2, topY - 10, frameWidth / 2, topY - 10);
+      capGrad.addColorStop(0.0, '#020617');
+      capGrad.addColorStop(0.5, '#111827');
+      capGrad.addColorStop(1.0, '#020617');
+      ctx.fillStyle = capGrad;
+      ctx.beginPath();
+      if (ctx.roundRect) {
+        ctx.roundRect(-frameWidth / 2, topY - 10, frameWidth, capHeight, 4);
+      } else {
+        ctx.moveTo(-frameWidth / 2, topY - 10);
+        ctx.lineTo(frameWidth / 2, topY - 10);
+        ctx.lineTo(frameWidth / 2, topY - 10 + capHeight);
+        ctx.lineTo(-frameWidth / 2, topY - 10 + capHeight);
+        ctx.closePath();
+      }
+      ctx.fill();
+
+      // pillars
+      const pillarGrad = ctx.createLinearGradient(-pillarWidth / 2, 0, pillarWidth / 2, 0);
+      pillarGrad.addColorStop(0.0, '#020617');
+      pillarGrad.addColorStop(0.4, '#111827');
+      pillarGrad.addColorStop(0.7, '#0b1120');
+      pillarGrad.addColorStop(1.0, '#020617');
+      ctx.fillStyle = pillarGrad;
+
+      ctx.beginPath();
+      const pillarHeight = pillarBotY - pillarTopY;
+      if (ctx.roundRect) {
+        ctx.roundRect(-pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight, 3);
+        ctx.roundRect( pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight, 3);
+      } else {
+        ctx.rect(-pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight);
+        ctx.rect( pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight);
+      }
+      ctx.fill();
+
+      // shadow under hourglass
+      const shadowGrad = ctx.createRadialGradient(
+        0, bottomY + 4, 2,
+        0, bottomY + 4, bottomBulbWidth * 0.6
+      );
+      shadowGrad.addColorStop(0.0, 'rgba(0,0,0,0.8)');
+      shadowGrad.addColorStop(1.0, 'rgba(0,0,0,0)');
+      ctx.fillStyle = shadowGrad;
+      ctx.beginPath();
+      ctx.ellipse(0, bottomY + 4, bottomBulbWidth * 0.6, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // ───────────── GLASS + SAND (CLIPPED) ─────────────
       ctx.save();
       ctx.clip(glassPath);
 
-      // Glass interior background (subtle vertical gradient)
+      // glass interior background
       const glassGrad = ctx.createLinearGradient(0, topY, 0, bottomY);
-      glassGrad.addColorStop(0, 'rgba(15,23,42,0.96)');
-      glassGrad.addColorStop(0.5, 'rgba(15,23,42,0.88)');
-      glassGrad.addColorStop(1, 'rgba(15,23,42,0.96)');
+      glassGrad.addColorStop(0.0, 'rgba(15,23,42,0.95)');
+      glassGrad.addColorStop(0.5, 'rgba(15,23,42,0.85)');
+      glassGrad.addColorStop(1.0, 'rgba(15,23,42,0.97)');
       ctx.fillStyle = glassGrad;
       ctx.fillRect(-W, topY, W * 2, bottomY - topY);
 
@@ -774,111 +855,143 @@
       const bottomFrac = Math.max(0, Math.min(1, progress));
       const topFrac    = 1 - bottomFrac;
 
-      // TOP SAND (flat)
+      // ───────────── TOP SAND (CONCAVE SURFACE) ─────────────
       if (topFrac > 0.0005) {
         const fillHeightTop = maxTopHeight * topFrac;
         const yLevel = neckY - fillHeightTop;
         const widthLevel = widthAtYTop(yLevel);
         const halfLevel  = widthLevel / 2;
 
+        const concavity = (neckY - yLevel) * 0.4;
+
         const sandGradTop = ctx.createLinearGradient(0, yLevel, 0, neckY);
-        sandGradTop.addColorStop(0, '#f8e19a');
-        sandGradTop.addColorStop(1, COLOR_SAND);
+        sandGradTop.addColorStop(0.0, '#fbe8a4');
+        sandGradTop.addColorStop(0.4, '#f4d06f');
+        sandGradTop.addColorStop(1.0, '#e0b557');
         ctx.fillStyle = sandGradTop;
 
         ctx.beginPath();
+        // concave surface
         ctx.moveTo(-halfLevel, yLevel);
-        ctx.lineTo(halfLevel, yLevel);
+        ctx.quadraticCurveTo(0, yLevel + concavity, halfLevel, yLevel);
+        // sloping down to neck
         ctx.lineTo(neckHalf * 0.9, neckY);
-        ctx.lineTo(-neckHalf * 0.9, neckY);
+        ctx.quadraticCurveTo(0, neckY + 2, -neckHalf * 0.9, neckY);
         ctx.closePath();
         ctx.fill();
 
-        ctx.strokeStyle = COLOR_SAND_DIM;
-        ctx.lineWidth = 1;
+        // subtle top highlight line
+        ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+        ctx.lineWidth = 0.8;
         ctx.beginPath();
         ctx.moveTo(-halfLevel, yLevel);
-        ctx.lineTo(halfLevel, yLevel);
+        ctx.quadraticCurveTo(0, yLevel + concavity, halfLevel, yLevel);
         ctx.stroke();
       }
 
-      // BOTTOM SAND (pile)
+      // ───────────── BOTTOM SAND (CONICAL PILE) ─────────────
       let yTopOfPile = null;
       if (bottomFrac > 0.0005) {
         const fillHeightBottom = maxBottomHeight * bottomFrac;
         yTopOfPile = yBottomInner - fillHeightBottom;
         yTopOfPile = Math.max(neckY + 6, yTopOfPile);
 
-        const baseWidth = bottomBulbWidth * 0.85;
+        const baseWidth = bottomBulbWidth * 0.88;
         const baseHalf  = baseWidth / 2;
-        const topWidth  = neckInnerWidth * 0.9;
-        const topHalf   = topWidth / 2;
+        const neckTopWidth = neckInnerWidth * 0.9;
+        const neckTopHalf  = neckTopWidth / 2;
+        const apexY = yTopOfPile - 4;
 
-        const sandGradBottom = ctx.createLinearGradient(0, yTopOfPile, 0, yBottomInner);
-        sandGradBottom.addColorStop(0, '#f8e19a');
-        sandGradBottom.addColorStop(1, COLOR_SAND);
+        const sandGradBottom = ctx.createLinearGradient(0, apexY, 0, yBottomInner);
+        sandGradBottom.addColorStop(0.0, '#fbe8a4');
+        sandGradBottom.addColorStop(0.5, '#f4d06f');
+        sandGradBottom.addColorStop(1.0, '#d4a94f');
         ctx.fillStyle = sandGradBottom;
 
         ctx.beginPath();
-        ctx.moveTo(-baseHalf, yBottomInner);
-        ctx.lineTo(baseHalf, yBottomInner);
-        ctx.lineTo(topHalf, yTopOfPile);
-        ctx.lineTo(-topHalf, yTopOfPile);
+        // base ellipse rim
+        ctx.moveTo(-baseHalf, yBottomInner - 1);
+        ctx.quadraticCurveTo(0, yBottomInner + 5, baseHalf, yBottomInner - 1);
+        // up right side of pile
+        ctx.lineTo(neckTopHalf, apexY);
+        // apex curve
+        ctx.quadraticCurveTo(0, apexY - 6, -neckTopHalf, apexY);
+        // back to base left
         ctx.closePath();
         ctx.fill();
 
-        ctx.fillStyle = COLOR_SAND_DIM;
+        // inner shadow at base
+        ctx.fillStyle = 'rgba(156,126,43,0.35)';
         ctx.beginPath();
         ctx.ellipse(0, yBottomInner, baseHalf * 0.7, 4, 0, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // STREAM
+      // ───────────── SAND STREAM ─────────────
       if (!finished && bottomFrac > 0 && bottomFrac < 1) {
-        const impactY = yTopOfPile != null ? yTopOfPile : yBottomInner;
+        const impactY = yTopOfPile != null ? yTopOfPile - 2 : yBottomInner - 2;
         const totalSpan = Math.max(10, impactY - neckY);
 
-        const streamWidth = neckInnerWidth * 0.25;
+        const streamWidth = neckInnerWidth * 0.22;
         const pulse = 0.65 + 0.25 * Math.sin(animPhase * 4.0);
 
         const streamGrad = ctx.createLinearGradient(0, neckY, 0, impactY);
         streamGrad.addColorStop(0, `rgba(244,208,111,${0.05 * pulse})`);
         streamGrad.addColorStop(0.4, `rgba(244,208,111,${0.6 * pulse})`);
-        streamGrad.addColorStop(1, `rgba(244,208,111,${0.18 * pulse})`);
+        streamGrad.addColorStop(1, `rgba(244,208,111,${0.2 * pulse})`);
         ctx.fillStyle = streamGrad;
 
         ctx.beginPath();
-        ctx.rect(-streamWidth / 2, neckY, streamWidth, totalSpan);
+        ctx.roundRect?.(
+          -streamWidth / 2,
+          neckY,
+          streamWidth,
+          totalSpan,
+          streamWidth / 2
+        ) || ctx.rect(-streamWidth / 2, neckY, streamWidth, totalSpan);
         ctx.fill();
 
-        // grains
-        const grainCount = 6;
+        // falling grains
+        const grainCount = 7;
         for (let i = 0; i < grainCount; i++) {
           const localT = (animPhase * 0.9 + i / grainCount) % 1;
-          const gy = neckY + localT * (totalSpan - 4);
-          const sway = Math.sin(animPhase * 3.2 + i * 1.7) * 1.3;
+          const gy = neckY + localT * (totalSpan - 6);
+          const sway = Math.sin(animPhase * 3.2 + i * 1.7) * 1.1;
 
           ctx.beginPath();
-          ctx.fillStyle = 'rgba(244,208,111,0.95)';
+          ctx.fillStyle = 'rgba(244,208,111,0.98)';
           ctx.arc(sway, gy, 1.1, 0, Math.PI * 2);
           ctx.fill();
         }
       }
 
+      // ───────────── GLASS HIGHLIGHT / REFLECTION ─────────────
+      const shineGrad = ctx.createLinearGradient(-topHalf, 0, topHalf, 0);
+      shineGrad.addColorStop(0.0, 'rgba(255,255,255,0.16)');
+      shineGrad.addColorStop(0.22, 'rgba(255,255,255,0.30)');
+      shineGrad.addColorStop(0.35, 'rgba(255,255,255,0.00)');
+      shineGrad.addColorStop(0.65, 'rgba(255,255,255,0.00)');
+      shineGrad.addColorStop(0.85, 'rgba(255,255,255,0.22)');
+      shineGrad.addColorStop(1.0, 'rgba(255,255,255,0.08)');
+      ctx.fillStyle = shineGrad;
+      ctx.fillRect(-topHalf - 8, topY, topHalf * 2 + 16, bottomY - topY);
+
       ctx.restore(); // end clip
 
-      // Glass outline
-      ctx.strokeStyle = COLOR_GLASS_EDGE;
-      ctx.lineWidth = 2;
+      // ───────────── GLASS OUTLINE ─────────────
+      // outer soft glass edge
+      ctx.strokeStyle = 'rgba(148,163,184,0.7)';
+      ctx.lineWidth = 2.2;
       ctx.stroke(glassPath);
 
-      ctx.strokeStyle = COLOR_FRAME;
-      ctx.lineWidth = 1;
-      ctx.globalAlpha = 0.7;
+      // inner bright edge
+      ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+      ctx.lineWidth = 1.1;
+      ctx.globalAlpha = 0.85;
       ctx.stroke(glassPath);
       ctx.globalAlpha = 1;
 
-      ctx.restore();
+      ctx.restore(); // restore translate
     }
 
     function frame() {
