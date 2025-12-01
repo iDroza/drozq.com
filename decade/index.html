@@ -665,7 +665,8 @@
 
     const topBulbWidth    = W * 0.60;
     const bottomBulbWidth = W * 0.70;
-    const neckInnerWidth  = W * 0.18;
+    // THINNER NECK
+    const neckInnerWidth  = W * 0.05;
 
     const topHalf    = topBulbWidth / 2;
     const bottomHalf = bottomBulbWidth / 2;
@@ -733,77 +734,81 @@
       p.moveTo(-topHalf, yTopInner);
       p.quadraticCurveTo(-topHalf * 0.8, topY, 0, topY);
       p.quadraticCurveTo(topHalf * 0.8, topY, topHalf, yTopInner);
-      p.quadraticCurveTo(topHalf * 0.4, neckY - 6, neckHalf, neckY);
+      p.quadraticCurveTo(topHalf * 0.35, neckY - 6, neckHalf, neckY);
       p.lineTo(-neckHalf, neckY);
-      p.quadraticCurveTo(-topHalf * 0.4, neckY - 6, -topHalf, yTopInner);
+      p.quadraticCurveTo(-topHalf * 0.35, neckY - 6, -topHalf, yTopInner);
 
       // bottom bulb
       p.moveTo(-neckHalf, neckY);
-      p.quadraticCurveTo(-bottomHalf * 0.4, neckY + 6, -bottomHalf, yBottomInner);
+      p.quadraticCurveTo(-bottomHalf * 0.35, neckY + 6, -bottomHalf, yBottomInner);
       p.quadraticCurveTo(-bottomHalf * 0.8, bottomY, 0, bottomY);
       p.quadraticCurveTo(bottomHalf * 0.8, bottomY, bottomHalf, yBottomInner);
-      p.quadraticCurveTo(bottomHalf * 0.4, neckY + 6, neckHalf, neckY);
+      p.quadraticCurveTo(bottomHalf * 0.35, neckY + 6, neckHalf, neckY);
       p.closePath();
       return p;
     })();
 
+    // ───────────── PHOTOREAL HOURGLASS RENDER ─────────────
     function drawHourglass(progress, finished, animPhase) {
       ctx.clearRect(0, 0, W, H);
-
       ctx.save();
-      ctx.translate(centerX, 0); // center on X axis
+      ctx.translate(centerX, 0); // center on X
 
-      // ───────────── BACKGROUND GLOW ─────────────
-      const bgGrad = ctx.createRadialGradient(
-        0, H * 0.25, 6,
-        0, H * 0.55, H * 0.9
+      // ───────── BACKGROUND / VIGNETTE ─────────
+      const vignette = ctx.createRadialGradient(
+        0, H * 0.3, 10,
+        0, H * 0.5, H * 0.9
       );
-      bgGrad.addColorStop(0.0, 'rgba(15,23,42,1)');
-      bgGrad.addColorStop(0.5, 'rgba(15,23,42,0.95)');
-      bgGrad.addColorStop(1.0, 'rgba(15,23,42,0)');
-      ctx.fillStyle = bgGrad;
+      vignette.addColorStop(0.0, '#020617');
+      vignette.addColorStop(0.4, 'rgba(15,23,42,0.98)');
+      vignette.addColorStop(1.0, 'rgba(3,7,18,0.0)');
+      ctx.fillStyle = vignette;
       ctx.fillRect(-W / 2, 0, W, H);
 
-      // ───────────── STAND (TOP / BOTTOM CAPS + PILLARS) ─────────────
+      // ───────── STAND / FRAME ─────────
       const frameWidth   = bottomBulbWidth * 0.95;
       const capHeight    = 8;
-      const pillarWidth  = 7;
+      const pillarWidth  = 6;
       const pillarOffset = frameWidth * 0.46;
-      const pillarTopY   = topY - 10;
-      const pillarBotY   = bottomY + 2;
+      const pillarTopY   = topY - 12;
+      const pillarBotY   = bottomY + 4;
 
       // bottom cap
-      let capGrad = ctx.createLinearGradient(-frameWidth / 2, bottomY + 2, frameWidth / 2, bottomY + 2);
+      let capGrad = ctx.createLinearGradient(-frameWidth / 2, bottomY + 4, frameWidth / 2, bottomY + 4);
       capGrad.addColorStop(0.0, '#020617');
-      capGrad.addColorStop(0.5, '#111827');
+      capGrad.addColorStop(0.25, '#111827');
+      capGrad.addColorStop(0.5, '#1f2937');
+      capGrad.addColorStop(0.75, '#111827');
       capGrad.addColorStop(1.0, '#020617');
       ctx.fillStyle = capGrad;
       ctx.beginPath();
       if (ctx.roundRect) {
-        ctx.roundRect(-frameWidth / 2, bottomY + 2, frameWidth, capHeight, 4);
+        ctx.roundRect(-frameWidth / 2, bottomY + 4, frameWidth, capHeight, 4);
       } else {
-        ctx.moveTo(-frameWidth / 2, bottomY + 2);
-        ctx.lineTo(frameWidth / 2, bottomY + 2);
-        ctx.lineTo(frameWidth / 2, bottomY + 2 + capHeight);
-        ctx.lineTo(-frameWidth / 2, bottomY + 2 + capHeight);
+        ctx.moveTo(-frameWidth / 2, bottomY + 4);
+        ctx.lineTo(frameWidth / 2, bottomY + 4);
+        ctx.lineTo(frameWidth / 2, bottomY + 4 + capHeight);
+        ctx.lineTo(-frameWidth / 2, bottomY + 4 + capHeight);
         ctx.closePath();
       }
       ctx.fill();
 
       // top cap
-      capGrad = ctx.createLinearGradient(-frameWidth / 2, topY - 10, frameWidth / 2, topY - 10);
+      capGrad = ctx.createLinearGradient(-frameWidth / 2, topY - 12, frameWidth / 2, topY - 12);
       capGrad.addColorStop(0.0, '#020617');
-      capGrad.addColorStop(0.5, '#111827');
+      capGrad.addColorStop(0.25, '#111827');
+      capGrad.addColorStop(0.5, '#1f2937');
+      capGrad.addColorStop(0.75, '#111827');
       capGrad.addColorStop(1.0, '#020617');
       ctx.fillStyle = capGrad;
       ctx.beginPath();
       if (ctx.roundRect) {
-        ctx.roundRect(-frameWidth / 2, topY - 10, frameWidth, capHeight, 4);
+        ctx.roundRect(-frameWidth / 2, topY - 12, frameWidth, capHeight, 4);
       } else {
-        ctx.moveTo(-frameWidth / 2, topY - 10);
-        ctx.lineTo(frameWidth / 2, topY - 10);
-        ctx.lineTo(frameWidth / 2, topY - 10 + capHeight);
-        ctx.lineTo(-frameWidth / 2, topY - 10 + capHeight);
+        ctx.moveTo(-frameWidth / 2, topY - 12);
+        ctx.lineTo(frameWidth / 2, topY - 12);
+        ctx.lineTo(frameWidth / 2, topY - 12 + capHeight);
+        ctx.lineTo(-frameWidth / 2, topY - 12 + capHeight);
         ctx.closePath();
       }
       ctx.fill();
@@ -811,13 +816,13 @@
       // pillars
       const pillarGrad = ctx.createLinearGradient(-pillarWidth / 2, 0, pillarWidth / 2, 0);
       pillarGrad.addColorStop(0.0, '#020617');
-      pillarGrad.addColorStop(0.4, '#111827');
+      pillarGrad.addColorStop(0.3, '#111827');
       pillarGrad.addColorStop(0.7, '#0b1120');
       pillarGrad.addColorStop(1.0, '#020617');
       ctx.fillStyle = pillarGrad;
 
-      ctx.beginPath();
       const pillarHeight = pillarBotY - pillarTopY;
+      ctx.beginPath();
       if (ctx.roundRect) {
         ctx.roundRect(-pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight, 3);
         ctx.roundRect( pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight, 3);
@@ -827,175 +832,201 @@
       }
       ctx.fill();
 
-      // shadow under hourglass
+      // soft shadow under glass
       const shadowGrad = ctx.createRadialGradient(
-        0, bottomY + 4, 2,
-        0, bottomY + 4, bottomBulbWidth * 0.6
+        0, bottomY + 6, 2,
+        0, bottomY + 6, bottomBulbWidth * 0.65
       );
       shadowGrad.addColorStop(0.0, 'rgba(0,0,0,0.8)');
       shadowGrad.addColorStop(1.0, 'rgba(0,0,0,0)');
       ctx.fillStyle = shadowGrad;
       ctx.beginPath();
-      ctx.ellipse(0, bottomY + 4, bottomBulbWidth * 0.6, 10, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, bottomY + 6, bottomBulbWidth * 0.65, 10, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // ───────────── GLASS + SAND (CLIPPED) ─────────────
+      // ───────── GLASS + SAND (CLIPPED) ─────────
       ctx.save();
       ctx.clip(glassPath);
 
-      // glass interior background
-      const glassGrad = ctx.createLinearGradient(0, topY, 0, bottomY);
-      glassGrad.addColorStop(0.0, 'rgba(15,23,42,0.95)');
-      glassGrad.addColorStop(0.5, 'rgba(15,23,42,0.85)');
-      glassGrad.addColorStop(1.0, 'rgba(15,23,42,0.97)');
-      ctx.fillStyle = glassGrad;
+      // glass interior base gradient
+      const glassInteriorGrad = ctx.createLinearGradient(0, topY, 0, bottomY);
+      glassInteriorGrad.addColorStop(0.0, 'rgba(15,23,42,0.94)');
+      glassInteriorGrad.addColorStop(0.5, 'rgba(15,23,42,0.88)');
+      glassInteriorGrad.addColorStop(1.0, 'rgba(15,23,42,0.97)');
+      ctx.fillStyle = glassInteriorGrad;
+      ctx.fillRect(-W, topY, W * 2, bottomY - topY);
+
+      // subtle inner glow to simulate volume
+      const bulbGlow = ctx.createRadialGradient(
+        0, neckY - maxTopHeight * 0.6, W * 0.05,
+        0, neckY, W * 0.7
+      );
+      bulbGlow.addColorStop(0.0, 'rgba(148,163,184,0.25)');
+      bulbGlow.addColorStop(0.4, 'rgba(148,163,184,0.10)');
+      bulbGlow.addColorStop(1.0, 'rgba(15,23,42,0)');
+      ctx.fillStyle = bulbGlow;
       ctx.fillRect(-W, topY, W * 2, bottomY - topY);
 
       // Sand fractions
       const bottomFrac = Math.max(0, Math.min(1, progress));
       const topFrac    = 1 - bottomFrac;
 
-      // ───────────── TOP SAND (CONCAVE SURFACE) ─────────────
+      // ───────── TOP SAND ─────────
       if (topFrac > 0.0005) {
         const fillHeightTop = maxTopHeight * topFrac;
         const yLevel = neckY - fillHeightTop;
         const widthLevel = widthAtYTop(yLevel);
         const halfLevel  = widthLevel / 2;
+        const surfaceDepth = Math.min(8, (neckY - yLevel) * 0.55);
 
-        const concavity = (neckY - yLevel) * 0.4;
-
-        const sandGradTop = ctx.createLinearGradient(0, yLevel, 0, neckY);
-        sandGradTop.addColorStop(0.0, '#fbe8a4');
-        sandGradTop.addColorStop(0.4, '#f4d06f');
-        sandGradTop.addColorStop(1.0, '#e0b557');
-        ctx.fillStyle = sandGradTop;
+        const sandTopGrad = ctx.createLinearGradient(0, yLevel - 6, 0, neckY + 4);
+        sandTopGrad.addColorStop(0.0, '#fdf3c4');
+        sandTopGrad.addColorStop(0.4, '#f5d67a');
+        sandTopGrad.addColorStop(1.0, '#d7ab4e');
+        ctx.fillStyle = sandTopGrad;
 
         ctx.beginPath();
-        // concave surface
         ctx.moveTo(-halfLevel, yLevel);
-        ctx.quadraticCurveTo(0, yLevel + concavity, halfLevel, yLevel);
-        // sloping down to neck
+        ctx.quadraticCurveTo(0, yLevel + surfaceDepth, halfLevel, yLevel);
         ctx.lineTo(neckHalf * 0.9, neckY);
         ctx.quadraticCurveTo(0, neckY + 2, -neckHalf * 0.9, neckY);
         ctx.closePath();
         ctx.fill();
 
-        // subtle top highlight line
-        ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-        ctx.lineWidth = 0.8;
+        // specular ridge
+        ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+        ctx.lineWidth = 0.7;
         ctx.beginPath();
-        ctx.moveTo(-halfLevel, yLevel);
-        ctx.quadraticCurveTo(0, yLevel + concavity, halfLevel, yLevel);
+        ctx.moveTo(-halfLevel * 0.85, yLevel + 0.5);
+        ctx.quadraticCurveTo(0, yLevel + surfaceDepth * 0.7, halfLevel * 0.85, yLevel + 0.5);
         ctx.stroke();
       }
 
-      // ───────────── BOTTOM SAND (CONICAL PILE) ─────────────
+      // ───────── BOTTOM SAND ─────────
       let yTopOfPile = null;
       if (bottomFrac > 0.0005) {
         const fillHeightBottom = maxBottomHeight * bottomFrac;
         yTopOfPile = yBottomInner - fillHeightBottom;
         yTopOfPile = Math.max(neckY + 6, yTopOfPile);
 
-        const baseWidth = bottomBulbWidth * 0.88;
+        const baseWidth = bottomBulbWidth * 0.9;
         const baseHalf  = baseWidth / 2;
-        const neckTopWidth = neckInnerWidth * 0.9;
-        const neckTopHalf  = neckTopWidth / 2;
-        const apexY = yTopOfPile - 4;
+        const apexY     = yTopOfPile - 3;
+        const neckWidth = neckInnerWidth * 0.9;
+        const neckHalfLocal  = neckWidth / 2;
 
-        const sandGradBottom = ctx.createLinearGradient(0, apexY, 0, yBottomInner);
-        sandGradBottom.addColorStop(0.0, '#fbe8a4');
-        sandGradBottom.addColorStop(0.5, '#f4d06f');
-        sandGradBottom.addColorStop(1.0, '#d4a94f');
-        ctx.fillStyle = sandGradBottom;
+        const sandBottomGrad = ctx.createLinearGradient(0, apexY - 6, 0, yBottomInner + 4);
+        sandBottomGrad.addColorStop(0.0, '#fdf3c4');
+        sandBottomGrad.addColorStop(0.35, '#f5d67a');
+        sandBottomGrad.addColorStop(1.0, '#c9993d');
+        ctx.fillStyle = sandBottomGrad;
 
         ctx.beginPath();
-        // base ellipse rim
         ctx.moveTo(-baseHalf, yBottomInner - 1);
         ctx.quadraticCurveTo(0, yBottomInner + 5, baseHalf, yBottomInner - 1);
-        // up right side of pile
-        ctx.lineTo(neckTopHalf, apexY);
-        // apex curve
-        ctx.quadraticCurveTo(0, apexY - 6, -neckTopHalf, apexY);
-        // back to base left
+        ctx.lineTo(neckHalfLocal, apexY);
+        ctx.quadraticCurveTo(0, apexY - 5, -neckHalfLocal, apexY);
         ctx.closePath();
         ctx.fill();
 
-        // inner shadow at base
-        ctx.fillStyle = 'rgba(156,126,43,0.35)';
+        ctx.fillStyle = 'rgba(156,126,43,0.45)';
         ctx.beginPath();
-        ctx.ellipse(0, yBottomInner, baseHalf * 0.7, 4, 0, 0, Math.PI * 2);
+        ctx.ellipse(0, yBottomInner + 1, baseHalf * 0.7, 4, 0, 0, Math.PI * 2);
         ctx.fill();
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+        ctx.lineWidth = 0.9;
+        ctx.beginPath();
+        ctx.moveTo(neckHalfLocal * 0.9, apexY + 1);
+        ctx.quadraticCurveTo(baseHalf * 0.5, (apexY + yBottomInner) / 2, baseHalf * 0.6, yBottomInner - 2);
+        ctx.stroke();
       }
 
-      // ───────────── SAND STREAM ─────────────
+      // ───────── SAND STREAM (NECK ~ STREAM WIDTH) ─────────
       if (!finished && bottomFrac > 0 && bottomFrac < 1) {
-        const impactY = yTopOfPile != null ? yTopOfPile - 2 : yBottomInner - 2;
-        const totalSpan = Math.max(10, impactY - neckY);
+        const impactY = yTopOfPile != null ? yTopOfPile - 2 : yBottomInner - 3;
+        const totalSpan = Math.max(12, impactY - neckY);
 
-        const streamWidth = neckInnerWidth * 0.22;
+        // make stream a significant fraction of the very thin neck
+        const streamWidth = neckInnerWidth * 0.5;
         const pulse = 0.65 + 0.25 * Math.sin(animPhase * 4.0);
 
         const streamGrad = ctx.createLinearGradient(0, neckY, 0, impactY);
-        streamGrad.addColorStop(0, `rgba(244,208,111,${0.05 * pulse})`);
-        streamGrad.addColorStop(0.4, `rgba(244,208,111,${0.6 * pulse})`);
-        streamGrad.addColorStop(1, `rgba(244,208,111,${0.2 * pulse})`);
+        streamGrad.addColorStop(0,  `rgba(244,208,111,${0.10 * pulse})`);
+        streamGrad.addColorStop(0.4,`rgba(244,208,111,${0.65 * pulse})`);
+        streamGrad.addColorStop(1,  `rgba(244,208,111,${0.25 * pulse})`);
         ctx.fillStyle = streamGrad;
 
         ctx.beginPath();
-        ctx.roundRect?.(
-          -streamWidth / 2,
-          neckY,
-          streamWidth,
-          totalSpan,
-          streamWidth / 2
-        ) || ctx.rect(-streamWidth / 2, neckY, streamWidth, totalSpan);
+        if (ctx.roundRect) {
+          ctx.roundRect(-streamWidth / 2, neckY, streamWidth, totalSpan, streamWidth / 2);
+        } else {
+          ctx.rect(-streamWidth / 2, neckY, streamWidth, totalSpan);
+        }
         ctx.fill();
 
-        // falling grains
         const grainCount = 7;
         for (let i = 0; i < grainCount; i++) {
           const localT = (animPhase * 0.9 + i / grainCount) % 1;
           const gy = neckY + localT * (totalSpan - 6);
-          const sway = Math.sin(animPhase * 3.2 + i * 1.7) * 1.1;
+          const sway = Math.sin(animPhase * 3.2 + i * 1.7) * 1.0;
 
           ctx.beginPath();
-          ctx.fillStyle = 'rgba(244,208,111,0.98)';
+          ctx.fillStyle = 'rgba(253,243,196,0.98)';
           ctx.arc(sway, gy, 1.1, 0, Math.PI * 2);
           ctx.fill();
         }
+
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.arc(0, impactY + 1.5, 1.2, 0, Math.PI * 2);
+        ctx.fill();
       }
 
-      // ───────────── GLASS HIGHLIGHT / REFLECTION ─────────────
-      const shineGrad = ctx.createLinearGradient(-topHalf, 0, topHalf, 0);
-      shineGrad.addColorStop(0.0, 'rgba(255,255,255,0.16)');
-      shineGrad.addColorStop(0.22, 'rgba(255,255,255,0.30)');
-      shineGrad.addColorStop(0.35, 'rgba(255,255,255,0.00)');
-      shineGrad.addColorStop(0.65, 'rgba(255,255,255,0.00)');
-      shineGrad.addColorStop(0.85, 'rgba(255,255,255,0.22)');
-      shineGrad.addColorStop(1.0, 'rgba(255,255,255,0.08)');
-      ctx.fillStyle = shineGrad;
-      ctx.fillRect(-topHalf - 8, topY, topHalf * 2 + 16, bottomY - topY);
+      // caustic-like glow near bottom of glass
+      const caustic = ctx.createRadialGradient(
+        0, yBottomInner - 4, 4,
+        0, yBottomInner + 4, bottomBulbWidth * 0.45
+      );
+      caustic.addColorStop(0.0, 'rgba(248, 220, 140, 0.35)');
+      caustic.addColorStop(1.0, 'rgba(248, 220, 140, 0)');
+      ctx.fillStyle = caustic;
+      ctx.fillRect(-W, neckY, W * 2, bottomY - neckY);
+
+      // inner reflections
+      const innerShine = ctx.createLinearGradient(topHalf * 0.2, topY, topHalf * 0.9, bottomY);
+      innerShine.addColorStop(0.0, 'rgba(255,255,255,0.20)');
+      innerShine.addColorStop(0.3, 'rgba(255,255,255,0.06)');
+      innerShine.addColorStop(1.0, 'rgba(255,255,255,0.0)');
+      ctx.fillStyle = innerShine;
+      ctx.fillRect(topHalf * 0.1, topY, topHalf * 0.9, bottomY - topY);
+
+      // slender bright highlight on left
+      ctx.globalAlpha = 0.4;
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+      ctx.lineWidth = 1.0;
+      ctx.beginPath();
+      ctx.moveTo(-topHalf * 0.95, topY + 6);
+      ctx.quadraticCurveTo(-topHalf * 0.85, H * 0.35, -neckHalf * 1.05, neckY);
+      ctx.quadraticCurveTo(-bottomHalf * 0.9, H * 0.75, -bottomHalf * 0.8, bottomY - 6);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
 
       ctx.restore(); // end clip
 
-      // ───────────── GLASS OUTLINE ─────────────
-      // outer soft glass edge
-      ctx.strokeStyle = 'rgba(148,163,184,0.7)';
-      ctx.lineWidth = 2.2;
+      // ───────── GLASS OUTER EDGES ─────────
+      ctx.strokeStyle = 'rgba(148,163,184,0.85)';
+      ctx.lineWidth = 2.4;
       ctx.stroke(glassPath);
 
-      // inner bright edge
-      ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
       ctx.lineWidth = 1.1;
-      ctx.globalAlpha = 0.85;
       ctx.stroke(glassPath);
-      ctx.globalAlpha = 1;
 
       ctx.restore(); // restore translate
     }
 
     function frame() {
-      // absolute wall-clock in ms (UTC-based)
       const nowMs = Date.now();
 
       const elapsedMs = nowMs - YEAR2_START_MS;
@@ -1013,7 +1044,6 @@
         pctEl.textContent = '100% elapsed — pivot or perish.';
         footEl.textContent = 'No alibis. Ship.';
       } else {
-        // single string: Xd XXh XXm XXs XXXms
         dhmEl.textContent =
           `${left.d}d ${pad2(left.h)}h ${pad2(left.m)}m ${pad2(left.s)}s ` +
           `${pad3(left.ms)}ms`;
@@ -1025,7 +1055,6 @@
 
       dhmEl.style.color = color;
 
-      // smooth animation phase decoupled from system time jumps
       const animPhase = (performance.now() % 4000) / 4000;
       drawHourglass(progress, finished, animPhase);
 
