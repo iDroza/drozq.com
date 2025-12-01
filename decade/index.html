@@ -619,7 +619,7 @@
     <a class="footer-link" href="/privacy/">Privacy</a>
   </footer>
 
-  <script>
+<script>
   // ───────────── YEAR 2 HOURGLASS – LIVE TO THE MILLISECOND ─────────────
   (function () {
     const MS_DAY = 86400000;
@@ -900,12 +900,10 @@
         pctEl.textContent = '100% elapsed — pivot or perish.';
         footEl.textContent = 'No alibis. Ship.';
       } else {
-        // main time on one line, ms in its own span to avoid squeezing on mobile
-        dhmEl.innerHTML =
-          `<span class="year2-dhm-main">` +
-            `${left.d}d ${pad2(left.h)}h ${pad2(left.m)}m ${pad2(left.s)}s` +
-          `</span>` +
-          `<span class="year2-dhm-ms">${pad3(left.ms)}ms</span>`;
+        // single string: Xd XXh XXm XXs XXXms
+        dhmEl.textContent =
+          `${left.d}d ${pad2(left.h)}h ${pad2(left.m)}m ${pad2(left.s)}s ` +
+          `${pad3(left.ms)}ms`;
 
         const pct = Math.round(progress * 100);
         pctEl.textContent = `${pct}% of Year 2 elapsed`;
@@ -923,6 +921,6 @@
 
     frame();
   })();
-  </script>
+</script>
 </body>
 </html>
