@@ -359,6 +359,18 @@
     .year2-dhm {
       font-weight: 700;
       font-size: 1.4rem;
+      line-height: 1.3;
+    }
+
+    .year2-dhm-main {
+      display: inline-block;
+      margin-right: 0.3rem;
+    }
+
+    .year2-dhm-ms {
+      display: inline-block;
+      font-size: 0.8em;
+      opacity: 0.85;
     }
 
     .year2-caption {
@@ -383,7 +395,18 @@
       }
 
       .year2-dhm {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+        line-height: 1.4;
+      }
+
+      .year2-dhm-main {
+        display:block;
+        margin-right:0;
+      }
+
+      .year2-dhm-ms {
+        display:block;
+        margin-top:0.1rem;
       }
     }
   </style>
@@ -653,7 +676,6 @@
 
     function breakdown(ms) {
       if (ms < 0) ms = 0;
-      // force integer to avoid floating creep in string
       ms = Math.floor(ms);
 
       const d = Math.floor(ms / MS_DAY);
@@ -878,9 +900,12 @@
         pctEl.textContent = '100% elapsed — pivot or perish.';
         footEl.textContent = 'No alibis. Ship.';
       } else {
-        // Xd XXh XXm XXs XXXms
-        dhmEl.textContent =
-          `${left.d}d ${pad2(left.h)}h ${pad2(left.m)}m ${pad2(left.s)}s ${pad3(left.ms)}ms`;
+        // main time on one line, ms in its own span to avoid squeezing on mobile
+        dhmEl.innerHTML =
+          `<span class="year2-dhm-main">` +
+            `${left.d}d ${pad2(left.h)}h ${pad2(left.m)}m ${pad2(left.s)}s` +
+          `</span>` +
+          `<span class="year2-dhm-ms">${pad3(left.ms)}ms</span>`;
 
         const pct = Math.round(progress * 100);
         pctEl.textContent = `${pct}% of Year 2 elapsed`;
@@ -898,4 +923,6 @@
 
     frame();
   })();
-</script>
+  </script>
+</body>
+</html>
