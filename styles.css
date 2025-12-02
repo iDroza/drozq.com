@@ -1,0 +1,519 @@
+:root {
+  --bg:#000;
+  --fg:#fff;
+  --accent:#9900FF;
+  --border:rgba(255,255,255,.14);
+  --shadow:0 10px 30px rgba(0,0,0,.45);
+  --caret-y:0.20em;
+  --muted:rgba(255,255,255,.65);
+  --past:rgba(0,255,153,.12);
+  --current:rgba(153,0,255,.18);
+  --upcoming:rgba(255,255,255,.01);
+}
+
+* {
+  box-sizing:border-box;
+}
+
+html {
+  height:100%;
+  background:var(--bg);
+  color:var(--fg);
+}
+
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ───────── HOME PAGE (FULLSCREEN HERO) ───────── */
+
+body.home-page {
+  height:100%;
+  font-weight:700;
+  overflow:hidden; /* lock viewport on desktop */
+}
+
+.wrap{
+  position:relative;
+  z-index:2;
+  min-height:100%;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  padding:2rem;
+  padding-bottom:5.5rem; /* space for fixed footer */
+}
+
+.hero{
+  display:inline-block;
+  user-select:text;
+  pointer-events:auto;
+  border:none;
+  border-radius:24px;
+  padding:clamp(16px,3vw,32px) clamp(18px,4vw,52px);
+  box-shadow:var(--shadow);
+}
+
+.line{
+  margin:0;
+  letter-spacing:.2px;
+  line-height:1.05;
+  font-size:clamp(28px,6vw,72px);
+  text-shadow:0 0 10px rgba(153,0,255,.18),0 0 35px rgba(153,0,255,.12);
+  white-space:pre-wrap;
+  opacity:0;
+  transition:opacity .6s ease-in-out;
+}
+
+.accent{
+  color:var(--accent);
+}
+
+.fadeout{
+  position:fixed;
+  inset:0;
+  background:#000;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 1.5s ease;
+  z-index:999;
+}
+.fadeout.active{
+  opacity:1;
+}
+
+.flash{
+  animation:fadePulse 2.6s ease-in-out infinite alternate;
+}
+@keyframes fadePulse{
+  from{opacity:.28;}
+  to{opacity:1;}
+}
+
+/* visually hidden SEO block */
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  border:0;
+}
+
+/* ───────── GLOBAL FOOTER ───────── */
+
+footer.site-footer{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:5;
+  background:rgba(0,0,0,.4);
+  backdrop-filter:blur(8px);
+  display:flex;
+  justify-content:center;
+  gap:2.5rem;
+  padding:1.35rem 1.5rem 1.1rem;
+}
+
+.footer-link{
+  position:relative;
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  letter-spacing:.02em;
+  cursor:pointer;
+  padding-bottom:.35rem;
+  transition:opacity .2s ease;
+}
+
+.footer-link::after{
+  content:'';
+  position:absolute;
+  left:0;
+  bottom:-0.35rem;
+  height:2px;
+  width:0;
+  background:#fff;
+  transition:width .2s ease-out;
+}
+
+.footer-link:hover{
+  opacity:.55;
+}
+
+.footer-link:hover::after{
+  width:100%;
+}
+
+/* ───────── DECADE PAGE LAYOUT ───────── */
+
+body.decade-page{
+  min-height:100vh;
+  padding-bottom:5.5rem; /* space for fixed footer on desktop */
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  padding:1.2rem 1.4rem 0.4rem;
+}
+
+.back-link{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  letter-spacing:.01em;
+  padding-bottom:.35rem;
+  transition:opacity .2s ease;
+}
+
+.back-link::after{
+  content:'';
+  position:absolute;
+  left:0;
+  bottom:-0.35rem;
+  height:2px;
+  width:0;
+  background:#fff;
+  transition:width .2s ease-out;
+}
+
+.back-link:hover{
+  opacity:.55;
+}
+
+.back-link:hover::after{
+  width:100%;
+}
+
+.back-link span.arrow{
+  font-size:1.1rem;
+  line-height:1;
+}
+
+main{
+  max-width:1120px;
+  margin:1.5rem auto 0;
+  padding:0 1.4rem 3rem;
+}
+
+/* layout: hourglass + decade plan */
+.decade-layout{
+  display:flex;
+  align-items:flex-start;
+  gap:1.75rem;
+}
+
+.decade-left{
+  flex:0 0 340px;
+}
+
+.decade-right{
+  flex:1;
+  min-width:0;
+}
+
+h1{
+  font-size:1.5rem;
+  margin-bottom:.4rem;
+  font-weight:700;
+}
+
+.subtitle{
+  color:var(--muted);
+  max-width:560px;
+  line-height:1.4;
+  margin-bottom:1.4rem;
+}
+
+.decade-meta{
+  margin-bottom:1.2rem;
+  padding:.6rem .8rem;
+  border-left:3px solid var(--accent);
+  background:rgba(153,0,255,.06);
+  font-size:.83rem;
+}
+
+.year-block{
+  position:relative;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:1rem 1.1rem .9rem;
+  margin-bottom:.9rem;
+  background:var(--upcoming);
+}
+
+.year-block .status-tag{
+  position:absolute;
+  top:.7rem;
+  right:.85rem;
+  font-size:.62rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  padding:.25rem .55rem .2rem;
+  border-radius:999px;
+  background:rgba(0,0,0,.3);
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.year-block.past{
+  background:linear-gradient(135deg, rgba(0,0,0,.35) 0%, rgba(0,255,153,.07) 100%);
+  border-color:rgba(0,255,153,.32);
+  opacity:.9;
+}
+
+.year-block.past .status-tag{
+  background:rgba(0,255,153,.14);
+  border-color:rgba(0,255,153,.45);
+  color:#fff;
+}
+
+.year-block.current{
+  background:radial-gradient(circle at top, rgba(153,0,255,.32) 0%, rgba(0,0,0,.4) 58%);
+  border-color:rgba(153,0,255,.6);
+  box-shadow:0 12px 35px rgba(0,0,0,.35);
+}
+
+.year-block.current .status-tag{
+  background:rgba(153,0,255,.24);
+  border-color:rgba(153,0,255,.6);
+}
+
+.year-block.upcoming{
+  background:rgba(255,255,255,.007);
+  border-color:rgba(255,255,255,.06);
+}
+
+.year-title{
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  font-weight:600;
+  margin-bottom:.35rem;
+  padding-right:4rem;
+}
+
+.income{
+  font-size:.68rem;
+  color:var(--muted);
+  margin-bottom:.45rem;
+}
+
+.pill{
+  display:inline-block;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.04);
+  border-radius:999px;
+  padding:.25rem .7rem;
+  font-size:.68rem;
+  margin-right:.35rem;
+  margin-bottom:.35rem;
+}
+
+.field-label{
+  font-size:.68rem;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:var(--muted);
+  margin-top:.35rem;
+  margin-bottom:.1rem;
+}
+
+.networth{
+  margin-top:1.6rem;
+  padding:1.1rem 1.1rem 1rem;
+  border:1px solid rgba(153,0,255,.5);
+  border-radius:16px;
+  background:radial-gradient(circle at top, rgba(153,0,255,.35) 0%, rgba(0,0,0,0) 58%);
+}
+
+.networth h2{
+  margin:0 0 .4rem;
+  font-size:1rem;
+}
+
+.networth p{
+  margin:0;
+  color:var(--muted);
+}
+
+/* ───────── YEAR 2 HOURGLASS WIDGET ───────── */
+
+.year2-hourglass{
+  background:#141828;
+  color:#ffffff;
+  border-radius:16px;
+  padding:16px 18px 18px;
+  box-shadow:0 18px 45px rgba(0,0,0,0.6);
+  border:1px solid rgba(255,255,255,.08);
+}
+
+/* enforce same font stack inside the widget */
+.year2-hourglass,
+.year2-hourglass *{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.year2-hourglass-inner{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.year2-header{
+  text-align:center;
+}
+
+.year2-title{
+  margin:0;
+  font-size:0.85rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  font-weight:600;
+  color:#e5e7eb;
+}
+
+.year2-dates{
+  margin:4px 0 0;
+  font-size:0.7rem;
+  color:#6b7280;
+}
+
+.year2-main{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:10px;
+}
+
+.year2-canvas-wrap{
+  display:flex;
+  justify-content:center;
+}
+
+#year2HourglassCanvas{
+  display:block;
+  width:100%;
+  max-width:320px;
+  height:auto;
+}
+
+.year2-metrics{
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.year2-dhm{
+  font-weight:700;
+  font-size:1.4rem;
+  line-height:1.3;
+}
+
+.year2-dhm-main{
+  display:inline-block;
+  margin-right:0.3rem;
+}
+
+.year2-dhm-ms{
+  display:inline-block;
+  font-size:0.8em;
+  opacity:0.85;
+}
+
+.year2-caption{
+  font-size:0.75rem;
+  color:#9ca3af;
+}
+
+.year2-footer{
+  margin-top:4px;
+  font-size:0.7rem;
+  color:#6b7280;
+}
+
+/* ───────── RESPONSIVE ───────── */
+
+@media (max-width:900px){
+  .decade-layout{
+    flex-direction:column;
+  }
+  .decade-left{
+    flex:none;
+    max-width:100%;
+  }
+}
+
+@media (max-width:540px){
+  html,
+  body{
+    overflow:auto;
+    height:auto;
+  }
+
+  body.decade-page{
+    padding-bottom:0; /* footer becomes static on mobile */
+  }
+
+  .wrap{
+    min-height:calc(100vh - 120px);
+    display:grid;
+    place-items:center;
+    padding:1.6rem 1.4rem 0;
+  }
+
+  .hero{
+    max-width:100%;
+  }
+
+  footer.site-footer{
+    position:static;
+    flex-wrap:wrap;
+    justify-content:flex-start;
+    gap:1rem 1.5rem;
+    padding:1.1rem 1.4rem 1.4rem;
+  }
+
+  .footer-link{
+    font-size:.85rem;
+  }
+}
+
+@media (max-width:480px){
+  .year2-hourglass{
+    padding:14px 14px 16px;
+    border-radius:14px;
+  }
+
+  .year2-title{
+    font-size:0.8rem;
+  }
+
+  .year2-dhm{
+    font-size:1.1rem;
+    line-height:1.4;
+  }
+
+  .year2-dhm-main{
+    display:block;
+    margin-right:0;
+  }
+
+  .year2-dhm-ms{
+    display:block;
+    margin-top:0.1rem;
+  }
+}
