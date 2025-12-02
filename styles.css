@@ -1014,3 +1014,35 @@ body.constraint-page {
     padding-bottom: 0;
   }
 }
+/* ───────────── HOME PAGE LAYOUT FIX ───────────── */
+
+body.home-page {
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Center the hero vertically and horizontally */
+body.home-page .wrap {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 2rem;
+  padding-bottom: 5.5rem; /* room for fixed footer */
+}
+
+/* Ensure the animated line behaves as before */
+body.home-page .line {
+  margin: 0;
+  letter-spacing: 0.2px;
+  line-height: 1.05;
+  font-size: clamp(28px, 6vw, 72px);
+  text-shadow:
+    0 0 10px rgba(153, 0, 255, 0.18),
+    0 0 35px rgba(153, 0, 255, 0.12);
+  white-space: pre-wrap;
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+}
