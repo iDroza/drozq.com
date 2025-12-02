@@ -701,14 +701,28 @@
     </div>
   </main>
 
-  <footer class="site-footer" id="footer">
-    <a class="footer-link" href="/constraint/">Constraint</a>
-    <a class="footer-link" href="/decade/">Decade</a>
-    <a class="footer-link" href="/answers/">Answers</a>
-    <a class="footer-link" href="/platforms/">Platforms</a>
-    <a class="footer-link" href="/philanthropy/">Philanthropy</a>
-    <a class="footer-link" href="/privacy/">Privacy</a>
-  </footer>
+<div id="site-footer"></div>
+
+<div id="fade" class="fadeout"></div>
+
+<script>
+  (function () {
+    var target = document.getElementById('site-footer');
+    if (!target) return;
+
+    fetch('/footer.html', { cache: 'no-cache' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('Failed to load footer');
+        return res.text();
+      })
+      .then(function (html) {
+        target.innerHTML = html;
+      })
+      .catch(function (err) {
+        console.error('Footer load error:', err);
+      });
+  })();
+</script>
 
 </body>
 </html>
