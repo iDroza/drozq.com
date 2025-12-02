@@ -30,7 +30,7 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
   -webkit-font-smoothing:antialiased;
   min-height:100vh;
-  padding-bottom:5.5rem; /* room for fixed footer on desktop */
+  padding-bottom:5.5rem; /* room for fixed footer on desktop by default */
 }
 
 /* default interior layout */
@@ -46,7 +46,7 @@ h1{
   font-weight:700;
 }
 
-/* generic links override if needed */
+/* generic links */
 a{
   color:inherit;
 }
@@ -143,7 +143,7 @@ footer.site-footer{
   width:100%;
 }
 
-/* ───────────── FADER OVERLAY (USED ON MULTIPLE PAGES) ───────────── */
+/* ───────────── FADER OVERLAY ───────────── */
 
 .fadeout{
   position:fixed;
@@ -175,18 +175,19 @@ footer.site-footer{
 
 body.home-page{
   font-weight:700;
-  overflow:hidden; /* lock viewport on desktop */
+  overflow:hidden;       /* lock desktop scroll */
+  display:flex;
+  flex-direction:column;
+  padding-bottom:0;      /* footer is fixed; don't offset center */
 }
 
 .home-page .wrap{
-  position:relative;
-  z-index:2;
-  min-height:100vh;
-  display:grid;
-  place-items:center;
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   text-align:center;
   padding:2rem;
-  padding-bottom:5.5rem; /* space for footer */
 }
 
 .hero{
@@ -225,7 +226,6 @@ body.home-page{
 
 /* ───────────── DECADE PAGE ───────────── */
 
-/* core layout */
 .decade-layout{
   display:flex;
   align-items:flex-start;
@@ -591,7 +591,7 @@ body.answers-page main{
   color:var(--muted);
 }
 
-/* FAQ section divider */
+/* FAQ divider */
 
 .faq-break{
   margin:2.8rem 0 1.6rem;
@@ -720,13 +720,29 @@ details[open] summary::after{
 
 /* ───────────── CONSTRAINT PAGE ───────────── */
 
+body.constraint-page{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  padding-bottom:5.5rem; /* room for fixed footer on desktop */
+}
+
 body.constraint-page main{
   max-width:880px;
   margin:1.5rem auto 0;
   padding:0 1.4rem 3rem;
 }
 
-.date{
+body.constraint-page h1{
+  font-size:1.4rem;
+  margin-bottom:.35rem;
+  font-weight:700;
+}
+
+body.constraint-page .date{
   font-size:.8rem;
   color:var(--muted);
   margin-bottom:1.2rem;
@@ -745,7 +761,17 @@ body.constraint-page main{
   margin-bottom:1rem;
 }
 
-/* optional meta block if you add more info later */
+body.constraint-page p{
+  line-height:1.55;
+  margin-bottom:1rem;
+  font-weight:500;
+}
+
+body.constraint-page strong{
+  font-weight:700;
+}
+
+/* optional meta block for detail constraint pages */
 
 .constraint-meta{
   border-top:1px solid rgba(255,255,255,.08);
@@ -800,7 +826,7 @@ body.constraint-page main{
   font-weight:600;
 }
 
-/* archive list */
+/* archive list (root /constraint) */
 
 .archive{
   margin-top:.5rem;
@@ -850,7 +876,7 @@ body.constraint-page main{
 
 @media (max-width:540px){
   body{
-    padding-bottom:0; /* footer no longer fixed overlap risk */
+    padding-bottom:0; /* footer not fixed on small screens */
   }
 
   footer.site-footer{
@@ -861,16 +887,13 @@ body.constraint-page main{
     padding:1.1rem 1.4rem 1.4rem;
   }
 
-  /* homepage tweak */
+  /* homepage mobile: allow scroll but keep center */
   body.home-page{
     overflow:auto;
-    height:auto;
   }
 
   .home-page .wrap{
     min-height:calc(100vh - 120px);
-    display:grid;
-    place-items:center;
     padding:1.6rem 1.4rem 0;
   }
 
@@ -889,7 +912,7 @@ body.constraint-page main{
     font-size:1.35rem;
   }
 
-  /* constraint page can just inherit the global body/footer mobile layout */
+  /* constraint page: reuse global body/footer mobile layout */
 }
 
 @media (max-width:480px){
@@ -916,133 +939,4 @@ body.constraint-page main{
     display:block;
     margin-top:0.1rem;
   }
-}
-/* ───────────── CONSTRAINT PAGE ───────────── */
-
-body.constraint-page {
-  margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-    "Helvetica Neue", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
-  padding-bottom: 5.5rem; /* room for fixed footer on desktop */
-}
-
-/* Layout */
-.constraint-page main {
-  max-width: 880px;
-  margin: 1.5rem auto 0;
-  padding: 0 1.4rem 3rem;
-}
-
-.constraint-page h1 {
-  font-size: 1.4rem;
-  margin-bottom: 0.35rem;
-  font-weight: 700;
-}
-
-.constraint-page .date {
-  font-size: 0.8rem;
-  color: var(--muted);
-  margin-bottom: 1.2rem;
-}
-
-/* Card + text */
-.constraint-card {
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  background: rgba(255, 255, 255, 0.015);
-  border-radius: 14px;
-  padding: 1rem 1rem 1.1rem;
-  margin-bottom: 1.8rem; /* separation from archive section */
-}
-
-.constraint-title {
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
-
-.constraint-page p {
-  line-height: 1.55;
-  margin-bottom: 1rem;
-  font-weight: 500;
-}
-
-.constraint-page strong {
-  font-weight: 700;
-}
-
-/* Archive block (root /constraint only) */
-.archive {
-  margin-top: 0.5rem;
-}
-
-.archive-header {
-  font-size: 0.75rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 0.4rem;
-}
-
-.archive-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.archive-link {
-  font-size: 0.75rem;
-  color: var(--muted);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-  padding-bottom: 0.06rem;
-  opacity: 0.8;
-  align-self: flex-start;
-}
-
-.archive-link:hover {
-  opacity: 1;
-  color: var(--fg);
-  border-bottom-color: var(--fg);
-}
-
-/* Mobile adjustments */
-@media (max-width: 540px) {
-  body.constraint-page {
-    padding-bottom: 0;
-  }
-}
-/* ───────────── HOME PAGE LAYOUT FIX ───────────── */
-
-body.home-page {
-  min-height: 100vh;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Center the hero vertically and horizontally */
-body.home-page .wrap {
-  flex: 1;
-  display: grid;
-  place-items: center;
-  text-align: center;
-  padding: 2rem;
-  padding-bottom: 5.5rem; /* room for fixed footer */
-}
-
-/* Ensure the animated line behaves as before */
-body.home-page .line {
-  margin: 0;
-  letter-spacing: 0.2px;
-  line-height: 1.05;
-  font-size: clamp(28px, 6vw, 72px);
-  text-shadow:
-    0 0 10px rgba(153, 0, 255, 0.18),
-    0 0 35px rgba(153, 0, 255, 0.12);
-  white-space: pre-wrap;
-  opacity: 0;
-  transition: opacity 0.6s ease-in-out;
 }
