@@ -5,228 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Constraint | drozq</title>
   <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
-  <style>
-    :root{
-      --bg:#000;
-      --fg:#fff;
-      --muted:rgba(255,255,255,.65);
-      --accent:#9900FF;
-      --border:rgba(255,255,255,.14);
-    }
-    *{box-sizing:border-box;}
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--fg);
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
-      -webkit-font-smoothing:antialiased;
-      min-height:100vh;
-      padding-bottom:5.5rem;
-    }
-    .topbar{
-      display:flex;
-      align-items:center;
-      gap:.5rem;
-      padding:1.2rem 1.4rem 0.4rem;
-    }
-    .back-link{
-      position:relative;
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.01em;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .back-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .back-link:hover{
-      opacity:.55;
-    }
-    .back-link:hover::after{
-      width:100%;
-    }
-    .back-link span.arrow{
-      font-size:1.1rem;
-      line-height:1;
-    }
-    main{
-      max-width:880px;
-      margin:1.5rem auto 0;
-      padding:0 1.4rem 3rem;
-    }
-    h1{
-      font-size:1.4rem;
-      margin-bottom:.35rem;
-      font-weight:700;
-    }
-    .date{
-      font-size:.8rem;
-      color:var(--muted);
-      margin-bottom:1.2rem;
-    }
-    .constraint-card{
-      border:1px solid rgba(255,255,255,.05);
-      background:rgba(255,255,255,.015);
-      border-radius:14px;
-      padding:1rem 1rem 1.1rem;
-      margin-bottom:1.8rem;
-    }
-    p{
-      line-height:1.55;
-      margin-bottom:1rem;
-      font-weight:500;
-    }
-    strong{font-weight:700;}
-
-    /* Constraint meta layout */
-    .constraint-title{
-      font-size:1rem;
-      margin-bottom:1rem;
-    }
-    .constraint-meta{
-      border-top:1px solid rgba(255,255,255,.08);
-      padding-top:.9rem;
-      display:flex;
-      flex-wrap:wrap;
-      gap:1.5rem;
-    }
-    .meta-block{
-      min-width:180px;
-    }
-    .meta-label{
-      font-size:.75rem;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      color:var(--muted);
-      margin-bottom:.4rem;
-    }
-    .meta-list{
-      list-style:none;
-      margin:0;
-      padding:0;
-      font-size:.9rem;
-    }
-    .meta-list li{
-      position:relative;
-      padding-left:1.1rem;
-      margin-bottom:.3rem;
-    }
-    .meta-list li::before{
-      content:'•';
-      position:absolute;
-      left:0;
-      top:0;
-      color:var(--accent);
-      font-size:.9rem;
-    }
-    .meta-value{
-      font-size:.9rem;
-      margin:0;
-      color:var(--muted);
-    }
-    .meta-date{
-      color:var(--fg);
-      font-weight:600;
-    }
-
-    /* Archive styles */
-    .archive{
-      margin-top:.5rem;
-    }
-    .archive-header{
-      font-size:.75rem;
-      letter-spacing:.16em;
-      text-transform:uppercase;
-      color:var(--muted);
-      margin-bottom:.4rem;
-    }
-    .archive-list{
-      display:flex;
-      flex-direction:column;
-      gap:.25rem;
-    }
-    .archive-link{
-      font-size:.75rem;
-      color:var(--muted);
-      text-decoration:none;
-      border-bottom:1px solid rgba(255,255,255,.18);
-      padding-bottom:.06rem;
-      opacity:.8;
-      align-self:flex-start;
-    }
-    .archive-link:hover{
-      opacity:1;
-      color:var(--fg);
-      border-bottom-color:var(--fg);
-    }
-
-    footer.site-footer{
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
-      z-index:5;
-      background:rgba(0,0,0,.4);
-      backdrop-filter:blur(8px);
-      display:flex;
-      justify-content:center;
-      gap:2.5rem;
-      padding:1.35rem 1.5rem 1.1rem;
-    }
-    .footer-link{
-      position:relative;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.02em;
-      cursor:pointer;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .footer-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .footer-link:hover{
-      opacity:.55;
-    }
-    .footer-link:hover::after{
-      width:100%;
-    }
-
-    @media (max-width:540px){
-      body{
-        padding-bottom:0;
-      }
-      footer.site-footer{
-        position:static;
-        flex-wrap:wrap;
-        justify-content:flex-start;
-        gap:1rem 1.5rem;
-        padding:1.1rem 1.4rem 1.4rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="/styles.css" />
 </head>
-<body>
+<body class="constraint-page">
 
   <header class="topbar">
     <a href="/" class="back-link">
@@ -239,14 +20,14 @@
     <h1>Constraint</h1>
     <div class="date">11/22/2025</div>
 
-    <!-- CURRENT CONSTRAINT: stays in the hero card -->
+    <!-- CURRENT CONSTRAINT -->
     <div class="constraint-card">
       <p class="constraint-title">
         <strong>There is no way the constraint has been pushed out to end of december. I refuse to believe we are currently residing in purgatory. Think bruddah man ting ya. There is no way this is a time constraint based on a variable that is just now materializing. I am currently constrained by my resourcefullness. I need to increase my income. I cannot breathe.</strong>
       </p>
     </div>
 
-    <!-- PREVIOUS CONSTRAINTS: now OUTSIDE the card, on bare background -->
+    <!-- PREVIOUS CONSTRAINTS -->
     <section class="archive" aria-label="Previous constraints">
       <div class="archive-header">Previous constraints</div>
       <div class="archive-list">
@@ -257,29 +38,28 @@
 
   </main>
 
-<div id="site-footer"></div>
+  <div id="site-footer"></div>
 
-<div id="fade" class="fadeout"></div>
+  <div id="fade" class="fadeout"></div>
 
-<script>
-  (function () {
-    var target = document.getElementById('site-footer');
-    if (!target) return;
+  <script>
+    (function () {
+      var target = document.getElementById('site-footer');
+      if (!target) return;
 
-    fetch('/footer.html', { cache: 'no-cache' })
-      .then(function (res) {
-        if (!res.ok) throw new Error('Failed to load footer');
-        return res.text();
-      })
-      .then(function (html) {
-        target.innerHTML = html;
-      })
-      .catch(function (err) {
-        console.error('Footer load error:', err);
-      });
-  })();
-</script>
-
+      fetch('/footer.html', { cache: 'no-cache' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Failed to load footer');
+          return res.text();
+        })
+        .then(function (html) {
+          target.innerHTML = html;
+        })
+        .catch(function (err) {
+          console.error('Footer load error:', err);
+        });
+    })();
+  </script>
 
 </body>
 </html>
