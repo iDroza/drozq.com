@@ -29,12 +29,14 @@
   <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
 
   <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
+
   <style>
     :root{
       --bg:#000;
       --fg:#fff;
       --muted:rgba(255,255,255,.65);
-      --border:rgba(255,255,255,.12);
+      --accent:#9900FF;
+      --border:rgba(255,255,255,.14);
     }
     *{box-sizing:border-box;}
     body{
@@ -130,6 +132,8 @@
       border-radius:4px;
       font-size:.7rem;
     }
+
+    /* FOOTER: MATCHES CONSTRAINT PAGE */
     footer.site-footer{
       position:fixed;
       left:0;
@@ -170,10 +174,9 @@
       width:100%;
     }
 
-    /* mobile adjustments */
     @media (max-width:540px){
       body{
-        padding-bottom:0; /* footer no longer fixed */
+        padding-bottom:0;
       }
       footer.site-footer{
         position:static;
@@ -306,29 +309,28 @@
     </section>
   </main>
 
-<div id="site-footer"></div>
+  <div id="site-footer"></div>
 
-<div id="fade" class="fadeout"></div>
+  <div id="fade" class="fadeout"></div>
 
-<script>
-  (function () {
-    var target = document.getElementById('site-footer');
-    if (!target) return;
+  <script>
+    (function () {
+      var target = document.getElementById('site-footer');
+      if (!target) return;
 
-    fetch('/footer.html', { cache: 'no-cache' })
-      .then(function (res) {
-        if (!res.ok) throw new Error('Failed to load footer');
-        return res.text();
-      })
-      .then(function (html) {
-        target.innerHTML = html;
-      })
-      .catch(function (err) {
-        console.error('Footer load error:', err);
-      });
-  })();
-</script>
-
+      fetch('/footer.html', { cache: 'no-cache' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Failed to load footer');
+          return res.text();
+        })
+        .then(function (html) {
+          target.innerHTML = html;
+        })
+        .catch(function (err) {
+          console.error('Footer load error:', err);
+        });
+    })();
+  </script>
 
 </body>
 </html>
