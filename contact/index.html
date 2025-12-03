@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact | Joshua Guerrero</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
+  <style>
+    :root {
+      --bg:#000;
+      --fg:#fff;
+      --muted:rgba(255,255,255,.7);
+      --border:rgba(255,255,255,.14);
+      --accent:#9900FF;
+      --accent-soft:rgba(153,0,255,.18);
+      --danger:#ff4b81;
+      --success:#4ade80;
+      --input-bg:#05050b;
+    }
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(153,0,255,.25), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(0,140,255,.16), #000);
+      color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:3rem 1.5rem;
+    }
+
+    .page {
+      width:100%;
+      max-width:1100px;
+    }
+
+    .contact-shell {
+      display:grid;
+      gap:3rem;
+      grid-template-columns: minmax(0,1.1fr) minmax(0,1.1fr);
+      align-items:stretch;
+    }
+
+    @media (max-width: 900px) {
+      body { padding:2.5rem 1.25rem; }
+      .contact-shell {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    .intro {
+      padding:0.25rem 0;
+    }
+
+    .pill {
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      padding:.35rem .8rem;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(0,0,0,.65);
+      font-size:.75rem;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      color:var(--muted);
+      margin-bottom:1.5rem;
+    }
+
+    .pill-dot {
+      width:.47rem;
+      height:.47rem;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 12px rgba(153,0,255,.7);
+    }
+
+    .intro h1 {
+      font-size:2.4rem;
+      line-height:1.1;
+      margin:0 0 1rem;
+    }
+
+    .intro h1 span {
+      color:var(--accent);
+    }
+
+    .intro p {
+      margin:0 0 1.2rem;
+      color:var(--muted);
+      max-width:32rem;
+      font-size:.96rem;
+    }
+
+    .intro-meta {
+      margin-top:1.25rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:.75rem 1.25rem;
+      font-size:.8rem;
+      color:var(--muted);
+    }
+
+    .intro-meta span {
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+    }
+
+    .intro-meta strong {
+      font-weight:600;
+      color:var(--fg);
+    }
+
+    .dot {
+      width:.38rem;
+      height:.38rem;
+      border-radius:999px;
+      background:rgba(255,255,255,.5);
+    }
+
+    /* FORM CARD */
+
+    .form-card {
+      position:relative;
+      border-radius:24px;
+      padding:1px;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(153,0,255,.9), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(0,160,255,.7), transparent 55%);
+      box-shadow:
+        0 30px 120px rgba(0,0,0,.9),
+        0 0 0 1px rgba(255,255,255,.03);
+    }
+
+    .form-card-inner {
+      border-radius:23px;
+      background:
+        linear-gradient(145deg, rgba(5,5,12,.97), rgba(3,3,9,.98) 40%, rgba(7,7,18,.98));
+      padding:1.75rem 1.75rem 1.9rem;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .form-card-inner::before {
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(circle at 120% -10%, rgba(153,0,255,.22), transparent 55%),
+        radial-gradient(circle at -30% 120%, rgba(0,160,255,.18), transparent 55%);
+      mix-blend-mode:screen;
+      opacity:.7;
+      pointer-events:none;
+    }
+
+    .form-header {
+      position:relative;
+      z-index:1;
+      margin-bottom:1.3rem;
+    }
+
+    .form-header h2 {
+      margin:0 0 .35rem;
+      font-size:1.25rem;
+    }
+
+    .form-header p {
+      margin:0;
+      font-size:.82rem;
+      color:var(--muted);
+    }
+
+    form {
+      position:relative;
+      z-index:1;
+    }
+
+    .field-row {
+      display:flex;
+      gap:.9rem;
+    }
+
+    @media (max-width:600px) {
+      .field-row {
+        flex-direction:column;
+      }
+    }
+
+    .field {
+      flex:1;
+      margin-bottom:.95rem;
+    }
+
+    .field label {
+      display:block;
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.11em;
+      color:var(--muted);
+      margin-bottom:.38rem;
+    }
+
+    .required {
+      color:var(--accent);
+      margin-left:.15rem;
+    }
+
+    .input-shell {
+      position:relative;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width:100%;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:var(--input-bg);
+      color:var(--fg);
+      padding:.8rem 1rem;
+      font-size:.9rem;
+      outline:none;
+      transition:border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .08s ease;
+    }
+
+    textarea {
+      border-radius:14px;
+      min-height:110px;
+      resize:vertical;
+      padding:.75rem 1rem .8rem;
+      line-height:1.4;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color:rgba(255,255,255,.35);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px var(--accent-soft), 0 0 24px rgba(153,0,255,.45);
+      transform:translateY(-0.5px);
+    }
+
+    select {
+      appearance:none;
+      -webkit-appearance:none;
+      -moz-appearance:none;
+      padding-right:2.5rem;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+        linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+      background-position:
+        calc(100% - 15px) 50%,
+        calc(100% - 10px) 50%;
+      background-size:5px 5px, 5px 5px;
+      background-repeat:no-repeat;
+    }
+
+    .honeypot {
+      position:absolute;
+      left:-9999px;
+      opacity:0;
+      pointer-events:none;
+      height:0;
+      width:0;
+    }
+
+    .consent-line {
+      margin:.3rem 0 1.1rem;
+      display:flex;
+      gap:.55rem;
+      align-items:flex-start;
+      font-size:.78rem;
+      color:var(--muted);
+    }
+
+    .consent-line input {
+      margin-top:.12rem;
+      accent-color:var(--accent);
+    }
+
+    .consent-line a {
+      color:var(--accent);
+      text-decoration:none;
+    }
+    .consent-line a:hover {
+      text-decoration:underline;
+    }
+
+    .actions {
+      display:flex;
+      align-items:center;
+      gap:1rem;
+      flex-wrap:wrap;
+    }
+
+    button[type="submit"] {
+      border:none;
+      border-radius:999px;
+      padding:.82rem 1.6rem;
+      font-size:.9rem;
+      font-weight:600;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      cursor:pointer;
+      background:linear-gradient(135deg, #9900FF, #6b2bff);
+      color:#fff;
+      display:inline-flex;
+      align-items:center;
+      gap:.45rem;
+      box-shadow:0 14px 40px rgba(0,0,0,.85);
+      transform:translateY(0);
+      transition:transform .12s ease, box-shadow .12s ease, filter .15s ease;
+      white-space:nowrap;
+    }
+
+    button[type="submit"]:hover {
+      filter:brightness(1.06);
+      transform:translateY(-1px);
+      box-shadow:0 18px 60px rgba(0,0,0,.95);
+    }
+
+    button[type="submit"]:active {
+      transform:translateY(1px);
+      box-shadow:0 6px 25px rgba(0,0,0,.8);
+    }
+
+    button[type="submit"].is-loading {
+      cursor:wait;
+      opacity:.8;
+    }
+
+    .btn-dot {
+      width:.45rem;
+      height:.45rem;
+      border-radius:999px;
+      background:rgba(255,255,255,.9);
+    }
+
+    #form-status {
+      font-size:.8rem;
+      color:var(--muted);
+      min-height:1.2em;
+    }
+    #form-status[data-status="success"] {
+      color:var(--success);
+    }
+    #form-status[data-status="error"] {
+      color:var(--danger);
+    }
+
+    .tiny {
+      font-size:.7rem;
+      color:rgba(255,255,255,.45);
+      margin-top:.4rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="contact-shell">
+      <!-- LEFT: COPY -->
+      <div class="intro">
+        <div class="pill">
+          <span class="pill-dot"></span>
+          <span>Serious inquiries only</span>
+        </div>
+        <h1>Put a real operator on your <span>side</span>.</h1>
+        <p>
+          If you’re actually moving money, I want the details. Use this form to put a real name,
+          price range, and timeline in front of me so I can decide if it’s worth my attention.
+        </p>
+        <p>
+          Expect direct questions, no fluff, and a clear next step if the numbers make sense.
+        </p>
+
+        <div class="intro-meta">
+          <span><span class="dot"></span><strong>Use cases:</strong> sell a property, buy a property, or explore a larger play.</span>
+          <span><span class="dot"></span><strong>Location focus:</strong> Greater Los Angeles & California.</span>
+          <span><span class="dot"></span>I personally review each serious lead.</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: FORM -->
+      <div class="form-card">
+        <div class="form-card-inner">
+          <div class="form-header">
+            <h2>Tell me who you are and what you want.</h2>
+            <p>Give me enough signal that I can decide whether to respond and how aggressively.</p>
+          </div>
+
+          <form id="contact-form" method="POST" action="/api/lead" novalidate>
+            <!-- HONEYPOT -->
+            <div class="honeypot">
+              <label>Website
+                <input type="text" name="website" autocomplete="off" />
+              </label>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Full name<span class="required">*</span></label>
+                <div class="input-shell">
+                  <input type="text" name="name" autocomplete="name" placeholder="Your legal name" required />
+                </div>
+              </div>
+              <div class="field">
+                <label>Email<span class="required">*</span></label>
+                <div class="input-shell">
+                  <input type="email" name="email" autocomplete="email" placeholder="you@example.com" required />
+                </div>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Phone</label>
+                <div class="input-shell">
+                  <input type="tel" name="phone" autocomplete="tel" placeholder="+1 (555) 555-5555" />
+                </div>
+              </div>
+              <div class="field">
+                <label>Primary intent<span class="required">*</span></label>
+                <div class="input-shell">
+                  <select name="intent" required>
+                    <option value="">Select one</option>
+                    <option value="sell">Sell a property</option>
+                    <option value="buy">Buy a property</option>
+                    <option value="investor">Investor / multi-property strategy</option>
+                    <option value="other">Other (explain below)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label>Price range</label>
+                <div class="input-shell">
+                  <input type="text" name="budget_range" placeholder="$700k condo, $1.5M SFR, etc." />
+                </div>
+              </div>
+              <div class="field">
+                <label>Timeline</label>
+                <div class="input-shell">
+                  <input type="text" name="timeline" placeholder="30 days, 3–6 months, etc." />
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>What are you trying to do?<span class="required">*</span></label>
+              <div class="input-shell">
+                <textarea name="message" placeholder="Assets, constraints, and what “success” looks like for you." required></textarea>
+              </div>
+            </div>
+
+            <input type="hidden" name="source_page" value="contact" />
+
+            <div class="consent-line">
+              <input type="checkbox" id="consent" name="consent" value="yes" required />
+              <label for="consent">
+                You agree that your information can be stored and contacted by email, call, and text for real estate services.
+              </label>
+            </div>
+
+            <div class="actions">
+              <button type="submit">
+                <span class="btn-dot"></span>
+                <span>Send the details</span>
+              </button>
+              <div>
+                <div id="form-status"></div>
+                <div class="tiny">If the numbers are interesting, you’ll hear from me directly.</div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const form = document.getElementById('contact-form');
+      const statusEl = document.getElementById('form-status');
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      function setStatus(text, type) {
+        statusEl.textContent = text || '';
+        if (type) {
+          statusEl.setAttribute('data-status', type);
+        } else {
+          statusEl.removeAttribute('data-status');
+        }
+      }
+
+      form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        setStatus('Sending…', 'pending');
+        submitBtn.classList.add('is-loading');
+        submitBtn.disabled = true;
+
+        const formData = new FormData(form);
+
+        try {
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'Accept': 'application/json'
+            }
+          });
+
+          const isJson = response.headers.get('content-type') && response.headers.get('content-type').includes('application/json');
+          const payload = isJson ? await response.json().catch(() => ({})) : {};
+
+          if (!response.ok || payload.ok === false) {
+            console.error('Lead submit error', payload);
+            setStatus('Something broke. Try again in a minute.', 'error');
+          } else {
+            setStatus('Received. If it’s serious, I’ll reach out.', 'success');
+            form.reset();
+          }
+        } catch (err) {
+          console.error('Lead submit exception', err);
+          setStatus('Network error. Check your connection and try again.', 'error');
+        } finally {
+          submitBtn.classList.remove('is-loading');
+          submitBtn.disabled = false;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
