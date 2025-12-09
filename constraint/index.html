@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -238,19 +237,20 @@
 
   <main>
     <h1>Constraint</h1>
-    <div class="date">11/22/2025</div>
+    <div class="date">12/8/2025</div>
 
     <!-- CURRENT CONSTRAINT: stays in the hero card -->
     <div class="constraint-card">
       <p class="constraint-title">
-        <strong>There is no way the constraint has been pushed out to end of december. I refuse to believe we are currently residing in purgatory. Think bruddah man ting ya. There is no way this is a time constraint based on a variable that is just now materializing. I am currently constrained by my resourcefullness. I need to increase my income. I cannot breathe.</strong>
+        <strong>december 22nd the world will turn on its side</strong>
       </p>
     </div>
 
-    <!-- PREVIOUS CONSTRAINTS: now OUTSIDE the card, on bare background -->
+    <!-- PREVIOUS CONSTRAINTS -->
     <section class="archive" aria-label="Previous constraints">
       <div class="archive-header">Previous constraints</div>
       <div class="archive-list">
+        <a class="archive-link" href="/constraint/11-22-2025/">11/22/2025</a>
         <a class="archive-link" href="/constraint/11-17-2025/">11/17/2025</a>
         <a class="archive-link" href="/constraint/11-10-2025/">11/10/2025</a>
       </div>
@@ -258,29 +258,27 @@
 
   </main>
 
-<div id="site-footer"></div>
+  <div id="site-footer"></div>
+  <div id="fade" class="fadeout"></div>
 
-<div id="fade" class="fadeout"></div>
+  <script>
+    (function () {
+      var target = document.getElementById('site-footer');
+      if (!target) return;
 
-<script>
-  (function () {
-    var target = document.getElementById('site-footer');
-    if (!target) return;
-
-    fetch('/footer.html', { cache: 'no-cache' })
-      .then(function (res) {
-        if (!res.ok) throw new Error('Failed to load footer');
-        return res.text();
-      })
-      .then(function (html) {
-        target.innerHTML = html;
-      })
-      .catch(function (err) {
-        console.error('Footer load error:', err);
-      });
-  })();
-</script>
-
+      fetch('/footer.html', { cache: 'no-cache' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Failed to load footer');
+          return res.text();
+        })
+        .then(function (html) {
+          target.innerHTML = html;
+        })
+        .catch(function (err) {
+          console.error('Footer load error:', err);
+        });
+    })();
+  </script>
 
 </body>
 </html>
