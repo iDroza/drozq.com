@@ -400,11 +400,12 @@
             <p>Give me enough signal that I can decide whether to respond and how aggressively.</p>
           </div>
 
+          <!-- Keep novalidate, but we will enforce validity in JS -->
           <form id="contact-form" method="POST" action="/api/lead" novalidate>
-            <!-- HONEYPOT -->
+            <!-- HONEYPOT (MATCHES FUNCTION) -->
             <div class="honeypot">
-              <label>Website
-                <input type="text" name="website" autocomplete="off" />
+              <label>Company Website
+                <input type="text" name="company_website" autocomplete="off" />
               </label>
             </div>
 
@@ -482,7 +483,7 @@
               </button>
               <div>
                 <div id="form-status"></div>
-                <div class="tiny">If the numbers are interesting, you’ll hear from me directly.</div>
+                <div class="tiny">If the numbers are interesting, you’ll hear from me.</div>
               </div>
             </div>
           </form>
@@ -499,15 +500,20 @@
 
       function setStatus(text, type) {
         statusEl.textContent = text || '';
-        if (type) {
-          statusEl.setAttribute('data-status', type);
-        } else {
-          statusEl.removeAttribute('data-status');
-        }
+        if (type) statusEl.setAttribute('data-status', type);
+        else statusEl.removeAttribute('data-status');
       }
 
       form.addEventListener('submit', async function (event) {
         event.preventDefault();
+
+        // Manual validation gate (since we're using novalidate)
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          setStatus('Complete the required fields.', 'error');
+          return;
+        }
+
         setStatus('Sending…', 'pending');
         submitBtn.classList.add('is-loading');
         submitBtn.disabled = true;
@@ -518,13 +524,18 @@
           const response = await fetch(form.action, {
             method: 'POST',
             body: formData,
-            headers: {
-              'Accept': 'application/json'
-            }
+            headers: { 'Accept': 'application/json' }
           });
 
-          const isJson = response.headers.get('content-type') && response.headers.get('content-type').includes('application/json');
-          const payload = isJson ? await response.json().catch(() => ({})) : {};
+          // Your Function may return plain text "ok".
+          // This logic handles both JSON and non-JSON responses.
+          let payload = {};
+          const ct = response.headers.get('content-type') || '';
+          if (ct.includes('application/json')) {
+            payload = await response.json().catch(() => ({}));
+          } else {
+            await response.text().catch(() => '');
+          }
 
           if (!response.ok || payload.ok === false) {
             console.error('Lead submit error', payload);
@@ -535,7 +546,7 @@
           }
         } catch (err) {
           console.error('Lead submit exception', err);
-          setStatus('Network error. Check your connection and try again.', 'error');
+          setStatus('Network error. Try again.', 'error');
         } finally {
           submitBtn.classList.remove('is-loading');
           submitBtn.disabled = false;
