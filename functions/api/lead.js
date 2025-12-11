@@ -1,87 +1,177 @@
+const json = (data, status = 200) =>
+  new Response(JSON.stringify(data), {
+    status,
+    headers: { "content-type": "application/json; charset=UTF-8" }
+  });
+
 export async function onRequestPost(context) {
-  const { request, env } = context;
+  try {
+    const { request, env } = context;
 
-  // Only accept form submits
-  const contentType = request.headers.get("Content-Type") || "";
-  if (!contentType.includes("application/x-www-form-urlencoded")
-   && !contentType.includes("multipart/form-data")) {
-    return new Response("Unsupported content type", { status: 415 });
-  }
+    // 1) Only accept HTML form submits
+    const contentType = request.headers.get("Content-Type") || "";
+    const isForm =
+      contentType.includes("application/x-www-form-urlencoded") ||
+      contentType.includes("multipart/form-data");
 
-  const formData = await request.formData();
+    if (!isForm) {
+      return json({ ok: false, error: "Unsupported content type" }, 415);
+    }
 
-  // Honeypot check
-  const honey = formData.get("company_website");
-  if (honey && String(honey).trim() !== "") {
-    return new Response("ok", { status: 200 });
-  }
+    const formData = await request.formData();
 
-  // Extract fields
-  const name = String(formData.get("name") || "").trim();
-  const email = String(formData.get("email") || "").trim();
-  const phone = String(formData.get("phone") || "").trim();
-  const message = String(formData.get("message") || "").trim();
+    // 2) Honeypot check (matches your HTML)
+    const honey = formData.get("company_website");
+    if (honey && String(honey).trim() !== "") {
+      // Act like success; don't tip off bots.
+      return json({ ok: true }, 200);
+    }
 
-  // Basic validation
-  if (!name || !email || !message) {
-    return new Response("Missing required fields", { status: 400 });
-  }
+    // 3) Extract fields from your exact form
+    const name = String(formData.get("name") || "").trim();
+    const email = String(formData.get("email") || "").trim();
+    const phone = String(formData.get("phone") || "").trim();
 
-  // Choose your delivery method:
-  // A) Send to an email API directly
-  // B) Forward to Zapier webhook (then to CRM)
-  //
-  // This example uses MailChannels Email API.
+    const intent = String(formData.get("intent") || "").trim(); // sell/buy/investor/other
+    const budgetRange = String(formData.get("budget_range") || "").trim();
+    const timeline = String(formData.get("timeline") || "").trim();
 
-  const TO_EMAIL = env.TO_EMAIL;
-  const FROM_EMAIL = env.FROM_EMAIL;
+    const message = String(formData.get("message") || "").trim();
+    const sourcePage = String(formData.get("source_page") || "").trim();
 
-  if (!TO_EMAIL || !FROM_EMAIL) {
-    return new Response("Server not configured", { status: 500 });
-  }
+    const consent = String(formData.get("consent") || "").trim(); // "yes" when checked
 
-  const emailBody =
+    // 4) Server-side validation (mirrors your required UI)
+    if (!name || !email || !message) {
+      return json({ ok: false, error: "Missing required fields" }, 400);
+    }
+
+    if (!intent) {
+      return json({ ok: false, error: "Missing intent" }, 400);
+    }
+
+    if (consent !== "yes") {
+      return json({ ok: false, error: "Consent required" }, 400);
+    }
+
+    // 5) Length guards (anti-abuse)
+    if (
+      name.length > 200 ||
+      email.length > 200 ||
+      phone.length > 50 ||
+      intent.length > 50 ||
+      budgetRange.length > 200 ||
+      timeline.length > 200 ||
+      sourcePage.length > 100 ||
+      message.length > 5000
+    ) {
+      return json({ ok: false, error: "Payload too large" }, 413);
+    }
+
+    // 6) Environment variables
+    const TO_EMAIL = env.TO_EMAIL;
+    const FROM_EMAIL = env.FROM_EMAIL;
+    const MAILCHANNELS_API_KEY = env.MAILCHANNELS_API_KEY;
+
+    if (!TO_EMAIL || !FROM_EMAIL) {
+      return json(
+        { ok: false, error: "Server not configured: TO_EMAIL/FROM_EMAIL missing" },
+        500
+      );
+    }
+    if (!MAILCHANNELS_API_KEY) {
+      return json(
+        { ok: false, error: "Server not configured: MAILCHANNELS_API_KEY missing" },
+        500
+      );
+    }
+
+    // 7) Optional metadata (useful for triage)
+    const ip =
+      request.headers.get("cf-connecting-ip") ||
+      request.headers.get("x-forwarded-for") ||
+      "";
+    const ua = request.headers.get("user-agent") || "";
+    const url = new URL(request.url);
+
+    // 8) Compose email body with all fields
+    const emailBody =
 `New lead from drozq.com/contact
 
+IDENTITY
 Name: ${name}
 Email: ${email}
 Phone: ${phone || "—"}
 
-Message:
+DEAL SIGNAL
+Intent: ${intent}
+Price range: ${budgetRange || "—"}
+Timeline: ${timeline || "—"}
+
+MESSAGE
 ${message}
+
+META
+Source page: ${sourcePage || "contact"}
+Endpoint: ${url.pathname}
+IP: ${ip || "—"}
+User-Agent: ${ua || "—"}
+Consent: ${consent}
 `;
 
-  // MailChannels Email API
-  // Note: the old free MailChannels Workers service ended Aug 31, 2024.
-  // The Email API offers a free plan (up to 100 emails/day),
-  // but requires a Domain Lockdown DNS record for your domain. :contentReference[oaicite:2]{index=2}
-  const sendReq = new Request("https://api.mailchannels.net/tx/v1/send", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      personalizations: [{ to: [{ email: TO_EMAIL }] }],
-      from: { email: FROM_EMAIL, name: "drozq.com Lead Form" },
-      reply_to: { email, name },
-      subject: `New Lead: ${name}`,
-      content: [{ type: "text/plain", value: emailBody }]
-    })
-  });
-
-  const resp = await fetch(sendReq);
-
-  if (!resp.ok) {
-    return new Response("Email failed", { status: 502 });
-  }
-
-  // Optional: Forward to Zapier
-  if (env.ZAPIER_WEBHOOK_URL) {
-    // Fire and forget (don’t block the user)
-    context.waitUntil(fetch(env.ZAPIER_WEBHOOK_URL, {
+    // 9) MailChannels Email API (authenticated)
+    const sendReq = new Request("https://api.mailchannels.net/tx/v1/send", {
       method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ name, email, phone, message, source: "drozq.com/contact" })
-    }));
-  }
+      headers: {
+        "content-type": "application/json",
+        "X-Api-Key": MAILCHANNELS_API_KEY,
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: TO_EMAIL }] }],
+        from: { email: FROM_EMAIL, name: "drozq.com Lead Form" },
+        reply_to: { email, name },
+        subject: `New Lead (${intent}): ${name}`,
+        content: [{ type: "text/plain", value: emailBody }]
+      })
+    });
 
-  return new Response("ok", { status: 200 });
+    const resp = await fetch(sendReq);
+    const respText = await resp.text().catch(() => "");
+
+    if (!resp.ok) {
+      // Critical: return the actual provider response so you can debug instantly
+      return json(
+        { ok: false, error: "Email failed", provider_status: resp.status, provider_body: respText },
+        502
+      );
+    }
+
+    // 10) Optional: forward to Zapier (CRM flow)
+    if (env.ZAPIER_WEBHOOK_URL) {
+      context.waitUntil(
+        fetch(env.ZAPIER_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            name,
+            email,
+            phone,
+            intent,
+            budget_range: budgetRange,
+            timeline,
+            message,
+            source_page: sourcePage || "contact",
+            consent,
+            ip,
+            user_agent: ua
+          })
+        })
+      );
+    }
+
+    return json({ ok: true }, 200);
+  } catch (err) {
+    return json({ ok: false, error: "Server error" }, 500);
+  }
 }
