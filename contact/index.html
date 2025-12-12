@@ -6,12 +6,12 @@
 
   <!-- Primary SEO -->
   <title>Contact | Joshua Guerrero | Los Angeles Real Estate</title>
-  <meta name="description" content="High-signal intake for buyers, sellers, and investors in Greater Los Angeles & California. Submit your timeline, price range, and constraints—get a direct plan and next steps if it’s a fit." />
+  <meta name="description" content="High-signal intake for sellers, buyers, and investors in Greater Los Angeles & California. Submit your details—get a direct plan and next steps if it’s a fit." />
   <link rel="canonical" href="https://drozq.com/contact/" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Contact | Joshua Guerrero | Los Angeles Real Estate" />
-  <meta property="og:description" content="High-signal intake for buyers, sellers, and investors in Greater Los Angeles & California. Submit your details—get a direct plan and next steps if it’s a fit." />
+  <meta property="og:description" content="High-signal intake for sellers, buyers, and investors in Greater Los Angeles & California. Submit your details—get a direct plan and next steps if it’s a fit." />
   <meta property="og:url" content="https://drozq.com/contact/" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://drozq.com/preview.jpg" />
@@ -22,51 +22,63 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Contact | Joshua Guerrero | Los Angeles Real Estate" />
-  <meta name="twitter:description" content="High-signal intake for buyers, sellers, and investors in Greater Los Angeles & California. Submit your details—get a direct plan and next steps if it’s a fit." />
+  <meta name="twitter:description" content="High-signal intake for sellers, buyers, and investors in Greater Los Angeles & California. Submit your details—get a direct plan and next steps if it’s a fit." />
   <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
 
-  <!-- Indexing -->
   <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#0a0a0c" />
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
 
   <style>
-    :root {
-      --bg:#000;
-      --fg:#fff;
+    :root{
+      /* Apple-ish dark: clean, quiet, premium */
+      --bg:#07070a;
+      --bg2:#0b0b10;
+      --fg:#ffffff;
       --muted:rgba(255,255,255,.72);
-      --border:rgba(255,255,255,.14);
-      --accent:#9900FF;
-      --accent-soft:rgba(153,0,255,.18);
-      --danger:#ff4b81;
-      --success:#4ade80;
-      --input-bg:#05050b;
-      --card:rgba(255,255,255,.02);
-      --card-2:rgba(255,255,255,.03);
-    }
-    * { box-sizing:border-box; }
+      --muted2:rgba(255,255,255,.56);
+      --hairline:rgba(255,255,255,.10);
+      --card:rgba(255,255,255,.04);
+      --card2:rgba(255,255,255,.06);
+      --shadow: 0 40px 120px rgba(0,0,0,.75);
 
-    body {
+      --accent:#7c3aed; /* sophisticated purple */
+      --accent2:#3b82f6; /* blue */
+      --success:#34d399;
+      --danger:#fb7185;
+
+      --radius-lg:28px;
+      --radius-md:18px;
+      --max: 1120px;
+
+      --step: clamp(56px, 7vw, 96px);
+    }
+
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    body{
       margin:0;
       min-height:100vh;
       background:
-        radial-gradient(circle at top left, rgba(153,0,255,.25), transparent 55%),
-        radial-gradient(circle at bottom right, rgba(0,140,255,.16), #000);
+        radial-gradient(900px 500px at 20% 10%, rgba(124,58,237,.22), transparent 60%),
+        radial-gradient(900px 500px at 85% 30%, rgba(59,130,246,.14), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
       color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
-      padding:1.2rem 1.5rem 6.25rem;
+      padding-bottom:6.25rem; /* room for fixed footer on desktop */
     }
 
-    /* Header pulled from your existing pattern */
+    /* ───────── header (matches your style) ───────── */
     .topbar{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:1.2rem 1.4rem 0.4rem;
       display:flex;
       align-items:center;
-      gap:.5rem;
-      max-width:1100px;
-      margin:0 auto;
-      padding:0.35rem 0 0.6rem;
+      justify-content:space-between;
+      gap:1rem;
     }
     .back-link{
       position:relative;
@@ -75,7 +87,7 @@
       gap:.55rem;
       color:#fff;
       text-decoration:none;
-      font-weight:600;
+      font-weight:650;
       letter-spacing:.01em;
       padding-bottom:.35rem;
       transition:opacity .2s ease;
@@ -90,363 +102,452 @@
       background:#fff;
       transition:width .2s ease-out;
     }
-    .back-link:hover{ opacity:.55; }
+    .back-link:hover{ opacity:.60; }
     .back-link:hover::after{ width:100%; }
-    .back-link .arrow{
-      font-size:1.1rem;
-      line-height:1;
-    }
+    .back-link .arrow{ font-size:1.1rem; line-height:1; }
 
-    .page {
-      width:100%;
-      max-width:1100px;
-      margin:0 auto;
-    }
-
-    .contact-shell {
-      display:grid;
-      gap:3rem;
-      grid-template-columns: minmax(0,1.15fr) minmax(0,1.05fr);
-      align-items:start;
-      padding-top:1rem;
-    }
-
-    @media (max-width: 980px) {
-      body { padding:1.1rem 1.25rem 1.25rem; }
-      .contact-shell { grid-template-columns: minmax(0,1fr); gap:2.2rem; }
-    }
-
-    /* LEFT: FUNNEL COPY */
-    .intro {
-      padding:0.25rem 0;
-    }
-
-    .pill {
+    .pill{
       display:inline-flex;
       align-items:center;
       gap:.55rem;
-      padding:.38rem .85rem;
+      padding:.42rem .88rem;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      background:rgba(0,0,0,.55);
-      font-size:.75rem;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.35);
+      font-size:.72rem;
       text-transform:uppercase;
-      letter-spacing:.14em;
-      color:var(--muted);
-      margin-bottom:1.25rem;
+      letter-spacing:.16em;
+      color:rgba(255,255,255,.78);
+      white-space:nowrap;
     }
-
-    .pill-dot {
-      width:.47rem;
-      height:.47rem;
+    .pill-dot{
+      width:.44rem;
+      height:.44rem;
       border-radius:999px;
-      background:var(--accent);
-      box-shadow:0 0 12px rgba(153,0,255,.7);
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow:0 0 18px rgba(124,58,237,.35);
     }
 
-    .intro h1 {
-      font-size:2.55rem;
-      line-height:1.05;
+    /* ───────── layout ───────── */
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:0 1.4rem;
+    }
+
+    .hero{
+      padding: var(--step) 0 calc(var(--step) * .85);
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns: minmax(0,1.2fr) minmax(0,.8fr);
+      gap:3.25rem;
+      align-items:start;
+    }
+
+    @media (max-width: 980px){
+      .hero-grid{ grid-template-columns: minmax(0,1fr); gap:2.2rem; }
+      body{ padding-bottom:0; }
+    }
+
+    .h-eyebrow{
       margin:0 0 1rem;
-      letter-spacing:-0.02em;
-    }
-
-    .intro h1 span {
-      color:var(--accent);
-    }
-
-    .intro p {
-      margin:0 0 1rem;
+      display:flex;
+      align-items:center;
+      gap:.7rem;
       color:var(--muted);
-      max-width:38rem;
-      font-size:1rem;
-      line-height:1.55;
+      font-size:.95rem;
+      letter-spacing:.01em;
+      line-height:1.35;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(44px, 5.5vw, 72px);
+      line-height:1.02;
+      letter-spacing:-0.03em;
+      font-weight:780;
+    }
+    .grad{
+      background: linear-gradient(135deg, #ffffff, rgba(255,255,255,.75));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .accent{
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .hero-sub{
+      margin:1.35rem 0 0;
+      color:var(--muted);
+      font-size:clamp(18px, 1.45vw, 20px);
+      line-height:1.65;
+      max-width:48rem;
     }
 
     .cta-row{
       display:flex;
-      gap:.85rem;
-      align-items:center;
+      gap:.9rem;
       flex-wrap:wrap;
-      margin:1.15rem 0 1.35rem;
-    }
-
-    .cta-primary{
-      display:inline-flex;
       align-items:center;
-      gap:.55rem;
-      text-decoration:none;
-      color:#fff;
-      border-radius:999px;
-      padding:.82rem 1.15rem;
-      border:1px solid rgba(255,255,255,.12);
-      background:linear-gradient(135deg, rgba(153,0,255,.35), rgba(0,160,255,.12));
-      box-shadow:0 18px 60px rgba(0,0,0,.85);
-      font-weight:650;
-      letter-spacing:.02em;
-      transition:transform .12s ease, filter .15s ease, opacity .2s ease;
+      margin-top:2rem;
     }
-    .cta-primary:hover{ filter:brightness(1.06); transform:translateY(-1px); }
-    .cta-secondary{
-      color:rgba(255,255,255,.75);
-      font-size:.9rem;
-      text-decoration:none;
-      border-bottom:1px solid rgba(255,255,255,.18);
-      padding-bottom:.12rem;
-      transition:opacity .2s ease, border-color .2s ease;
-    }
-    .cta-secondary:hover{
-      opacity:1;
-      border-bottom-color:#fff;
-    }
-
-    .grid-tiles{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap:0.9rem;
-      margin-top:1.25rem;
-    }
-    @media (max-width: 680px){
-      .grid-tiles{ grid-template-columns: minmax(0,1fr); }
-      .intro h1{ font-size:2.2rem; }
-    }
-
-    .tile{
-      border:1px solid rgba(255,255,255,.08);
-      background:linear-gradient(180deg, var(--card), rgba(255,255,255,.01));
-      border-radius:16px;
-      padding:1rem 1rem 1.05rem;
-      position:relative;
-      overflow:hidden;
-    }
-    .tile::before{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background:
-        radial-gradient(circle at 20% 10%, rgba(153,0,255,.16), transparent 55%),
-        radial-gradient(circle at 80% 90%, rgba(0,160,255,.10), transparent 55%);
-      opacity:.75;
-      pointer-events:none;
-    }
-    .tile h3{
-      margin:0 0 .45rem;
-      font-size:.95rem;
-      letter-spacing:.01em;
-      position:relative;
-      z-index:1;
-    }
-    .tile p{
-      margin:0;
-      font-size:.92rem;
-      color:rgba(255,255,255,.72);
-      position:relative;
-      z-index:1;
-      line-height:1.5;
-    }
-
-    .section{
-      margin-top:1.6rem;
-      border:1px solid rgba(255,255,255,.07);
-      background:rgba(0,0,0,.35);
-      border-radius:18px;
-      padding:1rem 1rem 1.05rem;
-    }
-    .section h2{
-      margin:0 0 .7rem;
-      font-size:1rem;
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      color:rgba(255,255,255,.75);
-    }
-    .steps{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap:.8rem;
-    }
-    @media (max-width: 820px){
-      .steps{ grid-template-columns: minmax(0,1fr); }
-    }
-    .step{
-      border:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.02);
-      border-radius:16px;
-      padding:.9rem .9rem .95rem;
-    }
-    .step .num{
+    .btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      width:1.65rem;
-      height:1.65rem;
+      gap:.6rem;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.14);
-      color:#fff;
+      padding: .92rem 1.25rem;
       font-weight:700;
-      margin-bottom:.55rem;
-      background:rgba(0,0,0,.35);
+      letter-spacing:.01em;
+      text-decoration:none;
+      transition: transform .12s ease, filter .15s ease, opacity .2s ease;
+      user-select:none;
+      cursor:pointer;
+      white-space:nowrap;
     }
-    .step h4{
-      margin:0 0 .35rem;
-      font-size:.95rem;
+    .btn-primary{
+      color:#0b0b10;
+      background: linear-gradient(135deg, rgba(255,255,255,.92), rgba(255,255,255,.78));
+      box-shadow: 0 26px 90px rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.18);
     }
-    .step p{
-      margin:0;
-      font-size:.92rem;
-      color:rgba(255,255,255,.72);
-      line-height:1.5;
+    .btn-primary:hover{ transform:translateY(-1px); filter:brightness(1.02); }
+    .btn-ghost{
+      color:rgba(255,255,255,.86);
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.03);
     }
+    .btn-ghost:hover{ transform:translateY(-1px); }
 
-    .bullets{
-      margin:.2rem 0 0;
-      padding:0;
-      list-style:none;
-      display:grid;
-      gap:.45rem;
-    }
-    .bullets li{
-      position:relative;
-      padding-left:1.15rem;
-      color:rgba(255,255,255,.78);
-      font-size:.95rem;
-      line-height:1.4;
-    }
-    .bullets li::before{
-      content:"•";
-      position:absolute;
-      left:0;
-      top:0;
-      color:var(--accent);
-    }
-
-    .fineprint{
+    .micro{
       margin-top:1.1rem;
       color:rgba(255,255,255,.55);
-      font-size:.85rem;
-      line-height:1.55;
-      max-width:44rem;
+      font-size:.92rem;
+      line-height:1.5;
     }
-
-    /* RIGHT: FORM CARD (unchanged style) */
-    .form-card {
-      position:relative;
-      border-radius:24px;
-      padding:1px;
-      background:
-        radial-gradient(circle at 0% 0%, rgba(153,0,255,.9), transparent 55%),
-        radial-gradient(circle at 100% 100%, rgba(0,160,255,.7), transparent 55%);
-      box-shadow:
-        0 30px 120px rgba(0,0,0,.9),
-        0 0 0 1px rgba(255,255,255,.03);
+    .micro a{
+      color:rgba(255,255,255,.75);
+      text-decoration:none;
+      border-bottom:1px solid rgba(255,255,255,.22);
+      padding-bottom:.08rem;
     }
+    .micro a:hover{ color:#fff; border-bottom-color:#fff; }
 
-    .form-card-inner {
-      border-radius:23px;
-      background:
-        linear-gradient(145deg, rgba(5,5,12,.97), rgba(3,3,9,.98) 40%, rgba(7,7,18,.98));
-      padding:1.75rem 1.75rem 1.9rem;
+    /* ───────── right-side “what you’ll get” card ───────── */
+    .promise-card{
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow: var(--shadow);
+      padding: 1.35rem 1.35rem 1.45rem;
       position:relative;
       overflow:hidden;
     }
-
-    .form-card-inner::before {
+    .promise-card::before{
       content:"";
       position:absolute;
-      inset:-40%;
+      inset:-60%;
       background:
-        radial-gradient(circle at 120% -10%, rgba(153,0,255,.22), transparent 55%),
-        radial-gradient(circle at -30% 120%, rgba(0,160,255,.18), transparent 55%);
-      mix-blend-mode:screen;
-      opacity:.7;
+        radial-gradient(circle at 20% 15%, rgba(124,58,237,.22), transparent 60%),
+        radial-gradient(circle at 80% 85%, rgba(59,130,246,.16), transparent 60%);
+      opacity:.9;
       pointer-events:none;
     }
-
-    .form-header {
-      position:relative;
-      z-index:1;
-      margin-bottom:1.15rem;
+    .promise-card > *{ position:relative; z-index:1; }
+    .promise-title{
+      margin:0 0 .5rem;
+      font-size:1.05rem;
+      font-weight:750;
+      letter-spacing:-0.01em;
     }
-
-    .form-header h2 {
-      margin:0 0 .35rem;
-      font-size:1.25rem;
+    .promise-sub{
+      margin:0 0 1rem;
+      color:rgba(255,255,255,.70);
+      font-size:.95rem;
+      line-height:1.55;
     }
-
-    .form-header p {
+    .list{
       margin:0;
-      font-size:.82rem;
-      color:var(--muted);
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:.7rem;
+    }
+    .list li{
+      display:flex;
+      gap:.7rem;
+      align-items:flex-start;
+      color:rgba(255,255,255,.84);
       line-height:1.45;
+      font-size:.95rem;
+    }
+    .check{
+      width:1.15rem;
+      height:1.15rem;
+      border-radius:999px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.14);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 auto;
+      margin-top:.12rem;
+    }
+    .check::before{
+      content:"✓";
+      font-size:.86rem;
+      color:rgba(255,255,255,.95);
     }
 
-    form { position:relative; z-index:1; }
+    /* ───────── section blocks (breathing room) ───────── */
+    .section{
+      padding: var(--step) 0;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .section:first-of-type{ border-top:none; }
+    .section h2{
+      margin:0;
+      font-size:clamp(26px, 2.3vw, 34px);
+      letter-spacing:-0.02em;
+      line-height:1.15;
+      font-weight:780;
+    }
+    .section p.lead{
+      margin:1.05rem 0 0;
+      max-width:56rem;
+      color:var(--muted);
+      font-size:1.05rem;
+      line-height:1.75;
+    }
 
-    .field-row { display:flex; gap:.9rem; }
-    @media (max-width:600px) { .field-row { flex-direction:column; } }
+    .cards{
+      margin-top:2.25rem;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:1.1rem;
+    }
+    @media (max-width: 980px){
+      .cards{ grid-template-columns: minmax(0,1fr); }
+    }
+    .card{
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      padding:1.25rem 1.25rem 1.3rem;
+      min-height: 160px;
+    }
+    .card h3{
+      margin:0 0 .55rem;
+      font-size:1.05rem;
+      font-weight:750;
+      letter-spacing:-0.01em;
+    }
+    .card p{
+      margin:0;
+      color:rgba(255,255,255,.72);
+      line-height:1.6;
+      font-size:.97rem;
+    }
 
-    .field { flex:1; margin-bottom:.95rem; }
+    .timeline{
+      margin-top:2.4rem;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:1.1rem;
+    }
+    @media (max-width: 980px){
+      .timeline{ grid-template-columns: minmax(0,1fr); }
+    }
+    .step{
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      padding:1.25rem 1.25rem 1.35rem;
+    }
+    .num{
+      width:2.1rem;
+      height:2.1rem;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.28);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      margin-bottom:.85rem;
+    }
+    .step h3{ margin:0 0 .45rem; font-size:1.05rem; font-weight:760; }
+    .step p{ margin:0; color:rgba(255,255,255,.72); line-height:1.65; }
 
-    .field label {
+    /* ───────── FAQ (Apple-like minimal accordion) ───────── */
+    details{
+      border-radius: var(--radius-md);
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      padding:1.15rem 1.2rem;
+    }
+    summary{
+      cursor:pointer;
+      list-style:none;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:1rem;
+      font-weight:720;
+      font-size:1.02rem;
+      letter-spacing:-0.01em;
+    }
+    summary::-webkit-details-marker{ display:none; }
+    .plus{
+      width:1.55rem;
+      height:1.55rem;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.25);
+      flex:0 0 auto;
+      color:rgba(255,255,255,.9);
+      font-weight:800;
+    }
+    details[open] .plus{ transform:rotate(45deg); }
+    details p{
+      margin:.85rem 0 0;
+      color:rgba(255,255,255,.72);
+      line-height:1.75;
+      font-size:.98rem;
+      max-width:62rem;
+    }
+    .faq{
+      margin-top:2.25rem;
+      display:grid;
+      gap:.9rem;
+      max-width: 860px;
+    }
+
+    /* ───────── Intake form section (bigger, centered, premium) ───────── */
+    .intake{
+      padding: calc(var(--step) * 1.05) 0 calc(var(--step) * 1.1);
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .intake-head{
+      max-width: 860px;
+      margin:0 auto 2.1rem;
+      text-align:center;
+    }
+    .intake-head h2{ margin:0; font-size:clamp(30px, 2.7vw, 40px); font-weight:820; letter-spacing:-0.02em; }
+    .intake-head p{
+      margin:1rem auto 0;
+      color:var(--muted);
+      font-size:1.05rem;
+      line-height:1.75;
+      max-width: 52rem;
+    }
+
+    .form-shell{
+      max-width: 980px;
+      margin:0 auto;
+      border-radius: calc(var(--radius-lg) + 4px);
+      padding:1px;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(124,58,237,.75), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(59,130,246,.55), transparent 55%);
+      box-shadow: var(--shadow);
+    }
+    .form-inner{
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
+      padding: 2.1rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .form-inner::before{
+      content:"";
+      position:absolute;
+      inset:-50%;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(124,58,237,.18), transparent 60%),
+        radial-gradient(circle at 80% 90%, rgba(59,130,246,.12), transparent 60%);
+      opacity:.8;
+      pointer-events:none;
+    }
+    .form-inner > *{ position:relative; z-index:1; }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      gap:1.15rem;
+    }
+    @media (max-width: 740px){
+      .form-inner{ padding:1.4rem; }
+      .form-grid{ grid-template-columns: minmax(0,1fr); }
+    }
+
+    .field label{
       display:block;
       font-size:.78rem;
       text-transform:uppercase;
-      letter-spacing:.11em;
-      color:var(--muted);
-      margin-bottom:.38rem;
+      letter-spacing:.14em;
+      color:rgba(255,255,255,.75);
+      margin-bottom:.45rem;
     }
-
-    .required { color:var(--accent); margin-left:.15rem; }
-
-    .input-shell { position:relative; }
+    .required{ color:rgba(255,255,255,.9); margin-left:.15rem; }
 
     input[type="text"],
     input[type="email"],
     input[type="tel"],
     select,
-    textarea {
+    textarea{
       width:100%;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background:var(--input-bg);
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.28);
       color:var(--fg);
-      padding:.8rem 1rem;
-      font-size:.9rem;
+      padding: .95rem 1rem;
+      font-size:1rem;
       outline:none;
-      transition:border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .08s ease;
+      transition:border-color .18s ease, box-shadow .18s ease, transform .08s ease, background .18s ease;
+    }
+    textarea{
+      min-height: 150px;
+      resize: vertical;
+      line-height:1.55;
+      padding: 1rem;
+    }
+    input::placeholder, textarea::placeholder{ color:rgba(255,255,255,.35); }
+
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(255,255,255,.30);
+      box-shadow: 0 0 0 6px rgba(124,58,237,.14);
+      transform: translateY(-0.5px);
+      background: rgba(0,0,0,.34);
     }
 
-    textarea {
-      border-radius:14px;
-      min-height:110px;
-      resize:vertical;
-      padding:.75rem 1rem .8rem;
-      line-height:1.4;
-    }
-
-    input::placeholder, textarea::placeholder { color:rgba(255,255,255,.35); }
-
-    input:focus, select:focus, textarea:focus {
-      border-color:var(--accent);
-      box-shadow:0 0 0 1px var(--accent-soft), 0 0 24px rgba(153,0,255,.45);
-      transform:translateY(-0.5px);
-    }
-
-    select {
+    select{
       appearance:none;
       -webkit-appearance:none;
       -moz-appearance:none;
-      padding-right:2.5rem;
       background-image:
-        linear-gradient(45deg, transparent 50%, var(--muted) 50%),
-        linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+        linear-gradient(45deg, transparent 50%, rgba(255,255,255,.65) 50%),
+        linear-gradient(135deg, rgba(255,255,255,.65) 50%, transparent 50%);
       background-position:
-        calc(100% - 15px) 50%,
-        calc(100% - 10px) 50%;
-      background-size:5px 5px, 5px 5px;
+        calc(100% - 18px) 52%,
+        calc(100% - 12px) 52%;
+      background-size:6px 6px, 6px 6px;
       background-repeat:no-repeat;
+      padding-right:2.8rem;
     }
 
-    .honeypot {
+    .honeypot{
       position:absolute;
       left:-9999px;
       opacity:0;
@@ -455,211 +556,292 @@
       width:0;
     }
 
-    .consent-line {
-      margin:.3rem 0 1.1rem;
+    .consent-line{
       display:flex;
-      gap:.55rem;
+      gap:.65rem;
       align-items:flex-start;
-      font-size:.78rem;
-      color:var(--muted);
-      line-height:1.4;
+      margin-top: 1.15rem;
+      color:rgba(255,255,255,.72);
+      line-height:1.55;
+      font-size:.95rem;
     }
-    .consent-line input { margin-top:.12rem; accent-color:var(--accent); }
-    .consent-line a { color:var(--accent); text-decoration:none; }
-    .consent-line a:hover { text-decoration:underline; }
+    .consent-line input{ margin-top:.2rem; accent-color: var(--accent); }
 
-    .actions {
+    .submit-row{
+      margin-top: 1.35rem;
       display:flex;
-      align-items:center;
       gap:1rem;
+      align-items:center;
       flex-wrap:wrap;
+      justify-content:space-between;
     }
-
-    button[type="submit"] {
+    .submit{
       border:none;
       border-radius:999px;
-      padding:.82rem 1.6rem;
-      font-size:.9rem;
-      font-weight:650;
-      letter-spacing:.08em;
-      text-transform:uppercase;
+      padding: .95rem 1.35rem;
+      font-size: .98rem;
+      font-weight:780;
+      letter-spacing:.02em;
       cursor:pointer;
-      background:linear-gradient(135deg, #9900FF, #6b2bff);
-      color:#fff;
+      background: linear-gradient(135deg, rgba(255,255,255,.94), rgba(255,255,255,.82));
+      color:#0b0b10;
+      box-shadow: 0 26px 90px rgba(0,0,0,.55);
+      transition: transform .12s ease, filter .15s ease, opacity .2s ease;
       display:inline-flex;
       align-items:center;
-      gap:.45rem;
-      box-shadow:0 14px 40px rgba(0,0,0,.85);
-      transform:translateY(0);
-      transition:transform .12s ease, box-shadow .12s ease, filter .15s ease;
+      gap:.6rem;
       white-space:nowrap;
     }
+    .submit:hover{ transform:translateY(-1px); filter:brightness(1.02); }
+    .submit:active{ transform:translateY(1px); }
+    .submit.is-loading{ cursor:wait; opacity:.82; }
 
-    button[type="submit"]:hover {
-      filter:brightness(1.06);
-      transform:translateY(-1px);
-      box-shadow:0 18px 60px rgba(0,0,0,.95);
-    }
-
-    button[type="submit"]:active {
-      transform:translateY(1px);
-      box-shadow:0 6px 25px rgba(0,0,0,.8);
-    }
-
-    button[type="submit"].is-loading { cursor:wait; opacity:.8; }
-
-    .btn-dot {
-      width:.45rem;
-      height:.45rem;
+    .dot{
+      width:.52rem;
+      height:.52rem;
       border-radius:999px;
-      background:rgba(255,255,255,.9);
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow:0 0 18px rgba(124,58,237,.25);
     }
 
-    #form-status {
-      font-size:.8rem;
-      color:var(--muted);
+    #form-status{
       min-height:1.2em;
+      font-size:.95rem;
+      color:rgba(255,255,255,.72);
     }
-    #form-status[data-status="success"] { color:var(--success); }
-    #form-status[data-status="error"] { color:var(--danger); }
+    #form-status[data-status="success"]{ color: var(--success); }
+    #form-status[data-status="error"]{ color: var(--danger); }
 
-    .tiny {
-      font-size:.72rem;
-      color:rgba(255,255,255,.45);
-      margin-top:.4rem;
-      line-height:1.45;
+    .tiny{
+      margin-top:.35rem;
+      font-size:.86rem;
+      color:rgba(255,255,255,.55);
+      line-height:1.55;
+      max-width: 44rem;
     }
 
-    /* Footer injection container */
-    #site-footer { margin-top:2.5rem; }
+    /* ───────── footer styles (THIS fixes your footer formatting) ───────── */
+    footer.site-footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:5;
+      background:rgba(0,0,0,.45);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      display:flex;
+      justify-content:center;
+      gap:2.5rem;
+      padding:1.35rem 1.5rem 1.1rem;
+      border-top:1px solid rgba(255,255,255,.06);
+    }
+    .footer-link{
+      position:relative;
+      color:#fff;
+      text-decoration:none;
+      font-weight:650;
+      letter-spacing:.02em;
+      cursor:pointer;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+    .footer-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .footer-link:hover{ opacity:.55; }
+    .footer-link:hover::after{ width:100%; }
+
+    @media (max-width:540px){
+      body{ padding-bottom:0; }
+      footer.site-footer{
+        position:static;
+        flex-wrap:wrap;
+        justify-content:flex-start;
+        gap:1rem 1.5rem;
+        padding:1.1rem 1.4rem 1.4rem;
+      }
+    }
   </style>
 
-  <!-- Optional structured data (safe, minimal) -->
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Joshua Guerrero",
-    "alternateName": "drozq",
-    "url": "https://drozq.com/contact/",
-    "jobTitle": "Real Estate Agent",
-    "areaServed": "Greater Los Angeles, CA",
-    "sameAs": ["https://drozq.com/"]
+    "@context":"https://schema.org",
+    "@type":"RealEstateAgent",
+    "name":"Joshua Guerrero",
+    "alternateName":"drozq",
+    "url":"https://drozq.com/contact/",
+    "areaServed":"Greater Los Angeles, CA",
+    "sameAs":["https://drozq.com/"]
   }
   </script>
 </head>
 
 <body>
   <header class="topbar">
-    <a href="/" class="back-link" aria-label="Return to Home">
+    <a href="/" class="back-link">
       <span class="arrow">←</span>
       <span>Return to Home</span>
     </a>
+    <div class="pill" aria-label="High-signal intake">
+      <span class="pill-dot"></span>
+      <span>Intake is live</span>
+    </div>
   </header>
 
-  <main class="page">
-    <section class="contact-shell">
+  <main class="wrap">
 
-      <!-- LEFT: FUNNEL COPY -->
-      <div class="intro">
-        <div class="pill">
-          <span class="pill-dot"></span>
-          <span>High-signal intake • LA & California</span>
-        </div>
-
-        <h1>Tell me the goal.<br/>I’ll tell you the <span>plan</span>.</h1>
-
-        <p>
-          This page is built for people who want movement, not browsing. If you’re buying, selling, or structuring a
-          larger play in Greater Los Angeles, submit the details once—then we move fast if it’s a fit.
-        </p>
-
-        <p>
-          You’ll get direct questions, clean next steps, and a clear recommendation on strategy: pricing, positioning,
-          timing, and deal structure. No theatrics. Just execution.
-        </p>
-
-        <div class="cta-row">
-          <a class="cta-primary" href="#intake">
-            <span class="btn-dot"></span>
-            <span>Start the intake</span>
-          </a>
-          <a class="cta-secondary" href="/privacy/">Privacy & data use</a>
-        </div>
-
-        <div class="grid-tiles" aria-label="What this is for">
-          <div class="tile">
-            <h3>Seller strategy</h3>
-            <p>Pricing + positioning + buyer targeting. Tight feedback loop. Clean timeline. Clear negotiation posture.</p>
+    <!-- HERO -->
+    <section class="hero" aria-label="Contact hero">
+      <div class="hero-grid">
+        <div>
+          <div class="h-eyebrow">
+            <span style="width:.42rem;height:.42rem;border-radius:999px;background:rgba(255,255,255,.55);display:inline-block;"></span>
+            <span>Greater Los Angeles & California • Sellers • Buyers • Investors</span>
           </div>
-          <div class="tile">
-            <h3>Buyer execution</h3>
-            <p>Offer strategy, comps discipline, escalation logic, and a plan that wins without overpaying blindly.</p>
+
+          <h1><span class="grad">Submit the facts.</span><br><span class="accent">Get the plan.</span></h1>
+
+          <p class="hero-sub">
+            This is a high-signal intake designed to turn uncertainty into a decision.
+            If your situation is actionable, you’ll get direct next steps—pricing, positioning,
+            offer strategy, timelines, and the constraints that actually matter.
+          </p>
+
+          <div class="cta-row">
+            <a class="btn btn-primary" href="#intake"><span class="dot"></span><span>Start the intake</span></a>
+            <a class="btn btn-ghost" href="/privacy/">Privacy</a>
           </div>
-          <div class="tile">
-            <h3>Investor underwriting</h3>
-            <p>Constraints-first math: cash needs, rent reality, rehab scope, margin, and the fastest path to a yes/no.</p>
-          </div>
-          <div class="tile">
-            <h3>Complex moves</h3>
-            <p>Multi-property decisions, sequencing, trade-offs, and what actually matters when the numbers conflict.</p>
+
+          <div class="micro">
+            Not a fit for “just browsing.” This is for people who can decide once the math is clear.
           </div>
         </div>
 
-        <div class="section" aria-label="How it works">
-          <h2>How it works</h2>
-          <div class="steps">
-            <div class="step">
-              <div class="num">1</div>
-              <h4>You submit signal</h4>
-              <p>Timeline, intent, range, and constraints. The goal is clarity, not a novel.</p>
-            </div>
-            <div class="step">
-              <div class="num">2</div>
-              <h4>I review and triage</h4>
-              <p>If it’s actionable, you’ll get a reply with the next step (call, docs, or a direct plan).</p>
-            </div>
-            <div class="step">
-              <div class="num">3</div>
-              <h4>We execute</h4>
-              <p>We pick the winning line and move: pricing/offer, prep steps, and negotiation posture.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="section" aria-label="Who this is for">
-          <h2>Who this is for</h2>
-          <ul class="bullets">
-            <li>You have a real timeline (or a hard reason you don’t).</li>
-            <li>You can make decisions quickly once the math is clear.</li>
-            <li>You want a plan that survives reality: comps, inventory, financing, and leverage.</li>
-            <li>You’re buying, selling, or investing in Greater Los Angeles / California.</li>
+        <aside class="promise-card" aria-label="What you get">
+          <h3 class="promise-title">What you’ll get (if it’s a fit)</h3>
+          <p class="promise-sub">A clean plan with the minimum steps required to move the deal forward.</p>
+          <ul class="list">
+            <li><span class="check"></span><span><strong>Clarity</strong> on options, trade-offs, and the real constraint.</span></li>
+            <li><span class="check"></span><span><strong>Strategy</strong> for pricing / offers / negotiation posture.</span></li>
+            <li><span class="check"></span><span><strong>Execution</strong> steps: what to do first, second, third.</span></li>
+            <li><span class="check"></span><span><strong>Directness</strong> without pressure, gimmicks, or spam.</span></li>
           </ul>
+          <p class="promise-sub" style="margin-top:1rem;">
+            Prefer speed? Put your <strong>timeline</strong> and <strong>price range</strong> in the form. That’s signal.
+          </p>
+        </aside>
+      </div>
+    </section>
 
-          <div class="fineprint">
-            <strong>Not a fit:</strong> “Just curious,” fishing for free valuation paragraphs, or anyone unwilling to
-            share basic inputs. No inputs = no plan.
-          </div>
+    <!-- OUTCOMES -->
+    <section class="section" aria-label="Outcomes">
+      <h2>Built to convert: signal → plan → next step.</h2>
+      <p class="lead">
+        Most “contact” pages are dead ends. This one is a filter + funnel: you submit the minimum useful inputs, I respond
+        with a next step if it’s a match.
+      </p>
+
+      <div class="cards" role="list" aria-label="Use cases">
+        <div class="card" role="listitem">
+          <h3>Seller</h3>
+          <p>Pricing discipline, positioning, prep priorities, and a negotiation posture that holds up under pressure.</p>
         </div>
-
-        <div class="fineprint">
-          <strong>Notes:</strong> This is an intake. Submitting doesn’t create agency or representation.
-          If we proceed, we’ll formalize next steps clearly.
+        <div class="card" role="listitem">
+          <h3>Buyer</h3>
+          <p>Offer strategy built on reality: comps, leverage, timing, escalation logic, and win conditions.</p>
+        </div>
+        <div class="card" role="listitem">
+          <h3>Investor</h3>
+          <p>Constraints-first underwriting: cash needs, rehab scope, rent reality, margin, and the fastest yes/no.</p>
         </div>
       </div>
+    </section>
 
-      <!-- RIGHT: FORM -->
-      <div class="form-card" id="intake">
-        <div class="form-card-inner">
-          <div class="form-header">
-            <h2>High-signal intake</h2>
-            <p>
-              The fastest way to get a useful response is to be specific: intent, range, and timeline.
-              If it’s a fit, you’ll hear back with the next step.
-            </p>
-          </div>
+    <!-- PROCESS -->
+    <section class="section" aria-label="Process">
+      <h2>How it works</h2>
+      <p class="lead">
+        Simple, fast, and measurable. If it’s actionable, you get a next step. If it’s not, you don’t get dragged through a fake pipeline.
+      </p>
 
-          <!-- Keep novalidate, but we will enforce validity in JS -->
+      <div class="timeline" aria-label="Steps">
+        <div class="step">
+          <div class="num">1</div>
+          <h3>Submit the intake</h3>
+          <p>Intent, timeline, range, and constraints. You don’t need perfect words—just usable inputs.</p>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <h3>Review + triage</h3>
+          <p>I scan for fit and urgency. If it’s a match, you get the next step: call, docs, or a direct plan.</p>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <h3>Execute</h3>
+          <p>We choose the winning line and move: pricing/offer, prep priorities, and negotiation posture.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" aria-label="FAQ">
+      <h2>FAQ</h2>
+      <p class="lead">Short answers. No legal cosplay. If we move forward, everything gets formalized correctly.</p>
+
+      <div class="faq">
+        <details>
+          <summary>
+            <span>How fast will I hear back?</span>
+            <span class="plus">+</span>
+          </summary>
+          <p>If it’s actionable, you’ll get a reply with a next step. If it’s not actionable, you won’t get “strung along” responses.</p>
+        </details>
+
+        <details>
+          <summary>
+            <span>What should I put in the message?</span>
+            <span class="plus">+</span>
+          </summary>
+          <p>Property type + location, your ideal outcome, your constraints, and what you’ve already tried. The goal is clarity, not a novel.</p>
+        </details>
+
+        <details>
+          <summary>
+            <span>Do I need a budget range and timeline?</span>
+            <span class="plus">+</span>
+          </summary>
+          <p>No—but if you include them, your odds of getting a useful response jump because those two variables decide most strategies.</p>
+        </details>
+
+        <details>
+          <summary>
+            <span>Will you spam me?</span>
+            <span class="plus">+</span>
+          </summary>
+          <p>No. This goes to a secure intake and to my inbox. You’re not joining a newsletter by accident.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- INTAKE FORM -->
+    <section class="intake" id="intake" aria-label="Intake form">
+      <div class="intake-head">
+        <h2>Start the intake</h2>
+        <p>
+          If you want a serious response, give serious inputs. If it’s a fit, you’ll get a clear next step.
+        </p>
+      </div>
+
+      <div class="form-shell" role="region" aria-label="Contact form container">
+        <div class="form-inner">
           <form id="contact-form" method="POST" action="/api/lead" novalidate>
             <!-- HONEYPOT (MATCHES FUNCTION) -->
             <div class="honeypot">
@@ -668,61 +850,46 @@
               </label>
             </div>
 
-            <div class="field-row">
+            <div class="form-grid">
               <div class="field">
                 <label>Full name<span class="required">*</span></label>
-                <div class="input-shell">
-                  <input type="text" name="name" autocomplete="name" placeholder="Your name" required />
-                </div>
+                <input type="text" name="name" autocomplete="name" placeholder="Your name" required />
               </div>
+
               <div class="field">
                 <label>Email<span class="required">*</span></label>
-                <div class="input-shell">
-                  <input type="email" name="email" autocomplete="email" placeholder="you@example.com" required />
-                </div>
+                <input type="email" name="email" autocomplete="email" placeholder="you@example.com" required />
               </div>
-            </div>
 
-            <div class="field-row">
               <div class="field">
                 <label>Phone</label>
-                <div class="input-shell">
-                  <input type="tel" name="phone" autocomplete="tel" placeholder="+1 (555) 555-5555" />
-                </div>
+                <input type="tel" name="phone" autocomplete="tel" placeholder="+1 (555) 555-5555" />
               </div>
+
               <div class="field">
                 <label>Primary intent<span class="required">*</span></label>
-                <div class="input-shell">
-                  <select name="intent" required>
-                    <option value="">Select one</option>
-                    <option value="sell">Sell a property</option>
-                    <option value="buy">Buy a property</option>
-                    <option value="investor">Investor / multi-property strategy</option>
-                    <option value="other">Other (explain below)</option>
-                  </select>
-                </div>
+                <select name="intent" required>
+                  <option value="">Select one</option>
+                  <option value="sell">Sell a property</option>
+                  <option value="buy">Buy a property</option>
+                  <option value="investor">Investor / multi-property strategy</option>
+                  <option value="other">Other</option>
+                </select>
               </div>
-            </div>
 
-            <div class="field-row">
               <div class="field">
                 <label>Price range</label>
-                <div class="input-shell">
-                  <input type="text" name="budget_range" placeholder="$700k condo, $1.5M SFR, etc." />
-                </div>
+                <input type="text" name="budget_range" placeholder="$700k condo, $1.5M SFR, etc." />
               </div>
+
               <div class="field">
                 <label>Timeline</label>
-                <div class="input-shell">
-                  <input type="text" name="timeline" placeholder="30 days, 3–6 months, etc." />
-                </div>
+                <input type="text" name="timeline" placeholder="30 days, 3–6 months, etc." />
               </div>
-            </div>
 
-            <div class="field">
-              <label>What are you trying to do?<span class="required">*</span></label>
-              <div class="input-shell">
-                <textarea name="message" placeholder="Property basics, constraints, and what a win looks like." required></textarea>
+              <div class="field" style="grid-column:1 / -1;">
+                <label>What are you trying to do?<span class="required">*</span></label>
+                <textarea name="message" placeholder="What you want, what's stopping you, and what a win looks like." required></textarea>
               </div>
             </div>
 
@@ -735,12 +902,13 @@
               </label>
             </div>
 
-            <div class="actions">
-              <button type="submit">
-                <span class="btn-dot"></span>
+            <div class="submit-row">
+              <button class="submit" type="submit">
+                <span class="dot"></span>
                 <span>Send</span>
               </button>
-              <div>
+
+              <div style="min-width:260px; flex:1;">
                 <div id="form-status"></div>
                 <div class="tiny">If it’s actionable, you’ll get a reply with the next step.</div>
               </div>
@@ -749,13 +917,18 @@
         </div>
       </div>
 
+      <div style="max-width:980px;margin:1.6rem auto 0;color:rgba(255,255,255,.52);font-size:.9rem;line-height:1.7;">
+        Submitting this form does not create an agency relationship or representation. If we proceed, terms and scope are made explicit.
+      </div>
     </section>
 
-    <!-- Footer injection (same pattern as constraint page) -->
+    <!-- Footer injection (your global footer.html) -->
     <div id="site-footer"></div>
     <div id="fade" class="fadeout"></div>
+
   </main>
 
+  <!-- Form JS (kept functionally the same) -->
   <script>
     (function () {
       const form = document.getElementById('contact-form');
@@ -771,7 +944,6 @@
       form.addEventListener('submit', async function (event) {
         event.preventDefault();
 
-        // Manual validation gate (since we're using novalidate)
         if (!form.checkValidity()) {
           form.reportValidity();
           setStatus('Complete the required fields.', 'error');
@@ -803,7 +975,7 @@
             console.error('Lead submit error', payload);
             setStatus('Something broke. Try again in a minute.', 'error');
           } else {
-            setStatus('Received. Check your inbox for confirmation.', 'success');
+            setStatus('Received. If it’s a fit, you’ll get the next step.', 'success');
             form.reset();
           }
         } catch (err) {
@@ -817,6 +989,7 @@
     })();
   </script>
 
+  <!-- Footer loader (same pattern as constraint page) -->
   <script>
     (function () {
       var target = document.getElementById('site-footer');
