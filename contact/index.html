@@ -77,26 +77,52 @@
       z-index:10;
       padding:1.15rem 1.25rem;
     }
-    .back-link{
-      position:relative;
-      display:inline-flex;
-      align-items:center;
-      gap:.55rem;
-      color:#fff;
-      text-decoration:none;
-      font-weight:650;
-      letter-spacing:.01em;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-      background: rgba(0,0,0,.28);
-      border:1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius:999px;
-      padding: .62rem .9rem;
-    }
-    .back-link:hover{ opacity:.75; }
-    .back-link .arrow{ font-size:1.05rem; line-height:1; }
+.back-link{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  letter-spacing:.01em;
+  padding-bottom:.35rem;
+  transition:opacity .2s ease;
+
+  /* REMOVE the pill look */
+  background: none;
+  border: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+/* ADD the underline animation */
+.back-link::after{
+  content:'';
+  position:absolute;
+  left:0;
+  bottom:-0.35rem;
+  height:2px;
+  width:0;
+  background:#fff;
+  transition:width .2s ease-out;
+}
+
+.back-link:hover{
+  opacity:.55;
+}
+
+.back-link:hover::after{
+  width:100%;
+}
+
+/* Match arrow sizing from constraint page */
+.back-link span.arrow{
+  font-size:1.1rem;
+  line-height:1;
+}
 
     .wrap{
       max-width:var(--max);
