@@ -70,13 +70,16 @@
     }
 
     /* Return Home pinned top-left (not centered) */
-    .topbar{
-      position:fixed;
-      top:0;
-      left:0;
-      z-index:10;
-      padding:1.15rem 1.25rem;
-    }
+.topbar{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  padding:1.2rem 1.4rem 0.4rem;
+
+  /* match constraint page behavior */
+  position:static;
+}
+
 .back-link{
   position:relative;
   display:inline-flex;
