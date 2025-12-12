@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Primary SEO -->
-  <title>Contact | Joshua Guerrero | Los Angeles Real Estate</title>
-  <meta name="description" content="High-signal intake for sellers, buyers, and investors in Greater Los Angeles & California. Submit your details—get a direct plan and next steps if it’s a fit." />
+  <title>Investor Intake | Joshua Guerrero | California Real Estate</title>
+  <meta name="description" content="Investor intake for acquisitions in California. Submit deal constraints and underwriting inputs—receive a clear go/no-go plan, risk map, and execution steps if it fits." />
   <link rel="canonical" href="https://drozq.com/contact/" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Contact | Joshua Guerrero | Los Angeles Real Estate" />
-  <meta property="og:description" content="High-signal intake for sellers, buyers, and investors in Greater Los Angeles & California. Submit your details—get a direct plan and next steps if it’s a fit." />
+  <meta property="og:title" content="Investor Intake | Joshua Guerrero | California Real Estate" />
+  <meta property="og:description" content="Investor intake for acquisitions in California. Submit deal constraints and underwriting inputs—receive a clear go/no-go plan, risk map, and execution steps if it fits." />
   <meta property="og:url" content="https://drozq.com/contact/" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://drozq.com/preview.jpg" />
@@ -21,8 +21,8 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Contact | Joshua Guerrero | Los Angeles Real Estate" />
-  <meta name="twitter:description" content="High-signal intake for sellers, buyers, and investors in Greater Los Angeles & California. Submit your details—get a direct plan and next steps if it’s a fit." />
+  <meta name="twitter:title" content="Investor Intake | Joshua Guerrero | California Real Estate" />
+  <meta name="twitter:description" content="Investor intake for acquisitions in California. Submit deal constraints and underwriting inputs—receive a clear go/no-go plan, risk map, and execution steps if it fits." />
   <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
 
   <meta name="robots" content="index,follow" />
@@ -32,7 +32,6 @@
 
   <style>
     :root{
-      /* Apple-ish dark: clean, quiet, premium */
       --bg:#07070a;
       --bg2:#0b0b10;
       --fg:#ffffff;
@@ -43,8 +42,8 @@
       --card2:rgba(255,255,255,.06);
       --shadow: 0 40px 120px rgba(0,0,0,.75);
 
-      --accent:#7c3aed; /* sophisticated purple */
-      --accent2:#3b82f6; /* blue */
+      --accent:#7c3aed;
+      --accent2:#3b82f6;
       --success:#34d399;
       --danger:#fb7185;
 
@@ -52,7 +51,7 @@
       --radius-md:18px;
       --max: 1120px;
 
-      --step: clamp(56px, 7vw, 96px);
+      --step: clamp(58px, 7vw, 104px);
     }
 
     *{ box-sizing:border-box; }
@@ -61,24 +60,22 @@
       margin:0;
       min-height:100vh;
       background:
-        radial-gradient(900px 500px at 20% 10%, rgba(124,58,237,.22), transparent 60%),
-        radial-gradient(900px 500px at 85% 30%, rgba(59,130,246,.14), transparent 60%),
+        radial-gradient(900px 500px at 18% 8%, rgba(124,58,237,.22), transparent 60%),
+        radial-gradient(900px 500px at 86% 28%, rgba(59,130,246,.14), transparent 60%),
         linear-gradient(180deg, var(--bg), var(--bg2));
       color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
-      padding-bottom:6.25rem; /* room for fixed footer on desktop */
+      padding-bottom:6.25rem;
     }
 
-    /* ───────── header (matches your style) ───────── */
+    /* Return Home pinned top-left (not centered) */
     .topbar{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:1.2rem 1.4rem 0.4rem;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:1rem;
+      position:fixed;
+      top:0;
+      left:0;
+      z-index:10;
+      padding:1.15rem 1.25rem;
     }
     .back-link{
       position:relative;
@@ -91,48 +88,25 @@
       letter-spacing:.01em;
       padding-bottom:.35rem;
       transition:opacity .2s ease;
-    }
-    .back-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .back-link:hover{ opacity:.60; }
-    .back-link:hover::after{ width:100%; }
-    .back-link .arrow{ font-size:1.1rem; line-height:1; }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:.55rem;
-      padding:.42rem .88rem;
+      background: rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.35);
-      font-size:.72rem;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      color:rgba(255,255,255,.78);
-      white-space:nowrap;
+      padding: .62rem .9rem;
     }
-    .pill-dot{
-      width:.44rem;
-      height:.44rem;
-      border-radius:999px;
-      background:linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow:0 0 18px rgba(124,58,237,.35);
-    }
+    .back-link:hover{ opacity:.75; }
+    .back-link .arrow{ font-size:1.05rem; line-height:1; }
 
-    /* ───────── layout ───────── */
     .wrap{
       max-width:var(--max);
       margin:0 auto;
       padding:0 1.4rem;
+    }
+
+    /* give fixed topbar space */
+    .spacer{
+      height: 84px;
     }
 
     .hero{
@@ -141,7 +115,7 @@
 
     .hero-grid{
       display:grid;
-      grid-template-columns: minmax(0,1.2fr) minmax(0,.8fr);
+      grid-template-columns: minmax(0,1.25fr) minmax(0,.75fr);
       gap:3.25rem;
       align-items:start;
     }
@@ -149,6 +123,8 @@
     @media (max-width: 980px){
       .hero-grid{ grid-template-columns: minmax(0,1fr); gap:2.2rem; }
       body{ padding-bottom:0; }
+      .topbar{ position:absolute; }
+      .spacer{ height: 24px; }
     }
 
     .h-eyebrow{
@@ -164,13 +140,13 @@
 
     h1{
       margin:0;
-      font-size:clamp(44px, 5.5vw, 72px);
+      font-size:clamp(44px, 5.5vw, 74px);
       line-height:1.02;
       letter-spacing:-0.03em;
-      font-weight:780;
+      font-weight:800;
     }
     .grad{
-      background: linear-gradient(135deg, #ffffff, rgba(255,255,255,.75));
+      background: linear-gradient(135deg, #ffffff, rgba(255,255,255,.72));
       -webkit-background-clip:text;
       background-clip:text;
       color:transparent;
@@ -186,8 +162,8 @@
       margin:1.35rem 0 0;
       color:var(--muted);
       font-size:clamp(18px, 1.45vw, 20px);
-      line-height:1.65;
-      max-width:48rem;
+      line-height:1.7;
+      max-width:52rem;
     }
 
     .cta-row{
@@ -204,7 +180,7 @@
       gap:.6rem;
       border-radius:999px;
       padding: .92rem 1.25rem;
-      font-weight:700;
+      font-weight:750;
       letter-spacing:.01em;
       text-decoration:none;
       transition: transform .12s ease, filter .15s ease, opacity .2s ease;
@@ -230,7 +206,8 @@
       margin-top:1.1rem;
       color:rgba(255,255,255,.55);
       font-size:.92rem;
-      line-height:1.5;
+      line-height:1.6;
+      max-width: 54rem;
     }
     .micro a{
       color:rgba(255,255,255,.75);
@@ -240,7 +217,6 @@
     }
     .micro a:hover{ color:#fff; border-bottom-color:#fff; }
 
-    /* ───────── right-side “what you’ll get” card ───────── */
     .promise-card{
       border-radius: var(--radius-lg);
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
@@ -264,14 +240,14 @@
     .promise-title{
       margin:0 0 .5rem;
       font-size:1.05rem;
-      font-weight:750;
+      font-weight:800;
       letter-spacing:-0.01em;
     }
     .promise-sub{
       margin:0 0 1rem;
       color:rgba(255,255,255,.70);
       font-size:.95rem;
-      line-height:1.55;
+      line-height:1.6;
     }
     .list{
       margin:0;
@@ -284,8 +260,8 @@
       display:flex;
       gap:.7rem;
       align-items:flex-start;
-      color:rgba(255,255,255,.84);
-      line-height:1.45;
+      color:rgba(255,255,255,.86);
+      line-height:1.5;
       font-size:.95rem;
     }
     .check{
@@ -306,25 +282,23 @@
       color:rgba(255,255,255,.95);
     }
 
-    /* ───────── section blocks (breathing room) ───────── */
     .section{
       padding: var(--step) 0;
       border-top: 1px solid rgba(255,255,255,.06);
     }
-    .section:first-of-type{ border-top:none; }
     .section h2{
       margin:0;
-      font-size:clamp(26px, 2.3vw, 34px);
+      font-size:clamp(26px, 2.3vw, 36px);
       letter-spacing:-0.02em;
       line-height:1.15;
-      font-weight:780;
+      font-weight:820;
     }
     .section p.lead{
       margin:1.05rem 0 0;
-      max-width:56rem;
+      max-width:60rem;
       color:var(--muted);
       font-size:1.05rem;
-      line-height:1.75;
+      line-height:1.8;
     }
 
     .cards{
@@ -341,19 +315,29 @@
       background: rgba(255,255,255,.03);
       border:1px solid rgba(255,255,255,.08);
       padding:1.25rem 1.25rem 1.3rem;
-      min-height: 160px;
     }
     .card h3{
       margin:0 0 .55rem;
       font-size:1.05rem;
-      font-weight:750;
+      font-weight:820;
       letter-spacing:-0.01em;
     }
     .card p{
       margin:0;
       color:rgba(255,255,255,.72);
-      line-height:1.6;
-      font-size:.97rem;
+      line-height:1.7;
+      font-size:.98rem;
+    }
+    .tag{
+      display:inline-flex;
+      margin-top:.9rem;
+      padding:.35rem .65rem;
+      border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      color:rgba(255,255,255,.72);
+      font-size:.78rem;
+      letter-spacing:.01em;
     }
 
     .timeline{
@@ -380,13 +364,67 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      font-weight:800;
+      font-weight:900;
       margin-bottom:.85rem;
     }
-    .step h3{ margin:0 0 .45rem; font-size:1.05rem; font-weight:760; }
-    .step p{ margin:0; color:rgba(255,255,255,.72); line-height:1.65; }
+    .step h3{ margin:0 0 .45rem; font-size:1.05rem; font-weight:850; }
+    .step p{ margin:0; color:rgba(255,255,255,.72); line-height:1.75; }
 
-    /* ───────── FAQ (Apple-like minimal accordion) ───────── */
+    /* Proof / case study list */
+    .proof-grid{
+      margin-top:2.25rem;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:1.15rem;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .proof-grid{ grid-template-columns: minmax(0,1fr); }
+    }
+    .proof-card{
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      padding:1.35rem 1.35rem 1.45rem;
+    }
+    .proof-card h3{
+      margin:0 0 .6rem;
+      font-size:1.08rem;
+      font-weight:850;
+      letter-spacing:-0.01em;
+    }
+    .proof-card p{
+      margin:.6rem 0 0;
+      color:rgba(255,255,255,.72);
+      line-height:1.75;
+      font-size:.98rem;
+    }
+    .metrics{
+      margin:1rem 0 0;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:.7rem;
+    }
+    .metric{
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.20);
+      padding:.85rem .9rem;
+    }
+    .metric .k{
+      font-size:.75rem;
+      color:rgba(255,255,255,.55);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      margin-bottom:.3rem;
+    }
+    .metric .v{
+      font-size:1.02rem;
+      font-weight:850;
+      letter-spacing:-0.01em;
+    }
+
+    /* FAQ */
     details{
       border-radius: var(--radius-md);
       border:1px solid rgba(255,255,255,.08);
@@ -400,7 +438,7 @@
       align-items:center;
       justify-content:space-between;
       gap:1rem;
-      font-weight:720;
+      font-weight:820;
       font-size:1.02rem;
       letter-spacing:-0.01em;
     }
@@ -416,13 +454,13 @@
       background:rgba(0,0,0,.25);
       flex:0 0 auto;
       color:rgba(255,255,255,.9);
-      font-weight:800;
+      font-weight:900;
     }
     details[open] .plus{ transform:rotate(45deg); }
     details p{
       margin:.85rem 0 0;
       color:rgba(255,255,255,.72);
-      line-height:1.75;
+      line-height:1.8;
       font-size:.98rem;
       max-width:62rem;
     }
@@ -430,30 +468,30 @@
       margin-top:2.25rem;
       display:grid;
       gap:.9rem;
-      max-width: 860px;
+      max-width: 920px;
     }
 
-    /* ───────── Intake form section (bigger, centered, premium) ───────── */
+    /* Intake form */
     .intake{
       padding: calc(var(--step) * 1.05) 0 calc(var(--step) * 1.1);
       border-top: 1px solid rgba(255,255,255,.06);
     }
     .intake-head{
-      max-width: 860px;
-      margin:0 auto 2.1rem;
+      max-width: 900px;
+      margin:0 auto 2.2rem;
       text-align:center;
     }
-    .intake-head h2{ margin:0; font-size:clamp(30px, 2.7vw, 40px); font-weight:820; letter-spacing:-0.02em; }
+    .intake-head h2{ margin:0; font-size:clamp(30px, 2.7vw, 42px); font-weight:880; letter-spacing:-0.02em; }
     .intake-head p{
       margin:1rem auto 0;
       color:var(--muted);
       font-size:1.05rem;
-      line-height:1.75;
-      max-width: 52rem;
+      line-height:1.85;
+      max-width: 58rem;
     }
 
     .form-shell{
-      max-width: 980px;
+      max-width: 1000px;
       margin:0 auto;
       border-radius: calc(var(--radius-lg) + 4px);
       padding:1px;
@@ -518,9 +556,9 @@
       transition:border-color .18s ease, box-shadow .18s ease, transform .08s ease, background .18s ease;
     }
     textarea{
-      min-height: 150px;
+      min-height: 160px;
       resize: vertical;
-      line-height:1.55;
+      line-height:1.6;
       padding: 1rem;
     }
     input::placeholder, textarea::placeholder{ color:rgba(255,255,255,.35); }
@@ -562,7 +600,7 @@
       align-items:flex-start;
       margin-top: 1.15rem;
       color:rgba(255,255,255,.72);
-      line-height:1.55;
+      line-height:1.65;
       font-size:.95rem;
     }
     .consent-line input{ margin-top:.2rem; accent-color: var(--accent); }
@@ -580,7 +618,7 @@
       border-radius:999px;
       padding: .95rem 1.35rem;
       font-size: .98rem;
-      font-weight:780;
+      font-weight:880;
       letter-spacing:.02em;
       cursor:pointer;
       background: linear-gradient(135deg, rgba(255,255,255,.94), rgba(255,255,255,.82));
@@ -616,11 +654,11 @@
       margin-top:.35rem;
       font-size:.86rem;
       color:rgba(255,255,255,.55);
-      line-height:1.55;
-      max-width: 44rem;
+      line-height:1.75;
+      max-width: 54rem;
     }
 
-    /* ───────── footer styles (THIS fixes your footer formatting) ───────── */
+    /* Footer styles */
     footer.site-footer{
       position:fixed;
       left:0;
@@ -678,165 +716,277 @@
     "name":"Joshua Guerrero",
     "alternateName":"drozq",
     "url":"https://drozq.com/contact/",
-    "areaServed":"Greater Los Angeles, CA",
+    "areaServed":"California",
     "sameAs":["https://drozq.com/"]
   }
   </script>
 </head>
 
 <body>
+  <!-- pinned top-left -->
   <header class="topbar">
     <a href="/" class="back-link">
       <span class="arrow">←</span>
       <span>Return to Home</span>
     </a>
-    <div class="pill" aria-label="High-signal intake">
-      <span class="pill-dot"></span>
-      <span>Intake is live</span>
-    </div>
   </header>
+
+  <div class="spacer" aria-hidden="true"></div>
 
   <main class="wrap">
 
     <!-- HERO -->
-    <section class="hero" aria-label="Contact hero">
+    <section class="hero" aria-label="Investor intake hero">
       <div class="hero-grid">
         <div>
           <div class="h-eyebrow">
             <span style="width:.42rem;height:.42rem;border-radius:999px;background:rgba(255,255,255,.55);display:inline-block;"></span>
-            <span>Greater Los Angeles & California • Sellers • Buyers • Investors</span>
+            <span>Investor intake • Acquisitions • Value-add • Rehab / BRRRR / Flip</span>
           </div>
 
-          <h1><span class="grad">Submit the facts.</span><br><span class="accent">Get the plan.</span></h1>
+          <h1><span class="grad">Stop guessing.</span><br><span class="accent">Underwrite, decide, execute.</span></h1>
 
           <p class="hero-sub">
-            This is a high-signal intake designed to turn uncertainty into a decision.
-            If your situation is actionable, you’ll get direct next steps—pricing, positioning,
-            offer strategy, timelines, and the constraints that actually matter.
+            Investors don’t need hype. They need <strong>clarity</strong>, <strong>speed</strong>, and an operator who can
+            convert messy reality into a clean decision. Use this intake to put the deal (or your criteria) in front of me.
+            If it fits, you’ll get a direct plan: <strong>numbers</strong>, <strong>risks</strong>, and <strong>next steps</strong>.
           </p>
 
           <div class="cta-row">
-            <a class="btn btn-primary" href="#intake"><span class="dot"></span><span>Start the intake</span></a>
+            <a class="btn btn-primary" href="#intake"><span class="dot"></span><span>Start the investor intake</span></a>
             <a class="btn btn-ghost" href="/privacy/">Privacy</a>
           </div>
 
           <div class="micro">
-            Not a fit for “just browsing.” This is for people who can decide once the math is clear.
+            This is designed for investors who care about: <strong>basis</strong>, <strong>liquidity</strong>, <strong>timeline</strong>,
+            and <strong>execution certainty</strong>. If your goal is “browse listings,” this isn’t for you.
           </div>
         </div>
 
         <aside class="promise-card" aria-label="What you get">
-          <h3 class="promise-title">What you’ll get (if it’s a fit)</h3>
-          <p class="promise-sub">A clean plan with the minimum steps required to move the deal forward.</p>
+          <h3 class="promise-title">What you get (investor version)</h3>
+          <p class="promise-sub">A decision package, not a conversation.</p>
           <ul class="list">
-            <li><span class="check"></span><span><strong>Clarity</strong> on options, trade-offs, and the real constraint.</span></li>
-            <li><span class="check"></span><span><strong>Strategy</strong> for pricing / offers / negotiation posture.</span></li>
-            <li><span class="check"></span><span><strong>Execution</strong> steps: what to do first, second, third.</span></li>
-            <li><span class="check"></span><span><strong>Directness</strong> without pressure, gimmicks, or spam.</span></li>
+            <li><span class="check"></span><span><strong>Go / No-go</strong> within your constraints (capital, timing, strategy).</span></li>
+            <li><span class="check"></span><span><strong>Risk map</strong>: title, permits, rehab uncertainty, exit liquidity, tenant risk.</span></li>
+            <li><span class="check"></span><span><strong>Underwriting sanity check</strong>: ARV logic, rehab bands, reserves, margin.</span></li>
+            <li><span class="check"></span><span><strong>Execution path</strong>: what happens first, what can break, and how we de-risk.</span></li>
           </ul>
           <p class="promise-sub" style="margin-top:1rem;">
-            Prefer speed? Put your <strong>timeline</strong> and <strong>price range</strong> in the form. That’s signal.
+            If you want the fastest useful answer, include:
+            <strong>target basis</strong>, <strong>zip(s)</strong>, <strong>exit</strong>, <strong>timeline</strong>, and <strong>capital source</strong>.
           </p>
         </aside>
       </div>
     </section>
 
-    <!-- OUTCOMES -->
-    <section class="section" aria-label="Outcomes">
-      <h2>Built to convert: signal → plan → next step.</h2>
+    <!-- INVESTOR OUTCOMES -->
+    <section class="section" aria-label="Investor outcomes">
+      <h2>What investors actually want (and what this page delivers)</h2>
       <p class="lead">
-        Most “contact” pages are dead ends. This one is a filter + funnel: you submit the minimum useful inputs, I respond
-        with a next step if it’s a match.
+        The common failure mode is not “finding a deal.” It’s buying uncertainty and calling it a strategy.
+        This intake is built to reduce uncertainty fast: price, scope, timeline, and exit.
       </p>
 
-      <div class="cards" role="list" aria-label="Use cases">
+      <div class="cards" role="list" aria-label="Investor outcomes">
         <div class="card" role="listitem">
-          <h3>Seller</h3>
-          <p>Pricing discipline, positioning, prep priorities, and a negotiation posture that holds up under pressure.</p>
+          <h3>Basis discipline</h3>
+          <p>
+            You don’t win on vibes. You win on basis. I focus on what you can control: purchase price, scope control,
+            reserves, and negotiating leverage.
+          </p>
+          <span class="tag">Target: margin + safety</span>
         </div>
+
         <div class="card" role="listitem">
-          <h3>Buyer</h3>
-          <p>Offer strategy built on reality: comps, leverage, timing, escalation logic, and win conditions.</p>
+          <h3>Scope control</h3>
+          <p>
+            Rehab isn’t “a number,” it’s a distribution. You get bands, not fantasies: fast/likely/worst-case.
+            If the deal dies, it dies early—before you burn time and inspection money.
+          </p>
+          <span class="tag">Target: kill bad deals early</span>
         </div>
+
         <div class="card" role="listitem">
-          <h3>Investor</h3>
-          <p>Constraints-first underwriting: cash needs, rehab scope, rent reality, margin, and the fastest yes/no.</p>
+          <h3>Exit realism</h3>
+          <p>
+            ARV is not what Zillow says. Exit is liquidity: comps, buyer pool, appraisal risk, days-on-market,
+            and rate sensitivity. We underwrite the exit like it’s the whole deal—because it is.
+          </p>
+          <span class="tag">Target: liquidity + time</span>
         </div>
       </div>
     </section>
 
     <!-- PROCESS -->
     <section class="section" aria-label="Process">
-      <h2>How it works</h2>
+      <h2>How the intake turns into a decision</h2>
       <p class="lead">
-        Simple, fast, and measurable. If it’s actionable, you get a next step. If it’s not, you don’t get dragged through a fake pipeline.
+        Investors pay for speed and certainty. This is the shortest path to a rational decision without
+        drowning in “let’s hop on a call” nonsense.
       </p>
 
       <div class="timeline" aria-label="Steps">
         <div class="step">
           <div class="num">1</div>
-          <h3>Submit the intake</h3>
-          <p>Intent, timeline, range, and constraints. You don’t need perfect words—just usable inputs.</p>
+          <h3>Submit your constraints</h3>
+          <p>
+            Strategy (flip/BRRRR/value-add), capital source (cash/hard money), timeline, zip(s), and your
+            “walk-away” rules. Constraints are the model.
+          </p>
         </div>
         <div class="step">
           <div class="num">2</div>
-          <h3>Review + triage</h3>
-          <p>I scan for fit and urgency. If it’s a match, you get the next step: call, docs, or a direct plan.</p>
+          <h3>Underwrite + risk map</h3>
+          <p>
+            You get a clean summary: basis logic, rehab bands, key risks, and what would change the decision.
+            If it’s not investable, you’ll get the reason in plain language.
+          </p>
         </div>
         <div class="step">
           <div class="num">3</div>
-          <h3>Execute</h3>
-          <p>We choose the winning line and move: pricing/offer, prep priorities, and negotiation posture.</p>
+          <h3>Execute the next step</h3>
+          <p>
+            If it’s a go: offer strategy, diligence priorities, vendor sequencing, and a tight timeline.
+            If it’s a no: we tighten the criteria or move on immediately.
+          </p>
         </div>
       </div>
     </section>
 
-    <!-- FAQ -->
+    <!-- PROOF -->
+    <section class="section" aria-label="Proof">
+      <h2>Proof (replace these with your case studies)</h2>
+      <p class="lead">
+        Investors don’t care about “passion.” They care about outcomes and avoiding landmines.
+        Below are example case studies with granular details—swap with your real numbers.
+      </p>
+
+      <div class="proof-grid">
+        <div class="proof-card">
+          <h3>Case Study A — Value-add SFR (Flip Exit)</h3>
+          <p>
+            Deal looked “fine” on the surface. The win came from basis discipline and scope control.
+            We killed cosmetic bloat, re-scoped the rehab, and protected the exit.
+          </p>
+          <div class="metrics" aria-label="Case A metrics">
+            <div class="metric"><div class="k">Buy</div><div class="v">$612,000</div></div>
+            <div class="metric"><div class="k">Rehab band</div><div class="v">$48k / $64k / $92k</div></div>
+            <div class="metric"><div class="k">ARV logic</div><div class="v">$785k (3 comp set)</div></div>
+            <div class="metric"><div class="k">Hold time</div><div class="v">118 days</div></div>
+            <div class="metric"><div class="k">Net profit</div><div class="v">$71,400</div></div>
+            <div class="metric"><div class="k">Margin on cost</div><div class="v">~9.7%</div></div>
+          </div>
+          <p>
+            Concern addressed: <strong>“What if rehab runs?”</strong> We treated rehab as a distribution, not a single number.
+            Reserves were baked in. The deal survived the worst-case scenario without going negative.
+          </p>
+        </div>
+
+        <div class="proof-card">
+          <h3>Case Study B — BRRRR Duplex (Refi Risk Managed)</h3>
+          <p>
+            The underwriting risk wasn’t the purchase—it was refi/appraisal and rent reality. We underwrote
+            conservatively and structured the plan around appraisal constraints.
+          </p>
+          <div class="metrics" aria-label="Case B metrics">
+            <div class="metric"><div class="k">Buy</div><div class="v">$835,000</div></div>
+            <div class="metric"><div class="k">All-in</div><div class="v">$910,000</div></div>
+            <div class="metric"><div class="k">Stabilized rent</div><div class="v">$6,150/mo</div></div>
+            <div class="metric"><div class="k">Refi value</div><div class="v">$1.02M (appraiser set)</div></div>
+            <div class="metric"><div class="k">Cash-out</div><div class="v">$74,000</div></div>
+            <div class="metric"><div class="k">DSCR</div><div class="v">1.22–1.28 (range)</div></div>
+          </div>
+          <p>
+            Concern addressed: <strong>“Will the refi actually work?”</strong> We underwrote the appraiser’s world (not ours),
+            and used a conservative rent set with a vacancy buffer.
+          </p>
+        </div>
+      </div>
+
+      <div class="cards" style="margin-top:1.15rem;">
+        <div class="card">
+          <h3>Landmine avoidance (example)</h3>
+          <p>
+            Killed a “cheap” deal after identifying permit risk + unpriced foundation issue.
+            Investors lose more money buying uncertainty than missing deals.
+          </p>
+          <span class="tag">Saved: inspection + months</span>
+        </div>
+        <div class="card">
+          <h3>Offer leverage (example)</h3>
+          <p>
+            Tight offer terms based on seller constraints: faster close, clean escrow, controlled concessions.
+            Not “lowballing,” but engineering leverage.
+          </p>
+          <span class="tag">Leverage: terms > price</span>
+        </div>
+        <div class="card">
+          <h3>Exit protection (example)</h3>
+          <p>
+            Underwrote liquidity: buyer pool, appraisal risk, DOM sensitivity. Exit was protected before rehab began.
+          </p>
+          <span class="tag">Exit: liquidity first</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONCERNS / FAQ -->
     <section class="section" aria-label="FAQ">
-      <h2>FAQ</h2>
-      <p class="lead">Short answers. No legal cosplay. If we move forward, everything gets formalized correctly.</p>
+      <h2>Common investor concerns (answered)</h2>
+      <p class="lead">
+        These are the questions investors actually have when they’re about to wire money.
+      </p>
 
       <div class="faq">
         <details>
-          <summary>
-            <span>How fast will I hear back?</span>
-            <span class="plus">+</span>
-          </summary>
-          <p>If it’s actionable, you’ll get a reply with a next step. If it’s not actionable, you won’t get “strung along” responses.</p>
+          <summary><span>“Is this just a normal contact form?”</span><span class="plus">+</span></summary>
+          <p>
+            No. This is an intake built for underwriting and execution. The goal is to compress the time from
+            “idea” to “decision” without a dozen pointless calls.
+          </p>
         </details>
 
         <details>
-          <summary>
-            <span>What should I put in the message?</span>
-            <span class="plus">+</span>
-          </summary>
-          <p>Property type + location, your ideal outcome, your constraints, and what you’ve already tried. The goal is clarity, not a novel.</p>
+          <summary><span>“Can you underwrite without full documents?”</span><span class="plus">+</span></summary>
+          <p>
+            Yes—up to a point. With address/zip, strategy, price range, and constraints, we can do a first-pass
+            decision. If it’s a go, we tighten it with disclosures, inspection priorities, and comps.
+          </p>
         </details>
 
         <details>
-          <summary>
-            <span>Do I need a budget range and timeline?</span>
-            <span class="plus">+</span>
-          </summary>
-          <p>No—but if you include them, your odds of getting a useful response jump because those two variables decide most strategies.</p>
+          <summary><span>“What do you consider a ‘bad deal’?”</span><span class="plus">+</span></summary>
+          <p>
+            Bad basis, unclear scope, fragile exit, or thin margin that can’t absorb variance.
+            If one surprise can wipe the profit, it’s not investing—it's gambling.
+          </p>
         </details>
 
         <details>
-          <summary>
-            <span>Will you spam me?</span>
-            <span class="plus">+</span>
-          </summary>
-          <p>No. This goes to a secure intake and to my inbox. You’re not joining a newsletter by accident.</p>
+          <summary><span>“What strategies do you work with?”</span><span class="plus">+</span></summary>
+          <p>
+            Value-add SFR, small multifamily, BRRRR, flips, and structured acquisition plans.
+            If you’re institutional, the same logic holds—constraints, basis, risk, exit.
+          </p>
+        </details>
+
+        <details>
+          <summary><span>“Will you spam me?”</span><span class="plus">+</span></summary>
+          <p>
+            No. This goes to a secure intake + inbox. If there’s no fit, you don’t get dragged into a drip campaign.
+          </p>
         </details>
       </div>
     </section>
 
     <!-- INTAKE FORM -->
-    <section class="intake" id="intake" aria-label="Intake form">
+    <section class="intake" id="intake" aria-label="Investor intake form">
       <div class="intake-head">
-        <h2>Start the intake</h2>
+        <h2>Investor intake</h2>
         <p>
-          If you want a serious response, give serious inputs. If it’s a fit, you’ll get a clear next step.
+          Give me enough signal to underwrite quickly: your strategy, your constraints, and what a “win” looks like.
+          If it’s investable, you’ll get a clear next step. If it’s not, you’ll get the reason—clean and direct.
         </p>
       </div>
 
@@ -867,29 +1017,29 @@
               </div>
 
               <div class="field">
-                <label>Primary intent<span class="required">*</span></label>
+                <label>Strategy<span class="required">*</span></label>
                 <select name="intent" required>
                   <option value="">Select one</option>
-                  <option value="sell">Sell a property</option>
-                  <option value="buy">Buy a property</option>
                   <option value="investor">Investor / multi-property strategy</option>
-                  <option value="other">Other</option>
+                  <option value="other">Other (explain below)</option>
+                  <option value="buy">Buy (owner-occupant) — not primary</option>
+                  <option value="sell">Sell — not primary</option>
                 </select>
               </div>
 
               <div class="field">
-                <label>Price range</label>
-                <input type="text" name="budget_range" placeholder="$700k condo, $1.5M SFR, etc." />
+                <label>Target basis / price range</label>
+                <input type="text" name="budget_range" placeholder="Ex: $550k–$750k all-in, or $450k buy max" />
               </div>
 
               <div class="field">
                 <label>Timeline</label>
-                <input type="text" name="timeline" placeholder="30 days, 3–6 months, etc." />
+                <input type="text" name="timeline" placeholder="Ex: 14 days, 30–45 days, Q1, etc." />
               </div>
 
               <div class="field" style="grid-column:1 / -1;">
-                <label>What are you trying to do?<span class="required">*</span></label>
-                <textarea name="message" placeholder="What you want, what's stopping you, and what a win looks like." required></textarea>
+                <label>Deal / criteria details<span class="required">*</span></label>
+                <textarea name="message" placeholder="Include: zips/areas, property type, cap source (cash/hard money), rehab tolerance, exit (flip/rent/refi), and your walk-away rules." required></textarea>
               </div>
             </div>
 
@@ -910,25 +1060,28 @@
 
               <div style="min-width:260px; flex:1;">
                 <div id="form-status"></div>
-                <div class="tiny">If it’s actionable, you’ll get a reply with the next step.</div>
+                <div class="tiny">
+                  Tip: The fastest useful reply happens when you include your constraints:
+                  <strong>basis</strong>, <strong>exit</strong>, <strong>timeline</strong>, <strong>capital source</strong>, <strong>zips</strong>.
+                </div>
               </div>
             </div>
           </form>
         </div>
       </div>
 
-      <div style="max-width:980px;margin:1.6rem auto 0;color:rgba(255,255,255,.52);font-size:.9rem;line-height:1.7;">
-        Submitting this form does not create an agency relationship or representation. If we proceed, terms and scope are made explicit.
+      <div style="max-width:1000px;margin:1.6rem auto 0;color:rgba(255,255,255,.52);font-size:.9rem;line-height:1.8;">
+        Submitting this form does not create representation or an agency relationship. If we proceed, scope and terms are made explicit.
       </div>
     </section>
 
-    <!-- Footer injection (your global footer.html) -->
+    <!-- Footer injection -->
     <div id="site-footer"></div>
     <div id="fade" class="fadeout"></div>
 
   </main>
 
-  <!-- Form JS (kept functionally the same) -->
+  <!-- Form JS -->
   <script>
     (function () {
       const form = document.getElementById('contact-form');
@@ -975,7 +1128,7 @@
             console.error('Lead submit error', payload);
             setStatus('Something broke. Try again in a minute.', 'error');
           } else {
-            setStatus('Received. If it’s a fit, you’ll get the next step.', 'success');
+            setStatus('Received. If it’s investable, you’ll get the next step.', 'success');
             form.reset();
           }
         } catch (err) {
@@ -989,7 +1142,7 @@
     })();
   </script>
 
-  <!-- Footer loader (same pattern as constraint page) -->
+  <!-- Footer loader -->
   <script>
     (function () {
       var target = document.getElementById('site-footer');
