@@ -77,12 +77,8 @@
       background:#fff;
       transition:width .2s ease-out;
     }
-    .back-link:hover{
-      opacity:.55;
-    }
-    .back-link:hover::after{
-      width:100%;
-    }
+    .back-link:hover{ opacity:.55; }
+    .back-link:hover::after{ width:100%; }
     .back-link span.arrow{
       font-size:1.1rem;
       line-height:1;
@@ -111,66 +107,22 @@
     }
     p{
       line-height:1.55;
-      margin-bottom:1rem;
+      margin:0 0 1rem;
       font-weight:500;
     }
     strong{font-weight:700;}
 
-    /* Constraint meta layout */
     .constraint-title{
       font-size:1rem;
-      margin-bottom:1rem;
+      margin:0 0 .8rem;
     }
-    .constraint-meta{
-      border-top:1px solid rgba(255,255,255,.08);
-      padding-top:.9rem;
-      display:flex;
-      flex-wrap:wrap;
-      gap:1.5rem;
-    }
-    .meta-block{
-      min-width:180px;
-    }
-    .meta-label{
-      font-size:.75rem;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      color:var(--muted);
-      margin-bottom:.4rem;
-    }
-    .meta-list{
-      list-style:none;
+    .constraint-body{
+      white-space:pre-wrap;
       margin:0;
-      padding:0;
-      font-size:.9rem;
-    }
-    .meta-list li{
-      position:relative;
-      padding-left:1.1rem;
-      margin-bottom:.3rem;
-    }
-    .meta-list li::before{
-      content:'•';
-      position:absolute;
-      left:0;
-      top:0;
-      color:var(--accent);
-      font-size:.9rem;
-    }
-    .meta-value{
-      font-size:.9rem;
-      margin:0;
-      color:var(--muted);
-    }
-    .meta-date{
-      color:var(--fg);
-      font-weight:600;
+      color:rgba(255,255,255,.92);
     }
 
-    /* Archive styles */
-    .archive{
-      margin-top:.5rem;
-    }
+    .archive{ margin-top:.5rem; }
     .archive-header{
       font-size:.75rem;
       letter-spacing:.16em;
@@ -211,37 +163,9 @@
       gap:2.5rem;
       padding:1.35rem 1.5rem 1.1rem;
     }
-    .footer-link{
-      position:relative;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.02em;
-      cursor:pointer;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .footer-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .footer-link:hover{
-      opacity:.55;
-    }
-    .footer-link:hover::after{
-      width:100%;
-    }
 
     @media (max-width:540px){
-      body{
-        padding-bottom:0;
-      }
+      body{ padding-bottom:0; }
       footer.site-footer{
         position:static;
         flex-wrap:wrap;
@@ -263,19 +187,20 @@
 
   <main>
     <h1>Constraint</h1>
-    <div class="date">12/8/2025</div>
+    <div class="date">12/12/2025</div>
 
     <!-- CURRENT CONSTRAINT -->
     <div class="constraint-card">
-      <p class="constraint-title">
-        <strong>december 22nd the world will turn on its side</strong>
-      </p>
+      <p class="constraint-title"><strong>Action: Full Pivot Into Real Estate Done.</strong></p>
+
+      <p class="constraint-body">Ok I have officially made the full pivot into real estate. I have my first showing tomorrow | I will be working 12 hours a day 7 days a week. No days off. I will be all fucking in. I do not care. Current saved = $3,400 | current burn = $2,000/mo - Lawsuit hits within 45 days | all negotiations done - check will arrive December 22nd ($35,750) | holy fuck I am so excited. The question that sparked is “hey so do you want to shadow Kelly tomorrow at the open house?” the answer was an impulsive yes but now I am here typing this out in awe. Ok buddy we are officially doing this. We are all in | 10 days ahead of schedule and honestly I didn't think this was possible. | The game is truly based on the theory of constraints. | holy fuck. The world is yours. | I should go see my job today and say goodbye. | Man, the world is yours. | i was using the when then fallacy to make decisions - thinking that “when I get a listing and close it THEN I will be all in” - false frame. Ok i can float for 1.5 months and then I am sure the lawsuit check will hit before then . Bro I am all in.  Holy fuck. I am terrified. I didn't think it would. In all labor there is profit.</p>
     </div>
 
     <!-- PREVIOUS CONSTRAINTS -->
     <section class="archive" aria-label="Previous constraints">
       <div class="archive-header">Previous constraints</div>
       <div class="archive-list">
+        <a class="archive-link" href="/constraint/12-08-2025/">12/08/2025</a>
         <a class="archive-link" href="/constraint/11-22-2025/">11/22/2025</a>
         <a class="archive-link" href="/constraint/11-17-2025/">11/17/2025</a>
         <a class="archive-link" href="/constraint/11-10-2025/">11/10/2025</a>
