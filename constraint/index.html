@@ -77,8 +77,12 @@
       background:#fff;
       transition:width .2s ease-out;
     }
-    .back-link:hover{ opacity:.55; }
-    .back-link:hover::after{ width:100%; }
+    .back-link:hover{
+      opacity:.55;
+    }
+    .back-link:hover::after{
+      width:100%;
+    }
     .back-link span.arrow{
       font-size:1.1rem;
       line-height:1;
@@ -122,7 +126,10 @@
       color:rgba(255,255,255,.92);
     }
 
-    .archive{ margin-top:.5rem; }
+    /* Archive styles */
+    .archive{
+      margin-top:.5rem;
+    }
     .archive-header{
       font-size:.75rem;
       letter-spacing:.16em;
@@ -150,6 +157,7 @@
       border-bottom-color:var(--fg);
     }
 
+    /* ✅ Footer styling restored to match the original constraint page */
     footer.site-footer{
       position:fixed;
       left:0;
@@ -163,9 +171,37 @@
       gap:2.5rem;
       padding:1.35rem 1.5rem 1.1rem;
     }
+    .footer-link{
+      position:relative;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.02em;
+      cursor:pointer;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+    .footer-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .footer-link:hover{
+      opacity:.55;
+    }
+    .footer-link:hover::after{
+      width:100%;
+    }
 
     @media (max-width:540px){
-      body{ padding-bottom:0; }
+      body{
+        padding-bottom:0;
+      }
       footer.site-footer{
         position:static;
         flex-wrap:wrap;
