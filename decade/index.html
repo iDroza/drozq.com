@@ -48,7 +48,7 @@
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       min-height:100vh;
-      padding-bottom:5.5rem; /* desktop: make room for fixed footer */
+      padding-bottom:5.5rem;
     }
     .topbar{
       display:flex;
@@ -78,12 +78,8 @@
       background:#fff;
       transition:width .2s ease-out;
     }
-    .back-link:hover{
-      opacity:.55;
-    }
-    .back-link:hover::after{
-      width:100%;
-    }
+    .back-link:hover{ opacity:.55; }
+    .back-link:hover::after{ width:100%; }
     .back-link span.arrow{
       font-size:1.1rem;
       line-height:1;
@@ -102,7 +98,6 @@
     }
     .decade-left{
       flex:0 0 340px;
-      /* no sticky – scrolls with page */
     }
     .decade-right{
       flex:1;
@@ -249,27 +244,16 @@
       background:#fff;
       transition:width .2s ease-out;
     }
-    .footer-link:hover{
-      opacity:.55;
-    }
-    .footer-link:hover::after{
-      width:100%;
-    }
+    .footer-link:hover{ opacity:.55; }
+    .footer-link:hover::after{ width:100%; }
 
     /* mobile adjustments */
     @media (max-width:900px){
-      .decade-layout{
-        flex-direction:column;
-      }
-      .decade-left{
-        flex:none;
-        max-width:100%;
-      }
+      .decade-layout{ flex-direction:column; }
+      .decade-left{ flex:none; max-width:100%; }
     }
     @media (max-width:540px){
-      body{
-        padding-bottom:0; /* footer no longer fixed */
-      }
+      body{ padding-bottom:0; }
       .year-title{
         flex-direction:column;
         align-items:flex-start;
@@ -289,170 +273,98 @@
     }
 
     /* ───────────── YEAR 2 HOURGLASS STYLES ───────────── */
-
     .year2-hourglass {
       background:#141828;
-      color: #ffffff;
-      border-radius: 16px;
-      padding: 16px 18px 18px;
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
+      color:#ffffff;
+      border-radius:16px;
+      padding:16px 18px 18px;
+      box-shadow:0 18px 45px rgba(0, 0, 0, 0.6);
       border:1px solid rgba(255,255,255,.08);
     }
-
-    /* enforce same font stack inside the widget */
     .year2-hourglass,
     .year2-hourglass * {
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
     }
-
-    .year2-hourglass-inner {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .year2-header {
-      text-align: center;
-    }
-
-    .year2-title {
-      margin: 0;
-      font-size: 0.85rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      font-weight: 600;
-      color: #e5e7eb;
-    }
-
-    .year2-dates {
-      margin: 4px 0 0;
-      font-size: 0.7rem;
-      color: #6b7280;
-    }
-
-    .year2-main {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 10px;
-    }
-
-    .year2-canvas-wrap {
-      display: flex;
-      justify-content: center;
-    }
-
-    #year2HourglassCanvas {
-      display: block;
-      width: 100%;
-      max-width: 320px;
-      height: auto;
-    }
-
-    .year2-metrics {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .year2-dhm {
-      font-weight: 700;
-      font-size: 1.4rem;
-      line-height: 1.3;
-    }
-
-    .year2-dhm-main {
-      display: inline-block;
-      margin-right: 0.3rem;
-    }
-
-    .year2-dhm-ms {
-      display: inline-block;
-      font-size: 0.8em;
-      opacity: 0.85;
-    }
-
-    .year2-caption {
-      font-size: 0.75rem;
-      color: #9ca3af;
-    }
-
-    .year2-footer {
-      margin-top: 4px;
-      font-size: 0.7rem;
-      color: #6b7280;
-    }
-
-    @media (max-width:480px){
-      .year2-hourglass {
-        padding: 14px 14px 16px;
-        border-radius: 14px;
-      }
-
-      .year2-title {
-        font-size: 0.8rem;
-      }
-
-      .year2-dhm {
-        font-size: 1.1rem;
-        line-height: 1.4;
-      }
-
-      .year2-dhm-main {
-        display:block;
-        margin-right:0;
-      }
-
-      .year2-dhm-ms {
-        display:block;
-        margin-top:0.1rem;
-      }
-    }
-
-    /* ───────────── SISYPHUS: PROGRESS UPDATE (UNDER HOURGLASS) ───────────── */
-    .sisyphus-widget{
-      margin-top: 12px;
-      background:#141828;
-      color:#fff;
-      border-radius:16px;
-      padding: 14px 14px 16px;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.55);
-      border:1px solid rgba(255,255,255,.08);
-    }
-    .sisyphus-widget,
-    .sisyphus-widget *{
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
-    }
-    .sisyphus-header{
-      text-align:center;
-      margin-bottom:10px;
-    }
-    .sisyphus-title{
-      margin: 0;
-      font-size: 0.82rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      font-weight: 700;
+    .year2-hourglass-inner{ display:flex; flex-direction:column; gap:10px; }
+    .year2-header{ text-align:center; }
+    .year2-title{
+      margin:0;
+      font-size:0.85rem;
+      letter-spacing:0.15em;
+      text-transform:uppercase;
+      font-weight:600;
       color:#e5e7eb;
     }
-    .sisyphus-sub{
-      margin: 6px 0 0;
-      font-size: 0.7rem;
+    .year2-dates{
+      margin:4px 0 0;
+      font-size:0.7rem;
       color:#6b7280;
     }
-    .sisyphus-canvas-wrap{
+    .year2-main{
       display:flex;
-      justify-content:center;
+      flex-direction:column;
+      align-items:stretch;
+      gap:10px;
     }
-    #sisyphusCanvas{
+    .year2-canvas-wrap{ display:flex; justify-content:center; }
+    #year2HourglassCanvas{
       display:block;
       width:100%;
-      max-width: 320px;
+      max-width:320px;
       height:auto;
-      border-radius:14px;
-      image-rendering: pixelated;
-      image-rendering: crisp-edges;
+    }
+    .year2-metrics{
+      text-align:center;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .year2-dhm{
+      font-weight:700;
+      font-size:1.4rem;
+      line-height:1.3;
+    }
+    .year2-dhm-main{ display:inline-block; margin-right:0.3rem; }
+    .year2-dhm-ms{ display:inline-block; font-size:0.8em; opacity:0.85; }
+    .year2-caption{ font-size:0.75rem; color:#9ca3af; }
+    .year2-footer{ margin-top:4px; font-size:0.7rem; color:#6b7280; }
+
+    @media (max-width:480px){
+      .year2-hourglass{ padding:14px 14px 16px; border-radius:14px; }
+      .year2-title{ font-size:0.8rem; }
+      .year2-dhm{ font-size:1.1rem; line-height:1.4; }
+      .year2-dhm-main{ display:block; margin-right:0; }
+      .year2-dhm-ms{ display:block; margin-top:0.1rem; }
+    }
+
+    /* ───────────── PROGRESS UPDATE (GIF) ───────────── */
+    .progress-update {
+      margin-top:12px;
+      background:#141828;
+      border-radius:16px;
+      padding:14px 16px 16px;
+      box-shadow:0 18px 45px rgba(0, 0, 0, 0.6);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .progress-update-title{
+      margin:0 0 10px;
+      text-align:center;
+      font-size:0.78rem;
+      letter-spacing:0.15em;
+      text-transform:uppercase;
+      font-weight:600;
+      color:#e5e7eb;
+    }
+    .progress-update img{
+      display:block;
+      width:100%;
+      max-width:320px;
+      height:auto;
+      margin:0 auto;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.08);
+      background:#000;
+      image-rendering:pixelated;
     }
   </style>
 </head>
@@ -484,22 +396,21 @@
               <div class="year2-metrics">
                 <div id="year2Dhm" class="year2-dhm">0d 0h 0m</div>
                 <div id="year2Pct" class="year2-caption">0% of Year 2 elapsed</div>
-                <!-- sub line removed -->
                 <div id="year2Footer" class="year2-footer">Lead Gen → Lead Nurture → Sales.</div>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- SISYPHUS: PROGRESS UPDATE (UNDER THE HOURGLASS) -->
-        <section class="sisyphus-widget">
-          <header class="sisyphus-header">
-            <h2 class="sisyphus-title">Progress Update</h2>
-            <p class="sisyphus-sub">Loop: push → roll → descend → repeat.</p>
-          </header>
-          <div class="sisyphus-canvas-wrap">
-            <canvas id="sisyphusCanvas" width="320" height="180"></canvas>
-          </div>
+        <!-- PROGRESS UPDATE: RIGHT UNDER THE HOURGLASS -->
+        <section class="progress-update" aria-label="Progress Update">
+          <h3 class="progress-update-title">Progress Update:</h3>
+          <img
+            src="progress-update.gif"
+            alt="Progress update animation"
+            loading="lazy"
+            decoding="async"
+          />
         </section>
       </aside>
 
@@ -666,729 +577,408 @@
     </div>
   </main>
 
-<div id="site-footer"></div>
+  <div id="site-footer"></div>
+  <div id="fade" class="fadeout"></div>
 
-<div id="fade" class="fadeout"></div>
+  <script>
+    (function () {
+      var target = document.getElementById('site-footer');
+      if (!target) return;
 
-<script>
-  (function () {
-    var target = document.getElementById('site-footer');
-    if (!target) return;
-
-    fetch('/footer.html', { cache: 'no-cache' })
-      .then(function (res) {
-        if (!res.ok) throw new Error('Failed to load footer');
-        return res.text();
-      })
-      .then(function (html) {
-        target.innerHTML = html;
-      })
-      .catch(function (err) {
-        console.error('Footer load error:', err);
-      });
-  })();
-</script>
-
-<script>
-  // ───────────── YEAR 2 HOURGLASS – LIVE TO THE MILLISECOND ─────────────
-  (function () {
-    const MS_DAY = 86400000;
-    const YEAR2_START = new Date('2025-08-31T00:00:00-07:00');
-    const YEAR2_END   = new Date('2026-08-31T23:59:59-07:00');
-
-    const YEAR2_START_MS = YEAR2_START.getTime();
-    const YEAR2_END_MS   = YEAR2_END.getTime();
-    const TOTAL_MS       = YEAR2_END_MS - YEAR2_START_MS;
-
-    const canvas = document.getElementById('year2HourglassCanvas');
-    if (!canvas) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    const logicalWidth  = 320;
-    const logicalHeight = 220;
-
-    // High-DPI canvas
-    canvas.width  = logicalWidth * dpr;
-    canvas.height = logicalHeight * dpr;
-    canvas.style.width  = logicalWidth + 'px';
-    canvas.style.height = logicalHeight + 'px';
-
-    const ctx = canvas.getContext('2d');
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    const dhmEl   = document.getElementById('year2Dhm');
-    const pctEl   = document.getElementById('year2Pct');
-    const footEl  = document.getElementById('year2Footer');
-
-    // Geometry
-    const W  = logicalWidth;
-    const H  = logicalHeight;
-    const PAD = 16;
-
-    const centerX = W / 2;
-    const topY    = PAD;
-    const bottomY = H - PAD;
-    const neckY   = H / 2;
-
-    const yTopInner    = topY + 6;
-    const yBottomInner = bottomY - 6;
-
-    const topBulbWidth    = W * 0.60;
-    const bottomBulbWidth = W * 0.70;
-    // THIN NECK
-    const neckInnerWidth  = W * 0.05;
-
-    const topHalf    = topBulbWidth / 2;
-    const bottomHalf = bottomBulbWidth / 2;
-    const neckHalf   = neckInnerWidth / 2;
-
-    const maxTopHeight    = neckY - yTopInner;
-    const maxBottomHeight = yBottomInner - neckY;
-
-    function breakdown(ms) {
-      if (ms < 0) ms = 0;
-      ms = Math.floor(ms);
-
-      const d = Math.floor(ms / MS_DAY);
-      ms -= d * MS_DAY;
-
-      const h = Math.floor(ms / (1000 * 60 * 60));
-      ms -= h * (1000 * 60 * 60);
-
-      const m = Math.floor(ms / (1000 * 60));
-      ms -= m * (1000 * 60);
-
-      const s = Math.floor(ms / 1000);
-      ms -= s * 1000;
-
-      const msRemain = ms; // 0–999
-      return { d, h, m, s, ms: msRemain };
-    }
-
-    function phaseColor(msLeft, finished) {
-      if (finished) return '#ef4444'; // red
-      const daysLeft = msLeft / MS_DAY;
-      if (daysLeft > 300) return '#22c55e'; // green
-      if (daysLeft > 120) return '#eab308'; // yellow
-      return '#ef4444'; // red
-    }
-
-    function lerp(a, b, t) {
-      return a + (b - a) * t;
-    }
-
-    function widthAtYTop(y) {
-      const t = (y - yTopInner) / (neckY - yTopInner);
-      const clamped = Math.max(0, Math.min(1, t));
-      return lerp(topBulbWidth, neckInnerWidth, clamped);
-    }
-    function widthAtYBottom(y) {
-      const t = (y - neckY) / (yBottomInner - neckY);
-      const clamped = Math.max(0, Math.min(1, t));
-      return lerp(neckInnerWidth, bottomBulbWidth, clamped);
-    }
-
-    function pad2(n) {
-      return n < 10 ? '0' + n : String(n);
-    }
-    function pad3(n) {
-      if (n < 10) return '00' + n;
-      if (n < 100) return '0' + n;
-      return String(n);
-    }
-
-    // glass path (centered)
-    const glassPath = (function () {
-      const p = new Path2D();
-      // top bulb
-      p.moveTo(-topHalf, yTopInner);
-      p.quadraticCurveTo(-topHalf * 0.8, topY, 0, topY);
-      p.quadraticCurveTo(topHalf * 0.8, topY, topHalf, yTopInner);
-      p.quadraticCurveTo(topHalf * 0.35, neckY - 6, neckHalf, neckY);
-      p.lineTo(-neckHalf, neckY);
-      p.quadraticCurveTo(-topHalf * 0.35, neckY - 6, -topHalf, yTopInner);
-
-      // bottom bulb
-      p.moveTo(-neckHalf, neckY);
-      p.quadraticCurveTo(-bottomHalf * 0.35, neckY + 6, -bottomHalf, yBottomInner);
-      p.quadraticCurveTo(-bottomHalf * 0.8, bottomY, 0, bottomY);
-      p.quadraticCurveTo(bottomHalf * 0.8, bottomY, bottomHalf, yBottomInner);
-      p.quadraticCurveTo(bottomHalf * 0.35, neckY + 6, neckHalf, neckY);
-      p.closePath();
-      return p;
+      fetch('/footer.html', { cache: 'no-cache' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Failed to load footer');
+          return res.text();
+        })
+        .then(function (html) {
+          target.innerHTML = html;
+        })
+        .catch(function (err) {
+          console.error('Footer load error:', err);
+        });
     })();
+  </script>
 
-    // ───────────── PHOTOREAL HOURGLASS RENDER ─────────────
-    function drawHourglass(progress, finished, animPhase) {
-      ctx.clearRect(0, 0, W, H);
-      ctx.save();
-      ctx.translate(centerX, 0); // center on X
+  <script>
+    // ───────────── YEAR 2 HOURGLASS – LIVE TO THE MILLISECOND ─────────────
+    (function () {
+      const MS_DAY = 86400000;
+      const YEAR2_START = new Date('2025-08-31T00:00:00-07:00');
+      const YEAR2_END   = new Date('2026-08-31T23:59:59-07:00');
 
-      // ───────── MATCH WIDGET BACKGROUND (#141828) ─────────
-      ctx.fillStyle = '#141828';
-      ctx.fillRect(-W / 2, 0, W, H);
+      const YEAR2_START_MS = YEAR2_START.getTime();
+      const YEAR2_END_MS   = YEAR2_END.getTime();
+      const TOTAL_MS       = YEAR2_END_MS - YEAR2_START_MS;
 
-      // subtle vignette overlay, but same base color at edges
-      const vignette = ctx.createRadialGradient(
-        0, H * 0.3, 10,
-        0, H * 0.5, H * 0.9
-      );
-      vignette.addColorStop(0.0, 'rgba(31,41,55,0.65)');
-      vignette.addColorStop(1.0, 'rgba(20,24,40,0)');
-      ctx.fillStyle = vignette;
-      ctx.fillRect(-W / 2, 0, W, H);
+      const canvas = document.getElementById('year2HourglassCanvas');
+      if (!canvas) return;
 
-      // ───────── STAND / FRAME ─────────
-      const frameWidth   = bottomBulbWidth * 0.95;
-      const capHeight    = 8;
-      const pillarWidth  = 6;
-      const pillarOffset = frameWidth * 0.46;
-      const pillarTopY   = topY - 12;
-      const pillarBotY   = bottomY + 4;
+      const dpr = window.devicePixelRatio || 1;
+      const logicalWidth  = 320;
+      const logicalHeight = 220;
 
-      // bottom cap
-      let capGrad = ctx.createLinearGradient(-frameWidth / 2, bottomY + 4, frameWidth / 2, bottomY + 4);
-      capGrad.addColorStop(0.0, '#020617');
-      capGrad.addColorStop(0.25, '#111827');
-      capGrad.addColorStop(0.5, '#1f2937');
-      capGrad.addColorStop(0.75, '#111827');
-      capGrad.addColorStop(1.0, '#020617');
-      ctx.fillStyle = capGrad;
-      ctx.beginPath();
-      if (ctx.roundRect) {
-        ctx.roundRect(-frameWidth / 2, bottomY + 4, frameWidth, capHeight, 4);
-      } else {
-        ctx.moveTo(-frameWidth / 2, bottomY + 4);
-        ctx.lineTo(frameWidth / 2, bottomY + 4);
-        ctx.lineTo(frameWidth / 2, bottomY + 4 + capHeight);
-        ctx.lineTo(-frameWidth / 2, bottomY + 4 + capHeight);
-        ctx.closePath();
+      canvas.width  = logicalWidth * dpr;
+      canvas.height = logicalHeight * dpr;
+      canvas.style.width  = logicalWidth + 'px';
+      canvas.style.height = logicalHeight + 'px';
+
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const dhmEl   = document.getElementById('year2Dhm');
+      const pctEl   = document.getElementById('year2Pct');
+      const footEl  = document.getElementById('year2Footer');
+
+      const W  = logicalWidth;
+      const H  = logicalHeight;
+      const PAD = 16;
+
+      const centerX = W / 2;
+      const topY    = PAD;
+      const bottomY = H - PAD;
+      const neckY   = H / 2;
+
+      const yTopInner    = topY + 6;
+      const yBottomInner = bottomY - 6;
+
+      const topBulbWidth    = W * 0.60;
+      const bottomBulbWidth = W * 0.70;
+      const neckInnerWidth  = W * 0.05;
+
+      const topHalf    = topBulbWidth / 2;
+      const bottomHalf = bottomBulbWidth / 2;
+      const neckHalf   = neckInnerWidth / 2;
+
+      const maxTopHeight    = neckY - yTopInner;
+      const maxBottomHeight = yBottomInner - neckY;
+
+      function breakdown(ms) {
+        if (ms < 0) ms = 0;
+        ms = Math.floor(ms);
+
+        const d = Math.floor(ms / MS_DAY);
+        ms -= d * MS_DAY;
+
+        const h = Math.floor(ms / (1000 * 60 * 60));
+        ms -= h * (1000 * 60 * 60);
+
+        const m = Math.floor(ms / (1000 * 60));
+        ms -= m * (1000 * 60);
+
+        const s = Math.floor(ms / 1000);
+        ms -= s * 1000;
+
+        const msRemain = ms;
+        return { d, h, m, s, ms: msRemain };
       }
-      ctx.fill();
 
-      // top cap
-      capGrad = ctx.createLinearGradient(-frameWidth / 2, topY - 12, frameWidth / 2, topY - 12);
-      capGrad.addColorStop(0.0, '#020617');
-      capGrad.addColorStop(0.25, '#111827');
-      capGrad.addColorStop(0.5, '#1f2937');
-      capGrad.addColorStop(0.75, '#111827');
-      capGrad.addColorStop(1.0, '#020617');
-      ctx.fillStyle = capGrad;
-      ctx.beginPath();
-      if (ctx.roundRect) {
-        ctx.roundRect(-frameWidth / 2, topY - 12, frameWidth, capHeight, 4);
-      } else {
-        ctx.moveTo(-frameWidth / 2, topY - 12);
-        ctx.lineTo(frameWidth / 2, topY - 12);
-        ctx.lineTo(frameWidth / 2, topY - 12 + capHeight);
-        ctx.lineTo(-frameWidth / 2, topY - 12 + capHeight);
-        ctx.closePath();
+      function phaseColor(msLeft, finished) {
+        if (finished) return '#ef4444';
+        const daysLeft = msLeft / MS_DAY;
+        if (daysLeft > 300) return '#22c55e';
+        if (daysLeft > 120) return '#eab308';
+        return '#ef4444';
       }
-      ctx.fill();
 
-      // pillars
-      const pillarGrad = ctx.createLinearGradient(-pillarWidth / 2, 0, pillarWidth / 2, 0);
-      pillarGrad.addColorStop(0.0, '#020617');
-      pillarGrad.addColorStop(0.3, '#111827');
-      pillarGrad.addColorStop(0.7, '#0b1120');
-      pillarGrad.addColorStop(1.0, '#020617');
-      ctx.fillStyle = pillarGrad;
+      function lerp(a, b, t) { return a + (b - a) * t; }
 
-      const pillarHeight = pillarBotY - pillarTopY;
-      ctx.beginPath();
-      if (ctx.roundRect) {
-        ctx.roundRect(-pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight, 3);
-        ctx.roundRect( pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight, 3);
-      } else {
-        ctx.rect(-pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight);
-        ctx.rect( pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight);
+      function widthAtYTop(y) {
+        const t = (y - yTopInner) / (neckY - yTopInner);
+        const clamped = Math.max(0, Math.min(1, t));
+        return lerp(topBulbWidth, neckInnerWidth, clamped);
       }
-      ctx.fill();
+      function widthAtYBottom(y) {
+        const t = (y - neckY) / (yBottomInner - neckY);
+        const clamped = Math.max(0, Math.min(1, t));
+        return lerp(neckInnerWidth, bottomBulbWidth, clamped);
+      }
 
-      // soft shadow under glass
-      const shadowGrad = ctx.createRadialGradient(
-        0, bottomY + 6, 2,
-        0, bottomY + 6, bottomBulbWidth * 0.65
-      );
-      shadowGrad.addColorStop(0.0, 'rgba(0,0,0,0.8)');
-      shadowGrad.addColorStop(1.0, 'rgba(0,0,0,0)');
-      ctx.fillStyle = shadowGrad;
-      ctx.beginPath();
-      ctx.ellipse(0, bottomY + 6, bottomBulbWidth * 0.65, 10, 0, 0, Math.PI * 2);
-      ctx.fill();
+      function pad2(n) { return n < 10 ? '0' + n : String(n); }
+      function pad3(n) {
+        if (n < 10) return '00' + n;
+        if (n < 100) return '0' + n;
+        return String(n);
+      }
 
-      // ───────── GLASS + SAND (CLIPPED) ─────────
-      ctx.save();
-      ctx.clip(glassPath);
+      const glassPath = (function () {
+        const p = new Path2D();
+        p.moveTo(-topHalf, yTopInner);
+        p.quadraticCurveTo(-topHalf * 0.8, topY, 0, topY);
+        p.quadraticCurveTo(topHalf * 0.8, topY, topHalf, yTopInner);
+        p.quadraticCurveTo(topHalf * 0.35, neckY - 6, neckHalf, neckY);
+        p.lineTo(-neckHalf, neckY);
+        p.quadraticCurveTo(-topHalf * 0.35, neckY - 6, -topHalf, yTopInner);
 
-      // glass interior base gradient
-      const glassInteriorGrad = ctx.createLinearGradient(0, topY, 0, bottomY);
-      glassInteriorGrad.addColorStop(0.0, 'rgba(15,23,42,0.94)');
-      glassInteriorGrad.addColorStop(0.5, 'rgba(15,23,42,0.88)');
-      glassInteriorGrad.addColorStop(1.0, 'rgba(15,23,42,0.97)');
-      ctx.fillStyle = glassInteriorGrad;
-      ctx.fillRect(-W, topY, W * 2, bottomY - topY);
+        p.moveTo(-neckHalf, neckY);
+        p.quadraticCurveTo(-bottomHalf * 0.35, neckY + 6, -bottomHalf, yBottomInner);
+        p.quadraticCurveTo(-bottomHalf * 0.8, bottomY, 0, bottomY);
+        p.quadraticCurveTo(bottomHalf * 0.8, bottomY, bottomHalf, yBottomInner);
+        p.quadraticCurveTo(bottomHalf * 0.35, neckY + 6, neckHalf, neckY);
+        p.closePath();
+        return p;
+      })();
 
-      // subtle inner glow to simulate volume
-      const bulbGlow = ctx.createRadialGradient(
-        0, neckY - maxTopHeight * 0.6, W * 0.05,
-        0, neckY, W * 0.7
-      );
-      bulbGlow.addColorStop(0.0, 'rgba(148,163,184,0.25)');
-      bulbGlow.addColorStop(0.4, 'rgba(148,163,184,0.10)');
-      bulbGlow.addColorStop(1.0, 'rgba(15,23,42,0)');
-      ctx.fillStyle = bulbGlow;
-      ctx.fillRect(-W, topY, W * 2, bottomY - topY);
+      function drawHourglass(progress, finished, animPhase) {
+        ctx.clearRect(0, 0, W, H);
+        ctx.save();
+        ctx.translate(centerX, 0);
 
-      // Sand fractions
-      const bottomFrac = Math.max(0, Math.min(1, progress));
-      const topFrac    = 1 - bottomFrac;
+        ctx.fillStyle = '#141828';
+        ctx.fillRect(-W / 2, 0, W, H);
 
-      // ───────── TOP SAND ─────────
-      if (topFrac > 0.0005) {
-        const fillHeightTop = maxTopHeight * topFrac;
-        const yLevel = neckY - fillHeightTop;
-        // slightly overfill and let clip hug glass so it doesn't "hover"
-        const widthLevel = widthAtYTop(yLevel) * 1.02;
-        const halfLevel  = widthLevel / 2;
-        const surfaceDepth = Math.min(8, (neckY - yLevel) * 0.55);
+        const vignette = ctx.createRadialGradient(
+          0, H * 0.3, 10,
+          0, H * 0.5, H * 0.9
+        );
+        vignette.addColorStop(0.0, 'rgba(31,41,55,0.65)');
+        vignette.addColorStop(1.0, 'rgba(20,24,40,0)');
+        ctx.fillStyle = vignette;
+        ctx.fillRect(-W / 2, 0, W, H);
 
-        const sandTopGrad = ctx.createLinearGradient(0, yLevel - 6, 0, neckY + 4);
-        sandTopGrad.addColorStop(0.0, '#fdf3c4');
-        sandTopGrad.addColorStop(0.4, '#f5d67a');
-        sandTopGrad.addColorStop(1.0, '#d7ab4e');
-        ctx.fillStyle = sandTopGrad;
+        const frameWidth   = bottomBulbWidth * 0.95;
+        const capHeight    = 8;
+        const pillarWidth  = 6;
+        const pillarOffset = frameWidth * 0.46;
+        const pillarTopY   = topY - 12;
+        const pillarBotY   = bottomY + 4;
 
+        let capGrad = ctx.createLinearGradient(-frameWidth / 2, bottomY + 4, frameWidth / 2, bottomY + 4);
+        capGrad.addColorStop(0.0, '#020617');
+        capGrad.addColorStop(0.25, '#111827');
+        capGrad.addColorStop(0.5, '#1f2937');
+        capGrad.addColorStop(0.75, '#111827');
+        capGrad.addColorStop(1.0, '#020617');
+        ctx.fillStyle = capGrad;
         ctx.beginPath();
-        ctx.moveTo(-halfLevel, yLevel);
-        ctx.quadraticCurveTo(0, yLevel + surfaceDepth, halfLevel, yLevel);
-        ctx.lineTo(neckHalf * 1.02, neckY);
-        ctx.quadraticCurveTo(0, neckY + 2, -neckHalf * 1.02, neckY);
-        ctx.closePath();
+        if (ctx.roundRect) ctx.roundRect(-frameWidth / 2, bottomY + 4, frameWidth, capHeight, 4);
+        else { ctx.rect(-frameWidth / 2, bottomY + 4, frameWidth, capHeight); }
         ctx.fill();
 
-        // specular ridge
-        ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-        ctx.lineWidth = 0.7;
+        capGrad = ctx.createLinearGradient(-frameWidth / 2, topY - 12, frameWidth / 2, topY - 12);
+        capGrad.addColorStop(0.0, '#020617');
+        capGrad.addColorStop(0.25, '#111827');
+        capGrad.addColorStop(0.5, '#1f2937');
+        capGrad.addColorStop(0.75, '#111827');
+        capGrad.addColorStop(1.0, '#020617');
+        ctx.fillStyle = capGrad;
         ctx.beginPath();
-        ctx.moveTo(-halfLevel * 0.85, yLevel + 0.5);
-        ctx.quadraticCurveTo(0, yLevel + surfaceDepth * 0.7, halfLevel * 0.85, yLevel + 0.5);
-        ctx.stroke();
-      }
-
-      // ───────── BOTTOM SAND ─────────
-      let yTopOfPile = null;
-      if (bottomFrac > 0.0005) {
-        const fillHeightBottom = maxBottomHeight * bottomFrac;
-        yTopOfPile = yBottomInner - fillHeightBottom;
-        yTopOfPile = Math.max(neckY + 6, yTopOfPile);
-
-        // base widened to hug interior; clip keeps it inside glass
-        const baseWidth = bottomBulbWidth * 1.02;
-        const baseHalf  = baseWidth / 2;
-        const apexY     = yTopOfPile - 3;
-        const neckWidth = neckInnerWidth * 1.02;
-        const neckHalfLocal  = neckWidth / 2;
-
-        const sandBottomGrad = ctx.createLinearGradient(0, apexY - 6, 0, yBottomInner + 4);
-        sandBottomGrad.addColorStop(0.0, '#fdf3c4');
-        sandBottomGrad.addColorStop(0.35, '#f5d67a');
-        sandBottomGrad.addColorStop(1.0, '#c9993d');
-        ctx.fillStyle = sandBottomGrad;
-
-        ctx.beginPath();
-        ctx.moveTo(-baseHalf, yBottomInner - 1);
-        ctx.quadraticCurveTo(0, yBottomInner + 5, baseHalf, yBottomInner - 1);
-        ctx.lineTo(neckHalfLocal, apexY);
-        ctx.quadraticCurveTo(0, apexY - 5, -neckHalfLocal, apexY);
-        ctx.closePath();
+        if (ctx.roundRect) ctx.roundRect(-frameWidth / 2, topY - 12, frameWidth, capHeight, 4);
+        else { ctx.rect(-frameWidth / 2, topY - 12, frameWidth, capHeight); }
         ctx.fill();
 
-        ctx.fillStyle = 'rgba(156,126,43,0.45)';
-        ctx.beginPath();
-        ctx.ellipse(0, yBottomInner + 1, baseHalf * 0.7, 4, 0, 0, Math.PI * 2);
-        ctx.fill();
+        const pillarGrad = ctx.createLinearGradient(-pillarWidth / 2, 0, pillarWidth / 2, 0);
+        pillarGrad.addColorStop(0.0, '#020617');
+        pillarGrad.addColorStop(0.3, '#111827');
+        pillarGrad.addColorStop(0.7, '#0b1120');
+        pillarGrad.addColorStop(1.0, '#020617');
+        ctx.fillStyle = pillarGrad;
 
-        ctx.strokeStyle = 'rgba(255,255,255,0.28)';
-        ctx.lineWidth = 0.9;
-        ctx.beginPath();
-        ctx.moveTo(neckHalfLocal * 0.9, apexY + 1);
-        ctx.quadraticCurveTo(baseHalf * 0.5, (apexY + yBottomInner) / 2, baseHalf * 0.6, yBottomInner - 2);
-        ctx.stroke();
-      }
-
-      // ───────── SAND STREAM (NECK ~ STREAM WIDTH) ─────────
-      if (!finished && bottomFrac > 0 && bottomFrac < 1) {
-        const impactY = yTopOfPile != null ? yTopOfPile - 2 : yBottomInner - 3;
-        const totalSpan = Math.max(12, impactY - neckY);
-
-        const streamWidth = neckInnerWidth * 0.5;
-        const pulse = 0.65 + 0.25 * Math.sin(animPhase * 4.0);
-
-        const streamGrad = ctx.createLinearGradient(0, neckY, 0, impactY);
-        streamGrad.addColorStop(0,  `rgba(244,208,111,${0.10 * pulse})`);
-        streamGrad.addColorStop(0.4,`rgba(244,208,111,${0.65 * pulse})`);
-        streamGrad.addColorStop(1,  `rgba(244,208,111,${0.25 * pulse})`);
-        ctx.fillStyle = streamGrad;
-
+        const pillarHeight = pillarBotY - pillarTopY;
         ctx.beginPath();
         if (ctx.roundRect) {
-          ctx.roundRect(-streamWidth / 2, neckY, streamWidth, totalSpan, streamWidth / 2);
+          ctx.roundRect(-pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight, 3);
+          ctx.roundRect( pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight, 3);
         } else {
-          ctx.rect(-streamWidth / 2, neckY, streamWidth, totalSpan);
+          ctx.rect(-pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight);
+          ctx.rect( pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight);
         }
         ctx.fill();
 
-        const grainCount = 7;
-        for (let i = 0; i < grainCount; i++) {
-          const localT = (animPhase * 0.9 + i / grainCount) % 1;
-          const gy = neckY + localT * (totalSpan - 6);
-          const sway = Math.sin(animPhase * 3.2 + i * 1.7) * 1.0;
+        const shadowGrad = ctx.createRadialGradient(0, bottomY + 6, 2, 0, bottomY + 6, bottomBulbWidth * 0.65);
+        shadowGrad.addColorStop(0.0, 'rgba(0,0,0,0.8)');
+        shadowGrad.addColorStop(1.0, 'rgba(0,0,0,0)');
+        ctx.fillStyle = shadowGrad;
+        ctx.beginPath();
+        ctx.ellipse(0, bottomY + 6, bottomBulbWidth * 0.65, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.save();
+        ctx.clip(glassPath);
+
+        const glassInteriorGrad = ctx.createLinearGradient(0, topY, 0, bottomY);
+        glassInteriorGrad.addColorStop(0.0, 'rgba(15,23,42,0.94)');
+        glassInteriorGrad.addColorStop(0.5, 'rgba(15,23,42,0.88)');
+        glassInteriorGrad.addColorStop(1.0, 'rgba(15,23,42,0.97)');
+        ctx.fillStyle = glassInteriorGrad;
+        ctx.fillRect(-W, topY, W * 2, bottomY - topY);
+
+        const bulbGlow = ctx.createRadialGradient(0, neckY - maxTopHeight * 0.6, W * 0.05, 0, neckY, W * 0.7);
+        bulbGlow.addColorStop(0.0, 'rgba(148,163,184,0.25)');
+        bulbGlow.addColorStop(0.4, 'rgba(148,163,184,0.10)');
+        bulbGlow.addColorStop(1.0, 'rgba(15,23,42,0)');
+        ctx.fillStyle = bulbGlow;
+        ctx.fillRect(-W, topY, W * 2, bottomY - topY);
+
+        const bottomFrac = Math.max(0, Math.min(1, progress));
+        const topFrac    = 1 - bottomFrac;
+
+        if (topFrac > 0.0005) {
+          const fillHeightTop = maxTopHeight * topFrac;
+          const yLevel = neckY - fillHeightTop;
+          const widthLevel = widthAtYTop(yLevel) * 1.02;
+          const halfLevel  = widthLevel / 2;
+          const surfaceDepth = Math.min(8, (neckY - yLevel) * 0.55);
+
+          const sandTopGrad = ctx.createLinearGradient(0, yLevel - 6, 0, neckY + 4);
+          sandTopGrad.addColorStop(0.0, '#fdf3c4');
+          sandTopGrad.addColorStop(0.4, '#f5d67a');
+          sandTopGrad.addColorStop(1.0, '#d7ab4e');
+          ctx.fillStyle = sandTopGrad;
 
           ctx.beginPath();
-          ctx.fillStyle = 'rgba(253,243,196,0.98)';
-          ctx.arc(sway, gy, 1.1, 0, Math.PI * 2);
+          ctx.moveTo(-halfLevel, yLevel);
+          ctx.quadraticCurveTo(0, yLevel + surfaceDepth, halfLevel, yLevel);
+          ctx.lineTo(neckHalf * 1.02, neckY);
+          ctx.quadraticCurveTo(0, neckY + 2, -neckHalf * 1.02, neckY);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+          ctx.lineWidth = 0.7;
+          ctx.beginPath();
+          ctx.moveTo(-halfLevel * 0.85, yLevel + 0.5);
+          ctx.quadraticCurveTo(0, yLevel + surfaceDepth * 0.7, halfLevel * 0.85, yLevel + 0.5);
+          ctx.stroke();
+        }
+
+        let yTopOfPile = null;
+        if (bottomFrac > 0.0005) {
+          const fillHeightBottom = maxBottomHeight * bottomFrac;
+          yTopOfPile = yBottomInner - fillHeightBottom;
+          yTopOfPile = Math.max(neckY + 6, yTopOfPile);
+
+          const baseWidth = bottomBulbWidth * 1.02;
+          const baseHalf  = baseWidth / 2;
+          const apexY     = yTopOfPile - 3;
+          const neckWidth = neckInnerWidth * 1.02;
+          const neckHalfLocal  = neckWidth / 2;
+
+          const sandBottomGrad = ctx.createLinearGradient(0, apexY - 6, 0, yBottomInner + 4);
+          sandBottomGrad.addColorStop(0.0, '#fdf3c4');
+          sandBottomGrad.addColorStop(0.35, '#f5d67a');
+          sandBottomGrad.addColorStop(1.0, '#c9993d');
+          ctx.fillStyle = sandBottomGrad;
+
+          ctx.beginPath();
+          ctx.moveTo(-baseHalf, yBottomInner - 1);
+          ctx.quadraticCurveTo(0, yBottomInner + 5, baseHalf, yBottomInner - 1);
+          ctx.lineTo(neckHalfLocal, apexY);
+          ctx.quadraticCurveTo(0, apexY - 5, -neckHalfLocal, apexY);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.fillStyle = 'rgba(156,126,43,0.45)';
+          ctx.beginPath();
+          ctx.ellipse(0, yBottomInner + 1, baseHalf * 0.7, 4, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+          ctx.lineWidth = 0.9;
+          ctx.beginPath();
+          ctx.moveTo(neckHalfLocal * 0.9, apexY + 1);
+          ctx.quadraticCurveTo(baseHalf * 0.5, (apexY + yBottomInner) / 2, baseHalf * 0.6, yBottomInner - 2);
+          ctx.stroke();
+        }
+
+        if (!finished && bottomFrac > 0 && bottomFrac < 1) {
+          const impactY = yTopOfPile != null ? yTopOfPile - 2 : yBottomInner - 3;
+          const totalSpan = Math.max(12, impactY - neckY);
+
+          const streamWidth = neckInnerWidth * 0.5;
+          const pulse = 0.65 + 0.25 * Math.sin(animPhase * 4.0);
+
+          const streamGrad = ctx.createLinearGradient(0, neckY, 0, impactY);
+          streamGrad.addColorStop(0,  `rgba(244,208,111,${0.10 * pulse})`);
+          streamGrad.addColorStop(0.4,`rgba(244,208,111,${0.65 * pulse})`);
+          streamGrad.addColorStop(1,  `rgba(244,208,111,${0.25 * pulse})`);
+          ctx.fillStyle = streamGrad;
+
+          ctx.beginPath();
+          if (ctx.roundRect) ctx.roundRect(-streamWidth / 2, neckY, streamWidth, totalSpan, streamWidth / 2);
+          else ctx.rect(-streamWidth / 2, neckY, streamWidth, totalSpan);
+          ctx.fill();
+
+          const grainCount = 7;
+          for (let i = 0; i < grainCount; i++) {
+            const localT = (animPhase * 0.9 + i / grainCount) % 1;
+            const gy = neckY + localT * (totalSpan - 6);
+            const sway = Math.sin(animPhase * 3.2 + i * 1.7) * 1.0;
+
+            ctx.beginPath();
+            ctx.fillStyle = 'rgba(253,243,196,0.98)';
+            ctx.arc(sway, gy, 1.1, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          ctx.beginPath();
+          ctx.fillStyle = 'rgba(255,255,255,0.7)';
+          ctx.arc(0, impactY + 1.5, 1.2, 0, Math.PI * 2);
           ctx.fill();
         }
 
-        ctx.beginPath();
-        ctx.fillStyle = 'rgba(255,255,255,0.7)';
-        ctx.arc(0, impactY + 1.5, 1.2, 0, Math.PI * 2);
-        ctx.fill();
+        const caustic = ctx.createRadialGradient(0, yBottomInner - 4, 4, 0, yBottomInner + 4, bottomBulbWidth * 0.45);
+        caustic.addColorStop(0.0, 'rgba(248, 220, 140, 0.35)');
+        caustic.addColorStop(1.0, 'rgba(248, 220, 140, 0)');
+        ctx.fillStyle = caustic;
+        ctx.fillRect(-W, neckY, W * 2, bottomY - neckY);
+
+        const innerShine = ctx.createLinearGradient(topHalf * 0.2, topY, topHalf * 0.9, bottomY);
+        innerShine.addColorStop(0.0, 'rgba(255,255,255,0.18)');
+        innerShine.addColorStop(0.3, 'rgba(255,255,255,0.05)');
+        innerShine.addColorStop(1.0, 'rgba(255,255,255,0.0)');
+        ctx.fillStyle = innerShine;
+        ctx.fillRect(topHalf * 0.1, topY, topHalf * 0.9, bottomY - topY);
+
+        ctx.restore();
+
+        ctx.strokeStyle = 'rgba(148,163,184,0.85)';
+        ctx.lineWidth = 2.4;
+        ctx.stroke(glassPath);
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+        ctx.lineWidth = 1.1;
+        ctx.stroke(glassPath);
+
+        ctx.restore();
       }
 
-      // caustic-like glow near bottom of glass
-      const caustic = ctx.createRadialGradient(
-        0, yBottomInner - 4, 4,
-        0, yBottomInner + 4, bottomBulbWidth * 0.45
-      );
-      caustic.addColorStop(0.0, 'rgba(248, 220, 140, 0.35)');
-      caustic.addColorStop(1.0, 'rgba(248, 220, 140, 0)');
-      ctx.fillStyle = caustic;
-      ctx.fillRect(-W, neckY, W * 2, bottomY - neckY);
+      function frame() {
+        const nowMs = Date.now();
 
-      // inner soft shine (stays clipped, no ghost outline)
-      const innerShine = ctx.createLinearGradient(topHalf * 0.2, topY, topHalf * 0.9, bottomY);
-      innerShine.addColorStop(0.0, 'rgba(255,255,255,0.18)');
-      innerShine.addColorStop(0.3, 'rgba(255,255,255,0.05)');
-      innerShine.addColorStop(1.0, 'rgba(255,255,255,0.0)');
-      ctx.fillStyle = innerShine;
-      ctx.fillRect(topHalf * 0.1, topY, topHalf * 0.9, bottomY - topY);
+        const elapsedMs = nowMs - YEAR2_START_MS;
+        const clamped   = Math.max(0, Math.min(TOTAL_MS, elapsedMs));
+        const progress  = TOTAL_MS === 0 ? 1 : clamped / TOTAL_MS;
 
-      ctx.restore(); // end clip
+        const msLeft    = Math.max(0, YEAR2_END_MS - nowMs);
+        const finished  = msLeft <= 0;
 
-      // ───────── GLASS OUTER EDGES (NO GHOST OUTLINE) ─────────
-      ctx.strokeStyle = 'rgba(148,163,184,0.85)';
-      ctx.lineWidth = 2.4;
-      ctx.stroke(glassPath);
+        const left  = breakdown(msLeft);
+        const color = phaseColor(msLeft, finished);
 
-      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-      ctx.lineWidth = 1.1;
-      ctx.stroke(glassPath);
+        if (finished) {
+          dhmEl.textContent = 'TIME EXPIRED';
+          pctEl.textContent = '100% elapsed — pivot or perish.';
+          footEl.textContent = 'No alibis. Ship.';
+        } else {
+          dhmEl.textContent =
+            `${left.d}d ${pad2(left.h)}h ${pad2(left.m)}m ${pad2(left.s)}s ` +
+            `${pad3(left.ms)}ms`;
 
-      ctx.restore(); // restore translate
-    }
-
-    function frame() {
-      const nowMs = Date.now();
-
-      const elapsedMs = nowMs - YEAR2_START_MS;
-      const clamped   = Math.max(0, Math.min(TOTAL_MS, elapsedMs));
-      const progress  = TOTAL_MS === 0 ? 1 : clamped / TOTAL_MS;
-
-      const msLeft    = Math.max(0, YEAR2_END_MS - nowMs);
-      const finished  = msLeft <= 0;
-
-      const left  = breakdown(msLeft);
-      const color = phaseColor(msLeft, finished);
-
-      if (finished) {
-        dhmEl.textContent = 'TIME EXPIRED';
-        pctEl.textContent = '100% elapsed — pivot or perish.';
-        footEl.textContent = 'No alibis. Ship.';
-      } else {
-        dhmEl.textContent =
-          `${left.d}d ${pad2(left.h)}h ${pad2(left.m)}m ${pad2(left.s)}s ` +
-          `${pad3(left.ms)}ms`;
-
-        const pct = Math.round(progress * 100);
-        pctEl.textContent = `${pct}% of Year 2 elapsed`;
-        footEl.textContent = 'Lead Gen → Lead Nurture → Sales.';
-      }
-
-      dhmEl.style.color = color;
-
-      const animPhase = (performance.now() % 4000) / 4000;
-      drawHourglass(progress, finished, animPhase);
-
-      requestAnimationFrame(frame);
-    }
-
-    frame();
-  })();
-</script>
-
-<script>
-  // ───────────── SISYPHUS PROGRESS UPDATE – LOOPING PIXEL SCENE ─────────────
-  (function () {
-    const canvas = document.getElementById('sisyphusCanvas');
-    if (!canvas) return;
-
-    const dpr = window.devicePixelRatio || 1;
-
-    // Display size in CSS pixels (matches your hourglass max width)
-    const cssW = 320;
-    const cssH = 180;
-
-    canvas.width = Math.floor(cssW * dpr);
-    canvas.height = Math.floor(cssH * dpr);
-    canvas.style.width = cssW + 'px';
-    canvas.style.height = cssH + 'px';
-
-    const ctx = canvas.getContext('2d', { alpha: false });
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.imageSmoothingEnabled = false;
-
-    // Render low-res to make it pixelated, then scale up sharply.
-    const off = document.createElement('canvas');
-    const OW = 200; // 16:9
-    const OH = 112;
-    off.width = OW;
-    off.height = OH;
-
-    const o = off.getContext('2d', { alpha: false });
-    o.imageSmoothingEnabled = false;
-
-    const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
-    const lerp = (a,b,t)=>a+(b-a)*t;
-    const easeInOut = (t)=>t<.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2;
-    const fract = (x)=>x - Math.floor(x);
-
-    // Scene geometry (scaled from the standalone version)
-    const slopeA = { x: 36,  y: 93 }; // bottom
-    const slopeB = { x: 160, y: 27 }; // top
-    const slopeV = { x: slopeB.x - slopeA.x, y: slopeB.y - slopeA.y };
-    const slopeLen = Math.hypot(slopeV.x, slopeV.y);
-    const slopeN = { x: slopeV.x / slopeLen, y: slopeV.y / slopeLen }; // tangent
-    const slopeP = { x: -slopeN.y, y: slopeN.x };                      // perpendicular
-
-    const rough = Array.from({length:20}, (_,i)=>{
-      const r = Math.sin(i*2.1) * 0.8 + Math.sin(i*0.7) * 0.6;
-      return r;
-    });
-
-    function onSlope(u){
-      return {
-        x: slopeA.x + slopeV.x*u,
-        y: slopeA.y + slopeV.y*u
-      };
-    }
-
-    function sky(t){
-      // Base matches widget; add orange/amber glow.
-      o.fillStyle = '#141828';
-      o.fillRect(0,0,OW,OH);
-
-      const pulse = 0.5 + 0.5*Math.sin(t*0.7);
-      const g = o.createLinearGradient(0,0,0,OH);
-      g.addColorStop(0,   'rgba(20,24,40,1)');
-      g.addColorStop(0.65,'rgba(20,24,40,1)');
-      g.addColorStop(1,   `rgba(255,138,31,${0.10 + 0.10*pulse})`);
-      o.fillStyle = g;
-      o.fillRect(0,0,OW,OH);
-
-      // ember specks
-      o.fillStyle = 'rgba(255,210,106,0.30)';
-      for(let i=0;i<50;i++){
-        const x = (i*37) % OW;
-        const y = (i*19) % 58;
-        if(((i*11) % 7) < 2) o.fillRect(x, y, 1, 1);
-      }
-    }
-
-    function mountain(){
-      const g = o.createLinearGradient(0,0,OW,0);
-      g.addColorStop(0,   '#7a2f08');
-      g.addColorStop(0.45,'#ff8a1f');
-      g.addColorStop(1,   '#ffd26a');
-
-      o.fillStyle = g;
-      o.beginPath();
-      o.moveTo(0, 100);
-      o.lineTo(90, 18);
-      o.lineTo(OW, 100);
-      o.closePath();
-      o.fill();
-
-      // ridge shadow
-      o.fillStyle = 'rgba(0,0,0,0.22)';
-      o.beginPath();
-      o.moveTo(70, 52);
-      o.lineTo(90, 18);
-      o.lineTo(120, 62);
-      o.closePath();
-      o.fill();
-
-      // slope path dots
-      o.fillStyle = 'rgba(255,239,154,0.55)';
-      for(let i=0;i<90;i++){
-        const tt = i/89;
-        const x = lerp(slopeA.x, slopeB.x, tt);
-        const y = lerp(slopeA.y, slopeB.y, tt);
-        if(i%2===0) o.fillRect(x|0, y|0, 1, 1);
-      }
-
-      // ground band
-      o.fillStyle = '#2a0e0a';
-      o.fillRect(0, 100, OW, OH-100);
-    }
-
-    function drawBoulder(x,y,r,spin){
-      for(let dy=-r; dy<=r; dy++){
-        for(let dx=-r; dx<=r; dx++){
-          const d = Math.hypot(dx,dy);
-          const ang = Math.atan2(dy,dx) + spin;
-          const idx = ((ang + Math.PI) / (2*Math.PI) * rough.length) | 0;
-          const edge = r + rough[(idx+rough.length)%rough.length];
-          if(d <= edge){
-            const lit = (-(dx) + -(dy)) * 0.07;
-            const base = clamp(0.55 + lit, 0.12, 0.95);
-            o.fillStyle = base > 0.58 ? 'rgba(255,210,106,0.88)' : 'rgba(198,122,26,0.96)';
-            o.fillRect((x+dx)|0, (y+dy)|0, 1, 1);
-          }
+          const pct = Math.round(progress * 100);
+          pctEl.textContent = `${pct}% of Year 2 elapsed`;
+          footEl.textContent = 'Lead Gen → Lead Nurture → Sales.';
         }
-      }
-      o.fillStyle = 'rgba(0,0,0,0.35)';
-      for(let i=0;i<r*2;i++){
-        o.fillRect((x - r + i)|0, (y + r + 2)|0, 1, 1);
-      }
-    }
 
-    function drawSisyphus(pos, step, pushing){
-      const x = pos.x + slopeP.x*2;
-      const y = pos.y + slopeP.y*2;
+        dhmEl.style.color = color;
 
-      const bob = Math.sin(step * Math.PI*2) * 1;
+        const animPhase = (performance.now() % 4000) / 4000;
+        drawHourglass(progress, finished, animPhase);
 
-      const skin = 'rgba(255,239,154,0.95)';
-      const fist = 'rgba(255,210,106,0.96)';
-      const shade = 'rgba(0,0,0,0.25)';
-
-      const bx = (x)|0;
-      const by = (y - 7 + bob)|0;
-
-      const legA = Math.sin(step * Math.PI*2) > 0 ? 1 : -1;
-      const legB = -legA;
-
-      // torso
-      o.fillStyle = skin;
-      o.fillRect(bx-2, by-4, 4, 6);
-      o.fillRect(bx-1, by-7, 2, 3);
-
-      // head
-      o.fillRect(bx-2, by-10, 4, 3);
-
-      // arms
-      const armF = pushing ? 4 : 2;
-      const armY = pushing ? -2 : -1;
-
-      o.fillRect(bx+2, by+armY, armF, 2);
-      o.fillRect(bx-2-armF, by+armY+1, armF, 2);
-
-      // big fist
-      o.fillStyle = fist;
-      o.fillRect(bx+2+armF, by+armY-1, 3, 3);
-
-      // legs
-      o.fillStyle = skin;
-      o.fillRect(bx-2, by+2, 2, 5);
-      o.fillRect(bx-2 + legA, by+7, 2, 2);
-      o.fillRect(bx, by+2, 2, 5);
-      o.fillRect(bx + legB, by+7, 2, 2);
-
-      // outline/shadow hints
-      o.fillStyle = shade;
-      o.fillRect(bx-2, by-4, 1, 6);
-      o.fillRect(bx-2, by+2, 1, 5);
-    }
-
-    // Timing (seconds)
-    const PUSH  = 6.0;
-    const ROLL  = 2.6;
-    const DESC  = 4.2;
-    const RESET = 0.8;
-    const CYCLE = PUSH + ROLL + DESC + RESET;
-
-    const start = performance.now();
-
-    function tick(now){
-      const t = ((now - start) / 1000);
-      const c = t % CYCLE;
-
-      let uS = 0.05, uB = 0.06, pushing = false, spin = 0, step = fract(t * 1.6);
-
-      if(c < PUSH){
-        pushing = true;
-        const p = easeInOut(c / PUSH);
-        uB = lerp(0.08, 0.92, p);
-        uS = clamp(uB - 0.06, 0.05, 0.90);
-        spin = t * 1.4;
-        step = fract(t * 1.9);
-      } else if(c < PUSH + ROLL){
-        pushing = false;
-        const p = (c - PUSH) / ROLL;
-        uB = lerp(0.92, 0.08, easeInOut(p));
-        uS = 0.92;
-        spin = t * 3.0;
-        step = 0.05;
-      } else if(c < PUSH + ROLL + DESC){
-        pushing = false;
-        const p = (c - PUSH - ROLL) / DESC;
-        uB = 0.08;
-        uS = lerp(0.92, 0.08, easeInOut(p));
-        spin = t * 0.5;
-        step = fract(t * 1.8);
-      } else {
-        pushing = false;
-        uB = 0.08;
-        uS = 0.08;
-        step = 0.2;
-        spin = t * 0.2;
+        requestAnimationFrame(frame);
       }
 
-      // draw low-res
-      sky(t);
-      mountain();
-
-      const bPos = onSlope(uB);
-      const sPos = onSlope(uS);
-
-      drawBoulder(bPos.x, bPos.y - 5, 6, spin);
-
-      const sAdj = pushing ? {
-        x: sPos.x - slopeN.x*2,
-        y: sPos.y - slopeN.y*2
-      } : sPos;
-
-      drawSisyphus(sAdj, step, pushing);
-
-      // subtle single-pixel progress line (the loop always returns)
-      o.fillStyle = 'rgba(255,210,106,0.22)';
-      o.fillRect(10, 10, OW-20, 1);
-      const prog = c / CYCLE;
-      o.fillStyle = 'rgba(255,239,154,0.55)';
-      o.fillRect(10, 10, Math.max(1, ((OW-20)*prog)|0), 1);
-
-      // blit to visible canvas (sharp scaling)
-      ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(off, 0, 0, cssW, cssH);
-
-      requestAnimationFrame(tick);
-    }
-
-    requestAnimationFrame(tick);
-  })();
-</script>
-
+      frame();
+    })();
+  </script>
 </body>
 </html>
