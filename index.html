@@ -78,7 +78,7 @@
       text-align:left;
       scroll-behavior:smooth;
       overscroll-behavior:contain;
-      -webkit-overflow-scrolling:touch; /* iOS momentum scrolling */
+      -webkit-overflow-scrolling:touch;
       touch-action:pan-y;
     }
 
@@ -95,8 +95,8 @@
     }
     .msg:last-child{ margin-bottom:0; }
 
-    .flash { animation: fadePulse 2.2s ease-in-out infinite alternate; }
-    @keyframes fadePulse { from { opacity:.30 } to { opacity:1 } }
+    .flash { animation: fadePulse 2.6s ease-in-out infinite alternate; }
+    @keyframes fadePulse { from { opacity:.28 } to { opacity:1 } }
 
     /* subtle scrollbar */
     .feed::-webkit-scrollbar{ width:10px; }
@@ -157,11 +157,34 @@
       border:0;
     }
 
-    /* MOBILE FIX: stop clipping.
-       - allow the page to scroll normally
-       - make footer non-fixed so it doesn't overlap the feed
-       - use dynamic viewport height (dvh) so iOS address bar doesn't chop content
-    */
+    /* FINAL OVERLAY (covers desktop + mobile, always centered) */
+    .final-overlay{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      background:#000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:2rem;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 1.2s ease;
+    }
+    .final-overlay.active{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .final-line{
+      margin:0;
+      letter-spacing:.2px;
+      line-height:1.02;
+      font-size:clamp(38px, 8vw, 86px);
+      text-shadow:0 0 10px rgba(153,0,255,.18),0 0 35px rgba(153,0,255,.12);
+      white-space:pre-wrap;
+    }
+
+    /* MOBILE FIX (your previous one) */
     @media (max-width: 540px){
       html,body{
         height:auto;
@@ -253,6 +276,11 @@
 
   <div id="site-footer"></div>
 
+  <!-- FINAL centered overlay -->
+  <div id="finalOverlay" class="final-overlay" aria-hidden="true">
+    <h1 id="finalLine" class="final-line flash">Just Win.</h1>
+  </div>
+
   <script>
     (function () {
       var target = document.getElementById('site-footer');
@@ -276,7 +304,8 @@
   (function(){
     const feed = document.getElementById('feed');
     const sentinel = document.getElementById('sentinel');
-    if(!feed || !sentinel) return;
+    const finalOverlay = document.getElementById('finalOverlay');
+    if(!feed || !sentinel || !finalOverlay) return;
 
     const msgs = [
       {text:`The world is yours.`,accent:`yours`},
@@ -565,11 +594,12 @@
       {text:`Have I led a compelling narrative?`,accent:`narrative`}
     ];
 
-    const FINAL_LINE = 'Just Win.';
-
-    // SPEED (per your requirement)
+    // SPEED (your requirement)
     const BETWEEN_MIN = 450;   // ms
     const BETWEEN_MAX = 650;   // ms
+
+    // after the last message, wait a beat, then wipe -> show final
+    const END_HOLD_MS = 900;
 
     // keep DOM sane + user scroll behavior
     const MAX_MESSAGES = 180;
@@ -641,9 +671,9 @@
       }
     }
 
-    function addMessageInstant(m, {flash=false} = {}){
+    function addMessageInstant(m){
       const msgEl = document.createElement('div');
-      msgEl.className = 'msg' + (flash ? ' flash' : '');
+      msgEl.className = 'msg';
       msgEl.innerHTML = renderMessageHTML(m);
       feed.insertBefore(msgEl, sentinel);
 
@@ -660,6 +690,27 @@
       return arr;
     }
 
+    function freezeScroll(){
+      // Works for both desktop and mobile.
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function showFinalOverlay(){
+      // wipe the feed so "everything disappears"
+      const nodes = feed.querySelectorAll('.msg');
+      nodes.forEach(n => n.remove());
+
+      // stop announcing new items
+      feed.setAttribute('aria-live', 'off');
+
+      // show overlay centered + flashing (already has .flash)
+      finalOverlay.classList.add('active');
+      finalOverlay.setAttribute('aria-hidden', 'false');
+
+      freezeScroll();
+    }
+
     (async function run(){
       const order = shuffle(msgs); // randomized each load
       scrollToBottom(true);
@@ -669,8 +720,8 @@
         await wait(rand(BETWEEN_MIN, BETWEEN_MAX));
       }
 
-      addMessageInstant({text: FINAL_LINE, accent:''}, {flash:true});
-      scrollToBottom(true);
+      await wait(END_HOLD_MS);
+      showFinalOverlay();
     })();
 
   })();
