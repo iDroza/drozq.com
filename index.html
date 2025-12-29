@@ -45,6 +45,12 @@
       overflow:hidden; /* desktop: lock viewport; feed scrolls */
     }
 
+    /* If you add a header, keep it above the final overlay */
+    header.site-header, .site-header{
+      position:relative;
+      z-index:10000;
+    }
+
     .wrap{
       position:relative;
       z-index:2;
@@ -109,7 +115,7 @@
       left:0;
       right:0;
       bottom:0;
-      z-index:5;
+      z-index:10000; /* IMPORTANT: keep footer above final overlay */
       background:rgba(0,0,0,.4);
       backdrop-filter:blur(8px);
       display:flex;
@@ -157,24 +163,25 @@
       border:0;
     }
 
-    /* FINAL OVERLAY (covers desktop + mobile, always centered) */
+    /* FINAL OVERLAY (now UNDER footer/header, but still covers content) */
     .final-overlay{
       position:fixed;
       inset:0;
-      z-index:9999;
+      z-index:9000;            /* IMPORTANT: below footer/header */
       background:#000;
       display:flex;
       align-items:center;
       justify-content:center;
       padding:2rem;
       opacity:0;
-      pointer-events:none;
+      pointer-events:none;     /* IMPORTANT: footer/header stay clickable */
       transition:opacity 1.2s ease;
     }
     .final-overlay.active{
       opacity:1;
-      pointer-events:auto;
+      pointer-events:none;
     }
+
     .final-line{
       margin:0;
       letter-spacing:.2px;
@@ -216,15 +223,27 @@
       }
 
       footer.site-footer{
-        position:static; /* critical: prevent overlap/clipping */
+        position:static; /* normal state: prevent overlap/clipping */
         justify-content:flex-start;
         gap:1rem 1.5rem;
         padding:1.1rem 1.1rem calc(1.2rem + env(safe-area-inset-bottom));
       }
 
-      .footer-link{
-        font-size:.85rem;
-      }
+      .footer-link{ font-size:.85rem; }
+    }
+
+    /* FINAL STATE: pin footer to bottom on mobile too */
+    body.final footer.site-footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:10000;
+    }
+
+    /* Final state: prevent scrolling (but footer stays visible) */
+    body.final{
+      overflow:hidden;
     }
   </style>
 
@@ -692,7 +711,8 @@
     }
 
     function freezeScroll(){
-      // Works for both desktop and mobile.
+      // Freeze scrolling in final state, but footer/header remain visible due to z-index + pointer-events.
+      document.body.classList.add('final');
       document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
     }
@@ -729,4 +749,3 @@
   </script>
 </body>
 </html>
-
