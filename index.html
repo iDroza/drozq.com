@@ -42,7 +42,7 @@
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       font-weight:700;
       -webkit-font-smoothing:antialiased;
-      overflow:hidden; /* lock viewport; feed scrolls internally */
+      overflow:hidden; /* desktop: lock viewport; feed scrolls */
     }
 
     .wrap{
@@ -78,14 +78,16 @@
       text-align:left;
       scroll-behavior:smooth;
       overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch; /* iOS momentum scrolling */
+      touch-action:pan-y;
     }
 
-    /* BIGGER TEXT */
+    /* BIG TEXT */
     .msg{
       margin:0 0 .92rem 0;
       letter-spacing:.2px;
       line-height:1.10;
-      font-size:clamp(24px, 4.6vw, 52px);
+      font-size:clamp(26px, 4.8vw, 56px);
       text-shadow:0 0 10px rgba(153,0,255,.14),0 0 35px rgba(153,0,255,.10);
       white-space:pre-wrap;
       word-break:break-word;
@@ -101,7 +103,7 @@
     .feed::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.14); border-radius:10px; }
     .feed::-webkit-scrollbar-track{ background:rgba(255,255,255,.04); }
 
-    /* footer (fixed) */
+    /* footer (desktop fixed) */
     footer.site-footer{
       position:fixed;
       left:0;
@@ -113,7 +115,7 @@
       display:flex;
       justify-content:center;
       gap:2.5rem;
-      padding:1.35rem 1.5rem 1.1rem;
+      padding:1.35rem 1.5rem calc(1.1rem + env(safe-area-inset-bottom));
       flex-wrap:wrap;
     }
 
@@ -155,24 +157,50 @@
       border:0;
     }
 
+    /* MOBILE FIX: stop clipping.
+       - allow the page to scroll normally
+       - make footer non-fixed so it doesn't overlap the feed
+       - use dynamic viewport height (dvh) so iOS address bar doesn't chop content
+    */
     @media (max-width: 540px){
+      html,body{
+        height:auto;
+        min-height:100%;
+        overflow:auto; /* key fix: no clipping on mobile */
+      }
+
       .wrap{
-        padding:1.6rem 1.2rem 6.4rem;
+        min-height:0;
+        display:block;
+        padding:1.25rem 1.1rem 1.2rem;
       }
-      .footer-link{
-        font-size:.85rem;
+
+      .hero{
+        display:block;
+        max-width:100%;
+        padding:1.05rem 1.05rem;
       }
+
+      .feed{
+        width:100%;
+        max-height:calc(100dvh - 220px); /* leave room for footer + browser UI */
+        padding:0.35rem 0.35rem 0.45rem;
+      }
+
+      .msg{
+        font-size:clamp(24px, 7.2vw, 46px);
+        line-height:1.08;
+      }
+
       footer.site-footer{
+        position:static; /* critical: prevent overlap/clipping */
         justify-content:flex-start;
         gap:1rem 1.5rem;
-        padding:1.1rem 1.2rem 1.2rem;
+        padding:1.1rem 1.1rem calc(1.2rem + env(safe-area-inset-bottom));
       }
-      .feed{
-        max-height:min(74vh, 620px);
-      }
-      .msg{
-        font-size:clamp(22px, 7.2vw, 44px);
-        line-height:1.08;
+
+      .footer-link{
+        font-size:.85rem;
       }
     }
   </style>
@@ -539,9 +567,9 @@
 
     const FINAL_LINE = 'Just Win.';
 
-    // SPEED: faster stream
-    const BETWEEN_MIN = 350;   // ms between messages (fast)
-    const BETWEEN_MAX = 500;
+    // SPEED (per your requirement)
+    const BETWEEN_MIN = 450;   // ms
+    const BETWEEN_MAX = 650;   // ms
 
     // keep DOM sane + user scroll behavior
     const MAX_MESSAGES = 180;
@@ -578,15 +606,6 @@
       ];
     }
 
-    function renderMessageHTML(m){
-      const toks = parts(m);
-      let out = '';
-      for(const t of toks){
-        out += t.isAccent ? `<span class="accent">${escapeHTML(t.str)}</span>` : escapeHTML(t.str);
-      }
-      return out;
-    }
-
     function escapeHTML(s){
       return String(s)
         .replaceAll('&','&amp;')
@@ -594,6 +613,17 @@
         .replaceAll('>','&gt;')
         .replaceAll('"','&quot;')
         .replaceAll("'","&#39;");
+    }
+
+    function renderMessageHTML(m){
+      const toks = parts(m);
+      let out = '';
+      for(const t of toks){
+        out += t.isAccent
+          ? `<span class="accent">${escapeHTML(t.str)}</span>`
+          : escapeHTML(t.str);
+      }
+      return out;
     }
 
     function trimOldMessages(){
@@ -631,7 +661,7 @@
     }
 
     (async function run(){
-      const order = shuffle(msgs);
+      const order = shuffle(msgs); // randomized each load
       scrollToBottom(true);
 
       for(const m of order){
@@ -647,4 +677,3 @@
   </script>
 </body>
 </html>
-
