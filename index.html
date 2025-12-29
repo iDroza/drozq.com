@@ -24,7 +24,6 @@
   <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
 
   <meta name="robots" content="index,follow" />
-
   <link rel="icon" type="image/png" sizes="32x32" href="flavicon.png" />
 
   <style>
@@ -32,9 +31,7 @@
       --bg:#000;
       --fg:#fff;
       --accent:#9900FF;
-      --border:rgba(255,255,255,.14);
       --shadow:0 10px 30px rgba(0,0,0,.45);
-      --caret-y:0.20em;
     }
 
     html,body{
@@ -65,7 +62,7 @@
       pointer-events:auto;
       border:none;
       border-radius:24px;
-      padding:clamp(16px,3vw,32px) clamp(18px,4vw,52px);
+      padding:clamp(18px,3.2vw,34px) clamp(20px,4.2vw,58px);
       box-shadow:var(--shadow);
     }
 
@@ -73,55 +70,36 @@
 
     /* scrolling message feed */
     .feed{
-      width:min(980px, 92vw);
-      max-height:min(68vh, 560px);
+      width:min(1040px, 94vw);
+      max-height:min(72vh, 640px);
       overflow-y:auto;
       overflow-x:hidden;
-      padding:0.25rem 0.35rem 0.35rem;
+      padding:0.35rem 0.45rem 0.45rem;
       text-align:left;
       scroll-behavior:smooth;
       overscroll-behavior:contain;
     }
 
+    /* BIGGER TEXT */
     .msg{
-      margin:0 0 .72rem 0;
+      margin:0 0 .92rem 0;
       letter-spacing:.2px;
-      line-height:1.12;
-      font-size:clamp(18px, 3.6vw, 34px);
+      line-height:1.10;
+      font-size:clamp(24px, 4.6vw, 52px);
       text-shadow:0 0 10px rgba(153,0,255,.14),0 0 35px rgba(153,0,255,.10);
       white-space:pre-wrap;
       word-break:break-word;
-      opacity:.96;
+      opacity:.98;
     }
     .msg:last-child{ margin-bottom:0; }
 
-    .caret{
-      display:inline-block;
-      transform:translateY(var(--caret-y));
-      margin-left:2px;
-      opacity:.9;
-      animation:caretBlink 1.05s steps(2,end) infinite;
-    }
-    @keyframes caretBlink { 50% { opacity:0; } }
-
-    .flash { animation: fadePulse 2.6s ease-in-out infinite alternate; }
-    @keyframes fadePulse { from { opacity:.28 } to { opacity:1 } }
+    .flash { animation: fadePulse 2.2s ease-in-out infinite alternate; }
+    @keyframes fadePulse { from { opacity:.30 } to { opacity:1 } }
 
     /* subtle scrollbar */
     .feed::-webkit-scrollbar{ width:10px; }
     .feed::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.14); border-radius:10px; }
     .feed::-webkit-scrollbar-track{ background:rgba(255,255,255,.04); }
-
-    .fadeout{
-      position:fixed;
-      inset:0;
-      background:#000;
-      opacity:0;
-      pointer-events:none;
-      transition:opacity 1.5s ease;
-      z-index:999;
-    }
-    .fadeout.active{ opacity:1; }
 
     /* footer (fixed) */
     footer.site-footer{
@@ -190,7 +168,11 @@
         padding:1.1rem 1.2rem 1.2rem;
       }
       .feed{
-        max-height:min(70vh, 520px);
+        max-height:min(74vh, 620px);
+      }
+      .msg{
+        font-size:clamp(22px, 7.2vw, 44px);
+        line-height:1.08;
       }
     }
   </style>
@@ -243,8 +225,6 @@
 
   <div id="site-footer"></div>
 
-  <div id="fade" class="fadeout"></div>
-
   <script>
     (function () {
       var target = document.getElementById('site-footer');
@@ -269,9 +249,6 @@
     const feed = document.getElementById('feed');
     const sentinel = document.getElementById('sentinel');
     if(!feed || !sentinel) return;
-
-    // Respect reduced motion (typing becomes instant)
-    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const msgs = [
       {text:`The world is yours.`,accent:`yours`},
@@ -562,15 +539,13 @@
 
     const FINAL_LINE = 'Just Win.';
 
-    // typing + pacing
-    const TYPE_MIN = 14;     // ms per char
-    const TYPE_MAX = 26;
-    const BETWEEN_MIN = 220; // ms between messages
-    const BETWEEN_MAX = 650;
+    // SPEED: faster stream
+    const BETWEEN_MIN = 55;   // ms between messages (fast)
+    const BETWEEN_MAX = 140;
 
-    // feed behavior
-    const MAX_MESSAGES = 140;          // trim old messages to keep DOM sane
-    const AUTO_SCROLL_THRESHOLD = 48;  // px from bottom counts as "at bottom"
+    // keep DOM sane + user scroll behavior
+    const MAX_MESSAGES = 180;
+    const AUTO_SCROLL_THRESHOLD = 64;
 
     const wait = (ms) => new Promise(r => setTimeout(r, ms));
     const rand = (a,b) => a + Math.random() * (b - a);
@@ -580,7 +555,6 @@
       return distance < AUTO_SCROLL_THRESHOLD;
     }
 
-    // auto-scroll only when user is already at bottom
     let autoScroll = true;
     feed.addEventListener('scroll', () => {
       autoScroll = atBottom();
@@ -604,6 +578,24 @@
       ];
     }
 
+    function renderMessageHTML(m){
+      const toks = parts(m);
+      let out = '';
+      for(const t of toks){
+        out += t.isAccent ? `<span class="accent">${escapeHTML(t.str)}</span>` : escapeHTML(t.str);
+      }
+      return out;
+    }
+
+    function escapeHTML(s){
+      return String(s)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#39;");
+    }
+
     function trimOldMessages(){
       const nodes = feed.querySelectorAll('.msg');
       if(nodes.length <= MAX_MESSAGES) return;
@@ -619,55 +611,11 @@
       }
     }
 
-    async function typeMessageInto(container, m){
-      container.textContent = '';
-
-      const caret = document.createElement('span');
-      caret.className = 'caret';
-      caret.textContent = '▍';
-
-      const toks = parts(m);
-
-      if(reduceMotion){
-        for(const t of toks){
-          const span = document.createElement('span');
-          if(t.isAccent) span.className = 'accent';
-          span.textContent = t.str;
-          container.appendChild(span);
-        }
-        return;
-      }
-
-      for(const t of toks){
-        const span = document.createElement('span');
-        if(t.isAccent) span.className = 'accent';
-        container.appendChild(span);
-
-        for(const ch of t.str){
-          if(caret.parentNode) caret.remove();
-          span.textContent += ch;
-          container.appendChild(caret);
-
-          let delay = rand(TYPE_MIN, TYPE_MAX);
-          if(ch === '.' || ch === '!' || ch === '?') delay += 110;
-          if(ch === ',' || ch === ';' || ch === ':') delay += 55;
-
-          scrollToBottom(false);
-          await wait(delay);
-        }
-      }
-
-      if(caret.parentNode) caret.remove();
-    }
-
-    async function addMessage(m, {flash=false} = {}){
+    function addMessageInstant(m, {flash=false} = {}){
       const msgEl = document.createElement('div');
       msgEl.className = 'msg' + (flash ? ' flash' : '');
+      msgEl.innerHTML = renderMessageHTML(m);
       feed.insertBefore(msgEl, sentinel);
-
-      scrollToBottom(false);
-
-      await typeMessageInto(msgEl, m);
 
       trimOldMessages();
       scrollToBottom(false);
@@ -683,19 +631,15 @@
     }
 
     (async function run(){
-      // randomized each load
       const order = shuffle(msgs);
-
-      // start at bottom
       scrollToBottom(true);
 
       for(const m of order){
-        await addMessage(m);
+        addMessageInstant(m);
         await wait(rand(BETWEEN_MIN, BETWEEN_MAX));
       }
 
-      // final line appears at the bottom, typed, with pulse
-      await addMessage({text: FINAL_LINE, accent:''}, {flash:true});
+      addMessageInstant({text: FINAL_LINE, accent:''}, {flash:true});
       scrollToBottom(true);
     })();
 
