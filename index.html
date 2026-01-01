@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -24,6 +25,7 @@
   <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
 
   <meta name="robots" content="index,follow" />
+
   <link rel="icon" type="image/png" sizes="32x32" href="flavicon.png" />
 
   <style>
@@ -31,7 +33,9 @@
       --bg:#000;
       --fg:#fff;
       --accent:#9900FF;
+      --border:rgba(255,255,255,.14);
       --shadow:0 10px 30px rgba(0,0,0,.45);
+      --caret-y:0.20em;
     }
 
     html,body{
@@ -42,13 +46,7 @@
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       font-weight:700;
       -webkit-font-smoothing:antialiased;
-      overflow:hidden; /* desktop: lock viewport; feed scrolls */
-    }
-
-    /* If you add a header, keep it above the final overlay */
-    header.site-header, .site-header{
-      position:relative;
-      z-index:10000;
+      overflow:hidden; /* desktop: lock viewport */
     }
 
     .wrap{
@@ -59,70 +57,59 @@
       place-items:center;
       text-align:center;
       padding:2rem;
-      padding-bottom:6.0rem; /* space for fixed footer */
+      padding-bottom:5.5rem; /* desktop: space for fixed footer */
     }
 
     .hero{
       display:inline-block;
       user-select:text;
       pointer-events:auto;
-      border:none;
+      border:none; /* removed thin white border */
       border-radius:24px;
-      padding:clamp(18px,3.2vw,34px) clamp(20px,4.2vw,58px);
+      padding:clamp(16px,3vw,32px) clamp(18px,4vw,52px);
       box-shadow:var(--shadow);
+    }
+
+    .line{
+      margin:0;
+      letter-spacing:.2px;
+      line-height:1.05;
+      font-size:clamp(28px,6vw,72px);
+      text-shadow:0 0 10px rgba(153,0,255,.18),0 0 35px rgba(153,0,255,.12);
+      white-space:pre-wrap;
+      opacity:0;
+      transition:opacity .6s ease-in-out; /* fade in/out whole line */
     }
 
     .accent{ color:var(--accent); }
 
-    /* scrolling message feed */
-    .feed{
-      width:min(1040px, 94vw);
-      max-height:min(72vh, 640px);
-      overflow-y:auto;
-      overflow-x:hidden;
-      padding:0.35rem 0.45rem 0.45rem;
-      text-align:left;
-      scroll-behavior:smooth;
-      overscroll-behavior:contain;
-      -webkit-overflow-scrolling:touch;
-      touch-action:pan-y;
+    .fadeout{
+      position:fixed;
+      inset:0;
+      background:#000;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 1.5s ease;
+      z-index:999;
     }
-
-    /* BIG TEXT */
-    .msg{
-      margin:0 0 .92rem 0;
-      letter-spacing:.2px;
-      line-height:1.10;
-      font-size:clamp(26px, 4.8vw, 56px);
-      text-shadow:0 0 10px rgba(153,0,255,.14),0 0 35px rgba(153,0,255,.10);
-      white-space:pre-wrap;
-      word-break:break-word;
-      opacity:.98;
-    }
-    .msg:last-child{ margin-bottom:0; }
+    .fadeout.active{ opacity:1; }
 
     .flash { animation: fadePulse 2.6s ease-in-out infinite alternate; }
     @keyframes fadePulse { from { opacity:.28 } to { opacity:1 } }
 
-    /* subtle scrollbar */
-    .feed::-webkit-scrollbar{ width:10px; }
-    .feed::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.14); border-radius:10px; }
-    .feed::-webkit-scrollbar-track{ background:rgba(255,255,255,.04); }
-
-    /* footer (desktop fixed) */
+    /* footer (desktop) */
     footer.site-footer{
       position:fixed;
       left:0;
       right:0;
       bottom:0;
-      z-index:10000; /* IMPORTANT: keep footer above final overlay */
+      z-index:5;
       background:rgba(0,0,0,.4);
       backdrop-filter:blur(8px);
       display:flex;
       justify-content:center;
       gap:2.5rem;
-      padding:1.35rem 1.5rem calc(1.1rem + env(safe-area-inset-bottom));
-      flex-wrap:wrap;
+      padding:1.35rem 1.5rem 1.1rem;
     }
 
     .footer-link{
@@ -134,7 +121,6 @@
       cursor:pointer;
       padding-bottom:.35rem;
       transition:opacity .2s ease;
-      font-size:.95rem;
     }
 
     .footer-link::after{
@@ -148,8 +134,13 @@
       transition:width .2s ease-out;
     }
 
-    .footer-link:hover{ opacity:.55; }
-    .footer-link:hover::after{ width:100%; }
+    .footer-link:hover{
+      opacity:.55;
+    }
+
+    .footer-link:hover::after{
+      width:100%;
+    }
 
     /* visually hidden SEO block */
     .sr-only{
@@ -163,87 +154,31 @@
       border:0;
     }
 
-    /* FINAL OVERLAY (now UNDER footer/header, but still covers content) */
-    .final-overlay{
-      position:fixed;
-      inset:0;
-      z-index:9000;            /* IMPORTANT: below footer/header */
-      background:#000;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:2rem;
-      opacity:0;
-      pointer-events:none;     /* IMPORTANT: footer/header stay clickable */
-      transition:opacity 1.2s ease;
-    }
-    .final-overlay.active{
-      opacity:1;
-      pointer-events:none;
-    }
-
-    .final-line{
-      margin:0;
-      letter-spacing:.2px;
-      line-height:1.02;
-      font-size:clamp(38px, 8vw, 86px);
-      text-shadow:0 0 10px rgba(153,0,255,.18),0 0 35px rgba(153,0,255,.12);
-      white-space:pre-wrap;
-    }
-
-    /* MOBILE FIX (your previous one) */
+    /* mobile adjustments */
     @media (max-width: 540px){
       html,body{
+        overflow:auto;     /* allow scroll */
         height:auto;
-        min-height:100%;
-        overflow:auto; /* key fix: no clipping on mobile */
       }
-
       .wrap{
-        min-height:0;
-        display:block;
-        padding:1.25rem 1.1rem 1.2rem;
+        min-height:calc(100vh - 120px); /* hero centered above footer */
+        display:grid;
+        place-items:center;
+        padding:1.6rem 1.4rem 0;
       }
-
       .hero{
-        display:block;
         max-width:100%;
-        padding:1.05rem 1.05rem;
       }
-
-      .feed{
-        width:100%;
-        max-height:calc(100dvh - 220px); /* leave room for footer + browser UI */
-        padding:0.35rem 0.35rem 0.45rem;
-      }
-
-      .msg{
-        font-size:clamp(24px, 7.2vw, 46px);
-        line-height:1.08;
-      }
-
       footer.site-footer{
-        position:static; /* normal state: prevent overlap/clipping */
+        position:static;
+        flex-wrap:wrap;
         justify-content:flex-start;
         gap:1rem 1.5rem;
-        padding:1.1rem 1.1rem calc(1.2rem + env(safe-area-inset-bottom));
+        padding:1.1rem 1.4rem 1.4rem;
       }
-
-      .footer-link{ font-size:.85rem; }
-    }
-
-    /* FINAL STATE: pin footer to bottom on mobile too */
-    body.final footer.site-footer{
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
-      z-index:10000;
-    }
-
-    /* Final state: prevent scrolling (but footer stays visible) */
-    body.final{
-      overflow:hidden;
+      .footer-link{
+        font-size:.85rem;
+      }
     }
   </style>
 
@@ -271,62 +206,58 @@
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="hero" id="hero">
-      <div class="feed" id="feed" role="log" aria-live="polite" aria-relevant="additions text" aria-atomic="false">
-        <div id="sentinel" aria-hidden="true"></div>
-      </div>
-    </div>
-
-    <!-- SEO-readable static summary -->
-    <div class="sr-only">
-      <h2>Los Angeles Real Estate, Brokerage, and Customer Acquisition</h2>
-      <p>This is the homepage of Joshua Guerrero, also known as drozq, currently operating in Los Angeles, California. The current business focus is building toward VIRELLO Brokerage, removing the constraint of real estate customer acquisition cost inside 30 days, and executing a decade plan built on sales, lead generation, and acquisitions.</p>
-      <p>Explore core pages:</p>
-      <ul>
-        <li><a href="/constraint/">Current Constraint</a></li>
-        <li><a href="/decade/">Decade Plan</a></li>
-        <li><a href="/platforms/">Platforms</a></li>
-        <li><a href="/philanthropy/">Philanthropy</a></li>
-        <li><a href="/privacy/">Privacy</a></li>
-      </ul>
-    </div>
+<div class="wrap">
+  <div class="hero" id="hero" aria-live="polite" aria-atomic="true">
+    <h1 class="line" id="line">
+      <span>The world is </span><span class="accent">yours</span><span>.</span>
+    </h1>
   </div>
 
-  <div id="site-footer"></div>
-
-  <!-- FINAL centered overlay -->
-  <div id="finalOverlay" class="final-overlay" aria-hidden="true">
-    <h1 id="finalLine" class="final-line flash">Just Win.</h1>
+  <!-- SEO-readable static summary -->
+  <div class="sr-only">
+    <h2>Los Angeles Real Estate, Brokerage, and Customer Acquisition</h2>
+    <p>This is the homepage of Joshua Guerrero, also known as drozq, currently operating in Los Angeles, California. The current business focus is building toward VIRELLO Brokerage, removing the constraint of real estate customer acquisition cost inside 30 days, and executing a decade plan built on sales, lead generation, and acquisitions.</p>
+    <p>Explore core pages:</p>
+    <ul>
+      <li><a href="/constraint/">Current Constraint</a></li>
+      <li><a href="/decade/">Decade Plan</a></li>
+      <li><a href="/platforms/">Platforms</a></li>
+      <li><a href="/philanthropy/">Philanthropy</a></li>
+      <li><a href="/privacy/">Privacy</a></li>
+    </ul>
   </div>
+</div>
 
-  <script>
-    (function () {
-      var target = document.getElementById('site-footer');
-      if (!target) return;
+<div id="site-footer"></div>
 
-      fetch('/footer.html', { cache: 'no-cache' })
-        .then(function (res) {
-          if (!res.ok) throw new Error('Failed to load footer');
-          return res.text();
-        })
-        .then(function (html) {
-          target.innerHTML = html;
-        })
-        .catch(function (err) {
-          console.error('Footer load error:', err);
-        });
-    })();
-  </script>
+<div id="fade" class="fadeout"></div>
 
-  <script>
-  (function(){
-    const feed = document.getElementById('feed');
-    const sentinel = document.getElementById('sentinel');
-    const finalOverlay = document.getElementById('finalOverlay');
-    if(!feed || !sentinel || !finalOverlay) return;
+<script>
+  (function () {
+    var target = document.getElementById('site-footer');
+    if (!target) return;
 
-    const msgs = [
+    fetch('/footer.html', { cache: 'no-cache' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('Failed to load footer');
+        return res.text();
+      })
+      .then(function (html) {
+        target.innerHTML = html;
+      })
+      .catch(function (err) {
+        console.error('Footer load error:', err);
+      });
+  })();
+</script>
+
+<div id="fade" class="fadeout"></div>
+
+<script>
+(function(){
+  const lineEl = document.getElementById('line');
+
+  const msgs = [
       {text:`The world is yours.`,accent:`yours`},
       {text:`I've had enough.`,accent:`I've had enough`},
       {text:`The prerequisites are less than I once imagined.`,accent:``},
@@ -612,140 +543,78 @@
       {text:`Is it worth it?`,accent:``},
       {text:`You have to be willing to move the fucking world.`,accent:``},
       {text:`Have I led a compelling narrative?`,accent:`narrative`}
+];
+
+  const FINAL_LINE = 'Just Win.';
+  const FADE_IN = 600;
+  const FADE_OUT = 600;
+  const HOLD = 1000;
+
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  function parts(m){
+    const a = m.accent;
+    if(!a) return [{str:m.text, isAccent:false}];
+    const i = m.text.indexOf(a);
+    if(i < 0) return [{str:m.text, isAccent:false}];
+    return [
+      {str:m.text.slice(0,i), isAccent:false},
+      {str:a, isAccent:true},
+      {str:m.text.slice(i + a.length), isAccent:false}
     ];
+  }
 
-    // SPEED (your requirement)
-    const BETWEEN_MIN = 450;   // ms
-    const BETWEEN_MAX = 650;   // ms
+  function buildHTML(m){
+    const toks = parts(m);
+    let out = '';
+    for(const t of toks){
+      out += t.isAccent ? `<span class="accent">${t.str}</span>` : t.str;
+    }
+    return out;
+  }
 
-    // after the last message, wait a beat, then wipe -> show final
-    const END_HOLD_MS = 900;
+  async function showMsg(m){
+    lineEl.style.opacity = 0;
+    lineEl.classList.remove('flash');
+    lineEl.innerHTML = buildHTML(m);
 
-    // keep DOM sane + user scroll behavior
-    const MAX_MESSAGES = 180;
-    const AUTO_SCROLL_THRESHOLD = 64;
+    // reflow to trigger transition
+    void lineEl.offsetWidth;
 
-    const wait = (ms) => new Promise(r => setTimeout(r, ms));
-    const rand = (a,b) => a + Math.random() * (b - a);
+    lineEl.style.opacity = 1;
+    await wait(FADE_IN + HOLD);
 
-    function atBottom(){
-      const distance = feed.scrollHeight - (feed.scrollTop + feed.clientHeight);
-      return distance < AUTO_SCROLL_THRESHOLD;
+    lineEl.style.opacity = 0;
+    await wait(FADE_OUT);
+  }
+
+  function shuffle(a){
+    const arr = a.slice();
+    for(let i = arr.length - 1; i > 0; i--){
+      const j = (Math.random() * (i + 1)) | 0;
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  (async function run(){
+    const order = shuffle(msgs);
+    for(const m of order){
+      await showMsg(m);
     }
 
-    let autoScroll = true;
-    feed.addEventListener('scroll', () => {
-      autoScroll = atBottom();
-    }, { passive:true });
+    const fade = document.getElementById('fade');
+    fade.classList.add('active');
+    await wait(2000);
 
-    function scrollToBottom(force){
-      if(force || autoScroll){
-        feed.scrollTop = feed.scrollHeight;
-      }
-    }
+    lineEl.style.transition = 'none';
+    lineEl.style.opacity = 1;
+    lineEl.classList.add('flash');
+    lineEl.innerHTML = FINAL_LINE;
 
-    function parts(m){
-      const a = m.accent;
-      if(!a) return [{str:m.text, isAccent:false}];
-      const i = m.text.indexOf(a);
-      if(i < 0) return [{str:m.text, isAccent:false}];
-      return [
-        {str:m.text.slice(0,i), isAccent:false},
-        {str:a, isAccent:true},
-        {str:m.text.slice(i + a.length), isAccent:false}
-      ];
-    }
-
-    function escapeHTML(s){
-      return String(s)
-        .replaceAll('&','&amp;')
-        .replaceAll('<','&lt;')
-        .replaceAll('>','&gt;')
-        .replaceAll('"','&quot;')
-        .replaceAll("'","&#39;");
-    }
-
-    function renderMessageHTML(m){
-      const toks = parts(m);
-      let out = '';
-      for(const t of toks){
-        out += t.isAccent
-          ? `<span class="accent">${escapeHTML(t.str)}</span>`
-          : escapeHTML(t.str);
-      }
-      return out;
-    }
-
-    function trimOldMessages(){
-      const nodes = feed.querySelectorAll('.msg');
-      if(nodes.length <= MAX_MESSAGES) return;
-
-      const removeCount = nodes.length - MAX_MESSAGES;
-      for(let i = 0; i < removeCount; i++){
-        const n = nodes[i];
-        const h = n.getBoundingClientRect().height;
-        n.remove();
-        if(!autoScroll){
-          feed.scrollTop = Math.max(0, feed.scrollTop - h);
-        }
-      }
-    }
-
-    function addMessageInstant(m){
-      const msgEl = document.createElement('div');
-      msgEl.className = 'msg';
-      msgEl.innerHTML = renderMessageHTML(m);
-      feed.insertBefore(msgEl, sentinel);
-
-      trimOldMessages();
-      scrollToBottom(false);
-    }
-
-    function shuffle(a){
-      const arr = a.slice();
-      for(let i = arr.length - 1; i > 0; i--){
-        const j = (Math.random() * (i + 1)) | 0;
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    function freezeScroll(){
-      // Freeze scrolling in final state, but footer/header remain visible due to z-index + pointer-events.
-      document.body.classList.add('final');
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-    }
-
-    function showFinalOverlay(){
-      // wipe the feed so "everything disappears"
-      const nodes = feed.querySelectorAll('.msg');
-      nodes.forEach(n => n.remove());
-
-      // stop announcing new items
-      feed.setAttribute('aria-live', 'off');
-
-      // show overlay centered + flashing (already has .flash)
-      finalOverlay.classList.add('active');
-      finalOverlay.setAttribute('aria-hidden', 'false');
-
-      freezeScroll();
-    }
-
-    (async function run(){
-      const order = shuffle(msgs); // randomized each load
-      scrollToBottom(true);
-
-      for(const m of order){
-        addMessageInstant(m);
-        await wait(rand(BETWEEN_MIN, BETWEEN_MAX));
-      }
-
-      await wait(END_HOLD_MS);
-      showFinalOverlay();
-    })();
-
+    fade.classList.remove('active');
   })();
-  </script>
+})();
+</script>
 </body>
 </html>
