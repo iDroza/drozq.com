@@ -3,21 +3,25 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Contact | Joshua Guerrero</title>
-  <meta name="description" content="Contact Joshua Guerrero. Short intake. Clear routing." />
+
+  <title>Contact | drozq</title>
+  <meta name="description" content="Contact Joshua Guerrero (drozq)." />
   <link rel="canonical" href="https://drozq.com/contact/" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Contact Joshua Guerrero" />
-  <meta property="og:description" content="Short intake. Clear routing." />
+  <meta property="og:description" content="Contact Joshua Guerrero (drozq)." />
   <meta property="og:url" content="https://drozq.com/contact/" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://drozq.com/preview.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/jpeg" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Contact Joshua Guerrero" />
-  <meta name="twitter:description" content="Short intake. Clear routing." />
+  <meta name="twitter:description" content="Contact Joshua Guerrero (drozq)." />
   <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
 
   <meta name="robots" content="index,follow" />
@@ -28,41 +32,33 @@
     :root{
       --bg:#000;
       --fg:#fff;
-      --muted:rgba(255,255,255,.70);
-      --muted2:rgba(255,255,255,.50);
-
       --accent:#9900FF;
-
-      --surface:#1c1c1e;
-      --border:#2c2c2e;
-      --shadow:0 22px 70px rgba(0,0,0,.72);
-
-      --radius-lg:22px;
-      --focus: 0 0 0 4px rgba(153,0,255,.28);
+      --border:rgba(255,255,255,.14);
+      --shadow:0 10px 30px rgba(0,0,0,.45);
     }
 
     *{ box-sizing:border-box; }
+
     html,body{
       height:100%;
       margin:0;
       background:var(--bg);
       color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:700;                 /* MATCH HOME PAGE */
       -webkit-font-smoothing:antialiased;
-      overflow:hidden; /* desktop: like homepage */
+      overflow:hidden;                 /* MATCH HOME PAGE (desktop lock) */
     }
 
-    /* === TOP LEFT: CONSTRAINT STYLE === */
+    /* ===== Constraint-style top-left link (as requested) ===== */
     .topbar{
       display:flex;
       align-items:center;
       gap:.5rem;
       padding:1.2rem 1.4rem 0.4rem;
       position:fixed;
-      top:0;
-      left:0;
+      top:0; left:0;
       z-index:10;
-      width:100%;
       pointer-events:none;
     }
     .topbar > a{ pointer-events:auto; }
@@ -96,64 +92,59 @@
       line-height:1;
     }
 
-    .backdrop{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.55);
-      z-index:1;
-      pointer-events:none;
-    }
-
+    /* ===== HOME PAGE LAYOUT ===== */
     .wrap{
+      position:relative;
+      z-index:2;
       min-height:100%;
       display:grid;
       place-items:center;
-      padding:2.2rem 2rem 5.6rem;
-      position:relative;
-      z-index:2;
+      text-align:center;
+      padding:2rem;
+      padding-bottom:5.5rem; /* space for fixed footer */
     }
 
-    .stack{
-      width:min(920px, 100%);
-      display:grid;
-      gap:18px;
+    /* HOME PAGE "hero" card */
+    .hero{
+      display:inline-block;
+      user-select:text;
+      pointer-events:auto;
+      border:none;
+      border-radius:24px;
+      padding:clamp(16px,3vw,32px) clamp(18px,4vw,52px);
+      box-shadow:var(--shadow);
+      width:min(980px, 100%);
+      text-align:left; /* form reads better left-aligned */
     }
 
-    /* === TITLE OUTSIDE CARD: smaller + weight 700 + no mid-word breaks === */
-    .page-title{
-      margin:0;
-      letter-spacing:-0.03em;
-      line-height:1.05;
-      font-weight:700; /* requested */
-      font-size:clamp(32px, 5.4vw, 66px); /* slightly smaller */
-      text-shadow:0 0 10px rgba(153,0,255,.18), 0 0 35px rgba(153,0,255,.12);
+    /* HOME PAGE title style, but not animated */
+    .line{
+      margin:0 0 18px;
+      letter-spacing:.2px;                 /* MATCH HOME PAGE */
+      line-height:1.05;                    /* MATCH HOME PAGE */
+      font-size:clamp(28px,6vw,72px);      /* MATCH HOME PAGE */
+      text-shadow:0 0 10px rgba(153,0,255,.18),0 0 35px rgba(153,0,255,.12);
+      white-space:pre-wrap;
+      opacity:1;
+      font-weight:700;                     /* YOU REQUESTED 700 */
     }
     .accent{ color:var(--accent); }
     .nowrap{
       display:inline-block;
-      white-space:nowrap;
+      white-space:nowrap; /* prevents mid-word breaks */
     }
 
-    .card{
-      background:var(--surface);
-      border:1px solid var(--border);
-      border-radius:var(--radius-lg);
-      box-shadow:var(--shadow);
-      padding:22px;
-    }
-
-    .card-head{
-      margin:2px 0 14px;
-    }
-    .card-head h2{
-      margin:0;
-      font-size:13px;
+    /* form section label (small sub headline) */
+    .subhead{
+      margin:0 0 10px;
+      font-size:12px;
       letter-spacing:.16em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.70);
-      font-weight:650;
+      color:rgba(255,255,255,.65);
+      font-weight:700;
     }
 
+    /* form layout */
     form{ display:grid; gap:14px; }
 
     .grid{
@@ -172,20 +163,22 @@
       margin:0 0 6px;
       color:rgba(255,255,255,.78);
       font-size:13px;
-      font-weight:650;
+      font-weight:700;
+      letter-spacing:0;
+      text-transform:none;
     }
     .req{ color:rgba(255,255,255,.92); margin-left:.15rem; }
 
     input, select, textarea{
       width:100%;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background:#111114;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.04);  /* stays consistent with home (no gradients) */
       color:var(--fg);
       padding:12px 12px;
       font-size:15px;
       outline:none;
-      transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+      transition:border-color .15s ease, background .15s ease, box-shadow .15s ease;
     }
     textarea{
       min-height:120px;
@@ -195,9 +188,9 @@
     input::placeholder, textarea::placeholder{ color:rgba(255,255,255,.32); }
 
     input:focus, select:focus, textarea:focus{
-      border-color:rgba(255,255,255,.18);
-      box-shadow:var(--focus);
-      background:#0f0f12;
+      border-color:rgba(255,255,255,.22);
+      background:rgba(255,255,255,.06);
+      box-shadow:0 0 0 4px rgba(153,0,255,.22);
     }
 
     select{
@@ -224,14 +217,14 @@
       width:0;
     }
 
+    /* checkbox alignment (tight, left-aligned, no weird padding) */
     .consent{
       display:grid;
       grid-template-columns: 16px 1fr;
       column-gap:10px;
       align-items:start;
-      margin-top:4px;
-      color:var(--muted2);
-      font-weight:600;
+      margin-top:2px;
+      color:rgba(255,255,255,.65);
       font-size:13px;
       line-height:1.45;
       text-align:left;
@@ -245,57 +238,64 @@
     .consent label{
       margin:0;
       font-size:13px;
-      font-weight:600;
-      color:var(--muted2);
+      font-weight:700;
+      color:rgba(255,255,255,.65);
     }
 
+    /* CTA: home-like (simple, bold, clean) */
     .actions{
       display:flex;
       align-items:center;
-      justify-content:space-between;
+      gap:14px;
       flex-wrap:wrap;
-      gap:12px;
+      justify-content:flex-start;
       margin-top:8px;
     }
-
     .btn{
       border:none;
-      border-radius:12px;
-      padding:12px 16px;
+      border-radius:14px;
+      padding:12px 18px;
       font-size:15px;
-      font-weight:750;
+      font-weight:700;
       cursor:pointer;
-      transition:transform .06s ease, background .15s ease, opacity .15s ease, box-shadow .15s ease;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
+      transition:transform .06s ease, opacity .15s ease, filter .15s ease;
       min-height:44px;
       min-width:140px;
       user-select:none;
-      white-space:nowrap;
-    }
-    .btn-primary{
       background:var(--accent);
       color:#fff;
-      box-shadow:0 12px 28px rgba(0,0,0,.45);
     }
-    .btn-primary:hover{ background:#a61aff; }
-    .btn-primary:active{ transform:translateY(1px); }
+    .btn:hover{ filter:brightness(1.05); }
+    .btn:active{ transform:translateY(1px); }
     .btn.is-loading{ cursor:wait; opacity:.78; }
 
     #form-status{
       min-height:1.2em;
-      color:var(--muted);
-      font-weight:600;
-      text-align:left;
       font-size:13px;
-      flex:1;
-      min-width:240px;
+      font-weight:700;
+      color:rgba(255,255,255,.65);
     }
     #form-status[data-status="success"]{ color:#34d399; }
     #form-status[data-status="error"]{ color:#fb7185; }
 
-    /* Footer */
+    /* make desktop feel like home page even if form is taller:
+       keep background locked, allow hero to scroll internally if needed */
+    .hero-scroll{
+      max-height: calc(100vh - 200px);
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+      padding-right: 10px; /* prevents scrollbar overlap */
+    }
+    .hero-scroll::-webkit-scrollbar{ width:10px; }
+    .hero-scroll::-webkit-scrollbar-thumb{
+      background:rgba(255,255,255,.12);
+      border-radius:999px;
+      border:2px solid rgba(0,0,0,.0);
+      background-clip:padding-box;
+    }
+    .hero-scroll::-webkit-scrollbar-track{ background:transparent; }
+
+    /* footer (MATCH HOME PAGE) */
     footer.site-footer{
       position:fixed;
       left:0;
@@ -304,12 +304,10 @@
       z-index:5;
       background:rgba(0,0,0,.4);
       backdrop-filter:blur(8px);
-      -webkit-backdrop-filter:blur(8px);
       display:flex;
       justify-content:center;
       gap:2.5rem;
       padding:1.35rem 1.5rem 1.1rem;
-      border-top:1px solid rgba(255,255,255,.06);
     }
     .footer-link{
       position:relative;
@@ -334,15 +332,38 @@
     .footer-link:hover{ opacity:.55; }
     .footer-link:hover::after{ width:100%; }
 
-    /* mobile */
+    /* visually hidden SEO */
+    .sr-only{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      border:0;
+    }
+
+    /* mobile adjustments (MATCH HOME PAGE) */
     @media (max-width: 540px){
-      html,body{ overflow:auto; height:auto; }
+      html,body{
+        overflow:auto;
+        height:auto;
+      }
       .wrap{
         min-height:calc(100vh - 120px);
-        place-items:start;
-        padding:1.2rem 1.1rem 0;
+        display:grid;
+        place-items:center;
+        padding:1.6rem 1.4rem 0;
       }
-      .card{ padding:18px; }
+      .hero{
+        max-width:100%;
+      }
+      .hero-scroll{
+        max-height:none;
+        overflow:visible;
+        padding-right:0;
+      }
       footer.site-footer{
         position:static;
         flex-wrap:wrap;
@@ -351,24 +372,6 @@
         padding:1.1rem 1.4rem 1.4rem;
       }
       .footer-link{ font-size:.85rem; }
-    }
-
-    /* short desktops */
-    @media (max-height: 760px){
-      html,body{ overflow:auto; height:auto; }
-      footer.site-footer{ position:static; }
-      .wrap{ padding-bottom:2rem; }
-      .backdrop{ display:none; }
-      .topbar{ position:static; width:auto; pointer-events:auto; }
-    }
-
-    .sr-only{
-      position:absolute;
-      width:1px;height:1px;
-      padding:0;margin:-1px;
-      overflow:hidden;
-      clip:rect(0,0,0,0);
-      border:0;
     }
   </style>
 
@@ -388,8 +391,6 @@
 </head>
 
 <body>
-  <div class="backdrop" aria-hidden="true"></div>
-
   <header class="topbar">
     <a href="/" class="back-link">
       <span class="arrow">←</span>
@@ -397,22 +398,20 @@
     </a>
   </header>
 
-  <main class="wrap">
-    <div class="stack" aria-label="Contact form">
-      <!-- Title with no mid-word breaks -->
-      <h1 class="page-title">
-        <span>Contact</span>
-        <span class="accent nowrap">Joshua</span>
-        <span class="accent nowrap">Guerrero</span>
-      </h1>
+  <div class="wrap">
+    <div class="hero" aria-label="Contact hero">
+      <div class="hero-scroll">
+        <h1 class="line" id="title">
+          <span>Contact </span>
+          <span class="accent nowrap">Joshua</span>
+          <span> </span>
+          <span class="accent nowrap">Guerrero</span>
+        </h1>
 
-      <section class="card" aria-label="Your contact info form">
-        <div class="card-head">
-          <h2>Your contact info</h2>
-        </div>
+        <div class="subhead">Your contact info</div>
 
         <form id="contact-form" method="POST" action="/api/lead" novalidate>
-          <!-- Honeypot -->
+          <!-- Honeypot (matches lead.js) -->
           <div class="honeypot" aria-hidden="true">
             <label>Company Website
               <input type="text" name="company_website" autocomplete="off" tabindex="-1" />
@@ -463,26 +462,28 @@
           </div>
 
           <div class="actions">
-            <button class="btn btn-primary" type="submit">Send</button>
+            <button class="btn" type="submit">Send</button>
             <div id="form-status" aria-live="polite"></div>
           </div>
         </form>
-      </section>
-
-      <div class="sr-only">
-        <h2>Contact Joshua Guerrero</h2>
-        <p>Required: full name, email, phone, inquiry type. Consent required for contact by email, call, and text.</p>
       </div>
     </div>
-  </main>
+
+    <div class="sr-only">
+      <h2>Contact Joshua Guerrero</h2>
+      <p>Required: full name, email, phone, inquiry type. Consent required for contact by email, call, and text.</p>
+    </div>
+  </div>
 
   <div id="site-footer"></div>
 
+  <!-- Form JS -->
   <script>
     (function () {
       const form = document.getElementById('contact-form');
       const statusEl = document.getElementById('form-status');
       const submitBtn = form.querySelector('button[type="submit"]');
+      const msgEl = document.getElementById('message');
 
       function setStatus(text, type) {
         statusEl.textContent = text || '';
@@ -498,6 +499,11 @@
           setStatus('Complete the required fields.', 'error');
           return;
         }
+
+        // lead.js currently REQUIRES "message".
+        // Keep UI optional, but send a safe placeholder if blank.
+        const originalMessage = (msgEl.value || '').trim();
+        if (!originalMessage) msgEl.value = '—';
 
         setStatus('Sending…', 'pending');
         submitBtn.classList.add('is-loading');
@@ -520,6 +526,8 @@
           if (!response.ok || payload.ok === false) {
             console.error('Lead submit error', payload);
             setStatus('Something broke. Try again.', 'error');
+            // restore message if we injected placeholder
+            if (!originalMessage) msgEl.value = '';
           } else {
             setStatus('Received.', 'success');
             form.reset();
@@ -527,6 +535,7 @@
         } catch (err) {
           console.error('Lead submit exception', err);
           setStatus('Network error. Try again.', 'error');
+          if (!originalMessage) msgEl.value = '';
         } finally {
           submitBtn.classList.remove('is-loading');
           submitBtn.disabled = false;
@@ -535,6 +544,7 @@
     })();
   </script>
 
+  <!-- Footer loader -->
   <script>
     (function () {
       var target = document.getElementById('site-footer');
