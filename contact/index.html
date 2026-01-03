@@ -52,7 +52,7 @@
       overflow:hidden; /* desktop: like homepage */
     }
 
-    /* === TOP LEFT: EXACT CONSTRAINT STYLE === */
+    /* === TOP LEFT: CONSTRAINT STYLE === */
     .topbar{
       display:flex;
       align-items:center;
@@ -96,7 +96,6 @@
       line-height:1;
     }
 
-    /* backdrop (subtle) */
     .backdrop{
       position:fixed;
       inset:0;
@@ -105,7 +104,6 @@
       pointer-events:none;
     }
 
-    /* layout */
     .wrap{
       min-height:100%;
       display:grid;
@@ -121,18 +119,21 @@
       gap:18px;
     }
 
-    /* === HOMEPAGE-SCALE TITLE (outside card) === */
+    /* === TITLE OUTSIDE CARD: smaller + weight 700 + no mid-word breaks === */
     .page-title{
       margin:0;
       letter-spacing:-0.03em;
       line-height:1.05;
-      font-weight:700;
-      font-size:clamp(34px, 6vw, 72px); /* match homepage vibe */
+      font-weight:700; /* requested */
+      font-size:clamp(32px, 5.4vw, 66px); /* slightly smaller */
       text-shadow:0 0 10px rgba(153,0,255,.18), 0 0 35px rgba(153,0,255,.12);
     }
     .accent{ color:var(--accent); }
+    .nowrap{
+      display:inline-block;
+      white-space:nowrap;
+    }
 
-    /* card only for the form */
     .card{
       background:var(--surface);
       border:1px solid var(--border);
@@ -141,17 +142,16 @@
       padding:22px;
     }
 
-    /* small internal heading */
     .card-head{
       margin:2px 0 14px;
     }
     .card-head h2{
       margin:0;
-      font-size:13px;              /* substantially smaller */
+      font-size:13px;
       letter-spacing:.16em;
       text-transform:uppercase;
       color:rgba(255,255,255,.70);
-      font-weight:750;
+      font-weight:650;
     }
 
     form{ display:grid; gap:14px; }
@@ -224,7 +224,6 @@
       width:0;
     }
 
-    /* consent: tight + left aligned */
     .consent{
       display:grid;
       grid-template-columns: 16px 1fr;
@@ -400,10 +399,13 @@
 
   <main class="wrap">
     <div class="stack" aria-label="Contact form">
-      <!-- OUTSIDE CARD: BIG HOMEPAGE-SCALE TITLE -->
-      <h1 class="page-title">Contact <span class="accent">Joshua Guerrero</span></h1>
+      <!-- Title with no mid-word breaks -->
+      <h1 class="page-title">
+        <span>Contact</span>
+        <span class="accent nowrap">Joshua</span>
+        <span class="accent nowrap">Guerrero</span>
+      </h1>
 
-      <!-- CARD: FORM ONLY -->
       <section class="card" aria-label="Your contact info form">
         <div class="card-head">
           <h2>Your contact info</h2>
