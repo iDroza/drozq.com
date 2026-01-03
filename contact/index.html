@@ -3,581 +3,170 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- Primary SEO -->
-  <title>Contact | Joshua Guerrero | Los Angeles Real Estate Operator</title>
-  <meta name="description" content="Investor intake for acquisitions in California. Submit deal constraints and underwriting inputs—receive a clear go/no-go plan, risk map, and execution steps if it fits." />
+  <title>Contact | Joshua Guerrero</title>
+  <meta name="description" content="Speak to Joshua Guerrero. Short intake. Fast routing." />
   <link rel="canonical" href="https://drozq.com/contact/" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Investor Intake | Joshua Guerrero | California Real Estate" />
-  <meta property="og:description" content="Investor intake for acquisitions in California. Submit deal constraints and underwriting inputs—receive a clear go/no-go plan, risk map, and execution steps if it fits." />
+  <meta property="og:title" content="Speak to Joshua Guerrero" />
+  <meta property="og:description" content="Short intake. Fast routing." />
   <meta property="og:url" content="https://drozq.com/contact/" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://drozq.com/preview.jpg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:type" content="image/jpeg" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Investor Intake | Joshua Guerrero | California Real Estate" />
-  <meta name="twitter:description" content="Investor intake for acquisitions in California. Submit deal constraints and underwriting inputs—receive a clear go/no-go plan, risk map, and execution steps if it fits." />
+  <meta name="twitter:title" content="Speak to Joshua Guerrero" />
+  <meta name="twitter:description" content="Short intake. Fast routing." />
   <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
 
   <meta name="robots" content="index,follow" />
-  <meta name="theme-color" content="#0a0a0c" />
-
+  <meta name="theme-color" content="#000000" />
   <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
 
   <style>
     :root{
-      --bg:#07070a;
-      --bg2:#0b0b10;
-      --fg:#ffffff;
-      --muted:rgba(255,255,255,.72);
-      --muted2:rgba(255,255,255,.56);
-      --hairline:rgba(255,255,255,.10);
+      --bg:#000;
+      --fg:#fff;
+      --accent:#9900FF;
+      --border:rgba(255,255,255,.14);
+      --muted:rgba(255,255,255,.68);
+      --muted2:rgba(255,255,255,.45);
       --card:rgba(255,255,255,.04);
-      --card2:rgba(255,255,255,.06);
-      --shadow: 0 40px 120px rgba(0,0,0,.75);
-
-      --accent:#7c3aed;
-      --accent2:#3b82f6;
-      --success:#34d399;
+      --shadow:0 10px 30px rgba(0,0,0,.55);
+      --ring:rgba(153,0,255,.22);
       --danger:#fb7185;
-
-      --radius-lg:28px;
-      --radius-md:18px;
-      --max: 1120px;
-
-      --step: clamp(58px, 7vw, 104px);
+      --success:#34d399;
     }
 
     *{ box-sizing:border-box; }
-    html{ scroll-behavior:smooth; }
-    body{
+    html,body{
+      height:100%;
       margin:0;
-      min-height:100vh;
-      background:
-        radial-gradient(900px 500px at 18% 8%, rgba(124,58,237,.22), transparent 60%),
-        radial-gradient(900px 500px at 86% 28%, rgba(59,130,246,.14), transparent 60%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
+      background:var(--bg);
       color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:700;
       -webkit-font-smoothing:antialiased;
-      padding-bottom:6.25rem;
+      overflow:hidden; /* desktop: emulate homepage lock */
     }
 
-    /* Return Home pinned top-left (not centered) */
-.topbar{
-  display:flex;
-  align-items:center;
-  gap:.5rem;
-  padding:1.2rem 1.4rem 0.4rem;
-
-  /* match constraint page behavior */
-  position:static;
-}
-
-.back-link{
-  position:relative;
-  display:inline-flex;
-  align-items:center;
-  gap:.5rem;
-  color:#fff;
-  text-decoration:none;
-  font-weight:600;
-  letter-spacing:.01em;
-  padding-bottom:.35rem;
-  transition:opacity .2s ease;
-
-  /* REMOVE the pill look */
-  background: none;
-  border: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border-radius: 0;
-  padding: 0;
-}
-
-/* ADD the underline animation */
-.back-link::after{
-  content:'';
-  position:absolute;
-  left:0;
-  bottom:-0.35rem;
-  height:2px;
-  width:0;
-  background:#fff;
-  transition:width .2s ease-out;
-}
-
-.back-link:hover{
-  opacity:.55;
-}
-
-.back-link:hover::after{
-  width:100%;
-}
-
-/* Match arrow sizing from constraint page */
-.back-link span.arrow{
-  font-size:1.1rem;
-  line-height:1;
-}
+    /* top-left home link (minimal, no pill) */
+    .topbar{
+      position:fixed;
+      top:1.15rem;
+      left:1.25rem;
+      z-index:10;
+    }
+    .back-link{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      gap:.55rem;
+      color:#fff;
+      text-decoration:none;
+      font-weight:650;
+      letter-spacing:.02em;
+      padding-bottom:.35rem;
+      opacity:.92;
+      transition:opacity .2s ease;
+    }
+    .back-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .back-link:hover{ opacity:.55; }
+    .back-link:hover::after{ width:100%; }
 
     .wrap{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:0 1.4rem;
-    }
-
-    /* give fixed topbar space */
-    .spacer{
-      height: 84px;
+      position:relative;
+      z-index:2;
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:2rem;
+      padding-bottom:5.6rem; /* space for fixed footer */
     }
 
     .hero{
-      padding: var(--step) 0 calc(var(--step) * .85);
-    }
-
-    .hero-grid{
-      display:grid;
-      grid-template-columns: minmax(0,1.25fr) minmax(0,.75fr);
-      gap:3.25rem;
-      align-items:start;
-    }
-
-    @media (max-width: 980px){
-      .hero-grid{ grid-template-columns: minmax(0,1fr); gap:2.2rem; }
-      body{ padding-bottom:0; }
-      .topbar{ position:absolute; }
-      .spacer{ height: 24px; }
-    }
-
-    .h-eyebrow{
-      margin:0 0 1rem;
-      display:flex;
-      align-items:center;
-      gap:.7rem;
-      color:var(--muted);
-      font-size:.95rem;
-      letter-spacing:.01em;
-      line-height:1.35;
-    }
-
-    h1{
-      margin:0;
-      font-size:clamp(44px, 5.5vw, 74px);
-      line-height:1.02;
-      letter-spacing:-0.03em;
-      font-weight:800;
-    }
-    .grad{
-      background: linear-gradient(135deg, #ffffff, rgba(255,255,255,.72));
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-    }
-    .accent{
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-    }
-
-    .hero-sub{
-      margin:1.35rem 0 0;
-      color:var(--muted);
-      font-size:clamp(18px, 1.45vw, 20px);
-      line-height:1.7;
-      max-width:52rem;
-    }
-
-    .cta-row{
-      display:flex;
-      gap:.9rem;
-      flex-wrap:wrap;
-      align-items:center;
-      margin-top:2rem;
-    }
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:.6rem;
-      border-radius:999px;
-      padding: .92rem 1.25rem;
-      font-weight:750;
-      letter-spacing:.01em;
-      text-decoration:none;
-      transition: transform .12s ease, filter .15s ease, opacity .2s ease;
-      user-select:none;
-      cursor:pointer;
-      white-space:nowrap;
-    }
-    .btn-primary{
-      color:#0b0b10;
-      background: linear-gradient(135deg, rgba(255,255,255,.92), rgba(255,255,255,.78));
-      box-shadow: 0 26px 90px rgba(0,0,0,.55);
-      border:1px solid rgba(255,255,255,.18);
-    }
-    .btn-primary:hover{ transform:translateY(-1px); filter:brightness(1.02); }
-    .btn-ghost{
-      color:rgba(255,255,255,.86);
-      border:1px solid rgba(255,255,255,.16);
-      background:rgba(255,255,255,.03);
-    }
-    .btn-ghost:hover{ transform:translateY(-1px); }
-
-    .micro{
-      margin-top:1.1rem;
-      color:rgba(255,255,255,.55);
-      font-size:.92rem;
-      line-height:1.6;
-      max-width: 54rem;
-    }
-    .micro a{
-      color:rgba(255,255,255,.75);
-      text-decoration:none;
-      border-bottom:1px solid rgba(255,255,255,.22);
-      padding-bottom:.08rem;
-    }
-    .micro a:hover{ color:#fff; border-bottom-color:#fff; }
-
-    .promise-card{
-      border-radius: var(--radius-lg);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      width:min(900px, 100%);
+      text-align:left;
+      border-radius:24px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border:1px solid rgba(255,255,255,.10);
-      box-shadow: var(--shadow);
-      padding: 1.35rem 1.35rem 1.45rem;
+      box-shadow:var(--shadow);
+      padding:clamp(18px,3.2vw,34px) clamp(18px,3.4vw,44px);
       position:relative;
       overflow:hidden;
     }
-    .promise-card::before{
+    .hero::before{
       content:"";
       position:absolute;
       inset:-60%;
       background:
-        radial-gradient(circle at 20% 15%, rgba(124,58,237,.22), transparent 60%),
-        radial-gradient(circle at 80% 85%, rgba(59,130,246,.16), transparent 60%);
+        radial-gradient(circle at 18% 18%, rgba(153,0,255,.22), transparent 55%),
+        radial-gradient(circle at 84% 72%, rgba(153,0,255,.12), transparent 58%);
       opacity:.9;
       pointer-events:none;
     }
-    .promise-card > *{ position:relative; z-index:1; }
-    .promise-title{
-      margin:0 0 .5rem;
-      font-size:1.05rem;
-      font-weight:800;
-      letter-spacing:-0.01em;
-    }
-    .promise-sub{
-      margin:0 0 1rem;
-      color:rgba(255,255,255,.70);
-      font-size:.95rem;
-      line-height:1.6;
-    }
-    .list{
-      margin:0;
-      padding:0;
-      list-style:none;
-      display:grid;
-      gap:.7rem;
-    }
-    .list li{
-      display:flex;
-      gap:.7rem;
-      align-items:flex-start;
-      color:rgba(255,255,255,.86);
-      line-height:1.5;
-      font-size:.95rem;
-    }
-    .check{
-      width:1.15rem;
-      height:1.15rem;
-      border-radius:999px;
-      background:rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.14);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex:0 0 auto;
-      margin-top:.12rem;
-    }
-    .check::before{
-      content:"✓";
-      font-size:.86rem;
-      color:rgba(255,255,255,.95);
-    }
+    .hero > *{ position:relative; z-index:1; }
 
-    .section{
-      padding: var(--step) 0;
-      border-top: 1px solid rgba(255,255,255,.06);
-    }
-    .section h2{
-      margin:0;
-      font-size:clamp(26px, 2.3vw, 36px);
-      letter-spacing:-0.02em;
-      line-height:1.15;
-      font-weight:820;
-    }
-    .section p.lead{
-      margin:1.05rem 0 0;
-      max-width:60rem;
-      color:var(--muted);
-      font-size:1.05rem;
-      line-height:1.8;
-    }
-
-    .cards{
-      margin-top:2.25rem;
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap:1.1rem;
-    }
-    @media (max-width: 980px){
-      .cards{ grid-template-columns: minmax(0,1fr); }
-    }
-    .card{
-      border-radius: var(--radius-md);
-      background: rgba(255,255,255,.03);
-      border:1px solid rgba(255,255,255,.08);
-      padding:1.25rem 1.25rem 1.3rem;
-    }
-    .card h3{
-      margin:0 0 .55rem;
-      font-size:1.05rem;
-      font-weight:820;
-      letter-spacing:-0.01em;
-    }
-    .card p{
-      margin:0;
-      color:rgba(255,255,255,.72);
-      line-height:1.7;
-      font-size:.98rem;
-    }
-    .tag{
-      display:inline-flex;
-      margin-top:.9rem;
-      padding:.35rem .65rem;
-      border-radius:999px;
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.10);
-      color:rgba(255,255,255,.72);
-      font-size:.78rem;
-      letter-spacing:.01em;
-    }
-
-    .timeline{
-      margin-top:2.4rem;
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap:1.1rem;
-    }
-    @media (max-width: 980px){
-      .timeline{ grid-template-columns: minmax(0,1fr); }
-    }
-    .step{
-      border-radius: var(--radius-md);
-      background: rgba(255,255,255,.03);
-      border:1px solid rgba(255,255,255,.08);
-      padding:1.25rem 1.25rem 1.35rem;
-    }
-    .num{
-      width:2.1rem;
-      height:2.1rem;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.28);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:900;
-      margin-bottom:.85rem;
-    }
-    .step h3{ margin:0 0 .45rem; font-size:1.05rem; font-weight:850; }
-    .step p{ margin:0; color:rgba(255,255,255,.72); line-height:1.75; }
-
-    /* Proof / case study list */
-    .proof-grid{
-      margin-top:2.25rem;
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap:1.15rem;
-      align-items:start;
-    }
-    @media (max-width: 980px){
-      .proof-grid{ grid-template-columns: minmax(0,1fr); }
-    }
-    .proof-card{
-      border-radius: var(--radius-lg);
-      background: rgba(255,255,255,.03);
-      border:1px solid rgba(255,255,255,.08);
-      padding:1.35rem 1.35rem 1.45rem;
-    }
-    .proof-card h3{
+    h1{
       margin:0 0 .6rem;
-      font-size:1.08rem;
-      font-weight:850;
-      letter-spacing:-0.01em;
+      font-size:clamp(28px,4.5vw,52px);
+      letter-spacing:-0.03em;
+      line-height:1.05;
     }
-    .proof-card p{
-      margin:.6rem 0 0;
-      color:rgba(255,255,255,.72);
-      line-height:1.75;
-      font-size:.98rem;
-    }
-    .metrics{
-      margin:1rem 0 0;
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap:.7rem;
-    }
-    .metric{
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.20);
-      padding:.85rem .9rem;
-    }
-    .metric .k{
-      font-size:.75rem;
-      color:rgba(255,255,255,.55);
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      margin-bottom:.3rem;
-    }
-    .metric .v{
-      font-size:1.02rem;
-      font-weight:850;
-      letter-spacing:-0.01em;
-    }
+    .accent{ color:var(--accent); }
 
-    /* FAQ */
-    details{
-      border-radius: var(--radius-md);
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
-      padding:1.15rem 1.2rem;
-    }
-    summary{
-      cursor:pointer;
-      list-style:none;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:1rem;
-      font-weight:820;
-      font-size:1.02rem;
-      letter-spacing:-0.01em;
-    }
-    summary::-webkit-details-marker{ display:none; }
-    .plus{
-      width:1.55rem;
-      height:1.55rem;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.14);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:rgba(0,0,0,.25);
-      flex:0 0 auto;
-      color:rgba(255,255,255,.9);
-      font-weight:900;
-    }
-    details[open] .plus{ transform:rotate(45deg); }
-    details p{
-      margin:.85rem 0 0;
-      color:rgba(255,255,255,.72);
-      line-height:1.8;
-      font-size:.98rem;
-      max-width:62rem;
-    }
-    .faq{
-      margin-top:2.25rem;
-      display:grid;
-      gap:.9rem;
-      max-width: 920px;
-    }
-
-    /* Intake form */
-    .intake{
-      padding: calc(var(--step) * 1.05) 0 calc(var(--step) * 1.1);
-      border-top: 1px solid rgba(255,255,255,.06);
-    }
-    .intake-head{
-      max-width: 900px;
-      margin:0 auto 2.2rem;
-      text-align:center;
-    }
-    .intake-head h2{ margin:0; font-size:clamp(30px, 2.7vw, 42px); font-weight:880; letter-spacing:-0.02em; }
-    .intake-head p{
-      margin:1rem auto 0;
+    .sub{
+      margin:0 0 1.25rem;
       color:var(--muted);
-      font-size:1.05rem;
-      line-height:1.85;
-      max-width: 58rem;
+      font-weight:650;
+      font-size:clamp(14px,1.2vw,16px);
+      line-height:1.55;
     }
 
-    .form-shell{
-      max-width: 1000px;
-      margin:0 auto;
-      border-radius: calc(var(--radius-lg) + 4px);
-      padding:1px;
-      background:
-        radial-gradient(circle at 0% 0%, rgba(124,58,237,.75), transparent 55%),
-        radial-gradient(circle at 100% 100%, rgba(59,130,246,.55), transparent 55%);
-      box-shadow: var(--shadow);
-    }
-    .form-inner{
-      border-radius: var(--radius-lg);
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.08);
-      padding: 2.1rem;
-      position:relative;
-      overflow:hidden;
-    }
-    .form-inner::before{
-      content:"";
-      position:absolute;
-      inset:-50%;
-      background:
-        radial-gradient(circle at 15% 10%, rgba(124,58,237,.18), transparent 60%),
-        radial-gradient(circle at 80% 90%, rgba(59,130,246,.12), transparent 60%);
-      opacity:.8;
-      pointer-events:none;
-    }
-    .form-inner > *{ position:relative; z-index:1; }
-
-    .form-grid{
+    form{
+      margin-top:.35rem;
       display:grid;
-      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
-      gap:1.15rem;
-    }
-    @media (max-width: 740px){
-      .form-inner{ padding:1.4rem; }
-      .form-grid{ grid-template-columns: minmax(0,1fr); }
+      gap: .95rem;
     }
 
-    .field label{
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:.9rem;
+    }
+    @media (max-width: 760px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .field{
+      text-align:left;
+    }
+    label{
       display:block;
       font-size:.78rem;
       text-transform:uppercase;
       letter-spacing:.14em;
-      color:rgba(255,255,255,.75);
-      margin-bottom:.45rem;
+      color:rgba(255,255,255,.70);
+      margin:0 0 .45rem;
     }
-    .required{ color:rgba(255,255,255,.9); margin-left:.15rem; }
+    .req{ color:rgba(255,255,255,.92); margin-left:.2rem; }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    select,
-    textarea{
+    input, select, textarea{
       width:100%;
-      border-radius: 14px;
+      border-radius:14px;
       border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.28);
+      background:rgba(0,0,0,.28);
       color:var(--fg);
       padding: .95rem 1rem;
       font-size:1rem;
@@ -585,16 +174,16 @@
       transition:border-color .18s ease, box-shadow .18s ease, transform .08s ease, background .18s ease;
     }
     textarea{
-      min-height: 160px;
-      resize: vertical;
-      line-height:1.6;
-      padding: 1rem;
+      min-height:130px;
+      resize:vertical;
+      line-height:1.55;
+      padding:1rem;
     }
     input::placeholder, textarea::placeholder{ color:rgba(255,255,255,.35); }
 
     input:focus, select:focus, textarea:focus{
       border-color: rgba(255,255,255,.30);
-      box-shadow: 0 0 0 6px rgba(124,58,237,.14);
+      box-shadow: 0 0 0 6px var(--ring);
       transform: translateY(-0.5px);
       background: rgba(0,0,0,.34);
     }
@@ -623,29 +212,35 @@
       width:0;
     }
 
-    .consent-line{
+    .consent{
       display:flex;
       gap:.65rem;
       align-items:flex-start;
-      margin-top: 1.15rem;
-      color:rgba(255,255,255,.72);
-      line-height:1.65;
-      font-size:.95rem;
+      margin-top:.15rem;
+      color:var(--muted2);
+      font-weight:650;
+      font-size:.92rem;
+      line-height:1.5;
+      text-align:left;
     }
-    .consent-line input{ margin-top:.2rem; accent-color: var(--accent); }
+    .consent input{
+      margin-top:.2rem;
+      accent-color:var(--accent);
+    }
 
-    .submit-row{
-      margin-top: 1.35rem;
+    .actions{
       display:flex;
       gap:1rem;
       align-items:center;
-      flex-wrap:wrap;
       justify-content:space-between;
+      flex-wrap:wrap;
+      margin-top:.25rem;
     }
-    .submit{
+
+    .btn{
       border:none;
       border-radius:999px;
-      padding: .95rem 1.35rem;
+      padding: .98rem 1.25rem;
       font-size: .98rem;
       font-weight:880;
       letter-spacing:.02em;
@@ -659,44 +254,48 @@
       gap:.6rem;
       white-space:nowrap;
     }
-    .submit:hover{ transform:translateY(-1px); filter:brightness(1.02); }
-    .submit:active{ transform:translateY(1px); }
-    .submit.is-loading{ cursor:wait; opacity:.82; }
+    .btn:hover{ transform:translateY(-1px); filter:brightness(1.02); }
+    .btn:active{ transform:translateY(1px); }
+    .btn.is-loading{ cursor:wait; opacity:.82; }
 
     .dot{
       width:.52rem;
       height:.52rem;
       border-radius:999px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow:0 0 18px rgba(124,58,237,.25);
+      background: linear-gradient(135deg, var(--accent), rgba(153,0,255,.55));
+      box-shadow:0 0 18px rgba(153,0,255,.28);
     }
 
     #form-status{
       min-height:1.2em;
-      font-size:.95rem;
-      color:rgba(255,255,255,.72);
+      color:var(--muted);
+      font-weight:650;
+      text-align:left;
+      flex:1;
+      min-width: 240px;
     }
     #form-status[data-status="success"]{ color: var(--success); }
     #form-status[data-status="error"]{ color: var(--danger); }
 
-    .tiny{
-      margin-top:.35rem;
-      font-size:.86rem;
-      color:rgba(255,255,255,.55);
-      line-height:1.75;
-      max-width: 54rem;
+    .hint{
+      margin-top:.25rem;
+      text-align:left;
+      font-size:.88rem;
+      font-weight:650;
+      color:var(--muted2);
+      line-height:1.55;
     }
 
-    /* Footer styles */
+    /* footer (same behavior as home) */
     footer.site-footer{
       position:fixed;
       left:0;
       right:0;
       bottom:0;
       z-index:5;
-      background:rgba(0,0,0,.45);
-      backdrop-filter:blur(10px);
-      -webkit-backdrop-filter:blur(10px);
+      background:rgba(0,0,0,.4);
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
       display:flex;
       justify-content:center;
       gap:2.5rem;
@@ -707,7 +306,7 @@
       position:relative;
       color:#fff;
       text-decoration:none;
-      font-weight:650;
+      font-weight:600;
       letter-spacing:.02em;
       cursor:pointer;
       padding-bottom:.35rem;
@@ -726,8 +325,30 @@
     .footer-link:hover{ opacity:.55; }
     .footer-link:hover::after{ width:100%; }
 
-    @media (max-width:540px){
-      body{ padding-bottom:0; }
+    /* visually hidden SEO block */
+    .sr-only{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      border:0;
+    }
+
+    /* mobile: allow scroll, footer becomes static */
+    @media (max-width: 540px){
+      html,body{
+        overflow:auto;
+        height:auto;
+      }
+      .wrap{
+        min-height:calc(100vh - 120px);
+        display:grid;
+        place-items:center;
+        padding:1.6rem 1.4rem 0;
+      }
       footer.site-footer{
         position:static;
         flex-wrap:wrap;
@@ -735,382 +356,117 @@
         gap:1rem 1.5rem;
         padding:1.1rem 1.4rem 1.4rem;
       }
+      .footer-link{ font-size:.85rem; }
+    }
+
+    /* short desktops: allow scroll so nothing gets cut */
+    @media (max-height: 760px){
+      html,body{ overflow:auto; height:auto; }
+      footer.site-footer{ position:static; }
+      .wrap{ padding-bottom:2rem; }
     }
   </style>
 
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
-    "@type":"RealEstateAgent",
-    "name":"Joshua Guerrero",
-    "alternateName":"drozq",
+    "@type":"ContactPage",
+    "name":"Speak to Joshua Guerrero",
     "url":"https://drozq.com/contact/",
-    "areaServed":"California",
-    "sameAs":["https://drozq.com/"]
+    "about":{
+      "@type":"Person",
+      "name":"Joshua Guerrero",
+      "alternateName":"drozq"
+    }
   }
   </script>
 </head>
 
 <body>
-  <!-- pinned top-left -->
   <header class="topbar">
-    <a href="/" class="back-link">
-      <span class="arrow">←</span>
-      <span>Return to Home</span>
-    </a>
+    <a href="/" class="back-link"><span>←</span><span>Home</span></a>
   </header>
 
-  <div class="spacer" aria-hidden="true"></div>
-
   <main class="wrap">
+    <section class="hero" aria-label="Contact form">
+      <h1>Speak to <span class="accent">Joshua Guerrero</span></h1>
+      <p class="sub">Short intake. Clear routing. No fluff.</p>
 
-    <!-- HERO -->
-    <section class="hero" aria-label="Investor intake hero">
-      <div class="hero-grid">
-        <div>
-          <div class="h-eyebrow">
-            <span style="width:.42rem;height:.42rem;border-radius:999px;background:rgba(255,255,255,.55);display:inline-block;"></span>
-            <span>Investor intake • Acquisitions • Value-add • Rehab / BRRRR / Flip</span>
+      <form id="contact-form" method="POST" action="/api/lead" novalidate>
+        <!-- Honeypot (anti-bot) -->
+        <div class="honeypot" aria-hidden="true">
+          <label>Company Website
+            <input type="text" name="company_website" autocomplete="off" tabindex="-1" />
+          </label>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label for="name">Full name<span class="req">*</span></label>
+            <input id="name" type="text" name="name" autocomplete="name" placeholder="Your full name" required />
           </div>
 
-          <h1><span class="grad">Stop guessing.</span><br><span class="accent">Underwrite, decide, execute.</span></h1>
-
-          <p class="hero-sub">
-            Investors don’t need hype. They need <strong>clarity</strong>, <strong>speed</strong>, and an operator who can
-            convert messy reality into a clean decision. Use this intake to put the deal (or your criteria) in front of me.
-            If it fits, you’ll get a direct plan: <strong>numbers</strong>, <strong>risks</strong>, and <strong>next steps</strong>.
-          </p>
-
-          <div class="cta-row">
-            <a class="btn btn-primary" href="#intake"><span class="dot"></span><span>Start the investor intake</span></a>
-            <a class="btn btn-ghost" href="/privacy/">Privacy</a>
+          <div class="field">
+            <label for="email">Email<span class="req">*</span></label>
+            <input id="email" type="email" name="email" autocomplete="email" placeholder="you@example.com" required />
           </div>
 
-          <div class="micro">
-            This is designed for investors who care about: <strong>basis</strong>, <strong>liquidity</strong>, <strong>timeline</strong>,
-            and <strong>execution certainty</strong>. If your goal is “browse listings,” this isn’t for you.
+          <div class="field">
+            <label for="phone">Phone<span class="req">*</span></label>
+            <input id="phone" type="tel" name="phone" autocomplete="tel" inputmode="tel"
+                   placeholder="+1 (___) ___-____" required />
+          </div>
+
+          <div class="field">
+            <label for="intent">Inquiry type<span class="req">*</span></label>
+            <select id="intent" name="intent" required>
+              <option value="">Select one</option>
+              <option value="Need Capital (VIRELLO)">Need Capital (VIRELLO)</option>
+              <option value="Need Operator (Los Angeles)">Need Operator (Los Angeles)</option>
+              <option value="Real Estate Deal / Acquisition">Real Estate Deal / Acquisition</option>
+              <option value="Consulting">Consulting</option>
+              <option value="Join Media Team">Join Media Team</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
         </div>
 
-        <aside class="promise-card" aria-label="What you get">
-          <h3 class="promise-title">What you get (investor version)</h3>
-          <p class="promise-sub">A decision package, not a conversation.</p>
-          <ul class="list">
-            <li><span class="check"></span><span><strong>Go / No-go</strong> within your constraints (capital, timing, strategy).</span></li>
-            <li><span class="check"></span><span><strong>Risk map</strong>: title, permits, rehab uncertainty, exit liquidity, tenant risk.</span></li>
-            <li><span class="check"></span><span><strong>Underwriting sanity check</strong>: ARV logic, rehab bands, reserves, margin.</span></li>
-            <li><span class="check"></span><span><strong>Execution path</strong>: what happens first, what can break, and how we de-risk.</span></li>
-          </ul>
-          <p class="promise-sub" style="margin-top:1rem;">
-            If you want the fastest useful answer, include:
-            <strong>target basis</strong>, <strong>zip(s)</strong>, <strong>exit</strong>, <strong>timeline</strong>, and <strong>capital source</strong>.
-          </p>
-        </aside>
-      </div>
-    </section>
-
-    <!-- INVESTOR OUTCOMES -->
-    <section class="section" aria-label="Investor outcomes">
-      <h2>What investors actually want (and what this page delivers)</h2>
-      <p class="lead">
-        The common failure mode is not “finding a deal.” It’s buying uncertainty and calling it a strategy.
-        This intake is built to reduce uncertainty fast: price, scope, timeline, and exit.
-      </p>
-
-      <div class="cards" role="list" aria-label="Investor outcomes">
-        <div class="card" role="listitem">
-          <h3>Basis discipline</h3>
-          <p>
-            You don’t win on vibes. You win on basis. I focus on what you can control: purchase price, scope control,
-            reserves, and negotiating leverage.
-          </p>
-          <span class="tag">Target: margin + safety</span>
+        <div class="field">
+          <label for="message">Notes (optional)</label>
+          <textarea id="message" name="message" placeholder="If you want a fast, high-signal reply: drop context + constraints."></textarea>
         </div>
 
-        <div class="card" role="listitem">
-          <h3>Scope control</h3>
-          <p>
-            Rehab isn’t “a number,” it’s a distribution. You get bands, not fantasies: fast/likely/worst-case.
-            If the deal dies, it dies early—before you burn time and inspection money.
-          </p>
-          <span class="tag">Target: kill bad deals early</span>
+        <input type="hidden" name="source_page" value="contact" />
+
+        <div class="consent">
+          <input type="checkbox" id="consent" name="consent" value="yes" required />
+          <label for="consent">I agree to be contacted by email, call, and text.</label>
         </div>
 
-        <div class="card" role="listitem">
-          <h3>Exit realism</h3>
-          <p>
-            ARV is not what Zillow says. Exit is liquidity: comps, buyer pool, appraisal risk, days-on-market,
-            and rate sensitivity. We underwrite the exit like it’s the whole deal—because it is.
-          </p>
-          <span class="tag">Target: liquidity + time</span>
-        </div>
-      </div>
-    </section>
+        <div class="actions">
+          <button class="btn" type="submit">
+            <span class="dot"></span>
+            <span>Send</span>
+          </button>
 
-    <!-- PROCESS -->
-    <section class="section" aria-label="Process">
-      <h2>How the intake turns into a decision</h2>
-      <p class="lead">
-        Investors pay for speed and certainty. This is the shortest path to a rational decision without
-        drowning in “let’s hop on a call” nonsense.
-      </p>
-
-      <div class="timeline" aria-label="Steps">
-        <div class="step">
-          <div class="num">1</div>
-          <h3>Submit your constraints</h3>
-          <p>
-            Strategy (flip/BRRRR/value-add), capital source (cash/hard money), timeline, zip(s), and your
-            “walk-away” rules. Constraints are the model.
-          </p>
-        </div>
-        <div class="step">
-          <div class="num">2</div>
-          <h3>Underwrite + risk map</h3>
-          <p>
-            You get a clean summary: basis logic, rehab bands, key risks, and what would change the decision.
-            If it’s not investable, you’ll get the reason in plain language.
-          </p>
-        </div>
-        <div class="step">
-          <div class="num">3</div>
-          <h3>Execute the next step</h3>
-          <p>
-            If it’s a go: offer strategy, diligence priorities, vendor sequencing, and a tight timeline.
-            If it’s a no: we tighten the criteria or move on immediately.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- PROOF -->
-    <section class="section" aria-label="Proof">
-      <h2>Proof</h2>
-      <p class="lead">
-        Investors don’t care about “passion.” They care about outcomes and avoiding landmines.
-        Below are example case studies with granular details—swap with your real numbers.
-      </p>
-
-      <div class="proof-grid">
-        <div class="proof-card">
-          <h3>Case Study A — Value-add SFR (Flip Exit)</h3>
-          <p>
-            Deal looked “fine” on the surface. The win came from basis discipline and scope control.
-            We killed cosmetic bloat, re-scoped the rehab, and protected the exit.
-          </p>
-          <div class="metrics" aria-label="Case A metrics">
-            <div class="metric"><div class="k">Buy</div><div class="v">$612,000</div></div>
-            <div class="metric"><div class="k">Rehab band</div><div class="v">$48k / $64k / $92k</div></div>
-            <div class="metric"><div class="k">ARV logic</div><div class="v">$785k (3 comp set)</div></div>
-            <div class="metric"><div class="k">Hold time</div><div class="v">118 days</div></div>
-            <div class="metric"><div class="k">Net profit</div><div class="v">$71,400</div></div>
-            <div class="metric"><div class="k">Margin on cost</div><div class="v">~9.7%</div></div>
+          <div>
+            <div id="form-status" aria-live="polite"></div>
+            <div class="hint">Clean input → clean outcome.</div>
           </div>
-          <p>
-            Concern addressed: <strong>“What if rehab runs?”</strong> We treated rehab as a distribution, not a single number.
-            Reserves were baked in. The deal survived the worst-case scenario without going negative.
-          </p>
         </div>
-
-        <div class="proof-card">
-          <h3>Case Study B — BRRRR Duplex (Refi Risk Managed)</h3>
-          <p>
-            The underwriting risk wasn’t the purchase—it was refi/appraisal and rent reality. We underwrote
-            conservatively and structured the plan around appraisal constraints.
-          </p>
-          <div class="metrics" aria-label="Case B metrics">
-            <div class="metric"><div class="k">Buy</div><div class="v">$835,000</div></div>
-            <div class="metric"><div class="k">All-in</div><div class="v">$910,000</div></div>
-            <div class="metric"><div class="k">Stabilized rent</div><div class="v">$6,150/mo</div></div>
-            <div class="metric"><div class="k">Refi value</div><div class="v">$1.02M (appraiser set)</div></div>
-            <div class="metric"><div class="k">Cash-out</div><div class="v">$74,000</div></div>
-            <div class="metric"><div class="k">DSCR</div><div class="v">1.22–1.28 (range)</div></div>
-          </div>
-          <p>
-            Concern addressed: <strong>“Will the refi actually work?”</strong> We underwrote the appraiser’s world (not ours),
-            and used a conservative rent set with a vacancy buffer.
-          </p>
-        </div>
-      </div>
-
-      <div class="cards" style="margin-top:1.15rem;">
-        <div class="card">
-          <h3>Landmine avoidance (example)</h3>
-          <p>
-            Killed a “cheap” deal after identifying permit risk + unpriced foundation issue.
-            Investors lose more money buying uncertainty than missing deals.
-          </p>
-          <span class="tag">Saved: inspection + months</span>
-        </div>
-        <div class="card">
-          <h3>Offer leverage (example)</h3>
-          <p>
-            Tight offer terms based on seller constraints: faster close, clean escrow, controlled concessions.
-            Not “lowballing,” but engineering leverage.
-          </p>
-          <span class="tag">Leverage: terms > price</span>
-        </div>
-        <div class="card">
-          <h3>Exit protection (example)</h3>
-          <p>
-            Underwrote liquidity: buyer pool, appraisal risk, DOM sensitivity. Exit was protected before rehab began.
-          </p>
-          <span class="tag">Exit: liquidity first</span>
-        </div>
-      </div>
+      </form>
     </section>
 
-    <!-- CONCERNS / FAQ -->
-    <section class="section" aria-label="FAQ">
-      <h2>Common investor concerns (answered)</h2>
-      <p class="lead">
-        These are the questions investors actually have when they’re about to wire money.
-      </p>
-
-      <div class="faq">
-        <details>
-          <summary><span>“Is this just a normal contact form?”</span><span class="plus">+</span></summary>
-          <p>
-            No. This is an intake built for underwriting and execution. The goal is to compress the time from
-            “idea” to “decision” without a dozen pointless calls.
-          </p>
-        </details>
-
-        <details>
-          <summary><span>“Can you underwrite without full documents?”</span><span class="plus">+</span></summary>
-          <p>
-            Yes—up to a point. With address/zip, strategy, price range, and constraints, we can do a first-pass
-            decision. If it’s a go, we tighten it with disclosures, inspection priorities, and comps.
-          </p>
-        </details>
-
-        <details>
-          <summary><span>“What do you consider a ‘bad deal’?”</span><span class="plus">+</span></summary>
-          <p>
-            Bad basis, unclear scope, fragile exit, or thin margin that can’t absorb variance.
-            If one surprise can wipe the profit, it’s not investing—it's gambling.
-          </p>
-        </details>
-
-        <details>
-          <summary><span>“What strategies do you work with?”</span><span class="plus">+</span></summary>
-          <p>
-            Value-add SFR, small multifamily, BRRRR, flips, and structured acquisition plans.
-            If you’re institutional, the same logic holds—constraints, basis, risk, exit.
-          </p>
-        </details>
-
-        <details>
-          <summary><span>“Will you spam me?”</span><span class="plus">+</span></summary>
-          <p>
-            No. This goes to a secure intake + inbox. If there’s no fit, you don’t get dragged into a drip campaign.
-          </p>
-        </details>
-      </div>
-    </section>
-
-    <!-- INTAKE FORM -->
-    <section class="intake" id="intake" aria-label="Investor intake form">
-      <div class="intake-head">
-        <h2>Investor intake</h2>
-        <p>
-          Give me enough signal to underwrite quickly: your strategy, your constraints, and what a “win” looks like.
-          If it’s investable, you’ll get a clear next step. If it’s not, you’ll get the reason—clean and direct.
-        </p>
-      </div>
-
-      <div class="form-shell" role="region" aria-label="Contact form container">
-        <div class="form-inner">
-          <form id="contact-form" method="POST" action="/api/lead" novalidate>
-            <!-- HONEYPOT (MATCHES FUNCTION) -->
-            <div class="honeypot">
-              <label>Company Website
-                <input type="text" name="company_website" autocomplete="off" />
-              </label>
-            </div>
-
-            <div class="form-grid">
-              <div class="field">
-                <label>Full name<span class="required">*</span></label>
-                <input type="text" name="name" autocomplete="name" placeholder="Your name" required />
-              </div>
-
-              <div class="field">
-                <label>Email<span class="required">*</span></label>
-                <input type="email" name="email" autocomplete="email" placeholder="you@example.com" required />
-              </div>
-
-              <div class="field">
-                <label>Phone</label>
-                <input type="tel" name="phone" autocomplete="tel" placeholder="+1 (555) 555-5555" />
-              </div>
-
-              <div class="field">
-                <label>Strategy<span class="required">*</span></label>
-                <select name="intent" required>
-                  <option value="">Select one</option>
-                  <option value="investor">Investor / multi-property strategy</option>
-                  <option value="other">Other (explain below)</option>
-                  <option value="buy">Buy (owner-occupant) — not primary</option>
-                  <option value="sell">Sell — not primary</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label>Target basis / price range</label>
-                <input type="text" name="budget_range" placeholder="Ex: $550k–$750k all-in, or $450k buy max" />
-              </div>
-
-              <div class="field">
-                <label>Timeline</label>
-                <input type="text" name="timeline" placeholder="Ex: 14 days, 30–45 days, Q1, etc." />
-              </div>
-
-              <div class="field" style="grid-column:1 / -1;">
-                <label>Deal / criteria details<span class="required">*</span></label>
-                <textarea name="message" placeholder="Include: zips/areas, property type, cap source (cash/hard money), rehab tolerance, exit (flip/rent/refi), and your walk-away rules." required></textarea>
-              </div>
-            </div>
-
-            <input type="hidden" name="source_page" value="contact" />
-
-            <div class="consent-line">
-              <input type="checkbox" id="consent" name="consent" value="yes" required />
-              <label for="consent">
-                You agree your information can be stored and you can be contacted by email, call, and text regarding real estate services.
-              </label>
-            </div>
-
-            <div class="submit-row">
-              <button class="submit" type="submit">
-                <span class="dot"></span>
-                <span>Send</span>
-              </button>
-
-              <div style="min-width:260px; flex:1;">
-                <div id="form-status"></div>
-                <div class="tiny">
-                  Tip: The fastest useful reply happens when you include your constraints:
-                  <strong>basis</strong>, <strong>exit</strong>, <strong>timeline</strong>, <strong>capital source</strong>, <strong>zips</strong>.
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <div style="max-width:1000px;margin:1.6rem auto 0;color:rgba(255,255,255,.52);font-size:.9rem;line-height:1.8;">
-        Submitting this form does not create representation or an agency relationship. If we proceed, scope and terms are made explicit.
-      </div>
-    </section>
-
-    <!-- Footer injection -->
-    <div id="site-footer"></div>
-    <div id="fade" class="fadeout"></div>
-
+    <!-- SEO-readable static summary -->
+    <div class="sr-only">
+      <h2>Contact Joshua Guerrero</h2>
+      <p>Use this page to send an inquiry to Joshua Guerrero (drozq). Provide your name, email, phone, and inquiry type.</p>
+    </div>
   </main>
 
-  <!-- Form JS -->
+  <div id="site-footer"></div>
+
+  <!-- Form JS (simple + consistent with your existing endpoint) -->
   <script>
     (function () {
       const form = document.getElementById('contact-form');
@@ -1147,17 +503,14 @@
 
           let payload = {};
           const ct = response.headers.get('content-type') || '';
-          if (ct.includes('application/json')) {
-            payload = await response.json().catch(() => ({}));
-          } else {
-            await response.text().catch(() => '');
-          }
+          if (ct.includes('application/json')) payload = await response.json().catch(() => ({}));
+          else await response.text().catch(() => '');
 
           if (!response.ok || payload.ok === false) {
             console.error('Lead submit error', payload);
             setStatus('Something broke. Try again in a minute.', 'error');
           } else {
-            setStatus('Received. If it’s investable, you’ll get the next step.', 'success');
+            setStatus('Received.', 'success');
             form.reset();
           }
         } catch (err) {
