@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Contact | Joshua Guerrero</title>
-  <meta name="description" content="Speak to Joshua Guerrero. Short intake. Clear routing." />
+  <meta name="description" content="Contact Joshua Guerrero. Short intake. Clear routing." />
   <link rel="canonical" href="https://drozq.com/contact/" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Speak to Joshua Guerrero" />
+  <meta property="og:title" content="Contact Joshua Guerrero" />
   <meta property="og:description" content="Short intake. Clear routing." />
   <meta property="og:url" content="https://drozq.com/contact/" />
   <meta property="og:type" content="website" />
@@ -16,7 +16,7 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Speak to Joshua Guerrero" />
+  <meta name="twitter:title" content="Contact Joshua Guerrero" />
   <meta name="twitter:description" content="Short intake. Clear routing." />
   <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
 
@@ -27,22 +27,17 @@
   <style>
     :root{
       --bg:#000;
+      --fg:#fff;
+      --muted:rgba(255,255,255,.70);
+      --muted2:rgba(255,255,255,.50);
 
-      /* modal surface */
+      --accent:#9900FF;
+
       --surface:#1c1c1e;
       --border:#2c2c2e;
       --shadow:0 22px 70px rgba(0,0,0,.72);
 
-      --fg:#fff;
-      --muted:rgba(255,255,255,.70);
-      --muted2:rgba(255,255,255,.48);
-
-      --accent:#9900FF;
-      --danger:#fb7185;
-      --success:#34d399;
-
       --radius-lg:22px;
-      --radius-md:14px;
       --focus: 0 0 0 4px rgba(153,0,255,.28);
     }
 
@@ -54,10 +49,10 @@
       color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
-      overflow:hidden; /* desktop: homepage behavior */
+      overflow:hidden; /* desktop: like homepage */
     }
 
-    /* === TOP LEFT: MATCH CONSTRAINT PAGE EXACTLY === */
+    /* === TOP LEFT: EXACT CONSTRAINT STYLE === */
     .topbar{
       display:flex;
       align-items:center;
@@ -68,7 +63,7 @@
       left:0;
       z-index:10;
       width:100%;
-      pointer-events:none; /* so only link is clickable */
+      pointer-events:none;
     }
     .topbar > a{ pointer-events:auto; }
 
@@ -101,7 +96,7 @@
       line-height:1;
     }
 
-    /* backdrop to make card read like a dialog */
+    /* backdrop (subtle) */
     .backdrop{
       position:fixed;
       inset:0;
@@ -110,38 +105,53 @@
       pointer-events:none;
     }
 
+    /* layout */
     .wrap{
       min-height:100%;
       display:grid;
       place-items:center;
-      padding:2.4rem 2rem 5.6rem; /* extra top breathing room */
+      padding:2.2rem 2rem 5.6rem;
       position:relative;
       z-index:2;
     }
 
-    .modal{
-      width:min(860px, 100%);
+    .stack{
+      width:min(920px, 100%);
+      display:grid;
+      gap:18px;
+    }
+
+    /* === HOMEPAGE-SCALE TITLE (outside card) === */
+    .page-title{
+      margin:0;
+      letter-spacing:-0.03em;
+      line-height:1.05;
+      font-weight:800;
+      font-size:clamp(34px, 6vw, 72px); /* match homepage vibe */
+      text-shadow:0 0 10px rgba(153,0,255,.18), 0 0 35px rgba(153,0,255,.12);
+    }
+    .accent{ color:var(--accent); }
+
+    /* card only for the form */
+    .card{
       background:var(--surface);
       border:1px solid var(--border);
       border-radius:var(--radius-lg);
       box-shadow:var(--shadow);
-      padding:24px;
+      padding:22px;
     }
 
-    .modal-inner{ padding:10px 8px 8px; }
-
-    /* give the title room */
-    .head{
-      margin-bottom:18px;
-      padding-top:4px;
+    /* small internal heading */
+    .card-head{
+      margin:2px 0 14px;
     }
-
-    h1{
+    .card-head h2{
       margin:0;
-      font-size:clamp(26px, 3.8vw, 44px);
-      letter-spacing:-0.03em;
-      line-height:1.06;
-      font-weight:800;
+      font-size:13px;              /* substantially smaller */
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.70);
+      font-weight:750;
     }
 
     form{ display:grid; gap:14px; }
@@ -177,13 +187,11 @@
       outline:none;
       transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
     }
-
     textarea{
       min-height:120px;
       resize:vertical;
       line-height:1.55;
     }
-
     input::placeholder, textarea::placeholder{ color:rgba(255,255,255,.32); }
 
     input:focus, select:focus, textarea:focus{
@@ -216,7 +224,7 @@
       width:0;
     }
 
-    /* === CONSENT: tight, left-aligned, no weird padding === */
+    /* consent: tight + left aligned */
     .consent{
       display:grid;
       grid-template-columns: 16px 1fr;
@@ -228,16 +236,15 @@
       font-size:13px;
       line-height:1.45;
       text-align:left;
-      padding:0;              /* kill blocky spacing */
     }
     .consent input{
       width:16px;
       height:16px;
-      margin:2px 0 0;         /* align to first text line */
+      margin:2px 0 0;
       accent-color:var(--accent);
     }
     .consent label{
-      margin:0;               /* prevent label from adding top spacing */
+      margin:0;
       font-size:13px;
       font-weight:600;
       color:var(--muted2);
@@ -268,11 +275,10 @@
       user-select:none;
       white-space:nowrap;
     }
-
     .btn-primary{
       background:var(--accent);
       color:#fff;
-      box-shadow: 0 12px 28px rgba(0,0,0,.45);
+      box-shadow:0 12px 28px rgba(0,0,0,.45);
     }
     .btn-primary:hover{ background:#a61aff; }
     .btn-primary:active{ transform:translateY(1px); }
@@ -287,10 +293,10 @@
       flex:1;
       min-width:240px;
     }
-    #form-status[data-status="success"]{ color: var(--success); }
-    #form-status[data-status="error"]{ color: var(--danger); }
+    #form-status[data-status="success"]{ color:#34d399; }
+    #form-status[data-status="error"]{ color:#fb7185; }
 
-    /* Footer (same behavior as home) */
+    /* Footer */
     footer.site-footer{
       position:fixed;
       left:0;
@@ -329,7 +335,7 @@
     .footer-link:hover{ opacity:.55; }
     .footer-link:hover::after{ width:100%; }
 
-    /* mobile: allow scroll, footer becomes static */
+    /* mobile */
     @media (max-width: 540px){
       html,body{ overflow:auto; height:auto; }
       .wrap{
@@ -337,7 +343,7 @@
         place-items:start;
         padding:1.2rem 1.1rem 0;
       }
-      .modal{ padding:18px; }
+      .card{ padding:18px; }
       footer.site-footer{
         position:static;
         flex-wrap:wrap;
@@ -348,7 +354,7 @@
       .footer-link{ font-size:.85rem; }
     }
 
-    /* short desktops: allow scroll so nothing gets cut */
+    /* short desktops */
     @media (max-height: 760px){
       html,body{ overflow:auto; height:auto; }
       footer.site-footer{ position:static; }
@@ -357,7 +363,6 @@
       .topbar{ position:static; width:auto; pointer-events:auto; }
     }
 
-    /* visually hidden SEO */
     .sr-only{
       position:absolute;
       width:1px;height:1px;
@@ -372,7 +377,7 @@
   {
     "@context":"https://schema.org",
     "@type":"ContactPage",
-    "name":"Speak to Joshua Guerrero",
+    "name":"Contact Joshua Guerrero",
     "url":"https://drozq.com/contact/",
     "about":{
       "@type":"Person",
@@ -386,7 +391,6 @@
 <body>
   <div class="backdrop" aria-hidden="true"></div>
 
-  <!-- constraint-style top-left -->
   <header class="topbar">
     <a href="/" class="back-link">
       <span class="arrow">←</span>
@@ -395,10 +399,14 @@
   </header>
 
   <main class="wrap">
-    <section class="modal" aria-label="Contact dialog">
-      <div class="modal-inner">
-        <div class="head">
-          <h1>Speak to Joshua Guerrero</h1>
+    <div class="stack" aria-label="Contact form">
+      <!-- OUTSIDE CARD: BIG HOMEPAGE-SCALE TITLE -->
+      <h1 class="page-title">Contact <span class="accent">Joshua Guerrero</span></h1>
+
+      <!-- CARD: FORM ONLY -->
+      <section class="card" aria-label="Your contact info form">
+        <div class="card-head">
+          <h2>Your contact info</h2>
         </div>
 
         <form id="contact-form" method="POST" action="/api/lead" novalidate>
@@ -457,18 +465,17 @@
             <div id="form-status" aria-live="polite"></div>
           </div>
         </form>
-      </div>
-    </section>
+      </section>
 
-    <div class="sr-only">
-      <h2>Contact Joshua Guerrero</h2>
-      <p>Send an inquiry to Joshua Guerrero (drozq). Required: full name, email, phone, inquiry type.</p>
+      <div class="sr-only">
+        <h2>Contact Joshua Guerrero</h2>
+        <p>Required: full name, email, phone, inquiry type. Consent required for contact by email, call, and text.</p>
+      </div>
     </div>
   </main>
 
   <div id="site-footer"></div>
 
-  <!-- Form JS -->
   <script>
     (function () {
       const form = document.getElementById('contact-form');
@@ -526,7 +533,6 @@
     })();
   </script>
 
-  <!-- Footer loader -->
   <script>
     (function () {
       var target = document.getElementById('site-footer');
