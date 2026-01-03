@@ -26,27 +26,23 @@
 
   <style>
     :root{
-      --bg:#000000;
+      --bg:#000;
 
-      /* modal surface (solid gray — no gradients) */
-      --surface:#1c1c1e;           /* iOS-like dark gray */
-      --surface-2:#232326;         /* slightly lighter for hover states */
-      --border:#2c2c2e;            /* subtle border like Apple dialogs */
+      /* modal surface */
+      --surface:#1c1c1e;
+      --border:#2c2c2e;
       --shadow:0 22px 70px rgba(0,0,0,.72);
 
-      --fg:#ffffff;
+      --fg:#fff;
       --muted:rgba(255,255,255,.70);
       --muted2:rgba(255,255,255,.48);
 
-      /* brand accent */
       --accent:#9900FF;
-
       --danger:#fb7185;
       --success:#34d399;
 
       --radius-lg:22px;
       --radius-md:14px;
-      --radius-pill:999px;
       --focus: 0 0 0 4px rgba(153,0,255,.28);
     }
 
@@ -58,27 +54,34 @@
       color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
-      overflow:hidden; /* desktop like your homepage */
+      overflow:hidden; /* desktop: homepage behavior */
     }
 
-    /* top-left home link (simple, consistent) */
+    /* === TOP LEFT: MATCH CONSTRAINT PAGE EXACTLY === */
     .topbar{
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      padding:1.2rem 1.4rem 0.4rem;
       position:fixed;
-      top:1.15rem;
-      left:1.25rem;
+      top:0;
+      left:0;
       z-index:10;
+      width:100%;
+      pointer-events:none; /* so only link is clickable */
     }
+    .topbar > a{ pointer-events:auto; }
+
     .back-link{
       position:relative;
       display:inline-flex;
       align-items:center;
-      gap:.55rem;
+      gap:.5rem;
       color:#fff;
       text-decoration:none;
-      font-weight:650;
-      letter-spacing:.02em;
+      font-weight:600;
+      letter-spacing:.01em;
       padding-bottom:.35rem;
-      opacity:.92;
       transition:opacity .2s ease;
     }
     .back-link::after{
@@ -93,19 +96,12 @@
     }
     .back-link:hover{ opacity:.55; }
     .back-link:hover::after{ width:100%; }
-
-    /* modal layout */
-    .wrap{
-      min-height:100%;
-      display:grid;
-      place-items:center;
-      padding:2rem;
-      padding-bottom:5.6rem; /* space for fixed footer */
-      position:relative;
-      z-index:2;
+    .back-link span.arrow{
+      font-size:1.1rem;
+      line-height:1;
     }
 
-    /* subtle dim layer so the card reads as a "popup" */
+    /* backdrop to make card read like a dialog */
     .backdrop{
       position:fixed;
       inset:0;
@@ -114,67 +110,41 @@
       pointer-events:none;
     }
 
+    .wrap{
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      padding:2.4rem 2rem 5.6rem; /* extra top breathing room */
+      position:relative;
+      z-index:2;
+    }
+
     .modal{
       width:min(860px, 100%);
       background:var(--surface);
       border:1px solid var(--border);
       border-radius:var(--radius-lg);
       box-shadow:var(--shadow);
-      padding:22px;
+      padding:24px;
     }
 
-    .modal-inner{
-      padding:6px 6px 4px;
-    }
+    .modal-inner{ padding:10px 8px 8px; }
 
+    /* give the title room */
     .head{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:1rem;
-      margin-bottom:16px;
+      margin-bottom:18px;
+      padding-top:4px;
     }
 
     h1{
       margin:0;
-      font-size:clamp(24px, 3.6vw, 42px);
+      font-size:clamp(26px, 3.8vw, 44px);
       letter-spacing:-0.03em;
-      line-height:1.08;
+      line-height:1.06;
       font-weight:800;
     }
 
-    .sub{
-      margin:8px 0 0;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.5;
-      font-weight:600;
-    }
-
-    /* optional: tiny privacy link, Apple-style */
-    .meta-link{
-      color:rgba(255,255,255,.70);
-      text-decoration:none;
-      font-weight:650;
-      font-size:13px;
-      white-space:nowrap;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.04);
-      transition:background .15s ease, border-color .15s ease, opacity .15s ease;
-      align-self:flex-start;
-    }
-    .meta-link:hover{
-      background:rgba(255,255,255,.06);
-      border-color:rgba(255,255,255,.14);
-      opacity:.92;
-    }
-
-    form{
-      display:grid;
-      gap:14px;
-    }
+    form{ display:grid; gap:14px; }
 
     .grid{
       display:grid;
@@ -187,35 +157,33 @@
 
     .field{ text-align:left; }
 
-    /* Google/Apple vibe: clean labels, not shouty */
     label{
       display:block;
       margin:0 0 6px;
       color:rgba(255,255,255,.78);
       font-size:13px;
       font-weight:650;
-      letter-spacing:0;
-      text-transform:none;
     }
     .req{ color:rgba(255,255,255,.92); margin-left:.15rem; }
 
-    /* Inputs kept “fine” — tightened to match the dialog */
     input, select, textarea{
       width:100%;
       border-radius:12px;
       border:1px solid rgba(255,255,255,.12);
-      background:#111114; /* slightly darker than surface (like system fields) */
+      background:#111114;
       color:var(--fg);
       padding:12px 12px;
       font-size:15px;
       outline:none;
       transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
     }
+
     textarea{
       min-height:120px;
       resize:vertical;
       line-height:1.55;
     }
+
     input::placeholder, textarea::placeholder{ color:rgba(255,255,255,.32); }
 
     input:focus, select:focus, textarea:focus{
@@ -248,20 +216,31 @@
       width:0;
     }
 
+    /* === CONSENT: tight, left-aligned, no weird padding === */
     .consent{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      margin-top:2px;
+      display:grid;
+      grid-template-columns: 16px 1fr;
+      column-gap:10px;
+      align-items:start;
+      margin-top:4px;
       color:var(--muted2);
       font-weight:600;
       font-size:13px;
       line-height:1.45;
       text-align:left;
+      padding:0;              /* kill blocky spacing */
     }
     .consent input{
-      margin-top:2px;
+      width:16px;
+      height:16px;
+      margin:2px 0 0;         /* align to first text line */
       accent-color:var(--accent);
+    }
+    .consent label{
+      margin:0;               /* prevent label from adding top spacing */
+      font-size:13px;
+      font-weight:600;
+      color:var(--muted2);
     }
 
     .actions{
@@ -270,10 +249,9 @@
       justify-content:space-between;
       flex-wrap:wrap;
       gap:12px;
-      margin-top:6px;
+      margin-top:8px;
     }
 
-    /* Buttons: “real” buttons — solid fill + subtle hover, like Apple/Google */
     .btn{
       border:none;
       border-radius:12px;
@@ -281,13 +259,14 @@
       font-size:15px;
       font-weight:750;
       cursor:pointer;
-      transition:transform .06s ease, background .15s ease, opacity .15s ease, box-shadow .15s ease, border-color .15s ease;
+      transition:transform .06s ease, background .15s ease, opacity .15s ease, box-shadow .15s ease;
       display:inline-flex;
       align-items:center;
       justify-content:center;
       min-height:44px;
-      min-width:120px;
+      min-width:140px;
       user-select:none;
+      white-space:nowrap;
     }
 
     .btn-primary{
@@ -297,17 +276,6 @@
     }
     .btn-primary:hover{ background:#a61aff; }
     .btn-primary:active{ transform:translateY(1px); }
-
-    .btn-secondary{
-      background:rgba(255,255,255,.06);
-      color:rgba(255,255,255,.90);
-      border:1px solid rgba(255,255,255,.10);
-    }
-    .btn-secondary:hover{
-      background:rgba(255,255,255,.08);
-      border-color:rgba(255,255,255,.14);
-    }
-
     .btn.is-loading{ cursor:wait; opacity:.78; }
 
     #form-status{
@@ -363,10 +331,7 @@
 
     /* mobile: allow scroll, footer becomes static */
     @media (max-width: 540px){
-      html,body{
-        overflow:auto;
-        height:auto;
-      }
+      html,body{ overflow:auto; height:auto; }
       .wrap{
         min-height:calc(100vh - 120px);
         place-items:start;
@@ -389,6 +354,7 @@
       footer.site-footer{ position:static; }
       .wrap{ padding-bottom:2rem; }
       .backdrop{ display:none; }
+      .topbar{ position:static; width:auto; pointer-events:auto; }
     }
 
     /* visually hidden SEO */
@@ -420,19 +386,19 @@
 <body>
   <div class="backdrop" aria-hidden="true"></div>
 
+  <!-- constraint-style top-left -->
   <header class="topbar">
-    <a href="/" class="back-link"><span>←</span><span>Home</span></a>
+    <a href="/" class="back-link">
+      <span class="arrow">←</span>
+      <span>Return to Home</span>
+    </a>
   </header>
 
   <main class="wrap">
     <section class="modal" aria-label="Contact dialog">
       <div class="modal-inner">
         <div class="head">
-          <div>
-            <h1>Speak to Joshua Guerrero</h1>
-            <p class="sub">Name, email, phone, inquiry type. That’s it.</p>
-          </div>
-          <a class="meta-link" href="/privacy/">Privacy</a>
+          <h1>Speak to Joshua Guerrero</h1>
         </div>
 
         <form id="contact-form" method="POST" action="/api/lead" novalidate>
@@ -476,7 +442,7 @@
 
           <div class="field">
             <label for="message">Notes (optional)</label>
-            <textarea id="message" name="message" placeholder="If you want a fast reply: context + constraints."></textarea>
+            <textarea id="message" name="message" placeholder="Context helps. Constraints help more."></textarea>
           </div>
 
           <input type="hidden" name="source_page" value="contact" />
@@ -488,8 +454,6 @@
 
           <div class="actions">
             <button class="btn btn-primary" type="submit">Send</button>
-            <button class="btn btn-secondary" type="button" onclick="window.location.href='/'">Cancel</button>
-
             <div id="form-status" aria-live="polite"></div>
           </div>
         </form>
@@ -504,7 +468,7 @@
 
   <div id="site-footer"></div>
 
-  <!-- Form JS (same endpoint; no gradient nonsense) -->
+  <!-- Form JS -->
   <script>
     (function () {
       const form = document.getElementById('contact-form');
