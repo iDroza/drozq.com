@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Contact | drozq</title>
+  <title>Contact | Joshua Guerrero</title>
   <meta name="description" content="Contact Joshua Guerrero. Short intake. Clear routing." />
   <link rel="canonical" href="https://drozq.com/contact/" />
 
@@ -13,9 +13,6 @@
   <meta property="og:url" content="https://drozq.com/contact/" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://drozq.com/preview.jpg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:type" content="image/jpeg" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
@@ -31,40 +28,45 @@
     :root{
       --bg:#000;
       --fg:#fff;
+      --muted:rgba(255,255,255,.70);
+      --muted2:rgba(255,255,255,.50);
+
       --accent:#9900FF;
-      --border:rgba(255,255,255,.14);
-      --shadow:0 10px 30px rgba(0,0,0,.45);
-      --panel:rgba(255,255,255,.035);
-      --panel2:rgba(255,255,255,.055);
-      --field:rgba(255,255,255,.045);
-      --muted:rgba(255,255,255,.65);
-      --muted2:rgba(255,255,255,.48);
-      --danger:#fb7185;
-      --success:#34d399;
+
+      --surface:#1c1c1e;
+      --border:#2c2c2e;
+      --shadow:0 22px 70px rgba(0,0,0,.72);
+
+      --radius-lg:22px;
+      --focus: 0 0 0 4px rgba(153,0,255,.28);
     }
 
     *{ box-sizing:border-box; }
-
     html,body{
       height:100%;
       margin:0;
       background:var(--bg);
       color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
-      font-weight:700; /* matches home page */
       -webkit-font-smoothing:antialiased;
-      overflow:hidden; /* desktop: lock viewport like home */
+      overflow:hidden; /* desktop: like homepage */
     }
 
-    /* top-left button: copy constraint page */
+    /* === TOP LEFT: CONSTRAINT STYLE === */
     .topbar{
       display:flex;
       align-items:center;
       gap:.5rem;
       padding:1.2rem 1.4rem 0.4rem;
-      position:static;
+      position:fixed;
+      top:0;
+      left:0;
       z-index:10;
+      width:100%;
+      pointer-events:none;
     }
+    .topbar > a{ pointer-events:auto; }
+
     .back-link{
       position:relative;
       display:inline-flex;
@@ -76,10 +78,6 @@
       letter-spacing:.01em;
       padding-bottom:.35rem;
       transition:opacity .2s ease;
-      background:none;
-      border:none;
-      border-radius:0;
-      padding:0;
     }
     .back-link::after{
       content:'';
@@ -98,102 +96,83 @@
       line-height:1;
     }
 
-    /* home page wrap behavior */
+    .backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:1;
+      pointer-events:none;
+    }
+
     .wrap{
-      position:relative;
-      z-index:2;
-      min-height:calc(100% - 72px); /* account for topbar padding area */
+      min-height:100%;
       display:grid;
       place-items:center;
-      text-align:center;
-      padding:2rem;
-      padding-bottom:5.5rem; /* space for fixed footer */
+      padding:2.2rem 2rem 5.6rem;
+      position:relative;
+      z-index:2;
     }
 
-    /* stack keeps title + form tight (this fixes your “too much space”) */
     .stack{
-      width:min(980px, 100%);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:1.1rem; /* tight, deliberate */
+      width:min(920px, 100%);
+      display:grid;
+      gap:18px;
     }
 
-    /* hero matches home page */
-    .hero{
-      display:inline-block;
-      user-select:text;
-      pointer-events:auto;
-      border:none;
-      border-radius:24px;
-      padding:clamp(10px,1.4vw,18px) clamp(12px,2.2vw,22px); /* slightly tighter than home */
-      box-shadow:var(--shadow);
-    }
-
-    .line{
+    /* === TITLE OUTSIDE CARD: smaller + weight 700 + no mid-word breaks === */
+    .page-title{
       margin:0;
-      letter-spacing:.2px;
+      letter-spacing:-0.03em;
       line-height:1.05;
-      font-size:clamp(28px,5.4vw,66px); /* slightly smaller max to reduce push-down */
-      text-shadow:0 0 10px rgba(153,0,255,.18),0 0 35px rgba(153,0,255,.12);
-      white-space:pre-wrap;
-      opacity:1; /* no cycling animation on contact page */
+      font-weight:700; /* requested */
+      font-size:clamp(32px, 5.4vw, 66px); /* slightly smaller */
+      text-shadow:0 0 10px rgba(153,0,255,.18), 0 0 35px rgba(153,0,255,.12);
     }
     .accent{ color:var(--accent); }
+    .nowrap{
+      display:inline-block;
+      white-space:nowrap;
+    }
 
-    /* form panel */
-    .panel{
-      width:100%;
-      text-align:left;
-      border:1px solid rgba(255,255,255,.08);
-      background:var(--panel);
-      border-radius:22px;
+    .card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
       box-shadow:var(--shadow);
-      padding:18px;
+      padding:22px;
     }
 
-    .panel-head{
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:12px;
+    .card-head{
+      margin:2px 0 14px;
     }
-
-    .kicker{
+    .card-head h2{
       margin:0;
-      font-size:.72rem;
+      font-size:13px;
       letter-spacing:.16em;
       text-transform:uppercase;
-      color:rgba(255,255,255,.72);
-      font-weight:700;
+      color:rgba(255,255,255,.70);
+      font-weight:650;
     }
 
-    /* smaller sub headline */
-    .subhead{
-      margin:0;
-      font-size:.92rem;
-      color:var(--muted);
-      font-weight:700;
-    }
-
-    form{ display:grid; gap:12px; }
+    form{ display:grid; gap:14px; }
 
     .grid{
       display:grid;
-      grid-template-columns:1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap:12px;
     }
     @media (max-width: 760px){
-      .grid{ grid-template-columns:1fr; }
+      .grid{ grid-template-columns: 1fr; }
     }
+
+    .field{ text-align:left; }
 
     label{
       display:block;
       margin:0 0 6px;
       color:rgba(255,255,255,.78);
       font-size:13px;
-      font-weight:700;
+      font-weight:650;
     }
     .req{ color:rgba(255,255,255,.92); margin-left:.15rem; }
 
@@ -201,25 +180,24 @@
       width:100%;
       border-radius:12px;
       border:1px solid rgba(255,255,255,.12);
-      background:var(--field);
+      background:#111114;
       color:var(--fg);
       padding:12px 12px;
       font-size:15px;
       outline:none;
       transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
     }
-    input::placeholder, textarea::placeholder{ color:rgba(255,255,255,.32); }
-
-    input:focus, select:focus, textarea:focus{
-      border-color:rgba(255,255,255,.18);
-      box-shadow:0 0 0 4px rgba(153,0,255,.28);
-      background:rgba(255,255,255,.06);
-    }
-
     textarea{
       min-height:120px;
       resize:vertical;
       line-height:1.55;
+    }
+    input::placeholder, textarea::placeholder{ color:rgba(255,255,255,.32); }
+
+    input:focus, select:focus, textarea:focus{
+      border-color:rgba(255,255,255,.18);
+      box-shadow:var(--focus);
+      background:#0f0f12;
     }
 
     select{
@@ -246,37 +224,38 @@
       width:0;
     }
 
-    /* FIX: checkbox alignment + no weird padding */
     .consent{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
+      display:grid;
+      grid-template-columns: 16px 1fr;
+      column-gap:10px;
+      align-items:start;
       margin-top:4px;
-      padding:0;              /* kill extra padding */
       color:var(--muted2);
+      font-weight:600;
       font-size:13px;
       line-height:1.45;
-      font-weight:700;
+      text-align:left;
     }
     .consent input{
-      margin:2px 0 0;         /* left-aligned, tight */
+      width:16px;
+      height:16px;
+      margin:2px 0 0;
       accent-color:var(--accent);
-      flex:0 0 auto;
     }
     .consent label{
-      margin:0;               /* remove label margin that creates “offset” feel */
+      margin:0;
       font-size:13px;
+      font-weight:600;
       color:var(--muted2);
-      font-weight:700;
     }
 
     .actions{
       display:flex;
       align-items:center;
-      justify-content:flex-start;
-      gap:14px;
+      justify-content:space-between;
       flex-wrap:wrap;
-      margin-top:6px;
+      gap:12px;
+      margin-top:8px;
     }
 
     .btn{
@@ -284,20 +263,21 @@
       border-radius:12px;
       padding:12px 16px;
       font-size:15px;
-      font-weight:700; /* per your request: not 800 */
+      font-weight:750;
       cursor:pointer;
       transition:transform .06s ease, background .15s ease, opacity .15s ease, box-shadow .15s ease;
       display:inline-flex;
       align-items:center;
       justify-content:center;
       min-height:44px;
-      min-width:130px;
+      min-width:140px;
       user-select:none;
+      white-space:nowrap;
     }
     .btn-primary{
       background:var(--accent);
       color:#fff;
-      box-shadow: 0 12px 28px rgba(0,0,0,.45);
+      box-shadow:0 12px 28px rgba(0,0,0,.45);
     }
     .btn-primary:hover{ background:#a61aff; }
     .btn-primary:active{ transform:translateY(1px); }
@@ -306,16 +286,16 @@
     #form-status{
       min-height:1.2em;
       color:var(--muted);
-      font-weight:700;
+      font-weight:600;
       text-align:left;
       font-size:13px;
       flex:1;
       min-width:240px;
     }
-    #form-status[data-status="success"]{ color: var(--success); }
-    #form-status[data-status="error"]{ color: var(--danger); }
+    #form-status[data-status="success"]{ color:#34d399; }
+    #form-status[data-status="error"]{ color:#fb7185; }
 
-    /* footer matches home page */
+    /* Footer */
     footer.site-footer{
       position:fixed;
       left:0;
@@ -354,15 +334,15 @@
     .footer-link:hover{ opacity:.55; }
     .footer-link:hover::after{ width:100%; }
 
-    /* mobile adjustments: match home */
+    /* mobile */
     @media (max-width: 540px){
       html,body{ overflow:auto; height:auto; }
       .wrap{
         min-height:calc(100vh - 120px);
-        display:grid;
-        place-items:center;
-        padding:1.6rem 1.4rem 0;
+        place-items:start;
+        padding:1.2rem 1.1rem 0;
       }
+      .card{ padding:18px; }
       footer.site-footer{
         position:static;
         flex-wrap:wrap;
@@ -371,17 +351,17 @@
         padding:1.1rem 1.4rem 1.4rem;
       }
       .footer-link{ font-size:.85rem; }
-      .panel{ padding:16px; }
     }
 
-    /* short desktops: allow scroll so nothing feels cramped */
+    /* short desktops */
     @media (max-height: 760px){
       html,body{ overflow:auto; height:auto; }
       footer.site-footer{ position:static; }
       .wrap{ padding-bottom:2rem; }
+      .backdrop{ display:none; }
+      .topbar{ position:static; width:auto; pointer-events:auto; }
     }
 
-    /* visually hidden SEO */
     .sr-only{
       position:absolute;
       width:1px;height:1px;
@@ -408,6 +388,8 @@
 </head>
 
 <body>
+  <div class="backdrop" aria-hidden="true"></div>
+
   <header class="topbar">
     <a href="/" class="back-link">
       <span class="arrow">←</span>
@@ -416,23 +398,21 @@
   </header>
 
   <main class="wrap">
-    <div class="stack" aria-label="Contact">
-      <!-- HOME-PAGE-TYPOGRAPHY HEADLINE (2 lines, no fake blocks) -->
-      <div class="hero" aria-live="polite" aria-atomic="true">
-        <h1 class="line">
-          <span>Contact </span><span class="accent">Joshua</span><br><span class="accent">Guerrero</span>
-        </h1>
-      </div>
+    <div class="stack" aria-label="Contact form">
+      <!-- Title with no mid-word breaks -->
+      <h1 class="page-title">
+        <span>Contact</span>
+        <span class="accent nowrap">Joshua</span>
+        <span class="accent nowrap">Guerrero</span>
+      </h1>
 
-      <!-- FORM -->
-      <section class="panel" aria-label="Contact form">
-        <div class="panel-head">
-          <p class="kicker">Your Contact Info</p>
-          <p class="subhead">Required fields only.</p>
+      <section class="card" aria-label="Your contact info form">
+        <div class="card-head">
+          <h2>Your contact info</h2>
         </div>
 
         <form id="contact-form" method="POST" action="/api/lead" novalidate>
-          <!-- Honeypot (matches lead.js) -->
+          <!-- Honeypot -->
           <div class="honeypot" aria-hidden="true">
             <label>Company Website
               <input type="text" name="company_website" autocomplete="off" tabindex="-1" />
@@ -491,21 +471,18 @@
 
       <div class="sr-only">
         <h2>Contact Joshua Guerrero</h2>
-        <p>Required: full name, email, phone, inquiry type. Optional notes. SMS/email/call consent required.</p>
+        <p>Required: full name, email, phone, inquiry type. Consent required for contact by email, call, and text.</p>
       </div>
     </div>
   </main>
 
   <div id="site-footer"></div>
 
-  <!-- Form JS (same endpoint; keeps lead.js happy even if notes are empty) -->
   <script>
     (function () {
       const form = document.getElementById('contact-form');
       const statusEl = document.getElementById('form-status');
       const submitBtn = form.querySelector('button[type="submit"]');
-      const messageEl = document.getElementById('message');
-      const intentEl = document.getElementById('intent');
 
       function setStatus(text, type) {
         statusEl.textContent = text || '';
@@ -515,12 +492,6 @@
 
       form.addEventListener('submit', async function (event) {
         event.preventDefault();
-
-        // lead.js requires message; if empty, inject a minimal one
-        if (messageEl && !String(messageEl.value || '').trim()) {
-          const intent = intentEl ? String(intentEl.value || '').trim() : '';
-          messageEl.value = intent ? `No notes. Inquiry: ${intent}.` : 'No notes.';
-        }
 
         if (!form.checkValidity()) {
           form.reportValidity();
@@ -564,7 +535,6 @@
     })();
   </script>
 
-  <!-- Footer loader (same as home) -->
   <script>
     (function () {
       var target = document.getElementById('site-footer');
