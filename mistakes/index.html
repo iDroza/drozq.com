@@ -49,44 +49,12 @@
       min-height:100vh;
       padding-bottom:5.5rem;
     }
-    .topbar{
-      display:flex;
-      align-items:center;
-      gap:.5rem;
-      padding:1.2rem 1.4rem 0.4rem;
-    }
-    .back-link{
-      position:relative;
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.01em;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .back-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .back-link:hover{
-      opacity:.55;
-    }
-    .back-link:hover::after{
+
+    /* Injected header container */
+    #site-header{
       width:100%;
     }
-    .back-link span.arrow{
-      font-size:1.1rem;
-      line-height:1;
-    }
+
     main{
       max-width:880px;
       margin:2.1rem auto 0;
@@ -211,20 +179,12 @@
       background:#fff;
       transition:width .2s ease-out;
     }
-    .footer-link:hover{
-      opacity:.55;
-    }
-    .footer-link:hover::after{
-      width:100%;
-    }
+    .footer-link:hover{ opacity:.55; }
+    .footer-link:hover::after{ width:100%; }
 
     @media (max-width:540px){
-      body{
-        padding-bottom:0;
-      }
-      main{
-        margin-top:1.5rem;
-      }
+      body{ padding-bottom:0; }
+      main{ margin-top:1.5rem; }
       footer.site-footer{
         position:static;
         flex-wrap:wrap;
@@ -235,25 +195,19 @@
     }
   </style>
 </head>
+
 <body>
 
-  <header class="topbar">
-    <a href="/" class="back-link">
-      <span class="arrow">←</span>
-      <span>Return to Home</span>
-    </a>
-  </header>
+  <!-- Shared header inject point -->
+  <div id="site-header"></div>
 
   <main>
     <h1>Mistakes</h1>
-    <p class="mistakes-intro">
-      A ledger.
-    </p>
+    <p class="mistakes-intro">A ledger.</p>
 
     <section class="mistakes-list" aria-label="List of mistakes">
 
       <!-- Seed entries you asked for -->
-
       <article class="mistake-card">
         <div class="mistake-meta">
           <div>
@@ -317,29 +271,33 @@
     </section>
   </main>
 
-<div id="site-footer"></div>
+  <div id="site-footer"></div>
+  <div id="fade" class="fadeout"></div>
 
-<div id="fade" class="fadeout"></div>
+  <!-- Shared header + footer loader -->
+  <script>
+    (function () {
+      function inject(id, url, label) {
+        var target = document.getElementById(id);
+        if (!target) return;
 
-<script>
-  (function () {
-    var target = document.getElementById('site-footer');
-    if (!target) return;
+        fetch(url, { cache: 'no-cache' })
+          .then(function (res) {
+            if (!res.ok) throw new Error('Failed to load ' + label);
+            return res.text();
+          })
+          .then(function (html) {
+            target.innerHTML = html;
+          })
+          .catch(function (err) {
+            console.error(label + ' load error:', err);
+          });
+      }
 
-    fetch('/footer.html', { cache: 'no-cache' })
-      .then(function (res) {
-        if (!res.ok) throw new Error('Failed to load footer');
-        return res.text();
-      })
-      .then(function (html) {
-        target.innerHTML = html;
-      })
-      .catch(function (err) {
-        console.error('Footer load error:', err);
-      });
-  })();
-</script>
-
+      inject('site-header', '/header.html', 'header');
+      inject('site-footer', '/footer.html', 'footer');
+    })();
+  </script>
 
 </body>
 </html>
