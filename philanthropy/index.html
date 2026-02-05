@@ -3,20 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Primary SEO -->
   <title>Philanthropy | drozq</title>
-
-  <!-- SEO Description -->
   <meta name="description" content="Philanthropy page of drozq.com — Joshua Guerrero’s perspective on giving, incentives, and responsibility, framed by the warning: “Do not feed the wildlife.”" />
-
-  <!-- Canonical URL -->
   <link rel="canonical" href="https://drozq.com/philanthropy/" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Philanthropy | drozq" />
-  <meta property="og:description" content="Explore the Philanthropy page on drozq.com, where Joshua Guerrero reflects on charity, incentives, and the idea of not “feeding the wildlife.”" />
-  <meta property="og:type" content="website" />
+  <meta property="og:description" content="Philanthropy page of drozq.com — Joshua Guerrero’s perspective on giving, incentives, and responsibility, framed by the warning: “Do not feed the wildlife.”" />
   <meta property="og:url" content="https://drozq.com/philanthropy/" />
-  <meta property="og:site_name" content="drozq" />
+  <meta property="og:type" content="website" />
   <meta property="og:image" content="https://drozq.com/preview.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -25,9 +22,13 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Philanthropy | drozq" />
-  <meta name="twitter:description" content="Visit the Philanthropy page on drozq.com to see Joshua Guerrero’s stance on giving, incentives, and the line between helping and harming." />
+  <meta name="twitter:description" content="Philanthropy page of drozq.com — Joshua Guerrero’s perspective on giving, incentives, and responsibility, framed by the warning: “Do not feed the wildlife.”" />
   <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
 
+  <!-- Indexing -->
+  <meta name="robots" content="index,follow" />
+
+  <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
 
   <style>
@@ -35,72 +36,170 @@
       --bg:#000;
       --fg:#fff;
       --muted:rgba(255,255,255,.65);
-      --border:rgba(255,255,255,.12);
       --accent:#9900FF;
-      --footer-h: 92px; /* safety padding so the footer doesn't collide */
+      --border:rgba(255,255,255,.14);
     }
-
     *{box-sizing:border-box;}
-    html, body{
-      margin:0;
-      padding:0;
-      height:100%;
-    }
 
     body{
+      margin:0;
       background:var(--bg);
       color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       min-height:100vh;
+      padding-bottom:5.5rem;
 
-      /* Desktop: hard kill scrolling (your intent) */
+      /* Desktop: hard kill scrolling (your original intent) */
       overflow:hidden;
     }
 
-    /* Centered hero that respects header + footer presence */
+    /* These remain for other pages / legacy markup; harmless to keep */
+    .topbar{
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      padding:1.2rem 1.4rem 0.4rem;
+    }
+    .back-link{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.01em;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+    .back-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .back-link:hover{ opacity:.55; }
+    .back-link:hover::after{ width:100%; }
+    .back-link span.arrow{
+      font-size:1.1rem;
+      line-height:1;
+    }
+
+    /* Centered hero */
     main{
       width:100%;
       margin:0;
-      padding:0 1.4rem var(--footer-h);
-      min-height:calc(100vh - 4.2rem); /* header occupies top; keep the hero centered */
+      padding:0 1.4rem;
+      min-height:calc(100vh - 4.2rem); /* give header breathing room */
       display:flex;
       align-items:center;
       justify-content:center;
       text-align:center;
     }
-
     .hero-message{
       font-weight:700;
       font-size:clamp(28px,6vw,72px);
-      white-space:nowrap;
       letter-spacing:.03em;
+      white-space:nowrap;
     }
 
-    /* Mobile: allow scroll (100vh is weird on mobile browsers) */
+    footer.site-footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:5;
+      background:rgba(0,0,0,.4);
+      backdrop-filter:blur(8px);
+      display:flex;
+      justify-content:center;
+      gap:2.5rem;
+      padding:1.35rem 1.5rem 1.1rem;
+    }
+    .footer-link{
+      position:relative;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.02em;
+      cursor:pointer;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+    .footer-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .footer-link:hover{ opacity:.55; }
+    .footer-link:hover::after{ width:100%; }
+
     @media (max-width:540px){
       body{
-        overflow:auto;
+        padding-bottom:0;
+        overflow:auto; /* mobile: allow scroll */
+      }
+      footer.site-footer{
+        position:static;
+        flex-wrap:wrap;
+        justify-content:flex-start;
+        gap:1rem 1.5rem;
+        padding:1.1rem 1.4rem 1.4rem;
       }
       main{
         min-height:calc(100vh - 4rem);
         padding-bottom:1.4rem;
+      }
+      .hero-message{
+        white-space:normal; /* prevent tiny-screen overflow */
       }
     }
   </style>
 </head>
 
 <body>
-
-  <!-- Injected header: Return to Home (left) + Contact (right) -->
+  <!-- Shared header inject point -->
   <div id="site-header"></div>
 
   <main>
     <div class="hero-message">Do not feed the wildlife.</div>
   </main>
 
-  <!-- Injected footer -->
+  <!-- Shared footer inject point -->
   <div id="site-footer"></div>
 
+  <script>
+    (function () {
+      function inject(id, url, label) {
+        var target = document.getElementById(id);
+        if (!target) return;
+
+        fetch(url, { cache: 'no-cache' })
+          .then(function (res) {
+            if (!res.ok) throw new Error('Failed to load ' + label);
+            return res.text();
+          })
+          .then(function (html) {
+            target.innerHTML = html;
+          })
+          .catch(function (err) {
+            console.error(label + ' load error:', err);
+          });
+      }
+
+      inject('site-header', '/header.html', 'header');
+      inject('site-footer', '/footer.html', 'footer');
+    })();
+  </script>
 </body>
 </html>
