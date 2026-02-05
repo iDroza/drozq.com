@@ -52,48 +52,11 @@
       overflow:hidden; /* desktop: like homepage */
     }
 
-    /* === TOP LEFT: CONSTRAINT STYLE === */
-    .topbar{
-      display:flex;
-      align-items:center;
-      gap:.5rem;
-      padding:1.2rem 1.4rem 0.4rem;
+    /* Injected header container: fixed on desktop so it stays at the top level */
+    #site-header{
       position:fixed;
-      top:0;
-      left:0;
+      top:0; left:0; right:0;
       z-index:10;
-      width:100%;
-      pointer-events:none;
-    }
-    .topbar > a{ pointer-events:auto; }
-
-    .back-link{
-      position:relative;
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.01em;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .back-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .back-link:hover{ opacity:.55; }
-    .back-link:hover::after{ width:100%; }
-    .back-link span.arrow{
-      font-size:1.1rem;
-      line-height:1;
     }
 
     .backdrop{
@@ -119,13 +82,13 @@
       gap:18px;
     }
 
-    /* === TITLE OUTSIDE CARD: smaller + weight 700 + no mid-word breaks === */
+    /* === TITLE OUTSIDE CARD === */
     .page-title{
       margin:0;
       letter-spacing:-0.03em;
       line-height:1.05;
-      font-weight:700; /* requested */
-      font-size:clamp(32px, 5.4vw, 66px); /* slightly smaller */
+      font-weight:700;
+      font-size:clamp(32px, 5.4vw, 66px);
       text-shadow:0 0 10px rgba(153,0,255,.18), 0 0 35px rgba(153,0,255,.12);
     }
     .accent{ color:var(--accent); }
@@ -337,6 +300,7 @@
     /* mobile */
     @media (max-width: 540px){
       html,body{ overflow:auto; height:auto; }
+      #site-header{ position:static; } /* stop overlay on mobile */
       .wrap{
         min-height:calc(100vh - 120px);
         place-items:start;
@@ -356,10 +320,10 @@
     /* short desktops */
     @media (max-height: 760px){
       html,body{ overflow:auto; height:auto; }
+      #site-header{ position:static; } /* match your old behavior */
       footer.site-footer{ position:static; }
       .wrap{ padding-bottom:2rem; }
       .backdrop{ display:none; }
-      .topbar{ position:static; width:auto; pointer-events:auto; }
     }
 
     .sr-only{
@@ -390,16 +354,11 @@
 <body>
   <div class="backdrop" aria-hidden="true"></div>
 
-  <header class="topbar">
-    <a href="/" class="back-link">
-      <span class="arrow">←</span>
-      <span>Return to Home</span>
-    </a>
-  </header>
+  <!-- Shared header inject point -->
+  <div id="site-header"></div>
 
   <main class="wrap">
     <div class="stack" aria-label="Contact form">
-      <!-- Title with no mid-word breaks -->
       <h1 class="page-title">
         <span>Contact</span>
         <span class="accent nowrap">Joshua</span>
@@ -535,22 +494,28 @@
     })();
   </script>
 
+  <!-- Shared header + footer loader -->
   <script>
     (function () {
-      var target = document.getElementById('site-footer');
-      if (!target) return;
+      function inject(id, url, label) {
+        var target = document.getElementById(id);
+        if (!target) return;
 
-      fetch('/footer.html', { cache: 'no-cache' })
-        .then(function (res) {
-          if (!res.ok) throw new Error('Failed to load footer');
-          return res.text();
-        })
-        .then(function (html) {
-          target.innerHTML = html;
-        })
-        .catch(function (err) {
-          console.error('Footer load error:', err);
-        });
+        fetch(url, { cache: 'no-cache' })
+          .then(function (res) {
+            if (!res.ok) throw new Error('Failed to load ' + label);
+            return res.text();
+          })
+          .then(function (html) {
+            target.innerHTML = html;
+          })
+          .catch(function (err) {
+            console.error(label + ' load error:', err);
+          });
+      }
+
+      inject('site-header', '/header.html', 'header');
+      inject('site-footer', '/footer.html', 'footer');
     })();
   </script>
 </body>
