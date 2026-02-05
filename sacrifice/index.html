@@ -35,9 +35,10 @@
     :root{
       --bg:#000;
       --fg:#fff;
-      --muted:rgba(255,255,255,.65);
+      --muted:rgba(255,255,255,.62);
+      --dim:rgba(255,255,255,.42);
+      --hair:rgba(255,255,255,.12);
       --accent:#9900FF;
-      --border:rgba(255,255,255,.14);
     }
     *{box-sizing:border-box;}
     body{
@@ -49,10 +50,11 @@
       min-height:100vh;
       padding-bottom:5.5rem;
     }
+
+    /* Topbar (unchanged behavior, simpler visuals) */
     .topbar{
       display:flex;
       align-items:center;
-      gap:.5rem;
       padding:1.2rem 1.4rem 0.4rem;
     }
     .back-link{
@@ -79,104 +81,86 @@
     }
     .back-link:hover{ opacity:.55; }
     .back-link:hover::after{ width:100%; }
-    .back-link span.arrow{
+    .back-link .arrow{
       font-size:1.1rem;
       line-height:1;
     }
+
     main{
       max-width:880px;
       margin:1.5rem auto 0;
       padding:0 1.4rem 3rem;
     }
+
+    /* Raw header */
     h1{
-      font-size:1.4rem;
-      margin-bottom:.35rem;
-      font-weight:700;
+      margin:0 0 .25rem;
+      font-size:1.55rem;
+      font-weight:800;
+      letter-spacing:.01em;
     }
     .date{
-      font-size:.8rem;
+      font-size:.82rem;
       color:var(--muted);
-      margin-bottom:1.2rem;
+      margin:0 0 1.1rem;
     }
-    .constraint-card{
-      border:1px solid rgba(255,255,255,.05);
-      background:rgba(255,255,255,.015);
-      border-radius:14px;
-      padding:1rem 1rem 1.1rem;
-      margin-bottom:1.8rem;
-    }
-    p{
-      line-height:1.55;
-      margin:0 0 1rem;
-      font-weight:500;
-    }
-    strong{font-weight:700;}
 
-    .constraint-title{
-      font-size:1rem;
-      margin:0 0 .8rem;
+    /* Thin separators instead of boxes */
+    .rule{
+      height:1px;
+      background:var(--hair);
+      margin:1.05rem 0;
     }
-    .constraint-body{
-      white-space:pre-wrap;
+
+    /* Thesis */
+    .thesis{
+      font-size:1.08rem;
+      font-weight:700;
+      line-height:1.45;
       margin:0;
-      color:rgba(255,255,255,.92);
+    }
+    .thesis .accent{
+      color:#fff;
+      text-decoration:underline;
+      text-decoration-color:rgba(153,0,255,.65);
+      text-underline-offset:3px;
     }
 
-    .metrics{
-      margin:.9rem 0 1rem;
-      padding:.9rem;
-      border:1px solid rgba(255,255,255,.06);
-      background:rgba(255,255,255,.01);
-      border-radius:12px;
-    }
-    .metrics-head{
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap:1rem;
-      margin:0 0 .75rem;
-    }
-    .metrics-head .label{
-      font-size:.75rem;
-      letter-spacing:.16em;
-      text-transform:uppercase;
-      color:var(--muted);
-    }
-    .metrics-head .constraint-eq{
-      font-size:.9rem;
-      font-weight:800;
-      color:rgba(255,255,255,.94);
-      white-space:nowrap;
-    }
-    .metric-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));
-      gap:.6rem;
-    }
-    .metric{
-      border:1px solid rgba(255,255,255,.06);
-      background:rgba(0,0,0,.15);
-      border-radius:12px;
-      padding:.7rem .75rem;
-    }
-    .metric .k{
-      font-size:.72rem;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:var(--muted);
-      margin-bottom:.25rem;
-    }
-    .metric .v{
-      font-size:1rem;
-      font-weight:800;
-      color:#fff;
-    }
-    .metric .s{
-      display:block;
-      margin-top:.25rem;
+    /* Sections */
+    .section-title{
+      margin:0 0 .55rem;
       font-size:.78rem;
-      color:rgba(255,255,255,.75);
-      font-weight:600;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    /* List styling: raw, dense, no card */
+    ul{
+      margin:.2rem 0 0;
+      padding-left:1.1rem;
+    }
+    li{
+      margin:.28rem 0;
+      color:rgba(255,255,255,.9);
+      font-weight:560;
+      line-height:1.45;
+    }
+    .note{
+      margin:.9rem 0 0;
+      color:var(--muted);
+      line-height:1.55;
+      font-weight:520;
+    }
+
+    /* “Willing to pay” block */
+    .shift{
+      margin-top:.7rem;
+      color:rgba(255,255,255,.92);
+      white-space:pre-wrap;
+      font-weight:650;
+      line-height:1.55;
     }
 
     footer.site-footer{
@@ -227,8 +211,8 @@
     }
   </style>
 </head>
-<body>
 
+<body>
   <header class="topbar">
     <a href="/" class="back-link">
       <span class="arrow">←</span>
@@ -240,102 +224,70 @@
     <h1>Sacrifice</h1>
     <div class="date">02/05/2026</div>
 
-    <!-- SACRIFICE -->
-    <div class="constraint-card">
-      <p class="constraint-title"><strong>It cost me everything.</strong></p>
+    <p class="thesis">It cost me <span class="accent">everything</span>.</p>
 
-      <div class="metrics" role="group" aria-label="Sacrifice metrics">
-        <div class="metrics-head">
-          <div class="label">Paid Cost = Comfort</div>
-          <div class="constraint-eq">Tradeoff × Time</div>
-        </div>
+    <div class="rule"></div>
 
-        <div class="metric-grid">
-          <div class="metric">
-            <div class="k">Former workdays</div>
-            <div class="v">8 hours</div>
-            <span class="s">Baseline</span>
-          </div>
-          <div class="metric">
-            <div class="k">New workdays</div>
-            <div class="v">12 hours</div>
-            <span class="s">Willing to pay</span>
-          </div>
-          <div class="metric">
-            <div class="k">Former weeks</div>
-            <div class="v">5 days</div>
-            <span class="s">Baseline</span>
-          </div>
-          <div class="metric">
-            <div class="k">New weeks</div>
-            <div class="v">7 days</div>
-            <span class="s">Willing to pay</span>
-          </div>
-          <div class="metric">
-            <div class="k">Non-negotiable</div>
-            <div class="v">Whatever it takes</div>
-            <span class="s">This is not the failure point</span>
-          </div>
-        </div>
-      </div>
+    <div class="section-title">Already paid</div>
+    <ul>
+      <li>Video games</li>
+      <li>Time with friends</li>
+      <li>Weekends</li>
+      <li>Instagram</li>
+      <li>YouTube</li>
+      <li>TikTok</li>
+      <li>Chess</li>
 
-      <p class="constraint-body">I have already sacrificed:
+      <li>Angie</li>
+      <li>Rosanna</li>
+      <li>Azhley</li>
+      <li>Emma</li>
+      <li>Briceida</li>
+      <li>Belia</li>
+      <li>Kelli</li>
 
-• Video games
-• Time with friends
-• Weekends
-• Instagram
-• YouTube
-• TikTok
-• Chess
+      <li>Comfort of Panda Express</li>
+      <li>Comfort of Rite Aid</li>
+      <li>Comfort of Subaru</li>
+      <li>Comfort of Honda</li>
 
-• Angie
-• Rosanna
-• Azhley
-• Emma
-• Briceida
-• Belia
-• Kelli
+      <li>Fired Fabian, faced internal team rejection</li>
 
-• Comfort of Panda Express
-• Comfort of Rite Aid
-• Comfort of Subaru
-• Comfort of Honda
-• Comfort of living with grandparents
-• Comfort of living with parents
-• Comfort of a stable job
-• Comfort of being accepted by those at Lexus of Beverly Hills
-• Comfort of staying in KoreaTown
-• Comfort of being accepted by those at Norm Reeves Honda Superstore Cerritos
-• Comfort of staying with a loving family in La Mirada to shorten an hour commute into 15 minutes
+      <li>Zero tolerance of anyone who smokes weed</li>
+      <li>Zero tolerance of anyone who drinks alcohol</li>
+      <li>Zero tolerance of anyone who does drugs</li>
 
-• Fired Fabian, faced internal team rejection
+      <li>All friends made at Honda</li>
+      <li>All friends made ever in Vallejo, CA once I moved</li>
+      <li>Sacrificed every friend I had made at the Vallejo church I attended since I was 14</li>
+      <li>Sacrificed every friend I had ever made in that city since I was 13</li>
 
-• Zero tolerance of anyone who smokes weed
-• Zero tolerance of anyone who drinks alcohol
-• Zero tolerance of anyone who does drugs
+      <li>Brothers’ birthdays</li>
+      <li>Parents’ birthdays</li>
+      <li>Cousins’ birthdays</li>
+      <li>Brothers’ graduations</li>
 
-• All friends made at Honda
-• All friends made ever in Vallejo, CA once I moved
-• Every friend I made at the Vallejo church I attended since age 14
-• Every friend I made in that city since age 13
+      <li>Comfort of living with grandparents</li>
+      <li>Comfort of living with parents</li>
+      <li>Comfort of a stable job</li>
 
-• Brothers’ birthdays
-• Parents’ birthdays
-• Cousins’ birthdays
-• Brothers’ graduations
+      <li>Comfort of being accepted by those at Lexus of Beverly Hills</li>
+      <li>Comfort of staying in KoreaTown</li>
+      <li>Comfort of being accepted by those at Norm Reeves Honda Superstore Cerritos</li>
+      <li>Comfort of staying with a loving family in La Mirada to shorten an hour commute into 15 minutes</li>
 
-I went all in on real estate in a new city (Irvine), on a new team (Active Realty), in a new endeavor with a high likelihood of failure.
+      <li>Comfort of a stable income from Norm Reeves Honda</li>
+      <li>Going all in on real estate in a new city (Irvine), on a new team (Active Realty), in a new endeavor with a high likelihood of failure (Residential Real Estate Sales)</li>
+    </ul>
 
-These are the new sacrifices I am willing to make to become the number one agent in Los Angeles, CA:
+    <div class="rule"></div>
 
-• From 8 hour workdays → 12 hour workdays
-• From 5 day work weeks → 7 day work weeks
+    <div class="section-title">Willing to pay next</div>
+    <div class="shift">• From 8 hour workdays → 12 hour workdays
+• From 5 day work weeks → 7 day work weeks</div>
 
-My ability to push will not be the reason I fail here.
+    <p class="note">My ability to push will not be the reason I fail here.
 It has always been whatever it takes.</p>
-    </div>
-
   </main>
 
   <div id="site-footer"></div>
@@ -358,6 +310,5 @@ It has always been whatever it takes.</p>
         });
     })();
   </script>
-
 </body>
 </html>
