@@ -3,20 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Primary SEO -->
   <title>Platforms | drozq</title>
-
-  <!-- SEO Description -->
   <meta name="description" content="Explore all platforms where Joshua Guerrero (drozq) can be found — Instagram, Facebook, YouTube, LinkedIn, X, Twitch — plus direct email and phone contact details." />
-
-  <!-- Canonical URL -->
   <link rel="canonical" href="https://drozq.com/platforms/" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Platforms | drozq" />
   <meta property="og:description" content="Find every platform and contact channel for Joshua Guerrero (drozq), including social profiles, email, and direct cell phone." />
-  <meta property="og:type" content="website" />
   <meta property="og:url" content="https://drozq.com/platforms/" />
-  <meta property="og:site_name" content="drozq" />
+  <meta property="og:type" content="website" />
   <meta property="og:image" content="https://drozq.com/preview.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -28,6 +25,10 @@
   <meta name="twitter:description" content="Browse all of Joshua Guerrero’s (drozq) platforms in one place — social media, streaming, email, and cell." />
   <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
 
+  <!-- Indexing -->
+  <meta name="robots" content="index,follow" />
+
+  <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
 
   <style>
@@ -35,13 +36,14 @@
       --bg:#000;
       --fg:#fff;
       --muted:rgba(255,255,255,.65);
-      --border:rgba(255,255,255,.12);
       --accent:#9900FF;
-      --card:rgba(255,255,255,.015);
-      --footer-h: 92px; /* reserve space so fixed footer doesn't collide */
-    }
+      --border:rgba(255,255,255,.14);
 
+      --card:rgba(255,255,255,.015);
+      --card-border:rgba(255,255,255,.12);
+    }
     *{box-sizing:border-box;}
+
     body{
       margin:0;
       background:var(--bg);
@@ -49,7 +51,43 @@
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       min-height:100vh;
-      padding-bottom:var(--footer-h); /* desktop footer space */
+      padding-bottom:5.5rem; /* matches Constraint */
+    }
+
+    /* These remain for other pages / legacy markup; harmless to keep */
+    .topbar{
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      padding:1.2rem 1.4rem 0.4rem;
+    }
+    .back-link{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.01em;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+    .back-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .back-link:hover{ opacity:.55; }
+    .back-link:hover::after{ width:100%; }
+    .back-link span.arrow{
+      font-size:1.1rem;
+      line-height:1;
     }
 
     main{
@@ -58,17 +96,18 @@
       padding:0 1.4rem 3rem;
     }
 
-    .headline{
+    h1.headline{
       text-align:left;
       font-size:1.55rem;
       font-weight:700;
       margin:0 0 .25rem;
     }
-    .subtitle{
+    p.subtitle{
       text-align:left;
       color:var(--muted);
       margin:0 0 1.4rem;
       line-height:1.35;
+      font-weight:500;
     }
 
     .grid{
@@ -78,7 +117,7 @@
     }
 
     .platform-card{
-      border:1px solid var(--border);
+      border:1px solid var(--card-border);
       border-radius:16px;
       background:var(--card);
       padding:1rem 1rem 1.05rem;
@@ -130,16 +169,57 @@
       pointer-events:none;
     }
 
-    /* mobile adjustments */
+    footer.site-footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:5;
+      background:rgba(0,0,0,.4);
+      backdrop-filter:blur(8px);
+      display:flex;
+      justify-content:center;
+      gap:2.5rem;
+      padding:1.35rem 1.5rem 1.1rem;
+    }
+    .footer-link{
+      position:relative;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.02em;
+      cursor:pointer;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+    .footer-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .footer-link:hover{ opacity:.55; }
+    .footer-link:hover::after{ width:100%; }
+
     @media (max-width:540px){
       body{ padding-bottom:0; }
+      footer.site-footer{
+        position:static;
+        flex-wrap:wrap;
+        justify-content:flex-start;
+        gap:1rem 1.5rem;
+        padding:1.1rem 1.4rem 1.4rem;
+      }
     }
   </style>
 </head>
 
 <body>
-
-  <!-- Injected header: Return to Home (left) + Contact (right) -->
+  <!-- Shared header inject point -->
   <div id="site-header"></div>
 
   <main>
@@ -194,11 +274,31 @@
     </div>
   </main>
 
-  <!-- Injected footer -->
+  <!-- Shared footer inject point -->
   <div id="site-footer"></div>
 
-  <!-- Shared loader -->
-  <script src="/site.js" defer></script>
+  <script>
+    (function () {
+      function inject(id, url, label) {
+        var target = document.getElementById(id);
+        if (!target) return;
 
+        fetch(url, { cache: 'no-cache' })
+          .then(function (res) {
+            if (!res.ok) throw new Error('Failed to load ' + label);
+            return res.text();
+          })
+          .then(function (html) {
+            target.innerHTML = html;
+          })
+          .catch(function (err) {
+            console.error(label + ' load error:', err);
+          });
+      }
+
+      inject('site-header', '/header.html', 'header');
+      inject('site-footer', '/footer.html', 'footer');
+    })();
+  </script>
 </body>
 </html>
