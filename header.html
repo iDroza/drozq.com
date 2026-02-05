@@ -1,0 +1,85 @@
+<!-- header.html -->
+<style>
+  :root{
+    /* uses your existing vars if present; falls back safely */
+    --hdr-fg: var(--fg, #fff);
+    --hdr-muted: var(--muted, rgba(255,255,255,.65));
+    --hdr-accent: var(--accent, #9900FF);
+  }
+
+  .site-header-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:1.2rem 1.4rem 0.4rem; /* matches your constraint .topbar */
+  }
+
+  .site-header-link{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    gap:.5rem;
+    color:var(--hdr-fg);
+    text-decoration:none;
+    font-weight:600;
+    letter-spacing:.01em;
+    padding-bottom:.35rem;
+    transition:opacity .2s ease;
+    white-space:nowrap;
+  }
+
+  .site-header-link::after{
+    content:'';
+    position:absolute;
+    left:0;
+    bottom:-0.35rem;
+    height:2px;
+    width:0;
+    background:var(--hdr-fg);
+    transition:width .2s ease-out;
+  }
+
+  .site-header-link:hover{ opacity:.55; }
+  .site-header-link:hover::after{ width:100%; }
+
+  .site-header-link .arrow{
+    font-size:1.1rem;
+    line-height:1;
+  }
+
+  /* Contact: same feel, but underline uses accent purple */
+  .site-header-link.contact::after{
+    background:var(--hdr-accent);
+  }
+
+  /* Optional: if you ever want "Contact" to look active when on /contact/ */
+  .site-header-link.contact[aria-current="page"]{
+    opacity:1;
+  }
+  .site-header-link.contact[aria-current="page"]::after{
+    width:100%;
+    background:var(--hdr-accent);
+  }
+</style>
+
+<header class="site-header-bar" role="banner" aria-label="Site header">
+  <a href="/" class="site-header-link home">
+    <span class="arrow">←</span>
+    <span>Return to Home</span>
+  </a>
+
+  <a href="/contact/" class="site-header-link contact">Contact</a>
+</header>
+
+<script>
+  // Optional active-state: marks Contact on the contact page only
+  (function(){
+    try{
+      var path = (location.pathname || '').toLowerCase();
+      if (path === '/contact/' || path === '/contact') {
+        var link = document.querySelector('.site-header-link.contact');
+        if (link) link.setAttribute('aria-current','page');
+      }
+    } catch(e){}
+  })();
+</script>
