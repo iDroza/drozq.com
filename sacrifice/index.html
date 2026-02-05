@@ -38,6 +38,7 @@
       --muted:rgba(255,255,255,.65);
       --accent:#9900FF;
       --hair:rgba(255,255,255,.12);
+      --footer-h: 92px; /* reserve space so fixed footer doesn't collide */
     }
     *{box-sizing:border-box;}
     body{
@@ -47,43 +48,7 @@
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       min-height:100vh;
-      padding-bottom:5.5rem;
-    }
-
-    /* Keep Return to Home exact feel */
-    .topbar{
-      display:flex;
-      align-items:center;
-      gap:.5rem;
-      padding:1.2rem 1.4rem 0.4rem;
-    }
-    .back-link{
-      position:relative;
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.01em;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .back-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .back-link:hover{ opacity:.55; }
-    .back-link:hover::after{ width:100%; }
-    .back-link span.arrow{
-      font-size:1.1rem;
-      line-height:1;
+      padding-bottom:var(--footer-h);
     }
 
     main{
@@ -92,7 +57,7 @@
       padding:0 1.4rem 3rem;
     }
 
-    /* Revert font sizes to Constraint page */
+    /* Constraint-sized typography */
     h1{
       font-size:1.4rem;
       margin:0 0 .35rem;
@@ -104,14 +69,12 @@
       margin:0 0 1.2rem;
     }
 
-    /* Raw separators instead of borders */
     .rule{
       height:1px;
       background:var(--hair);
       margin:1.05rem 0;
     }
 
-    /* Raw body text uses same paragraph rhythm as Constraint */
     p{
       line-height:1.55;
       margin:0 0 1rem;
@@ -119,9 +82,8 @@
     }
     strong{ font-weight:700; }
 
-    .thesis{
-      margin:0;
-    }
+    .thesis{ margin:0; }
+
     .purple-underline{
       text-decoration:underline;
       text-decoration-color:rgba(153,0,255,.65);
@@ -145,7 +107,7 @@
     li{
       margin:.28rem 0;
       color:rgba(255,255,255,.92);
-      font-weight:500; /* match Constraint paragraph weight */
+      font-weight:500;
       line-height:1.55;
     }
 
@@ -155,62 +117,16 @@
       color:rgba(255,255,255,.92);
     }
 
-    footer.site-footer{
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
-      z-index:5;
-      background:rgba(0,0,0,.4);
-      backdrop-filter:blur(8px);
-      display:flex;
-      justify-content:center;
-      gap:2.5rem;
-      padding:1.35rem 1.5rem 1.1rem;
-    }
-    .footer-link{
-      position:relative;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.02em;
-      cursor:pointer;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .footer-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .footer-link:hover{ opacity:.55; }
-    .footer-link:hover::after{ width:100%; }
-
     @media (max-width:540px){
       body{ padding-bottom:0; }
-      footer.site-footer{
-        position:static;
-        flex-wrap:wrap;
-        justify-content:flex-start;
-        gap:1rem 1.5rem;
-        padding:1.1rem 1.4rem 1.4rem;
-      }
     }
   </style>
 </head>
 
 <body>
-  <header class="topbar">
-    <a href="/" class="back-link">
-      <span class="arrow">←</span>
-      <span>Return to Home</span>
-    </a>
-  </header>
+
+  <!-- Injected header: Return to Home (left) + Contact (right) -->
+  <div id="site-header"></div>
 
   <main>
     <h1>Sacrifice</h1>
@@ -273,25 +189,11 @@
 It has always been whatever it takes.</p>
   </main>
 
+  <!-- Injected footer -->
   <div id="site-footer"></div>
 
-  <script>
-    (function () {
-      var target = document.getElementById('site-footer');
-      if (!target) return;
+  <!-- Shared loader -->
+  <script src="/site.js" defer></script>
 
-      fetch('/footer.html', { cache: 'no-cache' })
-        .then(function (res) {
-          if (!res.ok) throw new Error('Failed to load footer');
-          return res.text();
-        })
-        .then(function (html) {
-          target.innerHTML = html;
-        })
-        .catch(function (err) {
-          console.error('Footer load error:', err);
-        });
-    })();
-  </script>
 </body>
 </html>
