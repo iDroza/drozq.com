@@ -29,6 +29,7 @@
   <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
 
   <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
+
   <style>
     :root{
       --bg:#000;
@@ -36,69 +37,33 @@
       --muted:rgba(255,255,255,.65);
       --border:rgba(255,255,255,.12);
       --accent:#9900FF;
+      --footer-h: 92px; /* safety padding so the footer doesn't collide */
     }
+
     *{box-sizing:border-box;}
     html, body{
       margin:0;
       padding:0;
       height:100%;
     }
+
     body{
       background:var(--bg);
       color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       min-height:100vh;
-      /* REMOVE the padding that caused scroll */
-      /* padding-bottom:5.5rem; */
-      overflow:hidden; /* hard kill scrolling */
+
+      /* Desktop: hard kill scrolling (your intent) */
+      overflow:hidden;
     }
 
-    .topbar{
-      display:flex;
-      align-items:center;
-      gap:.5rem;
-      padding:1.2rem 1.4rem 0.4rem;
-    }
-    .back-link{
-      position:relative;
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.01em;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .back-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .back-link:hover{
-      opacity:.55;
-    }
-    .back-link:hover::after{
-      width:100%;
-    }
-    .back-link .arrow{
-      font-size:1.1rem;
-      line-height:1;
-    }
-
-    /* FULL-WIDTH MAIN, CENTERED CONTENT */
+    /* Centered hero that respects header + footer presence */
     main{
       width:100%;
       margin:0;
-      padding:0 1.4rem 3rem;
-      min-height:calc(100vh - 7rem);
+      padding:0 1.4rem var(--footer-h);
+      min-height:calc(100vh - 4.2rem); /* header occupies top; keep the hero centered */
       display:flex;
       align-items:center;
       justify-content:center;
@@ -112,99 +77,33 @@
       letter-spacing:.03em;
     }
 
-    footer.site-footer{
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
-      z-index:5;
-      background:rgba(0,0,0,.4);
-      backdrop-filter:blur(8px);
-      display:flex;
-      justify-content:center;
-      gap:2.5rem;
-      padding:1.35rem 1.5rem 1.1rem;
-    }
-    .footer-link{
-      position:relative;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.02em;
-      cursor:pointer;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .footer-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .footer-link:hover{
-      opacity:.55;
-    }
-    .footer-link:hover::after{
-      width:100%;
-    }
-
+    /* Mobile: allow scroll (100vh is weird on mobile browsers) */
     @media (max-width:540px){
       body{
-        overflow:auto; /* let mobile deal with weird 100vh behavior */
-      }
-      footer.site-footer{
-        position:static;
-        flex-wrap:wrap;
-        justify-content:flex-start;
-        gap:1rem 1.5rem;
-        padding:1.1rem 1.4rem 1.4rem;
+        overflow:auto;
       }
       main{
         min-height:calc(100vh - 4rem);
+        padding-bottom:1.4rem;
       }
     }
   </style>
 </head>
+
 <body>
 
-  <header class="topbar">
-    <a href="/" class="back-link">
-      <span class="arrow">←</span>
-      <span>Return to Home</span>
-    </a>
-  </header>
+  <!-- Injected header: Return to Home (left) + Contact (right) -->
+  <div id="site-header"></div>
 
   <main>
     <div class="hero-message">Do not feed the wildlife.</div>
   </main>
 
-<div id="site-footer"></div>
+  <!-- Injected footer -->
+  <div id="site-footer"></div>
 
-<div id="fade" class="fadeout"></div>
-
-<script>
-  (function () {
-    var target = document.getElementById('site-footer');
-    if (!target) return;
-
-    fetch('/footer.html', { cache: 'no-cache' })
-      .then(function (res) {
-        if (!res.ok) throw new Error('Failed to load footer');
-        return res.text();
-      })
-      .then(function (html) {
-        target.innerHTML = html;
-      })
-      .catch(function (err) {
-        console.error('Footer load error:', err);
-      });
-  })();
-</script>
-
+  <!-- One script to rule them all -->
+  <script src="/site.js" defer></script>
 
 </body>
 </html>
