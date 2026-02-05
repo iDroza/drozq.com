@@ -35,10 +35,9 @@
     :root{
       --bg:#000;
       --fg:#fff;
-      --muted:rgba(255,255,255,.62);
-      --dim:rgba(255,255,255,.42);
-      --hair:rgba(255,255,255,.12);
+      --muted:rgba(255,255,255,.65);
       --accent:#9900FF;
+      --hair:rgba(255,255,255,.12);
     }
     *{box-sizing:border-box;}
     body{
@@ -51,10 +50,11 @@
       padding-bottom:5.5rem;
     }
 
-    /* Topbar (unchanged behavior, simpler visuals) */
+    /* Keep Return to Home exact feel */
     .topbar{
       display:flex;
       align-items:center;
+      gap:.5rem;
       padding:1.2rem 1.4rem 0.4rem;
     }
     .back-link{
@@ -81,7 +81,7 @@
     }
     .back-link:hover{ opacity:.55; }
     .back-link:hover::after{ width:100%; }
-    .back-link .arrow{
+    .back-link span.arrow{
       font-size:1.1rem;
       line-height:1;
     }
@@ -92,75 +92,67 @@
       padding:0 1.4rem 3rem;
     }
 
-    /* Raw header */
+    /* Revert font sizes to Constraint page */
     h1{
-      margin:0 0 .25rem;
-      font-size:1.55rem;
-      font-weight:800;
-      letter-spacing:.01em;
+      font-size:1.4rem;
+      margin:0 0 .35rem;
+      font-weight:700;
     }
     .date{
-      font-size:.82rem;
+      font-size:.8rem;
       color:var(--muted);
-      margin:0 0 1.1rem;
+      margin:0 0 1.2rem;
     }
 
-    /* Thin separators instead of boxes */
+    /* Raw separators instead of borders */
     .rule{
       height:1px;
       background:var(--hair);
       margin:1.05rem 0;
     }
 
-    /* Thesis */
+    /* Raw body text uses same paragraph rhythm as Constraint */
+    p{
+      line-height:1.55;
+      margin:0 0 1rem;
+      font-weight:500;
+    }
+    strong{ font-weight:700; }
+
     .thesis{
-      font-size:1.08rem;
-      font-weight:700;
-      line-height:1.45;
       margin:0;
     }
-    .thesis .accent{
-      color:#fff;
+    .purple-underline{
       text-decoration:underline;
       text-decoration-color:rgba(153,0,255,.65);
       text-underline-offset:3px;
+      text-decoration-thickness:2px;
     }
 
-    /* Sections */
     .section-title{
-      margin:0 0 .55rem;
-      font-size:.78rem;
-      letter-spacing:.18em;
+      font-size:.75rem;
+      letter-spacing:.16em;
       text-transform:uppercase;
       color:var(--muted);
+      margin:0 0 .55rem;
       font-weight:700;
     }
 
-    /* List styling: raw, dense, no card */
     ul{
       margin:.2rem 0 0;
       padding-left:1.1rem;
     }
     li{
       margin:.28rem 0;
-      color:rgba(255,255,255,.9);
-      font-weight:560;
-      line-height:1.45;
-    }
-    .note{
-      margin:.9rem 0 0;
-      color:var(--muted);
+      color:rgba(255,255,255,.92);
+      font-weight:500; /* match Constraint paragraph weight */
       line-height:1.55;
-      font-weight:520;
     }
 
-    /* “Willing to pay” block */
     .shift{
-      margin-top:.7rem;
-      color:rgba(255,255,255,.92);
       white-space:pre-wrap;
-      font-weight:650;
-      line-height:1.55;
+      margin:0;
+      color:rgba(255,255,255,.92);
     }
 
     footer.site-footer{
@@ -224,7 +216,7 @@
     <h1>Sacrifice</h1>
     <div class="date">02/05/2026</div>
 
-    <p class="thesis">It cost me <span class="accent">everything</span>.</p>
+    <p class="thesis"><strong>It cost me <span class="purple-underline">everything</span>.</strong></p>
 
     <div class="rule"></div>
 
@@ -259,8 +251,8 @@
 
       <li>All friends made at Honda</li>
       <li>All friends made ever in Vallejo, CA once I moved</li>
-      <li>Sacrificed every friend I had made at the Vallejo church I attended since I was 14</li>
-      <li>Sacrificed every friend I had ever made in that city since I was 13</li>
+      <li>Sacrificed every friend I had made at the Vallejo church I attended since I was 14 years old</li>
+      <li>Sacrificed every friend I had ever made in that city since I was 13 years old</li>
 
       <li>Brothers’ birthdays</li>
       <li>Parents’ birthdays</li>
@@ -274,19 +266,18 @@
       <li>Comfort of being accepted by those at Lexus of Beverly Hills</li>
       <li>Comfort of staying in KoreaTown</li>
       <li>Comfort of being accepted by those at Norm Reeves Honda Superstore Cerritos</li>
-      <li>Comfort of staying with a loving family in La Mirada to shorten an hour commute into 15 minutes</li>
+      <li>Comfort of staying with a different loving family in La Mirada in order to shorten an hour commute into 15 minutes</li>
 
-      <li>Comfort of a stable income from Norm Reeves Honda</li>
-      <li>Going all in on real estate in a new city (Irvine), on a new team (Active Realty), in a new endeavor with a high likelihood of failure (Residential Real Estate Sales)</li>
+      <li>Comfort of having a stable income from Norm Reeves Honda and instead going all in on real estate in a new city (Irvine), on a new team (Active Realty), in a completely new endeavor with a high likelihood of failure (Residential Real Estate Sales)</li>
     </ul>
 
     <div class="rule"></div>
 
     <div class="section-title">Willing to pay next</div>
-    <div class="shift">• From 8 hour workdays → 12 hour workdays
-• From 5 day work weeks → 7 day work weeks</div>
+    <p class="shift">• From 8 hour workdays → 12 hour workdays
+• From 5 day work weeks → 7 day work weeks</p>
 
-    <p class="note">My ability to push will not be the reason I fail here.
+    <p>My ability to push will not be the reason I fail here.
 It has always been whatever it takes.</p>
   </main>
 
