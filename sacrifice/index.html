@@ -4,470 +4,360 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>Tradeoff | drozq</title>
-  <meta name="description" content="A public audit of sacrifices (past, current, planned) used to buy skill, dealflow, and leverage. No inspiration. Just accounting." />
-  <link rel="canonical" href="https://drozq.com/tradeoff/" />
+  <!-- Primary SEO -->
+  <title>Sacrifice | drozq</title>
+  <meta name="description" content="A plain accounting of what it cost and what will be paid next — in pursuit of becoming the number one agent in Los Angeles, CA." />
+  <link rel="canonical" href="https://drozq.com/sacrifice/" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Tradeoff | drozq" />
-  <meta property="og:description" content="No inspiration. Just accounting: the sacrifices that bought speed, skill, and leverage." />
+  <meta property="og:title" content="Sacrifice | drozq" />
+  <meta property="og:description" content="A plain accounting of what it cost and what will be paid next — in pursuit of becoming the number one agent in Los Angeles, CA." />
+  <meta property="og:url" content="https://drozq.com/sacrifice/" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://drozq.com/tradeoff/" />
+  <meta property="og:image" content="https://drozq.com/preview.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/jpeg" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Sacrifice | drozq" />
+  <meta name="twitter:description" content="A plain accounting of what it cost and what will be paid next — in pursuit of becoming the number one agent in Los Angeles, CA." />
+  <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
+
+  <!-- Indexing -->
+  <meta name="robots" content="index,follow" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
 
   <style>
     :root{
-      --bg:#0b0b0d;
-      --fg:#f2f2f2;
-      --muted:#a8a8b3;
-      --dim:#6f6f7a;
-      --line:#1e1e24;
-      --accent:#ff4d2e; /* brutal, not cute */
-      --ok:#43ff97;
-      --warn:#ffd24a;
-      --bad:#ff3b3b;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --bg:#000;
+      --fg:#fff;
+      --muted:rgba(255,255,255,.65);
+      --accent:#9900FF;
+      --border:rgba(255,255,255,.14);
     }
-    *{ box-sizing:border-box; }
+    *{box-sizing:border-box;}
     body{
       margin:0;
       background:var(--bg);
       color:var(--fg);
-      font-family:var(--sans);
-      line-height:1.35;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;
+      padding-bottom:5.5rem;
     }
-    a{ color:inherit; text-decoration:none; }
-    a:hover{ text-decoration:underline; text-decoration-color:var(--accent); }
-    .wrap{ max-width:980px; margin:0 auto; padding:28px 18px 80px; }
-    .back{ display:inline-block; margin-bottom:18px; color:var(--muted); }
-    .hero{
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:18px;
-      background:linear-gradient(180deg, rgba(255,77,46,0.08), rgba(0,0,0,0));
-    }
-    h1{ margin:0 0 6px; font-size:34px; letter-spacing:-0.02em; }
-    .sub{ color:var(--muted); max-width:70ch; }
-    .warning{
-      margin-top:12px;
-      font-family:var(--mono);
-      color:var(--warn);
-      font-size:13px;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap:14px;
-      margin-top:14px;
-    }
-    @media (max-width:860px){ .grid{ grid-template-columns:1fr; } }
-
-    .card{
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:14px;
-      background:rgba(255,255,255,0.02);
-    }
-    .label{ color:var(--dim); font-family:var(--mono); font-size:12px; }
-    .statline{
+    .topbar{
       display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:8px;
-      font-family:var(--mono);
-      font-size:13px;
-    }
-    .pill{
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:6px 10px;
-      background:rgba(0,0,0,0.25);
-    }
-    .pill b{ color:var(--fg); }
-    .pill .k{ color:var(--muted); }
-    .pill.accent{ border-color:rgba(255,77,46,0.35); }
-    .pill.ok{ border-color:rgba(67,255,151,0.25); }
-    .pill.bad{ border-color:rgba(255,59,59,0.25); }
-
-    .controls{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:10px;
       align-items:center;
+      gap:.5rem;
+      padding:1.2rem 1.4rem 0.4rem;
     }
-    input[type="search"]{
-      flex:1;
-      min-width:240px;
-      border:1px solid var(--line);
-      border-radius:10px;
-      background:rgba(0,0,0,0.35);
-      color:var(--fg);
-      padding:10px 12px;
-      outline:none;
-      font-family:var(--mono);
-      font-size:13px;
+    .back-link{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.01em;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
     }
-    .chips{ display:flex; gap:8px; flex-wrap:wrap; }
-    .chip{
-      cursor:pointer;
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:7px 10px;
-      font-family:var(--mono);
-      font-size:12px;
+    .back-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .back-link:hover{ opacity:.55; }
+    .back-link:hover::after{ width:100%; }
+    .back-link span.arrow{
+      font-size:1.1rem;
+      line-height:1;
+    }
+    main{
+      max-width:880px;
+      margin:1.5rem auto 0;
+      padding:0 1.4rem 3rem;
+    }
+    h1{
+      font-size:1.4rem;
+      margin-bottom:.35rem;
+      font-weight:700;
+    }
+    .date{
+      font-size:.8rem;
       color:var(--muted);
-      user-select:none;
-      background:rgba(0,0,0,0.25);
+      margin-bottom:1.2rem;
     }
-    .chip.on{
-      color:var(--fg);
-      border-color:rgba(255,77,46,0.35);
-      background:rgba(255,77,46,0.10);
-    }
-
-    h2{
-      margin:26px 0 10px;
-      font-size:18px;
-      letter-spacing:-0.01em;
-    }
-    .sectionNote{ color:var(--muted); margin:-2px 0 12px; max-width:80ch; }
-
-    details{
-      border:1px solid var(--line);
+    .constraint-card{
+      border:1px solid rgba(255,255,255,.05);
+      background:rgba(255,255,255,.015);
       border-radius:14px;
-      padding:10px 12px;
-      background:rgba(255,255,255,0.02);
-      margin:10px 0;
+      padding:1rem 1rem 1.1rem;
+      margin-bottom:1.8rem;
     }
-    summary{
-      cursor:pointer;
-      list-style:none;
-      display:flex;
-      gap:10px;
-      align-items:baseline;
+    p{
+      line-height:1.55;
+      margin:0 0 1rem;
+      font-weight:500;
     }
-    summary::-webkit-details-marker{ display:none; }
+    strong{font-weight:700;}
 
-    .date{ font-family:var(--mono); font-size:12px; color:var(--muted); min-width:140px; }
-    .title{ font-size:14px; font-weight:600; }
-    .tags{ margin-left:auto; display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
-    .tag{
-      font-family:var(--mono);
-      font-size:11px;
-      padding:4px 8px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      color:var(--muted);
-      background:rgba(0,0,0,0.25);
+    .constraint-title{
+      font-size:1rem;
+      margin:0 0 .8rem;
     }
-    .tag.hot{ border-color:rgba(255,77,46,0.35); color:#ffd3c9; }
-    .tag.ok{ border-color:rgba(67,255,151,0.25); color:#caffdf; }
-    .tag.bad{ border-color:rgba(255,59,59,0.25); color:#ffd0d0; }
-    .body{
-      padding:12px 2px 4px;
-      color:var(--muted);
-      max-width:90ch;
+    .constraint-body{
+      white-space:pre-wrap;
+      margin:0;
+      color:rgba(255,255,255,.92);
     }
-    .kv{
+
+    .metrics{
+      margin:.9rem 0 1rem;
+      padding:.9rem;
+      border:1px solid rgba(255,255,255,.06);
+      background:rgba(255,255,255,.01);
+      border-radius:12px;
+    }
+    .metrics-head{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:1rem;
+      margin:0 0 .75rem;
+    }
+    .metrics-head .label{
+      font-size:.75rem;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+    .metrics-head .constraint-eq{
+      font-size:.9rem;
+      font-weight:800;
+      color:rgba(255,255,255,.94);
+      white-space:nowrap;
+    }
+    .metric-grid{
       display:grid;
-      grid-template-columns: 170px 1fr;
-      gap:8px 12px;
-      margin-top:10px;
-      font-family:var(--mono);
-      font-size:12px;
+      grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));
+      gap:.6rem;
+    }
+    .metric{
+      border:1px solid rgba(255,255,255,.06);
+      background:rgba(0,0,0,.15);
+      border-radius:12px;
+      padding:.7rem .75rem;
+    }
+    .metric .k{
+      font-size:.72rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
       color:var(--muted);
+      margin-bottom:.25rem;
     }
-    .kv div:nth-child(odd){ color:var(--dim); }
-    .evidence a{ color:var(--fg); text-decoration:underline; text-decoration-color:rgba(255,77,46,0.5); }
-    .footer{
-      margin-top:34px;
-      color:var(--dim);
-      font-family:var(--mono);
-      font-size:12px;
-      border-top:1px solid var(--line);
-      padding-top:16px;
+    .metric .v{
+      font-size:1rem;
+      font-weight:800;
+      color:#fff;
     }
-    .sigRow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px; }
-    .btn{
+    .metric .s{
+      display:block;
+      margin-top:.25rem;
+      font-size:.78rem;
+      color:rgba(255,255,255,.75);
+      font-weight:600;
+    }
+
+    footer.site-footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:5;
+      background:rgba(0,0,0,.4);
+      backdrop-filter:blur(8px);
+      display:flex;
+      justify-content:center;
+      gap:2.5rem;
+      padding:1.35rem 1.5rem 1.1rem;
+    }
+    .footer-link{
+      position:relative;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.02em;
       cursor:pointer;
-      border:1px solid var(--line);
-      border-radius:10px;
-      background:rgba(0,0,0,0.35);
-      color:var(--fg);
-      padding:10px 12px;
-      font-family:var(--mono);
-      font-size:13px;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
     }
-    .btn:hover{ border-color:rgba(255,77,46,0.35); }
-    .small{ color:var(--dim); font-size:12px; margin-top:8px; }
+    .footer-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+    .footer-link:hover{ opacity:.55; }
+    .footer-link:hover::after{ width:100%; }
+
+    @media (max-width:540px){
+      body{ padding-bottom:0; }
+      footer.site-footer{
+        position:static;
+        flex-wrap:wrap;
+        justify-content:flex-start;
+        gap:1rem 1.5rem;
+        padding:1.1rem 1.4rem 1.4rem;
+      }
+    }
   </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <a class="back" href="/">← Return to Home</a>
 
-    <div class="hero">
-      <h1>Tradeoff</h1>
-      <div class="sub">
-        A public audit of what I sacrificed to buy speed, skill, dealflow, and leverage.
-        <br/>No inspiration. Just accounting.
-      </div>
-      <div class="warning">
-        WARNING: This page is incompatible with comfort-seeking. If you want reassuring lies, leave.
-      </div>
+  <header class="topbar">
+    <a href="/" class="back-link">
+      <span class="arrow">←</span>
+      <span>Return to Home</span>
+    </a>
+  </header>
 
-      <div class="grid">
-        <div class="card">
-          <div class="label">Physics (why this exists)</div>
-          <div style="margin-top:8px; color:var(--muted); max-width:85ch;">
-            Time is conserved. Attention is conserved. Energy is conserved. Every output is paid for.
-            This ledger exists to prevent self-deception: if the results are not arriving, the inputs are not real.
-          </div>
+  <main>
+    <h1>Sacrifice</h1>
+    <div class="date">02/05/2026</div>
 
-          <div class="controls">
-            <input id="q" type="search" placeholder="Search sacrifices (e.g., 'risk', 'calls', 'identity', 'sleep', 'money')" />
-            <div class="chips" id="chips"></div>
-          </div>
+    <!-- SACRIFICE -->
+    <div class="constraint-card">
+      <p class="constraint-title"><strong>It cost me everything.</strong></p>
+
+      <div class="metrics" role="group" aria-label="Sacrifice metrics">
+        <div class="metrics-head">
+          <div class="label">Paid Cost = Comfort</div>
+          <div class="constraint-eq">Tradeoff × Time</div>
         </div>
 
-        <div class="card">
-          <div class="label">Totals (live)</div>
-          <div class="statline" id="totals">
-            <!-- populated by JS -->
+        <div class="metric-grid">
+          <div class="metric">
+            <div class="k">Former workdays</div>
+            <div class="v">8 hours</div>
+            <span class="s">Baseline</span>
           </div>
-          <div class="small">
-            Totals are estimates. The point is directionally correct truth, not pretty storytelling.
+          <div class="metric">
+            <div class="k">New workdays</div>
+            <div class="v">12 hours</div>
+            <span class="s">Willing to pay</span>
+          </div>
+          <div class="metric">
+            <div class="k">Former weeks</div>
+            <div class="v">5 days</div>
+            <span class="s">Baseline</span>
+          </div>
+          <div class="metric">
+            <div class="k">New weeks</div>
+            <div class="v">7 days</div>
+            <span class="s">Willing to pay</span>
+          </div>
+          <div class="metric">
+            <div class="k">Non-negotiable</div>
+            <div class="v">Whatever it takes</div>
+            <span class="s">This is not the failure point</span>
           </div>
         </div>
       </div>
+
+      <p class="constraint-body">I have already sacrificed:
+
+• Video games
+• Time with friends
+• Weekends
+• Instagram
+• YouTube
+• TikTok
+• Chess
+
+• Angie
+• Rosanna
+• Azhley
+• Emma
+• Briceida
+• Belia
+• Kelli
+
+• Comfort of Panda Express
+• Comfort of Rite Aid
+• Comfort of Subaru
+• Comfort of Honda
+• Comfort of living with grandparents
+• Comfort of living with parents
+• Comfort of a stable job
+• Comfort of being accepted by those at Lexus of Beverly Hills
+• Comfort of staying in KoreaTown
+• Comfort of being accepted by those at Norm Reeves Honda Superstore Cerritos
+• Comfort of staying with a loving family in La Mirada to shorten an hour commute into 15 minutes
+
+• Fired Fabian, faced internal team rejection
+
+• Zero tolerance of anyone who smokes weed
+• Zero tolerance of anyone who drinks alcohol
+• Zero tolerance of anyone who does drugs
+
+• All friends made at Honda
+• All friends made ever in Vallejo, CA once I moved
+• Every friend I made at the Vallejo church I attended since age 14
+• Every friend I made in that city since age 13
+
+• Brothers’ birthdays
+• Parents’ birthdays
+• Cousins’ birthdays
+• Brothers’ graduations
+
+I went all in on real estate in a new city (Irvine), on a new team (Active Realty), in a new endeavor with a high likelihood of failure.
+
+These are the new sacrifices I am willing to make to become the number one agent in Los Angeles, CA:
+
+• From 8 hour workdays → 12 hour workdays
+• From 5 day work weeks → 7 day work weeks
+
+My ability to push will not be the reason I fail here.
+It has always been whatever it takes.</p>
     </div>
 
-    <h2>Completed Tradeoffs</h2>
-    <div class="sectionNote">Pain that purchased something real. If it didn’t buy anything, it belongs in <span style="color:var(--fg);">Mistakes</span>.</div>
-    <div id="completed"></div>
+  </main>
 
-    <h2>Current Tradeoffs</h2>
-    <div class="sectionNote">Active constraints. These are the inputs I’m willing to bleed for right now.</div>
-    <div id="current"></div>
+  <div id="site-footer"></div>
 
-    <h2>Planned Tradeoffs (Contracts, not hopes)</h2>
-    <div class="sectionNote">Future sacrifices I am pre-committing to in exchange for probability mass.</div>
-    <div id="planned"></div>
+  <script>
+    (function () {
+      var target = document.getElementById('site-footer');
+      if (!target) return;
 
-    <div class="footer">
-      <div><span style="color:var(--fg);">Contract clause:</span> If I violate my own stated tradeoffs, I forfeit the right to complain about outcomes.</div>
+      fetch('/footer.html', { cache: 'no-cache' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Failed to load footer');
+          return res.text();
+        })
+        .then(function (html) {
+          target.innerHTML = html;
+        })
+        .catch(function (err) {
+          console.error('Footer load error:', err);
+        });
+    })();
+  </script>
 
-      <div class="sigRow">
-        <button class="btn" id="signBtn">Sign this page</button>
-        <button class="btn" id="clearSigBtn">Clear signature</button>
-        <span id="sigState" class="label"></span>
-      </div>
-
-      <div class="small">
-        Note: This page is a mirror. Most people avoid mirrors.
-      </div>
-    </div>
-  </div>
-
-<script>
-/**
- * Tradeoff ledger schema:
- * {
- *   id, status: "completed"|"current"|"planned",
- *   date: "YYYY-MM-DD" or "YYYY-MM-DD → YYYY-MM-DD",
- *   title: string,
- *   tags: ["Time","Money","Comfort","Identity","Relationships","Risk","Skill","Dealflow","Discipline","Health"],
- *   gaveUp: string,
- *   bought: string,
- *   costHours: number (estimate),
- *   costDollars: number (estimate),
- *   irreversibility: 0..10,
- *   verdict: "worth it"|"uncertain"|"mistake risk",
- *   evidence: [{label, href}] (optional)
- * }
- */
-
-const DATA = [
-  // Examples grounded in your existing public narrative (replace/add relentlessly)
-  {
-    id:"t1", status:"completed", date:"2025-11-17",
-    title:"Joined a larger team to compress skill acquisition",
-    tags:["Identity","Risk","Skill","Dealflow"],
-    gaveUp:"Ego (being 'the guy'), control, and the comfort of doing it alone.",
-    bought:"Accelerated learning + dealflow above zero + accountability.",
-    costHours:120, costDollars:0, irreversibility:6,
-    verdict:"worth it",
-    evidence:[{label:"Constraint snapshot", href:"/constraint/11-17-2025/"}]
-  },
-  {
-    id:"t2", status:"completed", date:"2025-12-12",
-    title:"Full pivot into real estate (burn the boats)",
-    tags:["Identity","Risk","Time","Discipline"],
-    gaveUp:"Stability, weekends, and the 'wait-until-then' fallacy.",
-    bought:"Speed. Optionality through commitment. A forced learning curve.",
-    costHours:220, costDollars:0, irreversibility:8,
-    verdict:"worth it",
-    evidence:[{label:"Constraint snapshot", href:"/constraint/12-12-2025/"}]
-  },
-  {
-    id:"t3", status:"completed", date:"2026-01-01",
-    title:"Admitted the current philosophy was wrong; increased risk",
-    tags:["Ego","Risk","Identity"],
-    gaveUp:"The soothing story that 'I’m fine' and 'time will fix it'.",
-    bought:"A new operating posture: more aggression, less cope.",
-    costHours:20, costDollars:0, irreversibility:4,
-    verdict:"worth it",
-    evidence:[{label:"Constraint snapshot", href:"/constraint/01-01-2026/"}]
-  },
-
-  // Current (your current constraint page)
-  {
-    id:"t4", status:"current", date:"2026-01-28 → now",
-    title:"Volume protocol: 100 dials + 100 emails + 100 SMS; response < 5 minutes",
-    tags:["Time","Discipline","Dealflow","Skill"],
-    gaveUp:"Comfort, low-effort days, and any identity that isn’t built on inputs.",
-    bought:"Probability of closings through contact rate and speed.",
-    costHours:420, costDollars:0, irreversibility:5,
-    verdict:"worth it",
-    evidence:[{label:"Current Constraint", href:"/constraint/"}]
-  },
-
-  // Planned (contracts)
-  {
-    id:"t5", status:"planned", date:"2026-02-15 → 2026-08-31",
-    title:"If closings lag: double inputs, cut entertainment to zero",
-    tags:["Time","Comfort","Discipline","Risk"],
-    gaveUp:"All non-essential entertainment; social spontaneity.",
-    bought:"More attempts per unit time → faster feedback loops.",
-    costHours:300, costDollars:0, irreversibility:6,
-    verdict:"uncertain",
-    evidence:[{label:"Decade plan window (Year 2)", href:"/decade/"}]
-  },
-  {
-    id:"t6", status:"planned", date:"2026-09-01 → 2027-08-31",
-    title:"Year 3: prioritize lead generation mastery over lifestyle",
-    tags:["Time","Comfort","Skill","Dealflow","Money"],
-    gaveUp:"Lifestyle inflation; 'nice-to-have' spending.",
-    bought:"Control of acquisition channels; leverage.",
-    costHours:600, costDollars:12000, irreversibility:7,
-    verdict:"worth it",
-    evidence:[{label:"Decade plan (Year 3)", href:"/decade/"}]
-  },
-];
-
-// Tag system
-const ALL_TAGS = [...new Set(DATA.flatMap(x => x.tags))].sort();
-let activeTags = new Set();
-let q = "";
-
-// DOM helpers
-const $ = (id) => document.getElementById(id);
-const esc = (s) => (s+"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-
-function matches(item){
-  const hay = (item.title + " " + item.gaveUp + " " + item.bought + " " + item.tags.join(" ")).toLowerCase();
-  if(q && !hay.includes(q.toLowerCase())) return false;
-  if(activeTags.size){
-    for(const t of activeTags) if(!item.tags.includes(t)) return false;
-  }
-  return true;
-}
-
-function verdictTag(v){
-  if(v === "worth it") return `<span class="tag ok">worth it</span>`;
-  if(v === "mistake risk") return `<span class="tag bad">mistake risk</span>`;
-  return `<span class="tag hot">uncertain</span>`;
-}
-
-function renderItem(item){
-  const evid = (item.evidence || []).map(e => `<div class="evidence"><a href="${esc(e.href)}">${esc(e.label)}</a></div>`).join("");
-  return `
-  <details>
-    <summary>
-      <div class="date">${esc(item.date)}</div>
-      <div class="title">${esc(item.title)}</div>
-      <div class="tags">
-        ${verdictTag(item.verdict)}
-        ${item.tags.slice(0,3).map(t => `<span class="tag">${esc(t)}</span>`).join("")}
-      </div>
-    </summary>
-    <div class="body">
-      <div><span style="color:var(--fg);">Gave up:</span> ${esc(item.gaveUp)}</div>
-      <div style="margin-top:8px;"><span style="color:var(--fg);">Bought:</span> ${esc(item.bought)}</div>
-
-      <div class="kv">
-        <div>Cost (hours)</div><div>${esc(item.costHours)}</div>
-        <div>Cost (dollars)</div><div>$${esc(item.costDollars)}</div>
-        <div>Irreversibility</div><div>${esc(item.irreversibility)}/10</div>
-        <div>Evidence</div><div>${evid || "<span style='color:var(--dim)'>none</span>"}</div>
-      </div>
-    </div>
-  </details>`;
-}
-
-function render(){
-  const filtered = DATA.filter(matches);
-
-  const buckets = { completed:[], current:[], planned:[] };
-  for(const it of filtered) buckets[it.status].push(it);
-
-  $("completed").innerHTML = buckets.completed.map(renderItem).join("") || `<div class="label">No matches.</div>`;
-  $("current").innerHTML    = buckets.current.map(renderItem).join("")   || `<div class="label">No matches.</div>`;
-  $("planned").innerHTML    = buckets.planned.map(renderItem).join("")   || `<div class="label">No matches.</div>`;
-
-  // totals
-  const sumH = filtered.reduce((a,x)=>a+(x.costHours||0),0);
-  const sum$ = filtered.reduce((a,x)=>a+(x.costDollars||0),0);
-  const bridges = filtered.reduce((a,x)=>a+(x.irreversibility>=8?1:0),0);
-
-  $("totals").innerHTML = `
-    <span class="pill accent"><span class="k">Entries:</span> <b>${filtered.length}</b></span>
-    <span class="pill"><span class="k">Hours:</span> <b>${sumH}</b></span>
-    <span class="pill"><span class="k">Cash burned:</span> <b>$${sum$}</b></span>
-    <span class="pill bad"><span class="k">High-irreversibility:</span> <b>${bridges}</b></span>
-  `;
-}
-
-function renderChips(){
-  $("chips").innerHTML = ALL_TAGS.map(t => {
-    const on = activeTags.has(t) ? "chip on" : "chip";
-    return `<div class="${on}" data-tag="${esc(t)}">${esc(t)}</div>`;
-  }).join("");
-  $("chips").querySelectorAll(".chip").forEach(el=>{
-    el.addEventListener("click", ()=>{
-      const t = el.getAttribute("data-tag");
-      if(activeTags.has(t)) activeTags.delete(t);
-      else activeTags.add(t);
-      renderChips();
-      render();
-    });
-  });
-}
-
-// Signature
-const SIG_KEY = "drozq_tradeoff_signature";
-function loadSig(){
-  const s = localStorage.getItem(SIG_KEY);
-  $("sigState").textContent = s ? `SIGNED: ${s}` : "UNSIGNED";
-}
-$("signBtn").addEventListener("click", ()=>{
-  const now = new Date();
-  localStorage.setItem(SIG_KEY, now.toISOString());
-  loadSig();
-});
-$("clearSigBtn").addEventListener("click", ()=>{
-  localStorage.removeItem(SIG_KEY);
-  loadSig();
-});
-
-$("q").addEventListener("input", (e)=>{ q = e.target.value || ""; render(); });
-
-renderChips();
-render();
-loadSig();
-</script>
 </body>
 </html>
