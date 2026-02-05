@@ -49,6 +49,8 @@
       min-height:100vh;
       padding-bottom:5.5rem;
     }
+
+    /* These remain for other pages / legacy markup; harmless to keep */
     .topbar{
       display:flex;
       align-items:center;
@@ -83,6 +85,7 @@
       font-size:1.1rem;
       line-height:1;
     }
+
     main{
       max-width:880px;
       margin:1.5rem auto 0;
@@ -258,9 +261,10 @@
     }
   </style>
 </head>
-<body>
 
-<div id="site-header"></div>
+<body>
+  <!-- Shared header inject point -->
+  <div id="site-header"></div>
 
   <main>
     <h1>Constraint</h1>
@@ -322,50 +326,33 @@ Leverage will come from advertising and larger distribution after I build proof.
         <a class="archive-link" href="/constraint/11-10-2025/">11/10/2025</a>
       </div>
     </section>
-
   </main>
 
+  <!-- Shared footer inject point -->
   <div id="site-footer"></div>
-  <div id="fade" class="fadeout"></div>
 
   <script>
     (function () {
-      var target = document.getElementById('site-footer');
-      if (!target) return;
+      function inject(id, url, label) {
+        var target = document.getElementById(id);
+        if (!target) return;
 
-      fetch('/footer.html', { cache: 'no-cache' })
-        .then(function (res) {
-          if (!res.ok) throw new Error('Failed to load footer');
-          return res.text();
-        })
-        .then(function (html) {
-          target.innerHTML = html;
-        })
-        .catch(function (err) {
-          console.error('Footer load error:', err);
-        });
+        fetch(url, { cache: 'no-cache' })
+          .then(function (res) {
+            if (!res.ok) throw new Error('Failed to load ' + label);
+            return res.text();
+          })
+          .then(function (html) {
+            target.innerHTML = html;
+          })
+          .catch(function (err) {
+            console.error(label + ' load error:', err);
+          });
+      }
+
+      inject('site-header', '/header.html', 'header');
+      inject('site-footer', '/footer.html', 'footer');
     })();
   </script>
-
-  <script>
-  (function () {
-    var target = document.getElementById('site-header');
-    if (!target) return;
-
-    fetch('/header.html', { cache: 'no-cache' })
-      .then(function (res) {
-        if (!res.ok) throw new Error('Failed to load header');
-        return res.text();
-      })
-      .then(function (html) {
-        target.innerHTML = html;
-      })
-      .catch(function (err) {
-        console.error('Header load error:', err);
-      });
-  })();
-</script>
-
-
 </body>
 </html>
