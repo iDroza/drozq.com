@@ -352,5 +352,25 @@ Leverage will come from advertising and larger distribution after I build proof.
     })();
   </script>
 
+  <script>
+  (function () {
+    var target = document.getElementById('site-header');
+    if (!target) return;
+
+    fetch('/header.html', { cache: 'no-cache' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('Failed to load header');
+        return res.text();
+      })
+      .then(function (html) {
+        target.innerHTML = html;
+      })
+      .catch(function (err) {
+        console.error('Header load error:', err);
+      });
+  })();
+</script>
+
+
 </body>
 </html>
