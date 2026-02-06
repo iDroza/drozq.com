@@ -38,69 +38,49 @@
       --muted:rgba(255,255,255,.65);
       --accent:#9900FF;
       --border:rgba(255,255,255,.14);
+      --shadow:0 10px 30px rgba(0,0,0,.45);
     }
-    *{box-sizing:border-box;}
 
-    body{
+    *{ box-sizing:border-box; }
+
+    /* Match homepage viewport + typography behavior */
+    html,body{
+      height:100%;
       margin:0;
       background:var(--bg);
       color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:700;
       -webkit-font-smoothing:antialiased;
+      overflow:hidden; /* desktop: lock viewport */
+    }
+
+    /* Make remaining viewport space belong to the hero area (same as homepage) */
+    body{
+      display:flex;
+      flex-direction:column;
       min-height:100vh;
-      padding-bottom:5.5rem;
-
-      /* Desktop: hard kill scrolling (your original intent) */
-      overflow:hidden;
     }
 
-    /* These remain for other pages / legacy markup; harmless to keep */
-    .topbar{
-      display:flex;
-      align-items:center;
-      gap:.5rem;
-      padding:1.2rem 1.4rem 0.4rem;
+    /* Header/footer inject points */
+    #site-header,
+    #site-footer{
+      flex:0 0 auto;
     }
-    .back-link{
+
+    /* Centered hero area spacing identical to homepage (.wrap) */
+    .wrap{
       position:relative;
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.01em;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .back-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .back-link:hover{ opacity:.55; }
-    .back-link:hover::after{ width:100%; }
-    .back-link span.arrow{
-      font-size:1.1rem;
-      line-height:1;
+      z-index:2;
+      flex:1 1 auto;      /* key: prevents overflow from header + wrap */
+      min-height:0;       /* allow flex child to shrink */
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:2rem;
+      padding-bottom:5.5rem; /* desktop: space for fixed footer */
     }
 
-    /* Centered hero */
-    main{
-      width:100%;
-      margin:0;
-      padding:0 1.4rem;
-      min-height:calc(100vh - 4.2rem); /* give header breathing room */
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-    }
     .hero-message{
       font-weight:700;
       font-size:clamp(28px,6vw,72px);
@@ -108,6 +88,7 @@
       white-space:nowrap;
     }
 
+    /* footer (desktop) — same as homepage */
     footer.site-footer{
       position:fixed;
       left:0;
@@ -121,6 +102,7 @@
       gap:2.5rem;
       padding:1.35rem 1.5rem 1.1rem;
     }
+
     .footer-link{
       position:relative;
       color:#fff;
@@ -131,6 +113,7 @@
       padding-bottom:.35rem;
       transition:opacity .2s ease;
     }
+
     .footer-link::after{
       content:'';
       position:absolute;
@@ -141,13 +124,27 @@
       background:#fff;
       transition:width .2s ease-out;
     }
+
     .footer-link:hover{ opacity:.55; }
     .footer-link:hover::after{ width:100%; }
 
+    /* mobile adjustments — same as homepage */
     @media (max-width:540px){
+      html,body{
+        overflow:auto;  /* allow scroll */
+        height:auto;
+      }
       body{
-        padding-bottom:0;
-        overflow:auto; /* mobile: allow scroll */
+        display:block;  /* simpler flow on mobile */
+      }
+      .wrap{
+        min-height:calc(100vh - 120px); /* hero centered above footer */
+        display:grid;
+        place-items:center;
+        padding:1.6rem 1.4rem 0;
+      }
+      .hero-message{
+        white-space:normal; /* prevent tiny-screen overflow */
       }
       footer.site-footer{
         position:static;
@@ -156,12 +153,8 @@
         gap:1rem 1.5rem;
         padding:1.1rem 1.4rem 1.4rem;
       }
-      main{
-        min-height:calc(100vh - 4rem);
-        padding-bottom:1.4rem;
-      }
-      .hero-message{
-        white-space:normal; /* prevent tiny-screen overflow */
+      .footer-link{
+        font-size:.85rem;
       }
     }
   </style>
@@ -171,7 +164,7 @@
   <!-- Shared header inject point -->
   <div id="site-header"></div>
 
-  <main>
+  <main class="wrap">
     <div class="hero-message">Do not feed the wildlife.</div>
   </main>
 
