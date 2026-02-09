@@ -337,11 +337,33 @@
     /* mobile */
     @media (max-width: 540px){
       html,body{ overflow:auto; height:auto; }
+
+      /* ✅ FIX: make header sticky so it doesn't overlap the form */
+      .topbar{
+        position:sticky; /* overrides fixed */
+        top:0;
+        left:0;
+        width:100%;
+        z-index:20;
+        pointer-events:auto;
+
+        padding:
+          calc(env(safe-area-inset-top) + .9rem)
+          1.1rem
+          .65rem;
+
+        background:rgba(0,0,0,.55);
+        backdrop-filter:blur(10px);
+        -webkit-backdrop-filter:blur(10px);
+        border-bottom:1px solid rgba(255,255,255,.06);
+      }
+
       .wrap{
         min-height:calc(100vh - 120px);
         place-items:start;
-        padding:1.2rem 1.1rem 0;
+        padding:.9rem 1.1rem 0;
       }
+
       .card{ padding:18px; }
       footer.site-footer{
         position:static;
