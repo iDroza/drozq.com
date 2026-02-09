@@ -338,9 +338,9 @@
     @media (max-width: 540px){
       html,body{ overflow:auto; height:auto; }
 
-      /* ✅ FIX: make header sticky so it doesn't overlap the form */
+      /* header: sticky (no overlap) */
       .topbar{
-        position:sticky; /* overrides fixed */
+        position:sticky;
         top:0;
         left:0;
         width:100%;
@@ -362,6 +362,14 @@
         min-height:calc(100vh - 120px);
         place-items:start;
         padding:.9rem 1.1rem 0;
+      }
+
+      /* ✅ FIX: checkbox aligns with the text line, not glued to the top */
+      .consent{
+        align-items:baseline;
+      }
+      .consent input{
+        margin:0;
       }
 
       .card{ padding:18px; }
@@ -421,7 +429,6 @@
 
   <main class="wrap">
     <div class="stack" aria-label="Contact form">
-      <!-- Title with no mid-word breaks -->
       <h1 class="page-title">
         <span>Contact</span>
         <span class="accent nowrap">Joshua</span>
@@ -466,7 +473,7 @@
                 <option value="Need Operator (Los Angeles)">Need Operator (Los Angeles)</option>
                 <option value="Real Estate Deal / Acquisition">Real Estate Deal / Acquisition</option>
                 <option value="Consulting">Consulting</option>
-                <option value="Join Media Team">Join Media Team</option>
+                <option value="Join Team">Join Team</option>
                 <option value="Other">Other</option>
               </select>
             </div>
