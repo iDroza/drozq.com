@@ -320,9 +320,14 @@
         var secs  = Math.floor(remMs / 1000);    remMs -= secs * 1000;
         var msec  = remMs;
 
+        // Format as: y d h s ms (fold minutes into seconds)
+        var secsTotal = (mins * 60) + secs;
+
         elAge.textContent =
           years + 'y ' + days + 'd ' +
-          pad2(hours) + ':' + pad2(mins) + ':' + pad2(secs) + '.' + pad3(msec);
+          pad2(hours) + 'h ' +
+          secsTotal + 's ' +
+          pad3(msec) + 'ms';
       }
 
       renderStaticNumbers();
