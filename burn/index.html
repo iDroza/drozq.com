@@ -4,10 +4,31 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <!-- Primary SEO -->
   <title>Burn | drozq</title>
-  <meta name="description" content="Cash runway. Wipeout date. Live countdown. Live age." />
+  <meta name="description" content="Cash on hand, burn rate, wipeout date, and live age." />
   <link rel="canonical" href="https://drozq.com/burn/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Burn | drozq" />
+  <meta property="og:description" content="Cash on hand, burn rate, wipeout date, and live age." />
+  <meta property="og:url" content="https://drozq.com/burn/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://drozq.com/preview.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/jpeg" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Burn | drozq" />
+  <meta name="twitter:description" content="Cash on hand, burn rate, wipeout date, and live age." />
+  <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
+
+  <!-- Indexing -->
   <meta name="robots" content="index,follow" />
+
+  <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
 
   <style>
@@ -16,10 +37,12 @@
       --fg:#fff;
       --muted:rgba(255,255,255,.65);
       --danger:#ff3b30;
+      --rule:rgba(255,255,255,.14);
     }
 
     *{ box-sizing:border-box; }
 
+    /* Match your base pages */
     html,body{
       height:100%;
       margin:0;
@@ -28,7 +51,7 @@
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
       font-weight:700;
       -webkit-font-smoothing:antialiased;
-      overflow:hidden; /* desktop: lock viewport like your other pages */
+      overflow:hidden;
     }
 
     body{
@@ -39,33 +62,23 @@
 
     #site-header,#site-footer{ flex:0 0 auto; }
 
-    /* Left-anchored content area */
+    /* Left-anchored “sheet” */
     .wrap{
       flex:1 1 auto;
       min-height:0;
       display:flex;
-      align-items:center;          /* vertically centered */
-      justify-content:flex-start;  /* LEFT */
+      align-items:center;
+      justify-content:flex-start;
       padding:2rem;
-      padding-bottom:5.5rem;       /* space for fixed footer */
+      padding-bottom:5.5rem; /* space for fixed footer */
     }
 
-    /* Balance-sheet block */
     .sheet{
       width:min(980px, 100%);
       text-align:left;
-      font-size:clamp(28px,6vw,72px); /* same scale as your philanthropy hero */
+      font-size:clamp(28px,6vw,72px); /* same scale family */
       letter-spacing:.03em;
       line-height:1.08;
-    }
-
-    .title{
-      font-size:.34em;
-      letter-spacing:.24em;
-      text-transform:uppercase;
-      color:var(--muted);
-      margin-bottom:.75rem;
-      white-space:nowrap;
     }
 
     .rows{
@@ -74,13 +87,12 @@
       gap:.55rem;
     }
 
-    /* Two-column: label left, value right */
+    /* Balance sheet row: label left, value right */
     .row{
       display:grid;
       grid-template-columns: 1fr auto;
-      gap:1.2rem;
+      gap:1.25rem;
       align-items:baseline;
-      width:100%;
     }
 
     .k{
@@ -102,32 +114,19 @@
 
     .neg{ color:var(--danger); }
 
-    .sep{
-      margin:.35rem 0 .15rem;
+    .rule{
       height:1px;
-      background:rgba(255,255,255,.12);
+      background:var(--rule);
       width:min(720px, 100%);
+      margin:.25rem 0 .1rem;
     }
 
-    .subrow{
-      margin-top:-.2rem;
-    }
-
-    .subrow .k{ font-size:.22em; letter-spacing:.16em; }
-    .subrow .v{ font-size:.46em; }
-
-    .note{
-      margin-top:.6rem;
-      font-size:.22em;
-      letter-spacing:.06em;
-      color:var(--muted);
-      max-width:70ch;
-    }
-
-    /* footer (desktop) — same as your other pages */
+    /* footer (desktop) — same behavior as your pages */
     footer.site-footer{
       position:fixed;
-      left:0; right:0; bottom:0;
+      left:0;
+      right:0;
+      bottom:0;
       z-index:5;
       background:rgba(0,0,0,.4);
       backdrop-filter:blur(8px);
@@ -147,7 +146,6 @@
       padding-bottom:.35rem;
       transition:opacity .2s ease;
     }
-
     .footer-link::after{
       content:'';
       position:absolute;
@@ -158,7 +156,6 @@
       background:#fff;
       transition:width .2s ease-out;
     }
-
     .footer-link:hover{ opacity:.55; }
     .footer-link:hover::after{ width:100%; }
 
@@ -177,7 +174,9 @@
         padding:1.1rem 1.4rem 1.4rem;
       }
       .footer-link{ font-size:.85rem; }
-      .row{ grid-template-columns: 1fr; gap:.25rem; }
+
+      /* Stack label/value on mobile */
+      .row{ grid-template-columns:1fr; gap:.25rem; }
       .v{ text-align:left; }
       .k{ white-space:normal; }
     }
@@ -185,12 +184,11 @@
 </head>
 
 <body>
+  <!-- Shared header inject point -->
   <div id="site-header"></div>
 
   <main class="wrap">
-    <section class="sheet" aria-label="Burn sheet">
-      <div class="title">Burn Sheet</div>
-
+    <section class="sheet" aria-label="Burn balance sheet">
       <div class="rows">
         <div class="row">
           <div class="k">Cash on Hand</div>
@@ -198,39 +196,28 @@
         </div>
 
         <div class="row">
-          <div class="k">Monthly Burn Rate</div>
+          <div class="k">Burn Rate</div>
           <div class="v neg" id="burn">-$0.00</div>
         </div>
 
-        <div class="sep" aria-hidden="true"></div>
+        <div class="rule" aria-hidden="true"></div>
 
         <div class="row">
           <div class="k">The day I am wiped from existence</div>
           <div class="v" id="wipeDate">—</div>
         </div>
 
-        <div class="row subrow">
-          <div class="k">Days Remaining</div>
-          <div class="v" id="days">—</div>
-        </div>
-
-        <div class="row subrow">
-          <div class="k">Countdown</div>
-          <div class="v" id="countdown">—</div>
-        </div>
-
-        <div class="sep" aria-hidden="true"></div>
+        <div class="rule" aria-hidden="true"></div>
 
         <div class="row">
           <div class="k">Age</div>
           <div class="v" id="age">—</div>
         </div>
-
-        <div class="note" id="note"></div>
       </div>
     </section>
   </main>
 
+  <!-- Shared footer inject point -->
   <div id="site-footer"></div>
 
   <script>
@@ -240,7 +227,10 @@
         if (!target) return;
 
         fetch(url, { cache: 'no-cache' })
-          .then(function (res) { if (!res.ok) throw new Error('Failed to load ' + label); return res.text(); })
+          .then(function (res) {
+            if (!res.ok) throw new Error('Failed to load ' + label);
+            return res.text();
+          })
           .then(function (html) { target.innerHTML = html; })
           .catch(function (err) { console.error(label + ' load error:', err); });
       }
@@ -253,122 +243,92 @@
   <script>
     (function () {
       // =========================
-      // EDIT THESE TWO NUMBERS
+      // EDIT THESE (manual inputs)
       // =========================
       var CASH_ON_HAND = 17891.93;
-      var MONTHLY_BURN = 2644.11; // displayed as negative and red
+      var BURN_RATE    = 2644.11; // per 30-day month, displayed negative + red
 
-      // Birth: Aug 27, 2004 @ 4:00 AM Pacific (PDT offset for that date)
+      // Birth: Aug 27, 2004 @ 4:00 AM Pacific (offset pinned for that date)
       var BIRTH_ISO = '2004-08-27T04:00:00-07:00';
 
-      // Convention: define "month" so the wipeout timestamp is computable.
-      // Average Gregorian month length.
-      var DAYS_PER_MONTH = 365.2425 / 12; // 30.436875
       var MS_PER_DAY = 86400000;
-      var MONTH_MS = DAYS_PER_MONTH * MS_PER_DAY;
+      var DAYS_PER_MONTH = 30;
 
-      var fmt = new Intl.NumberFormat('en-US', { style:'currency', currency:'USD', maximumFractionDigits:2 });
+      var fmtUSD = new Intl.NumberFormat('en-US', {
+        style:'currency', currency:'USD', maximumFractionDigits:2
+      });
 
       var elCash = document.getElementById('cash');
       var elBurn = document.getElementById('burn');
       var elWipe = document.getElementById('wipeDate');
-      var elDays = document.getElementById('days');
-      var elCd   = document.getElementById('countdown');
       var elAge  = document.getElementById('age');
-      var elNote = document.getElementById('note');
 
       function pad2(n){ return (n < 10 ? '0' : '') + n; }
-      function pad3(n){
-        if (n < 10) return '00' + n;
-        if (n < 100) return '0' + n;
-        return '' + n;
+
+      function renderStaticNumbers(){
+        elCash.textContent = fmtUSD.format(CASH_ON_HAND);
+        elBurn.textContent = '-' + fmtUSD.format(Math.abs(BURN_RATE));
       }
 
-      function breakdown(ms){
-        if (!isFinite(ms)) return null;
-        var x = Math.max(0, Math.floor(ms));
-        var days = Math.floor(x / MS_PER_DAY); x -= days * MS_PER_DAY;
-        var hours = Math.floor(x / 3600000);   x -= hours * 3600000;
-        var mins  = Math.floor(x / 60000);     x -= mins * 60000;
-        var secs  = Math.floor(x / 1000);      x -= secs * 1000;
-        var msec  = x;
-        return { days:days, hours:hours, mins:mins, secs:secs, msec:msec };
-      }
-
-      function wipeoutMs(nowMs){
-        var burn = Math.abs(MONTHLY_BURN);
-        if (!isFinite(CASH_ON_HAND) || !isFinite(burn) || burn <= 0) return NaN;
-        var monthsRemaining = CASH_ON_HAND / burn;
-        return nowMs + monthsRemaining * MONTH_MS;
-      }
-
-      function fmtDate(d){
-        return d.toLocaleString(undefined, {
-          year:'numeric', month:'2-digit', day:'2-digit',
-          hour:'2-digit', minute:'2-digit', second:'2-digit',
-          timeZoneName:'short'
-        });
-      }
-
-      function renderStatic(){
-        elCash.textContent = fmt.format(CASH_ON_HAND);
-        elBurn.textContent = '-' + fmt.format(Math.abs(MONTHLY_BURN));
-      }
-
-      function renderRunway(){
-        var now = Date.now();
-        var w = wipeoutMs(now);
-
-        if (!isFinite(w)){
+      // Compute wipeout ONCE, based on current moment and your inputs.
+      function computeAndFreezeWipeDate(){
+        var burn = Math.abs(BURN_RATE);
+        if (!isFinite(CASH_ON_HAND) || !isFinite(burn) || burn <= 0){
           elWipe.textContent = '—';
-          elDays.textContent = '—';
-          elCd.textContent = '—';
-          elNote.textContent = 'Set CASH_ON_HAND and MONTHLY_BURN to valid positive numbers.';
           return;
         }
 
-        var diff = w - now;
-        var parts = breakdown(diff);
+        var nowMs = Date.now();
+        var monthsRemaining = CASH_ON_HAND / burn;
+        var daysRemaining = monthsRemaining * DAYS_PER_MONTH;
+        var wipeMs = nowMs + (daysRemaining * MS_PER_DAY);
 
-        elWipe.textContent = fmtDate(new Date(w));
+        var wipeDate = new Date(wipeMs);
 
-        if (diff <= 0){
-          elDays.textContent = '0';
-          elCd.textContent = '00:00:00.000';
-        } else {
-          elDays.textContent = String(parts.days);
-          elCd.textContent =
-            pad2(parts.hours) + ':' + pad2(parts.mins) + ':' + pad2(parts.secs) + '.' + pad3(parts.msec);
-        }
-
-        elNote.textContent = 'Convention used: 1 month = ' + DAYS_PER_MONTH.toFixed(6) + ' days.';
+        // Plain English date (no 02/12/2026 style)
+        elWipe.textContent = wipeDate.toLocaleDateString(undefined, {
+          weekday:'long',
+          year:'numeric',
+          month:'long',
+          day:'numeric'
+        });
       }
 
+      // Age: years since birth + remainder as days/hh:mm:ss (ticks up)
       function renderAge(){
         var birth = new Date(BIRTH_ISO);
-        var now = new Date();
         if (!isFinite(birth)) { elAge.textContent = '—'; return; }
 
-        var diff = now.getTime() - birth.getTime();
-        if (diff < 0) { elAge.textContent = '—'; return; }
+        var now = new Date();
+        if (now < birth) { elAge.textContent = '—'; return; }
 
-        // Simple, readable: total days + clock (and keep it ticking per second)
-        var totalSeconds = Math.floor(diff / 1000);
+        var years = now.getFullYear() - birth.getFullYear();
+        var lastBirthday = new Date(birth.getTime());
+        lastBirthday.setFullYear(birth.getFullYear() + years);
+
+        if (lastBirthday > now){
+          years--;
+          lastBirthday = new Date(birth.getTime());
+          lastBirthday.setFullYear(birth.getFullYear() + years);
+        }
+
+        var diffMs = now.getTime() - lastBirthday.getTime();
+        var totalSeconds = Math.floor(diffMs / 1000);
+
         var days = Math.floor(totalSeconds / 86400);
-        var rem = totalSeconds - days * 86400;
-        var hours = Math.floor(rem / 3600); rem -= hours * 3600;
-        var mins = Math.floor(rem / 60); rem -= mins * 60;
-        var secs = rem;
+        var rem = totalSeconds - (days * 86400);
 
-        elAge.textContent = days + 'd ' + pad2(hours) + ':' + pad2(mins) + ':' + pad2(secs);
+        var hours = Math.floor(rem / 3600); rem -= hours * 3600;
+        var mins  = Math.floor(rem / 60);   rem -= mins * 60;
+        var secs  = rem;
+
+        elAge.textContent = years + 'y ' + days + 'd ' + pad2(hours) + ':' + pad2(mins) + ':' + pad2(secs);
       }
 
-      renderStatic();
-      renderRunway();
+      renderStaticNumbers();
+      computeAndFreezeWipeDate(); // IMPORTANT: only once
       renderAge();
-
-      setInterval(renderRunway, 30); // countdown needs ms
-      setInterval(renderAge, 250);   // age updates cleanly
+      setInterval(renderAge, 250); // smooth, but still “to the second”
     })();
   </script>
 </body>
