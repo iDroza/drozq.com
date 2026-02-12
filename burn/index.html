@@ -42,7 +42,6 @@
 
     *{ box-sizing:border-box; }
 
-    /* Match your base pages */
     html,body{
       height:100%;
       margin:0;
@@ -62,33 +61,35 @@
 
     #site-header,#site-footer{ flex:0 0 auto; }
 
-    /* Left-anchored “sheet” */
     .wrap{
       flex:1 1 auto;
       min-height:0;
       display:flex;
-      align-items:center;
-      justify-content:flex-start;
+      align-items:center;          /* vertical */
+      justify-content:flex-start;  /* left */
       padding:2rem;
-      padding-bottom:5.5rem; /* space for fixed footer */
+      padding-bottom:5.5rem;
     }
 
+    /* Full-width sheet so labels/values hug left/right edges (within padding) */
     .sheet{
-      width:min(980px, 100%);
+      width:100%;
       text-align:left;
-      font-size:clamp(28px,6vw,72px); /* same scale family */
+      font-size:clamp(28px,6vw,72px);
       letter-spacing:.03em;
       line-height:1.08;
     }
 
     .rows{
+      width:100%;
       display:flex;
       flex-direction:column;
       gap:.55rem;
     }
 
-    /* Balance sheet row: label left, value right */
+    /* label hard-left, value hard-right */
     .row{
+      width:100%;
       display:grid;
       grid-template-columns: 1fr auto;
       gap:1.25rem;
@@ -100,7 +101,7 @@
       letter-spacing:.18em;
       text-transform:uppercase;
       color:var(--muted);
-      white-space:nowrap;
+      white-space:normal;
     }
 
     .v{
@@ -110,18 +111,19 @@
       font-feature-settings: "tnum" 1, "lnum" 1;
       white-space:nowrap;
       text-align:right;
+      justify-self:end;
     }
 
     .neg{ color:var(--danger); }
 
+    /* Only split before Age */
     .rule{
       height:1px;
       background:var(--rule);
-      width:min(720px, 100%);
+      width:100%;
       margin:.25rem 0 .1rem;
     }
 
-    /* footer (desktop) — same behavior as your pages */
     footer.site-footer{
       position:fixed;
       left:0;
@@ -174,17 +176,12 @@
         padding:1.1rem 1.4rem 1.4rem;
       }
       .footer-link{ font-size:.85rem; }
-
-      /* Stack label/value on mobile */
-      .row{ grid-template-columns:1fr; gap:.25rem; }
-      .v{ text-align:left; }
-      .k{ white-space:normal; }
+      .v{ font-size:.52em; }
     }
   </style>
 </head>
 
 <body>
-  <!-- Shared header inject point -->
   <div id="site-header"></div>
 
   <main class="wrap">
@@ -199,8 +196,6 @@
           <div class="k">Burn Rate</div>
           <div class="v neg" id="burn">-$0.00</div>
         </div>
-
-        <div class="rule" aria-hidden="true"></div>
 
         <div class="row">
           <div class="k">The day I am wiped from existence</div>
@@ -217,7 +212,6 @@
     </section>
   </main>
 
-  <!-- Shared footer inject point -->
   <div id="site-footer"></div>
 
   <script>
@@ -264,13 +258,18 @@
       var elAge  = document.getElementById('age');
 
       function pad2(n){ return (n < 10 ? '0' : '') + n; }
+      function pad3(n){
+        if (n < 10) return '00' + n;
+        if (n < 100) return '0' + n;
+        return '' + n;
+      }
 
       function renderStaticNumbers(){
         elCash.textContent = fmtUSD.format(CASH_ON_HAND);
         elBurn.textContent = '-' + fmtUSD.format(Math.abs(BURN_RATE));
       }
 
-      // Compute wipeout ONCE, based on current moment and your inputs.
+      // Compute wipeout ONCE (frozen). No live countdown.
       function computeAndFreezeWipeDate(){
         var burn = Math.abs(BURN_RATE);
         if (!isFinite(CASH_ON_HAND) || !isFinite(burn) || burn <= 0){
@@ -285,7 +284,6 @@
 
         var wipeDate = new Date(wipeMs);
 
-        // Plain English date (no 02/12/2026 style)
         elWipe.textContent = wipeDate.toLocaleDateString(undefined, {
           weekday:'long',
           year:'numeric',
@@ -294,7 +292,7 @@
         });
       }
 
-      // Age: years since birth + remainder as days/hh:mm:ss (ticks up)
+      // Age ticks up (includes milliseconds)
       function renderAge(){
         var birth = new Date(BIRTH_ISO);
         if (!isFinite(birth)) { elAge.textContent = '—'; return; }
@@ -302,10 +300,10 @@
         var now = new Date();
         if (now < birth) { elAge.textContent = '—'; return; }
 
+        // Years since birth (calendar-true), plus remainder since last birthday
         var years = now.getFullYear() - birth.getFullYear();
         var lastBirthday = new Date(birth.getTime());
         lastBirthday.setFullYear(birth.getFullYear() + years);
-
         if (lastBirthday > now){
           years--;
           lastBirthday = new Date(birth.getTime());
@@ -313,22 +311,24 @@
         }
 
         var diffMs = now.getTime() - lastBirthday.getTime();
-        var totalSeconds = Math.floor(diffMs / 1000);
 
-        var days = Math.floor(totalSeconds / 86400);
-        var rem = totalSeconds - (days * 86400);
+        var days = Math.floor(diffMs / MS_PER_DAY);
+        var remMs = diffMs - (days * MS_PER_DAY);
 
-        var hours = Math.floor(rem / 3600); rem -= hours * 3600;
-        var mins  = Math.floor(rem / 60);   rem -= mins * 60;
-        var secs  = rem;
+        var hours = Math.floor(remMs / 3600000); remMs -= hours * 3600000;
+        var mins  = Math.floor(remMs / 60000);   remMs -= mins * 60000;
+        var secs  = Math.floor(remMs / 1000);    remMs -= secs * 1000;
+        var msec  = remMs;
 
-        elAge.textContent = years + 'y ' + days + 'd ' + pad2(hours) + ':' + pad2(mins) + ':' + pad2(secs);
+        elAge.textContent =
+          years + 'y ' + days + 'd ' +
+          pad2(hours) + ':' + pad2(mins) + ':' + pad2(secs) + '.' + pad3(msec);
       }
 
       renderStaticNumbers();
-      computeAndFreezeWipeDate(); // IMPORTANT: only once
+      computeAndFreezeWipeDate();
       renderAge();
-      setInterval(renderAge, 250); // smooth, but still “to the second”
+      setInterval(renderAge, 30); // ms-visible, smooth enough
     })();
   </script>
 </body>
