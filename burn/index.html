@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Primary SEO -->
+  <title>Burn | drozq</title>
+  <meta name="description" content="Cash runway. Exact wipeout date. Live countdown. Live age counter." />
+  <link rel="canonical" href="https://drozq.com/burn/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Burn | drozq" />
+  <meta property="og:description" content="Cash runway. Exact wipeout date. Live countdown. Live age counter." />
+  <meta property="og:url" content="https://drozq.com/burn/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://drozq.com/preview.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/jpeg" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Burn | drozq" />
+  <meta name="twitter:description" content="Cash runway. Exact wipeout date. Live countdown. Live age counter." />
+  <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
+
+  <!-- Indexing -->
+  <meta name="robots" content="index,follow" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
+
+  <style>
+    :root{
+      --bg:#000;
+      --fg:#fff;
+      --muted:rgba(255,255,255,.65);
+      --accent:#9900FF;
+      --border:rgba(255,255,255,.14);
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+      --danger:#ff3b30; /* iOS-ish red */
+    }
+
+    *{ box-sizing:border-box; }
+
+    /* Match homepage viewport + typography behavior */
+    html,body{
+      height:100%;
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-weight:700;
+      -webkit-font-smoothing:antialiased;
+      overflow:hidden; /* desktop: lock viewport */
+    }
+
+    body{
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+    }
+
+    #site-header,
+    #site-footer{
+      flex:0 0 auto;
+    }
+
+    .wrap{
+      position:relative;
+      z-index:2;
+      flex:1 1 auto;
+      min-height:0;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:2rem;
+      padding-bottom:5.5rem; /* desktop: space for fixed footer */
+    }
+
+    /* Base hero size = philanthropy page */
+    .hero-stack{
+      font-weight:700;
+      font-size:clamp(28px,6vw,72px);
+      letter-spacing:.03em;
+      line-height:1.08;
+      width:min(980px, 100%);
+      display:flex;
+      flex-direction:column;
+      gap:1.05rem;
+    }
+
+    .metric{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:.25rem;
+    }
+
+    .label{
+      font-size:.24em;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    .value{
+      font-size:1em;
+      letter-spacing:.02em;
+      white-space:nowrap;
+    }
+
+    .value.negative{
+      color:var(--danger);
+    }
+
+    .divider{
+      width:min(720px, 92%);
+      height:1px;
+      background:var(--border);
+      margin:.1rem auto .1rem;
+    }
+
+    .row-two{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:1.2rem;
+      width:100%;
+      align-items:start;
+    }
+
+    .box{
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:1.05rem 1.1rem;
+      background:rgba(255,255,255,.03);
+      box-shadow:var(--shadow);
+    }
+
+    .box .label{
+      font-size:.22em;
+    }
+
+    .box .big{
+      font-size:.62em;
+      letter-spacing:.02em;
+      margin-top:.25rem;
+      white-space:normal;
+    }
+
+    .countdown{
+      display:flex;
+      flex-direction:column;
+      gap:.35rem;
+      margin-top:.25rem;
+    }
+
+    .countdown .line{
+      font-size:.56em;
+      letter-spacing:.02em;
+      white-space:nowrap;
+    }
+
+    .countdown .sub{
+      font-size:.28em;
+      color:var(--muted);
+      letter-spacing:.06em;
+      font-weight:700;
+      white-space:normal;
+    }
+
+    .note{
+      font-size:.22em;
+      color:var(--muted);
+      letter-spacing:.04em;
+      margin-top:.15rem;
+      font-weight:700;
+    }
+
+    /* footer (desktop) — same as homepage */
+    footer.site-footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:5;
+      background:rgba(0,0,0,.4);
+      backdrop-filter:blur(8px);
+      display:flex;
+      justify-content:center;
+      gap:2.5rem;
+      padding:1.35rem 1.5rem 1.1rem;
+    }
+
+    .footer-link{
+      position:relative;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.02em;
+      cursor:pointer;
+      padding-bottom:.35rem;
+      transition:opacity .2s ease;
+    }
+
+    .footer-link::after{
+      content:'';
+      position:absolute;
+      left:0;
+      bottom:-0.35rem;
+      height:2px;
+      width:0;
+      background:#fff;
+      transition:width .2s ease-out;
+    }
+
+    .footer-link:hover{ opacity:.55; }
+    .footer-link:hover::after{ width:100%; }
+
+    /* mobile adjustments — same as homepage */
+    @media (max-width:540px){
+      html,body{
+        overflow:auto;
+        height:auto;
+      }
+      body{
+        display:block;
+      }
+      .wrap{
+        min-height:calc(100vh - 120px);
+        display:grid;
+        place-items:center;
+        padding:1.6rem 1.4rem 0;
+      }
+      .hero-stack{
+        width:100%;
+        gap:1rem;
+      }
+      .row-two{
+        grid-template-columns:1fr;
+      }
+      footer.site-footer{
+        position:static;
+        flex-wrap:wrap;
+        justify-content:flex-start;
+        gap:1rem 1.5rem;
+        padding:1.1rem 1.4rem 1.4rem;
+      }
+      .footer-link{
+        font-size:.85rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Shared header inject point -->
+  <div id="site-header"></div>
+
+  <main class="wrap">
+    <section class="hero-stack" aria-label="Burn runway">
+      <div class="metric">
+        <div class="label">Cash on Hand</div>
+        <div class="value" id="cashValue">$0.00</div>
+      </div>
+
+      <div class="metric">
+        <div class="label">Monthly Burn Rate</div>
+        <div class="value negative" id="burnValue">-$0.00</div>
+      </div>
+
+      <div class="divider" role="separator" aria-hidden="true"></div>
+
+      <div class="row-two">
+        <div class="box">
+          <div class="label">The day I am wiped from existence</div>
+          <div class="big" id="wipeDate">—</div>
+          <div class="note" id="wipeDateNote"></div>
+        </div>
+
+        <div class="box">
+          <div class="label">Days Remaining</div>
+          <div class="countdown">
+            <div class="line" id="daysRemaining">—</div>
+            <div class="line" id="hmsmRemaining">—</div>
+            <div class="sub" id="countdownSub">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider" role="separator" aria-hidden="true"></div>
+
+      <div class="box" style="width:100%;">
+        <div class="label">Age (live)</div>
+        <div class="big" id="ageValue">—</div>
+        <div class="note" id="ageNote"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Shared footer inject point -->
+  <div id="site-footer"></div>
+
+  <script>
+    (function () {
+      function inject(id, url, label) {
+        var target = document.getElementById(id);
+        if (!target) return;
+
+        fetch(url, { cache: 'no-cache' })
+          .then(function (res) {
+            if (!res.ok) throw new Error('Failed to load ' + label);
+            return res.text();
+          })
+          .then(function (html) {
+            target.innerHTML = html;
+          })
+          .catch(function (err) {
+            console.error(label + ' load error:', err);
+          });
+      }
+
+      inject('site-header', '/header.html', 'header');
+      inject('site-footer', '/footer.html', 'footer');
+    })();
+  </script>
+
+  <script>
+    (function () {
+      // =========================
+      // EDIT HERE (manual inputs)
+      // =========================
+      var CASH_ON_HAND = 17891.93;  // dollars
+      var MONTHLY_BURN  = 2644.11;  // dollars per month (will display as negative)
+
+      // Birth: Aug 27, 2004 @ 4:00 AM Pacific.
+      // This string pins it to a Pacific offset (PDT, UTC-7) for that date.
+      // If your device timezone isn't Pacific, "Age" will still be consistent as an absolute moment,
+      // but the displayed wall-clock interpretation may feel shifted.
+      var BIRTH_ISO = '2004-08-27T04:00:00-07:00';
+
+      // =========================
+      // Assumptions (truth matters)
+      // =========================
+      // "Monthly burn" is not a physical unit of time. Months vary.
+      // To make an exact timestamp, we must choose a convention.
+      // Here: average Gregorian month length = 365.2425/12 days.
+      var AVG_DAYS_PER_MONTH = 365.2425 / 12; // 30.436875
+      var MS_PER_DAY = 24 * 60 * 60 * 1000;
+      var AVG_MONTH_MS = AVG_DAYS_PER_MONTH * MS_PER_DAY;
+
+      var cashEl = document.getElementById('cashValue');
+      var burnEl = document.getElementById('burnValue');
+      var wipeDateEl = document.getElementById('wipeDate');
+      var wipeDateNoteEl = document.getElementById('wipeDateNote');
+      var daysEl = document.getElementById('daysRemaining');
+      var hmsmEl = document.getElementById('hmsmRemaining');
+      var subEl = document.getElementById('countdownSub');
+
+      var ageEl = document.getElementById('ageValue');
+      var ageNoteEl = document.getElementById('ageNote');
+
+      var moneyFmt = new Intl.NumberFormat('en-US', { style:'currency', currency:'USD', maximumFractionDigits: 2 });
+      function fmtUSD(n){ return moneyFmt.format(n); }
+
+      // Display the static inputs (but still formatted)
+      function renderInputs(){
+        cashEl.textContent = fmtUSD(CASH_ON_HAND);
+        burnEl.textContent = '-' + fmtUSD(Math.abs(MONTHLY_BURN));
+      }
+
+      function pad2(n){ return (n < 10 ? '0' : '') + n; }
+      function pad3(n){
+        if (n < 10) return '00' + n;
+        if (n < 100) return '0' + n;
+        return '' + n;
+      }
+
+      function computeWipeoutTimestamp(nowMs){
+        var burn = Math.abs(MONTHLY_BURN);
+        if (!isFinite(CASH_ON_HAND) || !isFinite(burn) || burn <= 0){
+          return NaN;
+        }
+        var monthsRemaining = CASH_ON_HAND / burn;
+        var durationMs = monthsRemaining * AVG_MONTH_MS;
+        return nowMs + durationMs;
+      }
+
+      function formatWipeDate(dt){
+        // Concrete. No vibes. Date + time.
+        return dt.toLocaleString(undefined, {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+      }
+
+      function breakdownMs(ms){
+        if (!isFinite(ms)) return null;
+
+        var sign = ms < 0 ? -1 : 1;
+        var x = Math.max(0, Math.floor(Math.abs(ms)));
+
+        var days = Math.floor(x / MS_PER_DAY);
+        x -= days * MS_PER_DAY;
+
+        var hours = Math.floor(x / (60 * 60 * 1000));
+        x -= hours * (60 * 60 * 1000);
+
+        var minutes = Math.floor(x / (60 * 1000));
+        x -= minutes * (60 * 1000);
+
+        var seconds = Math.floor(x / 1000);
+        x -= seconds * 1000;
+
+        var millis = x;
+
+        return { sign: sign, days: days, hours: hours, minutes: minutes, seconds: seconds, millis: millis };
+      }
+
+      function renderCountdown(){
+        var now = Date.now();
+        var wipeMs = computeWipeoutTimestamp(now);
+
+        if (!isFinite(wipeMs)){
+          wipeDateEl.textContent = '—';
+          wipeDateNoteEl.textContent = 'Set CASH_ON_HAND and MONTHLY_BURN to valid numbers.';
+          daysEl.textContent = '—';
+          hmsmEl.textContent = '—';
+          subEl.textContent = '—';
+          return;
+        }
+
+        var wipeDate = new Date(wipeMs);
+        wipeDateEl.textContent = formatWipeDate(wipeDate);
+
+        // Truth note (assumption disclosure)
+        wipeDateNoteEl.textContent =
+          'Assumption: burn is constant; 1 month = ' + AVG_DAYS_PER_MONTH.toFixed(6) + ' days (average Gregorian month).';
+
+        var diff = wipeMs - now;
+        var parts = breakdownMs(diff);
+
+        if (!parts || diff <= 0){
+          daysEl.textContent = '0 days';
+          hmsmEl.textContent = '00:00:00.000';
+          subEl.textContent = 'Runway exhausted.';
+          return;
+        }
+
+        daysEl.textContent = parts.days + ' days';
+        hmsmEl.textContent = pad2(parts.hours) + ':' + pad2(parts.minutes) + ':' + pad2(parts.seconds) + '.' + pad3(parts.millis);
+        subEl.textContent = 'Hours / Minutes / Seconds / Milliseconds remaining (counting down).';
+      }
+
+      // Age counter (calendar-true years/months, then remainder)
+      function addMonths(date, m){
+        var d = new Date(date.getTime());
+        var day = d.getDate();
+        d.setMonth(d.getMonth() + m);
+
+        // Handle month rollover for dates like Jan 31 -> Feb (clamp)
+        // If we rolled into next month, pull back to last day of prior month.
+        if (d.getDate() < day) {
+          d.setDate(0);
+        }
+        return d;
+      }
+
+      function computeAgeParts(now, birth){
+        if (!(now instanceof Date) || !(birth instanceof Date) || !isFinite(now) || !isFinite(birth)) return null;
+        if (now < birth) return null;
+
+        // Years
+        var years = now.getFullYear() - birth.getFullYear();
+        var anchor = new Date(birth.getTime());
+        anchor.setFullYear(birth.getFullYear() + years);
+
+        if (anchor > now) {
+          years--;
+          anchor = new Date(birth.getTime());
+          anchor.setFullYear(birth.getFullYear() + years);
+        }
+
+        // Months (increment until next month would overshoot)
+        var months = 0;
+        while (true) {
+          var next = addMonths(anchor, 1);
+          if (next <= now) { anchor = next; months++; }
+          else break;
+        }
+
+        // Remainder as pure elapsed time
+        var remMs = now.getTime() - anchor.getTime();
+        var p = breakdownMs(remMs);
+        return {
+          years: years,
+          months: months,
+          days: p ? p.days : 0,
+          hours: p ? p.hours : 0,
+          minutes: p ? p.minutes : 0,
+          seconds: p ? p.seconds : 0
+        };
+      }
+
+      function renderAge(){
+        var now = new Date();
+        var birth = new Date(BIRTH_ISO);
+
+        if (!isFinite(birth)){
+          ageEl.textContent = '—';
+          ageNoteEl.textContent = 'Birth timestamp invalid.';
+          return;
+        }
+
+        var a = computeAgeParts(now, birth);
+        if (!a){
+          ageEl.textContent = '—';
+          ageNoteEl.textContent = 'Now < Birth (clock issue).';
+          return;
+        }
+
+        ageEl.textContent =
+          a.years + 'y ' +
+          a.months + 'mo ' +
+          a.days + 'd ' +
+          pad2(a.hours) + 'h ' +
+          pad2(a.minutes) + 'm ' +
+          pad2(a.seconds) + 's';
+
+        ageNoteEl.textContent = 'Birth pinned at: Aug 27, 2004 04:00 (Pacific).';
+      }
+
+      renderInputs();
+
+      // Countdown wants milliseconds, so we refresh often.
+      // Keep it light: 30ms is smooth enough without being stupid.
+      renderCountdown();
+      var countdownTimer = setInterval(renderCountdown, 30);
+
+      // Age updates to the second.
+      renderAge();
+      var ageTimer = setInterval(renderAge, 250);
+    })();
+  </script>
+</body>
+</html>
