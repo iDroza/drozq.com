@@ -237,16 +237,35 @@
   <script>
     (function () {
       // =========================
-      // EDIT THESE (manual inputs)
+      // UPDATE THESE (manual inputs)
       // =========================
-      var CASH_ON_HAND = 17891.93;
-      var BURN_RATE    = 2644.11; // per 30-day month, displayed negative + red
+
+      // UPDATE THIS: current bank account balance (cash on hand)
+      var CASH_ON_HAND = 17180.52;
+
+      // UPDATE THIS: burn rate per 30-day month (keep positive here; display will be negative + red)
+      var BURN_RATE    = 2644.11;
+
+      /*
+        UPDATE THIS: WIPEOUT DATE (BURNED-IN / NON-VARIABLE)
+
+        Calculated in-chat using:
+          monthsRemaining = CASH_ON_HAND / BURN_RATE
+          daysRemaining   = monthsRemaining * 30
+          = (17180.52 / 2644.11) * 30
+          = 194.9297 days after Feb 17, 2026 (Los Angeles)
+
+        Result burned in as:
+      */
+      var WIPEOUT_DATE = 'Monday, August 31, 2026';
 
       // Birth: Aug 27, 2004 @ 4:00 AM Pacific (offset pinned for that date)
       var BIRTH_ISO = '2004-08-27T04:00:00-07:00';
 
+      // =========================
+      // internals
+      // =========================
       var MS_PER_DAY = 86400000;
-      var DAYS_PER_MONTH = 30;
 
       var fmtUSD = new Intl.NumberFormat('en-US', {
         style:'currency', currency:'USD', maximumFractionDigits:2
@@ -259,6 +278,7 @@
 
       function pad2(n){ return (n < 10 ? '0' : '') + n; }
       function pad3(n){
+        n = Math.floor(n);
         if (n < 10) return '00' + n;
         if (n < 100) return '0' + n;
         return '' + n;
@@ -269,30 +289,13 @@
         elBurn.textContent = '-' + fmtUSD.format(Math.abs(BURN_RATE));
       }
 
-      // Compute wipeout ONCE (frozen). No live countdown.
-      function computeAndFreezeWipeDate(){
-        var burn = Math.abs(BURN_RATE);
-        if (!isFinite(CASH_ON_HAND) || !isFinite(burn) || burn <= 0){
-          elWipe.textContent = '—';
-          return;
-        }
-
-        var nowMs = Date.now();
-        var monthsRemaining = CASH_ON_HAND / burn;
-        var daysRemaining = monthsRemaining * DAYS_PER_MONTH;
-        var wipeMs = nowMs + (daysRemaining * MS_PER_DAY);
-
-        var wipeDate = new Date(wipeMs);
-
-        elWipe.textContent = wipeDate.toLocaleDateString(undefined, {
-          weekday:'long',
-          year:'numeric',
-          month:'long',
-          day:'numeric'
-        });
+      // Wipeout date is intentionally NOT computed at runtime.
+      function renderBurnedInWipeDate(){
+        elWipe.textContent = WIPEOUT_DATE || '—';
       }
 
       // Age ticks up (includes milliseconds)
+      // Format: y d h m s ms
       function renderAge(){
         var birth = new Date(BIRTH_ISO);
         if (!isFinite(birth)) { elAge.textContent = '—'; return; }
@@ -320,18 +323,16 @@
         var secs  = Math.floor(remMs / 1000);    remMs -= secs * 1000;
         var msec  = remMs;
 
-        // Format as: y d h s ms (fold minutes into seconds)
-        var secsTotal = (mins * 60) + secs;
-
         elAge.textContent =
           years + 'y ' + days + 'd ' +
           pad2(hours) + 'h ' +
-          secsTotal + 's ' +
-          pad3(msec) + 'ms';
+          pad2(mins)  + 'm ' +
+          pad2(secs)  + 's ' +
+          pad3(msec)  + 'ms';
       }
 
       renderStaticNumbers();
-      computeAndFreezeWipeDate();
+      renderBurnedInWipeDate();
       renderAge();
       setInterval(renderAge, 30); // ms-visible, smooth enough
     })();
