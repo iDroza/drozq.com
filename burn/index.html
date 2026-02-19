@@ -71,7 +71,6 @@
       padding-bottom:5.5rem;
     }
 
-    /* Full-width sheet so labels/values hug left/right edges (within padding) */
     .sheet{
       width:100%;
       text-align:left;
@@ -87,7 +86,6 @@
       gap:.55rem;
     }
 
-    /* label hard-left, value hard-right */
     .row{
       width:100%;
       display:grid;
@@ -116,7 +114,6 @@
 
     .neg{ color:var(--danger); }
 
-    /* Only split before Age */
     .rule{
       height:1px;
       background:var(--rule);
@@ -241,7 +238,7 @@
       // =========================
 
       // UPDATE THIS: current bank account balance (cash on hand)
-      var CASH_ON_HAND = 17180.52;
+      var CASH_ON_HAND = 23054.14;
 
       // UPDATE THIS: burn rate per 30-day month (keep positive here; display will be negative + red)
       var BURN_RATE    = 2644.11;
@@ -252,12 +249,12 @@
         Calculated in-chat using:
           monthsRemaining = CASH_ON_HAND / BURN_RATE
           daysRemaining   = monthsRemaining * 30
-          = (17180.52 / 2644.11) * 30
-          = 194.9297 days after Feb 17, 2026 (Los Angeles)
+          = (23054.14 / 2644.11) * 30
+          = 261.5716 days after Feb 19, 2026 (Los Angeles)
 
         Result burned in as:
       */
-      var WIPEOUT_DATE = 'Monday, August 31, 2026';
+      var WIPEOUT_DATE = 'Saturday, November 07, 2026';
 
       // Birth: Aug 27, 2004 @ 4:00 AM Pacific (offset pinned for that date)
       var BIRTH_ISO = '2004-08-27T04:00:00-07:00';
@@ -334,7 +331,7 @@
       renderStaticNumbers();
       renderBurnedInWipeDate();
       renderAge();
-      setInterval(renderAge, 30); // ms-visible, smooth enough
+      setInterval(renderAge, 30);
     })();
   </script>
 </body>
