@@ -238,7 +238,7 @@
       // =========================
 
       // UPDATE THIS: current bank account balance (cash on hand)
-      var CASH_ON_HAND = 23054.14;
+      var CASH_ON_HAND = 21269.48;
 
       // UPDATE THIS: burn rate per 30-day month (keep positive here; display will be negative + red)
       var BURN_RATE    = 2644.11;
@@ -246,15 +246,15 @@
       /*
         UPDATE THIS: WIPEOUT DATE (BURNED-IN / NON-VARIABLE)
 
-        Calculated in-chat using:
+        Calculated in-chat (Los Angeles) anchored to: March 6, 2026
           monthsRemaining = CASH_ON_HAND / BURN_RATE
           daysRemaining   = monthsRemaining * 30
-          = (23054.14 / 2644.11) * 30
-          = 261.5716 days after Feb 19, 2026 (Los Angeles)
+          = (21269.48 / 2644.11) * 30
+          = 241.3229 days after March 6, 2026
 
         Result burned in as:
       */
-      var WIPEOUT_DATE = 'Saturday, November 07, 2026';
+      var WIPEOUT_DATE = 'Monday, November 02, 2026';
 
       // Birth: Aug 27, 2004 @ 4:00 AM Pacific (offset pinned for that date)
       var BIRTH_ISO = '2004-08-27T04:00:00-07:00';
