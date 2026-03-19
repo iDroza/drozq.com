@@ -41,7 +41,7 @@
       --current:rgba(153,0,255,.18);
       --upcoming:rgba(255,255,255,.01);
     }
-    *{box-sizing:border-box;}
+    *{box-sizing:border-box;margin:0;padding:0;}
     body{
       margin:0;
       background:var(--bg);
@@ -52,10 +52,7 @@
       padding-bottom:5.5rem;
     }
 
-    /* Injected header container */
-    #site-header{
-      width:100%;
-    }
+    #site-header{width:100%;}
 
     main{
       max-width:1120px;
@@ -63,14 +60,14 @@
       padding:0 1.4rem 3rem;
     }
 
-    /* ───────────── LAYOUT: HOURGLASS + DECADE PLAN ───────────── */
+    /* ───────────── LAYOUT ───────────── */
     .decade-layout{
       display:flex;
       align-items:flex-start;
       gap:1.75rem;
     }
-    .decade-left{ flex:0 0 340px; }
-    .decade-right{ flex:1; min-width:0; }
+    .decade-left{flex:0 0 340px;position:sticky;top:1.5rem;}
+    .decade-right{flex:1;min-width:0;}
 
     h1{
       font-size:1.5rem;
@@ -80,48 +77,55 @@
     .subtitle{
       color:var(--muted);
       max-width:560px;
-      line-height:1.4;
+      line-height:1.5;
       margin-bottom:1.4rem;
+      font-size:.9rem;
     }
     .decade-meta{
-      margin-bottom:1.2rem;
-      padding:.6rem .8rem;
+      margin-bottom:1.6rem;
+      padding:.65rem .9rem;
       border-left:3px solid var(--accent);
       background:rgba(153,0,255,.06);
-      font-size:.83rem;
+      font-size:.82rem;
+      line-height:1.5;
+      color:var(--muted);
     }
+
+    /* ───────────── YEAR BLOCKS ───────────── */
     .year-block{
       position:relative;
       border:1px solid var(--border);
       border-radius:14px;
-      padding:1rem 1.1rem .9rem;
+      padding:1.1rem 1.2rem 1rem;
       margin-bottom:.9rem;
       background:var(--upcoming);
     }
     .year-block .status-tag{
       position:absolute;
-      top:.7rem;
-      right:.85rem;
-      font-size:.62rem;
-      letter-spacing:.08em;
+      top:.75rem;
+      right:.9rem;
+      font-size:.6rem;
+      letter-spacing:.1em;
       text-transform:uppercase;
-      padding:.25rem .55rem .2rem;
+      padding:.22rem .55rem;
       border-radius:999px;
       background:rgba(0,0,0,.3);
       border:1px solid rgba(255,255,255,.08);
+      font-weight:600;
     }
+
+    /* states */
     .year-block.past{
-      background:linear-gradient(135deg, rgba(0,0,0,.35) 0%, rgba(0,255,153,.07) 100%);
+      background:linear-gradient(135deg,rgba(0,0,0,.35) 0%,rgba(0,255,153,.07) 100%);
       border-color:rgba(0,255,153,.32);
-      opacity:.9;
+      opacity:.85;
     }
     .year-block.past .status-tag{
       background:rgba(0,255,153,.14);
       border-color:rgba(0,255,153,.45);
-      color:#fff;
     }
     .year-block.current{
-      background:radial-gradient(circle at top, rgba(153,0,255,.32) 0%, rgba(0,0,0,.4) 58%);
+      background:radial-gradient(circle at top,rgba(153,0,255,.32) 0%,rgba(0,0,0,.4) 58%);
       border-color:rgba(153,0,255,.6);
       box-shadow:0 12px 35px rgba(0,0,0,.35);
     }
@@ -133,66 +137,106 @@
       background:rgba(255,255,255,.007);
       border-color:rgba(255,255,255,.06);
     }
-    .year-title{
+
+    /* year header row */
+    .year-header{
       display:flex;
       justify-content:space-between;
-      gap:1rem;
-      font-weight:600;
-      margin-bottom:.35rem;
-      padding-right:4rem;
+      align-items:baseline;
+      padding-right:5rem;
+      margin-bottom:.55rem;
     }
-    .income{
-      font-size:.68rem;
+    .year-num{
+      font-weight:700;
+      font-size:1rem;
+    }
+    .year-dates{
+      font-size:.72rem;
       color:var(--muted);
-      margin-bottom:.45rem;
     }
+    .year-income{
+      font-size:.78rem;
+      color:#fbbf24;
+      font-weight:600;
+      margin-bottom:.7rem;
+    }
+
+    /* data grid inside each year */
+    .year-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:.45rem .9rem;
+    }
+    .year-grid.full{
+      grid-template-columns:1fr;
+    }
+    .data-cell{}
+    .data-cell.span{grid-column:1/-1;}
+    .data-label{
+      font-size:.6rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--muted);
+      margin-bottom:.15rem;
+      line-height:1;
+    }
+    .data-value{
+      font-size:.78rem;
+      line-height:1.4;
+    }
+
+    /* pills */
     .pill{
       display:inline-block;
       background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
       border-radius:999px;
-      padding:.25rem .7rem;
-      font-size:.68rem;
-      margin-right:.35rem;
-      margin-bottom:.35rem;
-    }
-    .field-label{
-      font-size:.68rem;
-      text-transform:uppercase;
-      letter-spacing:.06em;
-      color:var(--muted);
-      margin-top:.35rem;
-      margin-bottom:.1rem;
-    }
-    .networth{
-      margin-top:1.6rem;
-      padding:1.1rem 1.1rem 1rem;
-      border:1px solid rgba(153,0,255,.5);
-      border-radius:16px;
-      background:radial-gradient(circle at top, rgba(153,0,255,.35) 0%, rgba(0,0,0,0) 58%);
-    }
-    .networth h2{
-      margin:0 0 .4rem;
-      font-size:1rem;
-    }
-    .networth p{
-      margin:0;
-      color:var(--muted);
+      padding:.2rem .6rem;
+      font-size:.65rem;
+      margin-right:.3rem;
+      margin-bottom:.3rem;
     }
 
-    footer.site-footer{
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
-      z-index:5;
-      background:rgba(0,0,0,.4);
-      backdrop-filter:blur(8px);
+    /* capital + EV row */
+    .metrics-row{
       display:flex;
-      justify-content:center;
-      gap:2.5rem;
-      padding:1.35rem 1.5rem 1.1rem;
+      gap:.6rem;
+      margin-top:.55rem;
+      padding-top:.5rem;
+      border-top:1px solid rgba(255,255,255,.06);
     }
+    .metric-box{
+      flex:1;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.05);
+      border-radius:8px;
+      padding:.4rem .6rem;
+    }
+    .metric-box .data-label{margin-bottom:.1rem;}
+    .metric-box .data-value{
+      font-weight:600;
+      font-size:.76rem;
+    }
+    .metric-box.ev .data-value{color:var(--accent);}
+    .metric-box.cap .data-value{color:#34d399;}
+
+    /* end-of-decade */
+    .networth{
+      margin-top:1.6rem;
+      padding:1.2rem;
+      border:1px solid rgba(153,0,255,.5);
+      border-radius:16px;
+      background:radial-gradient(circle at top,rgba(153,0,255,.35) 0%,rgba(0,0,0,0) 58%);
+    }
+    .networth h2{margin:0 0 .25rem;font-size:1rem;}
+    .networth .nw-sub{color:var(--muted);font-size:.82rem;margin:0 0 .3rem;}
+    .networth .nw-eq{
+      font-size:.75rem;
+      color:var(--muted);
+      font-style:italic;
+    }
+
+    /* footer nav links */
     .footer-link{
       position:relative;
       color:#fff;
@@ -204,152 +248,80 @@
       transition:opacity .2s ease;
     }
     .footer-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
+      content:'';position:absolute;left:0;bottom:-0.35rem;
+      height:2px;width:0;background:#fff;transition:width .2s ease-out;
     }
-    .footer-link:hover{ opacity:.55; }
-    .footer-link:hover::after{ width:100%; }
+    .footer-link:hover{opacity:.55;}
+    .footer-link:hover::after{width:100%;}
 
-    /* mobile adjustments */
-    @media (max-width:900px){
-      .decade-layout{ flex-direction:column; }
-      .decade-left{ flex:none; max-width:100%; }
-    }
-    @media (max-width:540px){
-      body{ padding-bottom:0; }
-      .year-title{
-        flex-direction:column;
-        align-items:flex-start;
-        padding-right:0;
-      }
-      .year-block .status-tag{
-        top:.6rem;
-        right:.6rem;
-      }
-      footer.site-footer{
-        position:static;
-        flex-wrap:wrap;
-        justify-content:flex-start;
-        gap:1rem 1.5rem;
-        padding:1.1rem 1.4rem 1.4rem;
-      }
-    }
-
-    /* ───────────── YEAR 2 HOURGLASS STYLES ───────────── */
-    .year2-hourglass {
-      background:#141828;
-      color:#ffffff;
-      border-radius:16px;
-      padding:16px 18px 18px;
-      box-shadow:0 18px 45px rgba(0, 0, 0, 0.6);
+    /* ───────────── HOURGLASS (unchanged) ───────────── */
+    .year2-hourglass{
+      background:#141828;color:#fff;border-radius:16px;
+      padding:16px 18px 18px;box-shadow:0 18px 45px rgba(0,0,0,.6);
       border:1px solid rgba(255,255,255,.08);
     }
-    .year2-hourglass,
-    .year2-hourglass * {
+    .year2-hourglass,.year2-hourglass *{
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
     }
-    .year2-hourglass-inner{ display:flex; flex-direction:column; gap:10px; }
-    .year2-header{ text-align:center; }
-    .year2-title{
-      margin:0;
-      font-size:0.85rem;
-      letter-spacing:0.15em;
-      text-transform:uppercase;
-      font-weight:600;
-      color:#e5e7eb;
-    }
-    .year2-dates{
-      margin:4px 0 0;
-      font-size:0.7rem;
-      color:#6b7280;
-    }
-    .year2-main{
-      display:flex;
-      flex-direction:column;
-      align-items:stretch;
-      gap:10px;
-    }
-    .year2-canvas-wrap{ display:flex; justify-content:center; }
-    #year2HourglassCanvas{
-      display:block;
-      width:100%;
-      max-width:320px;
-      height:auto;
-    }
-    .year2-metrics{
-      text-align:center;
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-    .year2-dhm{
-      font-weight:700;
-      font-size:1.4rem;
-      line-height:1.3;
-    }
-    .year2-caption{ font-size:0.75rem; color:#9ca3af; }
-    .year2-footer{ margin-top:4px; font-size:0.7rem; color:#6b7280; }
-
-    @media (max-width:480px){
-      .year2-hourglass{ padding:14px 14px 16px; border-radius:14px; }
-      .year2-title{ font-size:0.8rem; }
-      .year2-dhm{ font-size:1.1rem; line-height:1.4; }
-    }
+    .year2-hourglass-inner{display:flex;flex-direction:column;gap:10px;}
+    .year2-header{text-align:center;}
+    .year2-title{margin:0;font-size:.85rem;letter-spacing:.15em;text-transform:uppercase;font-weight:600;color:#e5e7eb;}
+    .year2-dates{margin:4px 0 0;font-size:.7rem;color:#6b7280;}
+    .year2-main{display:flex;flex-direction:column;align-items:stretch;gap:10px;}
+    .year2-canvas-wrap{display:flex;justify-content:center;}
+    #year2HourglassCanvas{display:block;width:100%;max-width:320px;height:auto;}
+    .year2-metrics{text-align:center;display:flex;flex-direction:column;gap:4px;}
+    .year2-dhm{font-weight:700;font-size:1.4rem;line-height:1.3;}
+    .year2-caption{font-size:.75rem;color:#9ca3af;}
+    .year2-footer{margin-top:4px;font-size:.7rem;color:#6b7280;}
 
     /* ───────────── PROGRESS UPDATE (GIF) ───────────── */
-    .progress-update {
-      margin-top:12px;
-      background:#141828;
-      border-radius:16px;
-      padding:14px 16px 16px;
-      box-shadow:0 18px 45px rgba(0, 0, 0, 0.6);
+    .progress-update{
+      margin-top:12px;background:#141828;border-radius:16px;
+      padding:14px 16px 16px;box-shadow:0 18px 45px rgba(0,0,0,.6);
       border:1px solid rgba(255,255,255,.08);
     }
     .progress-update-title{
-      margin:0 0 10px;
-      text-align:center;
-      font-size:0.78rem;
-      letter-spacing:0.15em;
-      text-transform:uppercase;
-      font-weight:600;
-      color:#e5e7eb;
+      margin:0 0 10px;text-align:center;font-size:.78rem;
+      letter-spacing:.15em;text-transform:uppercase;font-weight:600;color:#e5e7eb;
     }
     .progress-update img{
-      display:block;
-      width:100%;
-      max-width:320px;
-      height:auto;
-      margin:0 auto;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.08);
-      background:#000;
-      image-rendering:pixelated;
+      display:block;width:100%;max-width:320px;height:auto;
+      margin:0 auto;border-radius:12px;border:1px solid rgba(255,255,255,.08);
+      background:#000;image-rendering:pixelated;
+    }
+
+    /* ───────────── RESPONSIVE ───────────── */
+    @media(max-width:900px){
+      .decade-layout{flex-direction:column;}
+      .decade-left{flex:none;max-width:100%;position:static;}
+    }
+    @media(max-width:540px){
+      body{padding-bottom:0;}
+      .year-header{flex-direction:column;padding-right:4rem;}
+      .year-grid{grid-template-columns:1fr;}
+      .year-grid .data-cell.span{grid-column:1;}
+      .metrics-row{flex-direction:column;}
+      .year2-dhm{font-size:1.1rem;line-height:1.4;}
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Shared header inject point -->
   <div id="site-header"></div>
 
   <main>
     <div class="decade-layout">
-      <!-- LEFT: YEAR 2 HOURGLASS -->
+
+      <!-- ════════ LEFT: HOURGLASS + GIF (UNTOUCHED) ════════ -->
       <aside class="decade-left">
         <section class="year2-hourglass">
           <div class="year2-hourglass-inner">
             <header class="year2-header">
-              <h2 class="year2-title">YEAR 2 of 10 — Close 15 Deals</h2>
+              <h2 class="year2-title">YEAR 2 of 10 - Close 15 Deals</h2>
               <p class="year2-dates">Aug 31, 2025 → Aug 31, 2026</p>
             </header>
-
             <div class="year2-main">
               <div class="year2-canvas-wrap">
                 <canvas id="year2HourglassCanvas" width="320" height="220"></canvas>
@@ -369,7 +341,7 @@
         </section>
       </aside>
 
-      <!-- RIGHT: DECADE PLAN -->
+      <!-- ════════ RIGHT: DECADE PLAN ════════ -->
       <section class="decade-right">
         <h1>Decade Plan | Age 20 to Age 30</h1>
         <p class="subtitle">As you take a step, the next step is illuminated. In the beginning you must be directionally correct.</p>
@@ -378,131 +350,366 @@
           Over the next 10 years the impact I have on reality will be objectively measured. Skill acquisition and capital compounding will act as the main drivers here. Theory of Constraints identifies the points of greatest leverage.
         </div>
 
+        <!-- ─── YEAR 1 ─── -->
         <section class="year-block past">
           <span class="status-tag">Completed</span>
-          <div class="year-title"><div>Year 1 (August 2024 – August 2025)</div></div>
-          <div class="income">$12k/mo</div>
-          <div class="field-label">Skill</div>
-          <div class="pill">Lead Nurture</div>
-          <div class="pill">Sales</div>
-          <div class="field-label">Objective</div>
-          <div>Learn</div>
-          <div class="field-label">Place</div>
-          <div>Honda of Vallejo</div>
+          <div class="year-header">
+            <span class="year-num">Year 1</span>
+            <span class="year-dates">Aug 2024 – Aug 2025</span>
+          </div>
+          <div class="year-income">$12K / mo personal</div>
+          <div class="year-grid">
+            <div class="data-cell">
+              <div class="data-label">Key Skill</div>
+              <div class="data-value"><span class="pill">Sales Fundamentals</span></div>
+            </div>
+            <div class="data-cell">
+              <div class="data-label">Place</div>
+              <div class="data-value">Honda of Vallejo</div>
+            </div>
+            <div class="data-cell span">
+              <div class="data-label">Critical Milestone</div>
+              <div class="data-value">Save $50K+. Get RE license. Move to LA.</div>
+            </div>
+          </div>
+          <div class="metrics-row">
+            <div class="metric-box cap">
+              <div class="data-label">Capital</div>
+              <div class="data-value">$50K saved</div>
+            </div>
+            <div class="metric-box ev">
+              <div class="data-label">Enterprise Value</div>
+              <div class="data-value">—</div>
+            </div>
+          </div>
         </section>
 
+        <!-- ─── YEAR 2 ─── -->
         <section class="year-block current">
           <span class="status-tag">Current</span>
-          <div class="year-title"><div>Year 2 (August 2025 – August 2026)</div></div>
-          <div class="income">$25k/mo</div>
-          <div class="field-label">Skills</div>
-          <div>
-            <span class="pill">Lead Nurture</span>
-            <span class="pill">Sales</span>
-            <span class="pill">Deal Structure</span>
-            <span class="pill">Lending</span>
-            <span class="pill">Paid Advertising</span>
-            <span class="pill">Free Media</span>
+          <div class="year-header">
+            <span class="year-num">Year 2</span>
+            <span class="year-dates">Aug 2025 – Aug 2026</span>
           </div>
-          <div class="field-label">Objective</div>
-          <div>Close 15 Real Estate Deals</div>
-          <div class="field-label">Place</div>
-          <div>Active Realty Team - Los Angeles</div>
+          <div class="year-income">$25K / mo personal</div>
+          <div class="year-grid">
+            <div class="data-cell">
+              <div class="data-label">Key Skill</div>
+              <div class="data-value">
+                <span class="pill">Deal Closing</span>
+                <span class="pill">Lead Gen</span>
+              </div>
+            </div>
+            <div class="data-cell">
+              <div class="data-label">Place</div>
+              <div class="data-value">Active Realty Team - Los Angeles</div>
+            </div>
+            <div class="data-cell span">
+              <div class="data-label">Critical Milestone</div>
+              <div class="data-value">Close 12–20 deals. Build personal brand. Study AI/tech. Prototype tech tools. </div>
+            </div>
+          </div>
+          <div class="metrics-row">
+            <div class="metric-box cap">
+              <div class="data-label">Capital</div>
+              <div class="data-value">$150K liquid</div>
+            </div>
+            <div class="metric-box ev">
+              <div class="data-label">Enterprise Value</div>
+              <div class="data-value">—</div>
+            </div>
+          </div>
         </section>
 
+        <!-- ─── YEAR 3 ─── -->
         <section class="year-block upcoming">
           <span class="status-tag">Upcoming</span>
-          <div class="year-title"><div>Year 3 (August 2026 – August 2027)</div></div>
-          <div class="field-label">Skill</div>
-          <div class="pill">Lead Generation</div>
-          <div class="pill">Marketing</div>
-          <div class="field-label">Objective</div>
-          <div>Learn</div>
-          <div class="field-label">Place</div>
-          <div>Real Estate Brokerage in Los Angeles</div>
+          <div class="year-header">
+            <span class="year-num">Year 3</span>
+            <span class="year-dates">Aug 2026 – Aug 2027</span>
+          </div>
+          <div class="year-income">$40K / mo personal</div>
+          <div class="year-grid">
+            <div class="data-cell">
+              <div class="data-label">Key Skill</div>
+              <div class="data-value">
+                <span class="pill">Team Building</span>
+                <span class="pill">Systems</span>
+              </div>
+            </div>
+            <div class="data-cell">
+              <div class="data-label">Place</div>
+              <div class="data-value">Los Angeles</div>
+            </div>
+            <div class="data-cell span">
+              <div class="data-label">Critical Milestone</div>
+              <div class="data-value">LAUNCH <strong>VIRELLO</strong>. 3–5 agents. MVP tech platform. 50+ deals as team.</div>
+            </div>
+          </div>
+          <div class="metrics-row">
+            <div class="metric-box cap">
+              <div class="data-label">Capital</div>
+              <div class="data-value">$300K equity</div>
+            </div>
+            <div class="metric-box ev">
+              <div class="data-label">Enterprise Value</div>
+              <div class="data-value">$1–2M</div>
+            </div>
+          </div>
         </section>
 
+        <!-- ─── YEAR 4 ─── -->
         <section class="year-block upcoming">
           <span class="status-tag">Upcoming</span>
-          <div class="year-title"><div>Year 4 (August 2027 – August 2028)</div></div>
-          <div class="field-label">Skill</div>
-          <div class="pill">Recruiting</div>
-          <div class="pill">Product</div>
-          <div class="field-label">Objective</div>
-          <div>Open Real Estate Brokerage <strong>VIRELLO</strong></div>
-          <div class="field-label">Place</div>
-          <div>Los Angeles</div>
+          <div class="year-header">
+            <span class="year-num">Year 4</span>
+            <span class="year-dates">Aug 2027 – Aug 2028</span>
+          </div>
+          <div class="year-income">$80K / mo revenue</div>
+          <div class="year-grid">
+            <div class="data-cell">
+              <div class="data-label">Key Skill</div>
+              <div class="data-value">
+                <span class="pill">Recruiting</span>
+                <span class="pill">Product</span>
+              </div>
+            </div>
+            <div class="data-cell">
+              <div class="data-label">Place</div>
+              <div class="data-value">Los Angeles</div>
+            </div>
+            <div class="data-cell span">
+              <div class="data-label">Critical Milestone</div>
+              <div class="data-value">Scale to 15–25 agents. Launch mortgage JV. Agent equity program.</div>
+            </div>
+          </div>
+          <div class="metrics-row">
+            <div class="metric-box cap">
+              <div class="data-label">Capital</div>
+              <div class="data-value">$500K–$1M</div>
+            </div>
+            <div class="metric-box ev">
+              <div class="data-label">Enterprise Value</div>
+              <div class="data-value">$5–10M</div>
+            </div>
+          </div>
         </section>
 
+        <!-- ─── YEAR 5 ─── -->
         <section class="year-block upcoming">
           <span class="status-tag">Upcoming</span>
-          <div class="year-title"><div>Year 5 (August 2028 – August 2029)</div></div>
-          <div class="field-label">Skill</div>
-          <div class="pill">Operations</div>
-          <div class="field-label">Objective</div>
-          <div>Learn</div>
-          <div class="field-label">Place</div>
-          <div>Los Angeles</div>
+          <div class="year-header">
+            <span class="year-num">Year 5</span>
+            <span class="year-dates">Aug 2028 – Aug 2029</span>
+          </div>
+          <div class="year-income">$200K / mo revenue</div>
+          <div class="year-grid">
+            <div class="data-cell">
+              <div class="data-label">Key Skill</div>
+              <div class="data-value">
+                <span class="pill">Operations</span>
+                <span class="pill">Capital</span>
+              </div>
+            </div>
+            <div class="data-cell">
+              <div class="data-label">Place</div>
+              <div class="data-value">Los Angeles</div>
+            </div>
+            <div class="data-cell span">
+              <div class="data-label">Critical Milestone</div>
+              <div class="data-value">50–100 agents. Hire COO. Seed round ($2–5M) or stay profitable.</div>
+            </div>
+          </div>
+          <div class="metrics-row">
+            <div class="metric-box cap">
+              <div class="data-label">Capital</div>
+              <div class="data-value">$2–5M</div>
+            </div>
+            <div class="metric-box ev">
+              <div class="data-label">Enterprise Value</div>
+              <div class="data-value">$20–50M</div>
+            </div>
+          </div>
         </section>
 
+        <!-- ─── YEAR 6 ─── -->
         <section class="year-block upcoming">
           <span class="status-tag">Upcoming</span>
-          <div class="year-title"><div>Year 6 (August 2029 – August 2030)</div></div>
-          <div class="field-label">Skill</div>
-          <div class="pill">Product</div>
-          <div class="field-label">Objective</div>
-          <div>Trim fat, Hire Executives, Create Decade Model, Prepare for Scale</div>
-          <div class="field-label">Place</div>
-          <div>Los Angeles</div>
+          <div class="year-header">
+            <span class="year-num">Year 6</span>
+            <span class="year-dates">Aug 2029 – Aug 2030</span>
+          </div>
+          <div class="year-income">$500K / mo revenue</div>
+          <div class="year-grid">
+            <div class="data-cell">
+              <div class="data-label">Key Skill</div>
+              <div class="data-value">
+                <span class="pill">Exec Hiring</span>
+                <span class="pill">M&amp;A Prep</span>
+              </div>
+            </div>
+            <div class="data-cell">
+              <div class="data-label">Place</div>
+              <div class="data-value">Los Angeles &amp; San Francisco</div>
+            </div>
+            <div class="data-cell span">
+              <div class="data-label">Critical Milestone</div>
+              <div class="data-value">200+ agents. Launch in 2nd market (SF). Series A ($10–20M).</div>
+            </div>
+          </div>
+          <div class="metrics-row">
+            <div class="metric-box cap">
+              <div class="data-label">Capital</div>
+              <div class="data-value">$10–20M</div>
+            </div>
+            <div class="metric-box ev">
+              <div class="data-label">Enterprise Value</div>
+              <div class="data-value">$75–150M</div>
+            </div>
+          </div>
         </section>
 
+        <!-- ─── YEAR 7 ─── -->
         <section class="year-block upcoming">
           <span class="status-tag">Upcoming</span>
-          <div class="year-title"><div>Year 7 (August 2030 – August 2031)</div></div>
-          <div class="field-label">Skill</div>
-          <div class="pill">Acquisitions</div>
-          <div class="field-label">Objective</div>
-          <div>Buying other brokerages to own their respective agents. Learn.</div>
-          <div class="field-label">Place</div>
-          <div>San Francisco &amp; Los Angeles</div>
+          <div class="year-header">
+            <span class="year-num">Year 7</span>
+            <span class="year-dates">Aug 2030 – Aug 2031</span>
+          </div>
+          <div class="year-income">$1–2M / mo revenue</div>
+          <div class="year-grid">
+            <div class="data-cell">
+              <div class="data-label">Key Skill</div>
+              <div class="data-value"><span class="pill">M&amp;A Execution</span></div>
+            </div>
+            <div class="data-cell">
+              <div class="data-label">Place</div>
+              <div class="data-value">5 Markets</div>
+            </div>
+            <div class="data-cell span">
+              <div class="data-label">Critical Milestone</div>
+              <div class="data-value">Acquire 3–5 brokerages. 500+ agents. 5 markets.</div>
+            </div>
+          </div>
+          <div class="metrics-row">
+            <div class="metric-box cap">
+              <div class="data-label">Capital</div>
+              <div class="data-value">$30–50M</div>
+            </div>
+            <div class="metric-box ev">
+              <div class="data-label">Enterprise Value</div>
+              <div class="data-value">$200–400M</div>
+            </div>
+          </div>
         </section>
 
+        <!-- ─── YEAR 8 ─── -->
         <section class="year-block upcoming">
           <span class="status-tag">Upcoming</span>
-          <div class="year-title"><div>Year 8 (August 2031 – August 2032)</div></div>
-          <div class="field-label">Skill</div>
-          <div class="pill">Acquisitions</div>
-          <div class="field-label">Objective</div>
-          <div>Earn</div>
-          <div class="field-label">Place</div>
-          <div>San Francisco &amp; Los Angeles</div>
+          <div class="year-header">
+            <span class="year-num">Year 8</span>
+            <span class="year-dates">Aug 2031 – Aug 2032</span>
+          </div>
+          <div class="year-income">$3–5M / mo revenue</div>
+          <div class="year-grid">
+            <div class="data-cell">
+              <div class="data-label">Key Skill</div>
+              <div class="data-value"><span class="pill">Scale Operations</span></div>
+            </div>
+            <div class="data-cell">
+              <div class="data-label">Place</div>
+              <div class="data-value">8–10 Markets</div>
+            </div>
+            <div class="data-cell span">
+              <div class="data-label">Critical Milestone</div>
+              <div class="data-value">1,500+ agents. 8–10 markets. Series B ($30–50M). AI agent tools live.</div>
+            </div>
+          </div>
+          <div class="metrics-row">
+            <div class="metric-box cap">
+              <div class="data-label">Capital</div>
+              <div class="data-value">$50–100M</div>
+            </div>
+            <div class="metric-box ev">
+              <div class="data-label">Enterprise Value</div>
+              <div class="data-value">$500M–$1B</div>
+            </div>
+          </div>
         </section>
 
+        <!-- ─── YEAR 9 ─── -->
         <section class="year-block upcoming">
           <span class="status-tag">Upcoming</span>
-          <div class="year-title"><div>Year 9 (August 2032 – August 2033)</div></div>
-          <div class="field-label">Skill</div>
-          <div class="pill">Scale</div>
-          <div class="field-label">Objective</div>
-          <div>Increase TAM across California → Break into surrounding states</div>
-          <div class="field-label">Place</div>
-          <div>Nationwide</div>
+          <div class="year-header">
+            <span class="year-num">Year 9</span>
+            <span class="year-dates">Aug 2032 – Aug 2033</span>
+          </div>
+          <div class="year-income">$8–15M / mo revenue</div>
+          <div class="year-grid">
+            <div class="data-cell">
+              <div class="data-label">Key Skill</div>
+              <div class="data-value"><span class="pill">National Expansion</span></div>
+            </div>
+            <div class="data-cell">
+              <div class="data-label">Place</div>
+              <div class="data-value">15 Markets Nationwide</div>
+            </div>
+            <div class="data-cell span">
+              <div class="data-label">Critical Milestone</div>
+              <div class="data-value">5,000+ agents. 15 markets. Data/AI licensing revenue begins.</div>
+            </div>
+          </div>
+          <div class="metrics-row">
+            <div class="metric-box cap">
+              <div class="data-label">Capital</div>
+              <div class="data-value">$100M+</div>
+            </div>
+            <div class="metric-box ev">
+              <div class="data-label">Enterprise Value</div>
+              <div class="data-value">$1–3B</div>
+            </div>
+          </div>
         </section>
 
+        <!-- ─── YEAR 10 ─── -->
         <section class="year-block upcoming">
           <span class="status-tag">Upcoming</span>
-          <div class="year-title"><div>Year 10 (August 2033 – August 2034)</div></div>
-          <div class="field-label">Skill</div>
-          <div class="pill">Scale</div>
-          <div class="field-label">Objective</div>
-          <div>Own all 50 States</div>
-          <div class="field-label">Place</div>
-          <div>Nationwide</div>
+          <div class="year-header">
+            <span class="year-num">Year 10</span>
+            <span class="year-dates">Aug 2033 – Aug 2034</span>
+          </div>
+          <div class="year-income">$20–30M / mo revenue</div>
+          <div class="year-grid">
+            <div class="data-cell">
+              <div class="data-label">Key Skill</div>
+              <div class="data-value"><span class="pill">IPO Prep / Strategic Exit</span></div>
+            </div>
+            <div class="data-cell">
+              <div class="data-label">Place</div>
+              <div class="data-value">15–20 Markets Nationwide</div>
+            </div>
+            <div class="data-cell span">
+              <div class="data-label">Critical Milestone</div>
+              <div class="data-value">10,000+ agents. 15–20 markets. IPO or $1B+ secondary.</div>
+            </div>
+          </div>
+          <div class="metrics-row">
+            <div class="metric-box cap">
+              <div class="data-label">Capital</div>
+              <div class="data-value">Illiquid equity</div>
+            </div>
+            <div class="metric-box ev">
+              <div class="data-label">Enterprise Value</div>
+              <div class="data-value">$3–5B</div>
+            </div>
+          </div>
         </section>
 
+        <!-- ─── NET WORTH ─── -->
         <div class="networth">
           <h2>End of Decade Net Worth: $1 Billion</h2>
-          <p>Volume x Leverage = Output.</p>
+          <p class="nw-sub">At 20–25% founder ownership after dilution, a $4B enterprise value yields ~$1B.</p>
+          <p class="nw-eq">Volume × Leverage = Output.</p>
         </div>
       </section>
     </div>
@@ -517,27 +724,21 @@
       function inject(id, url, label) {
         var target = document.getElementById(id);
         if (!target) return;
-
         fetch(url, { cache: 'no-cache' })
           .then(function (res) {
             if (!res.ok) throw new Error('Failed to load ' + label);
             return res.text();
           })
-          .then(function (html) {
-            target.innerHTML = html;
-          })
-          .catch(function (err) {
-            console.error(label + ' load error:', err);
-          });
+          .then(function (html) { target.innerHTML = html; })
+          .catch(function (err) { console.error(label + ' load error:', err); });
       }
-
       inject('site-header', '/header.html', 'header');
       inject('site-footer', '/footer.html', 'footer');
     })();
   </script>
 
+  <!-- ───────────── YEAR 2 HOURGLASS – LIVE TO THE MILLISECOND ───────────── -->
   <script>
-    // ───────────── YEAR 2 HOURGLASS – LIVE TO THE MILLISECOND ─────────────
     (function () {
       const MS_DAY = 86400000;
       const YEAR2_START = new Date('2025-08-31T00:00:00-07:00');
@@ -592,21 +793,11 @@
       function breakdown(ms) {
         if (ms < 0) ms = 0;
         ms = Math.floor(ms);
-
-        const d = Math.floor(ms / MS_DAY);
-        ms -= d * MS_DAY;
-
-        const h = Math.floor(ms / (1000 * 60 * 60));
-        ms -= h * (1000 * 60 * 60);
-
-        const m = Math.floor(ms / (1000 * 60));
-        ms -= m * (1000 * 60);
-
-        const s = Math.floor(ms / 1000);
-        ms -= s * 1000;
-
-        const msRemain = ms;
-        return { d, h, m, s, ms: msRemain };
+        const d = Math.floor(ms / MS_DAY); ms -= d * MS_DAY;
+        const h = Math.floor(ms / (1000*60*60)); ms -= h * (1000*60*60);
+        const m = Math.floor(ms / (1000*60)); ms -= m * (1000*60);
+        const s = Math.floor(ms / 1000); ms -= s * 1000;
+        return { d, h, m, s, ms };
       }
 
       function phaseColor(msLeft, finished) {
@@ -620,22 +811,12 @@
       function lerp(a, b, t) { return a + (b - a) * t; }
 
       function widthAtYTop(y) {
-        const t = (y - yTopInner) / (neckY - yTopInner);
-        const clamped = Math.max(0, Math.min(1, t));
-        return lerp(topBulbWidth, neckInnerWidth, clamped);
-      }
-      function widthAtYBottom(y) {
-        const t = (y - neckY) / (yBottomInner - neckY);
-        const clamped = Math.max(0, Math.min(1, t));
-        return lerp(neckInnerWidth, bottomBulbWidth, clamped);
+        const t = Math.max(0, Math.min(1, (y - yTopInner) / (neckY - yTopInner)));
+        return lerp(topBulbWidth, neckInnerWidth, t);
       }
 
       function pad2(n) { return n < 10 ? '0' + n : String(n); }
-      function pad3(n) {
-        if (n < 10) return '00' + n;
-        if (n < 100) return '0' + n;
-        return String(n);
-      }
+      function pad3(n) { return n < 10 ? '00'+n : n < 100 ? '0'+n : String(n); }
 
       const glassPath = (function () {
         const p = new Path2D();
@@ -645,7 +826,6 @@
         p.quadraticCurveTo(topHalf * 0.35, neckY - 6, neckHalf, neckY);
         p.lineTo(-neckHalf, neckY);
         p.quadraticCurveTo(-topHalf * 0.35, neckY - 6, -topHalf, yTopInner);
-
         p.moveTo(-neckHalf, neckY);
         p.quadraticCurveTo(-bottomHalf * 0.35, neckY + 6, -bottomHalf, yBottomInner);
         p.quadraticCurveTo(-bottomHalf * 0.8, bottomY, 0, bottomY);
@@ -663,10 +843,7 @@
         ctx.fillStyle = '#141828';
         ctx.fillRect(-W / 2, 0, W, H);
 
-        const vignette = ctx.createRadialGradient(
-          0, H * 0.3, 10,
-          0, H * 0.5, H * 0.9
-        );
+        const vignette = ctx.createRadialGradient(0, H * 0.3, 10, 0, H * 0.5, H * 0.9);
         vignette.addColorStop(0.0, 'rgba(31,41,55,0.65)');
         vignette.addColorStop(1.0, 'rgba(20,24,40,0)');
         ctx.fillStyle = vignette;
@@ -679,238 +856,182 @@
         const pillarTopY   = topY - 12;
         const pillarBotY   = bottomY + 4;
 
-        let capGrad = ctx.createLinearGradient(-frameWidth / 2, bottomY + 4, frameWidth / 2, bottomY + 4);
-        capGrad.addColorStop(0.0, '#020617');
-        capGrad.addColorStop(0.25, '#111827');
-        capGrad.addColorStop(0.5, '#1f2937');
-        capGrad.addColorStop(0.75, '#111827');
-        capGrad.addColorStop(1.0, '#020617');
+        let capGrad = ctx.createLinearGradient(-frameWidth/2, bottomY+4, frameWidth/2, bottomY+4);
+        capGrad.addColorStop(0.0,'#020617');capGrad.addColorStop(0.25,'#111827');
+        capGrad.addColorStop(0.5,'#1f2937');capGrad.addColorStop(0.75,'#111827');capGrad.addColorStop(1.0,'#020617');
         ctx.fillStyle = capGrad;
         ctx.beginPath();
-        if (ctx.roundRect) ctx.roundRect(-frameWidth / 2, bottomY + 4, frameWidth, capHeight, 4);
-        else { ctx.rect(-frameWidth / 2, bottomY + 4, frameWidth, capHeight); }
+        if(ctx.roundRect)ctx.roundRect(-frameWidth/2,bottomY+4,frameWidth,capHeight,4);
+        else ctx.rect(-frameWidth/2,bottomY+4,frameWidth,capHeight);
         ctx.fill();
 
-        capGrad = ctx.createLinearGradient(-frameWidth / 2, topY - 12, frameWidth / 2, topY - 12);
-        capGrad.addColorStop(0.0, '#020617');
-        capGrad.addColorStop(0.25, '#111827');
-        capGrad.addColorStop(0.5, '#1f2937');
-        capGrad.addColorStop(0.75, '#111827');
-        capGrad.addColorStop(1.0, '#020617');
+        capGrad = ctx.createLinearGradient(-frameWidth/2,topY-12,frameWidth/2,topY-12);
+        capGrad.addColorStop(0.0,'#020617');capGrad.addColorStop(0.25,'#111827');
+        capGrad.addColorStop(0.5,'#1f2937');capGrad.addColorStop(0.75,'#111827');capGrad.addColorStop(1.0,'#020617');
         ctx.fillStyle = capGrad;
         ctx.beginPath();
-        if (ctx.roundRect) ctx.roundRect(-frameWidth / 2, topY - 12, frameWidth, capHeight, 4);
-        else { ctx.rect(-frameWidth / 2, topY - 12, frameWidth, capHeight); }
+        if(ctx.roundRect)ctx.roundRect(-frameWidth/2,topY-12,frameWidth,capHeight,4);
+        else ctx.rect(-frameWidth/2,topY-12,frameWidth,capHeight);
         ctx.fill();
 
-        const pillarGrad = ctx.createLinearGradient(-pillarWidth / 2, 0, pillarWidth / 2, 0);
-        pillarGrad.addColorStop(0.0, '#020617');
-        pillarGrad.addColorStop(0.3, '#111827');
-        pillarGrad.addColorStop(0.7, '#0b1120');
-        pillarGrad.addColorStop(1.0, '#020617');
+        const pillarGrad = ctx.createLinearGradient(-pillarWidth/2,0,pillarWidth/2,0);
+        pillarGrad.addColorStop(0.0,'#020617');pillarGrad.addColorStop(0.3,'#111827');
+        pillarGrad.addColorStop(0.7,'#0b1120');pillarGrad.addColorStop(1.0,'#020617');
         ctx.fillStyle = pillarGrad;
-
         const pillarHeight = pillarBotY - pillarTopY;
         ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(-pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight, 3);
-          ctx.roundRect( pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight, 3);
-        } else {
-          ctx.rect(-pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight);
-          ctx.rect( pillarOffset - pillarWidth / 2, pillarTopY, pillarWidth, pillarHeight);
+        if(ctx.roundRect){
+          ctx.roundRect(-pillarOffset-pillarWidth/2,pillarTopY,pillarWidth,pillarHeight,3);
+          ctx.roundRect(pillarOffset-pillarWidth/2,pillarTopY,pillarWidth,pillarHeight,3);
+        }else{
+          ctx.rect(-pillarOffset-pillarWidth/2,pillarTopY,pillarWidth,pillarHeight);
+          ctx.rect(pillarOffset-pillarWidth/2,pillarTopY,pillarWidth,pillarHeight);
         }
         ctx.fill();
 
-        const shadowGrad = ctx.createRadialGradient(0, bottomY + 6, 2, 0, bottomY + 6, bottomBulbWidth * 0.65);
-        shadowGrad.addColorStop(0.0, 'rgba(0,0,0,0.8)');
-        shadowGrad.addColorStop(1.0, 'rgba(0,0,0,0)');
+        const shadowGrad = ctx.createRadialGradient(0,bottomY+6,2,0,bottomY+6,bottomBulbWidth*0.65);
+        shadowGrad.addColorStop(0.0,'rgba(0,0,0,0.8)');shadowGrad.addColorStop(1.0,'rgba(0,0,0,0)');
         ctx.fillStyle = shadowGrad;
-        ctx.beginPath();
-        ctx.ellipse(0, bottomY + 6, bottomBulbWidth * 0.65, 10, 0, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath();ctx.ellipse(0,bottomY+6,bottomBulbWidth*0.65,10,0,0,Math.PI*2);ctx.fill();
 
         ctx.save();
         ctx.clip(glassPath);
 
-        const glassInteriorGrad = ctx.createLinearGradient(0, topY, 0, bottomY);
-        glassInteriorGrad.addColorStop(0.0, 'rgba(15,23,42,0.94)');
-        glassInteriorGrad.addColorStop(0.5, 'rgba(15,23,42,0.88)');
-        glassInteriorGrad.addColorStop(1.0, 'rgba(15,23,42,0.97)');
+        const glassInteriorGrad = ctx.createLinearGradient(0,topY,0,bottomY);
+        glassInteriorGrad.addColorStop(0.0,'rgba(15,23,42,0.94)');
+        glassInteriorGrad.addColorStop(0.5,'rgba(15,23,42,0.88)');
+        glassInteriorGrad.addColorStop(1.0,'rgba(15,23,42,0.97)');
         ctx.fillStyle = glassInteriorGrad;
-        ctx.fillRect(-W, topY, W * 2, bottomY - topY);
+        ctx.fillRect(-W,topY,W*2,bottomY-topY);
 
-        const bulbGlow = ctx.createRadialGradient(0, neckY - maxTopHeight * 0.6, W * 0.05, 0, neckY, W * 0.7);
-        bulbGlow.addColorStop(0.0, 'rgba(148,163,184,0.25)');
-        bulbGlow.addColorStop(0.4, 'rgba(148,163,184,0.10)');
-        bulbGlow.addColorStop(1.0, 'rgba(15,23,42,0)');
+        const bulbGlow = ctx.createRadialGradient(0,neckY-maxTopHeight*0.6,W*0.05,0,neckY,W*0.7);
+        bulbGlow.addColorStop(0.0,'rgba(148,163,184,0.25)');
+        bulbGlow.addColorStop(0.4,'rgba(148,163,184,0.10)');
+        bulbGlow.addColorStop(1.0,'rgba(15,23,42,0)');
         ctx.fillStyle = bulbGlow;
-        ctx.fillRect(-W, topY, W * 2, bottomY - topY);
+        ctx.fillRect(-W,topY,W*2,bottomY-topY);
 
-        const bottomFrac = Math.max(0, Math.min(1, progress));
-        const topFrac    = 1 - bottomFrac;
+        const bottomFrac = Math.max(0,Math.min(1,progress));
+        const topFrac = 1 - bottomFrac;
 
-        if (topFrac > 0.0005) {
+        if(topFrac > 0.0005){
           const fillHeightTop = maxTopHeight * topFrac;
           const yLevel = neckY - fillHeightTop;
-          const widthLevel = widthAtYTop(yLevel) * 1.02;
-          const halfLevel  = widthLevel / 2;
-          const surfaceDepth = Math.min(8, (neckY - yLevel) * 0.55);
+          const widthLevel = widthAtYTop(yLevel)*1.02;
+          const halfLevel = widthLevel/2;
+          const surfaceDepth = Math.min(8,(neckY-yLevel)*0.55);
 
-          const sandTopGrad = ctx.createLinearGradient(0, yLevel - 6, 0, neckY + 4);
-          sandTopGrad.addColorStop(0.0, '#fdf3c4');
-          sandTopGrad.addColorStop(0.4, '#f5d67a');
-          sandTopGrad.addColorStop(1.0, '#d7ab4e');
+          const sandTopGrad = ctx.createLinearGradient(0,yLevel-6,0,neckY+4);
+          sandTopGrad.addColorStop(0.0,'#fdf3c4');sandTopGrad.addColorStop(0.4,'#f5d67a');sandTopGrad.addColorStop(1.0,'#d7ab4e');
           ctx.fillStyle = sandTopGrad;
-
           ctx.beginPath();
-          ctx.moveTo(-halfLevel, yLevel);
-          ctx.quadraticCurveTo(0, yLevel + surfaceDepth, halfLevel, yLevel);
-          ctx.lineTo(neckHalf * 1.02, neckY);
-          ctx.quadraticCurveTo(0, neckY + 2, -neckHalf * 1.02, neckY);
-          ctx.closePath();
-          ctx.fill();
+          ctx.moveTo(-halfLevel,yLevel);ctx.quadraticCurveTo(0,yLevel+surfaceDepth,halfLevel,yLevel);
+          ctx.lineTo(neckHalf*1.02,neckY);ctx.quadraticCurveTo(0,neckY+2,-neckHalf*1.02,neckY);
+          ctx.closePath();ctx.fill();
 
-          ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-          ctx.lineWidth = 0.7;
-          ctx.beginPath();
-          ctx.moveTo(-halfLevel * 0.85, yLevel + 0.5);
-          ctx.quadraticCurveTo(0, yLevel + surfaceDepth * 0.7, halfLevel * 0.85, yLevel + 0.5);
-          ctx.stroke();
+          ctx.strokeStyle='rgba(255,255,255,0.35)';ctx.lineWidth=0.7;
+          ctx.beginPath();ctx.moveTo(-halfLevel*0.85,yLevel+0.5);
+          ctx.quadraticCurveTo(0,yLevel+surfaceDepth*0.7,halfLevel*0.85,yLevel+0.5);ctx.stroke();
         }
 
         let yTopOfPile = null;
-        if (bottomFrac > 0.0005) {
+        if(bottomFrac > 0.0005){
           const fillHeightBottom = maxBottomHeight * bottomFrac;
           yTopOfPile = yBottomInner - fillHeightBottom;
-          yTopOfPile = Math.max(neckY + 6, yTopOfPile);
+          yTopOfPile = Math.max(neckY+6,yTopOfPile);
 
-          const baseWidth = bottomBulbWidth * 1.02;
-          const baseHalf  = baseWidth / 2;
-          const apexY     = yTopOfPile - 3;
-          const neckWidth = neckInnerWidth * 1.02;
-          const neckHalfLocal  = neckWidth / 2;
+          const baseWidth = bottomBulbWidth*1.02;
+          const baseHalf = baseWidth/2;
+          const apexY = yTopOfPile - 3;
+          const neckWidth = neckInnerWidth*1.02;
+          const neckHalfLocal = neckWidth/2;
 
-          const sandBottomGrad = ctx.createLinearGradient(0, apexY - 6, 0, yBottomInner + 4);
-          sandBottomGrad.addColorStop(0.0, '#fdf3c4');
-          sandBottomGrad.addColorStop(0.35, '#f5d67a');
-          sandBottomGrad.addColorStop(1.0, '#c9993d');
+          const sandBottomGrad = ctx.createLinearGradient(0,apexY-6,0,yBottomInner+4);
+          sandBottomGrad.addColorStop(0.0,'#fdf3c4');sandBottomGrad.addColorStop(0.35,'#f5d67a');sandBottomGrad.addColorStop(1.0,'#c9993d');
           ctx.fillStyle = sandBottomGrad;
-
           ctx.beginPath();
-          ctx.moveTo(-baseHalf, yBottomInner - 1);
-          ctx.quadraticCurveTo(0, yBottomInner + 5, baseHalf, yBottomInner - 1);
-          ctx.lineTo(neckHalfLocal, apexY);
-          ctx.quadraticCurveTo(0, apexY - 5, -neckHalfLocal, apexY);
-          ctx.closePath();
-          ctx.fill();
+          ctx.moveTo(-baseHalf,yBottomInner-1);ctx.quadraticCurveTo(0,yBottomInner+5,baseHalf,yBottomInner-1);
+          ctx.lineTo(neckHalfLocal,apexY);ctx.quadraticCurveTo(0,apexY-5,-neckHalfLocal,apexY);
+          ctx.closePath();ctx.fill();
 
-          ctx.fillStyle = 'rgba(156,126,43,0.45)';
-          ctx.beginPath();
-          ctx.ellipse(0, yBottomInner + 1, baseHalf * 0.7, 4, 0, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.fillStyle='rgba(156,126,43,0.45)';
+          ctx.beginPath();ctx.ellipse(0,yBottomInner+1,baseHalf*0.7,4,0,0,Math.PI*2);ctx.fill();
 
-          ctx.strokeStyle = 'rgba(255,255,255,0.28)';
-          ctx.lineWidth = 0.9;
-          ctx.beginPath();
-          ctx.moveTo(neckHalfLocal * 0.9, apexY + 1);
-          ctx.quadraticCurveTo(baseHalf * 0.5, (apexY + yBottomInner) / 2, baseHalf * 0.6, yBottomInner - 2);
-          ctx.stroke();
+          ctx.strokeStyle='rgba(255,255,255,0.28)';ctx.lineWidth=0.9;
+          ctx.beginPath();ctx.moveTo(neckHalfLocal*0.9,apexY+1);
+          ctx.quadraticCurveTo(baseHalf*0.5,(apexY+yBottomInner)/2,baseHalf*0.6,yBottomInner-2);ctx.stroke();
         }
 
-        if (!finished && bottomFrac > 0 && bottomFrac < 1) {
-          const impactY = yTopOfPile != null ? yTopOfPile - 2 : yBottomInner - 3;
-          const totalSpan = Math.max(12, impactY - neckY);
+        if(!finished && bottomFrac > 0 && bottomFrac < 1){
+          const impactY = yTopOfPile != null ? yTopOfPile-2 : yBottomInner-3;
+          const totalSpan = Math.max(12,impactY-neckY);
+          const streamWidth = neckInnerWidth*0.5;
+          const pulse = 0.65+0.25*Math.sin(animPhase*4.0);
 
-          const streamWidth = neckInnerWidth * 0.5;
-          const pulse = 0.65 + 0.25 * Math.sin(animPhase * 4.0);
-
-          const streamGrad = ctx.createLinearGradient(0, neckY, 0, impactY);
-          streamGrad.addColorStop(0,  `rgba(244,208,111,${0.10 * pulse})`);
-          streamGrad.addColorStop(0.4,`rgba(244,208,111,${0.65 * pulse})`);
-          streamGrad.addColorStop(1,  `rgba(244,208,111,${0.25 * pulse})`);
+          const streamGrad = ctx.createLinearGradient(0,neckY,0,impactY);
+          streamGrad.addColorStop(0,`rgba(244,208,111,${0.10*pulse})`);
+          streamGrad.addColorStop(0.4,`rgba(244,208,111,${0.65*pulse})`);
+          streamGrad.addColorStop(1,`rgba(244,208,111,${0.25*pulse})`);
           ctx.fillStyle = streamGrad;
-
           ctx.beginPath();
-          if (ctx.roundRect) ctx.roundRect(-streamWidth / 2, neckY, streamWidth, totalSpan, streamWidth / 2);
-          else ctx.rect(-streamWidth / 2, neckY, streamWidth, totalSpan);
+          if(ctx.roundRect)ctx.roundRect(-streamWidth/2,neckY,streamWidth,totalSpan,streamWidth/2);
+          else ctx.rect(-streamWidth/2,neckY,streamWidth,totalSpan);
           ctx.fill();
 
-          const grainCount = 7;
-          for (let i = 0; i < grainCount; i++) {
-            const localT = (animPhase * 0.9 + i / grainCount) % 1;
-            const gy = neckY + localT * (totalSpan - 6);
-            const sway = Math.sin(animPhase * 3.2 + i * 1.7) * 1.0;
-
-            ctx.beginPath();
-            ctx.fillStyle = 'rgba(253,243,196,0.98)';
-            ctx.arc(sway, gy, 1.1, 0, Math.PI * 2);
-            ctx.fill();
+          for(let i=0;i<7;i++){
+            const localT=(animPhase*0.9+i/7)%1;
+            const gy=neckY+localT*(totalSpan-6);
+            const sway=Math.sin(animPhase*3.2+i*1.7)*1.0;
+            ctx.beginPath();ctx.fillStyle='rgba(253,243,196,0.98)';
+            ctx.arc(sway,gy,1.1,0,Math.PI*2);ctx.fill();
           }
-
-          ctx.beginPath();
-          ctx.fillStyle = 'rgba(255,255,255,0.7)';
-          ctx.arc(0, impactY + 1.5, 1.2, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.beginPath();ctx.fillStyle='rgba(255,255,255,0.7)';
+          ctx.arc(0,impactY+1.5,1.2,0,Math.PI*2);ctx.fill();
         }
 
-        const caustic = ctx.createRadialGradient(0, yBottomInner - 4, 4, 0, yBottomInner + 4, bottomBulbWidth * 0.45);
-        caustic.addColorStop(0.0, 'rgba(248, 220, 140, 0.35)');
-        caustic.addColorStop(1.0, 'rgba(248, 220, 140, 0)');
+        const caustic = ctx.createRadialGradient(0,yBottomInner-4,4,0,yBottomInner+4,bottomBulbWidth*0.45);
+        caustic.addColorStop(0.0,'rgba(248,220,140,0.35)');caustic.addColorStop(1.0,'rgba(248,220,140,0)');
         ctx.fillStyle = caustic;
-        ctx.fillRect(-W, neckY, W * 2, bottomY - neckY);
+        ctx.fillRect(-W,neckY,W*2,bottomY-neckY);
 
-        const innerShine = ctx.createLinearGradient(topHalf * 0.2, topY, topHalf * 0.9, bottomY);
-        innerShine.addColorStop(0.0, 'rgba(255,255,255,0.18)');
-        innerShine.addColorStop(0.3, 'rgba(255,255,255,0.05)');
-        innerShine.addColorStop(1.0, 'rgba(255,255,255,0.0)');
+        const innerShine = ctx.createLinearGradient(topHalf*0.2,topY,topHalf*0.9,bottomY);
+        innerShine.addColorStop(0.0,'rgba(255,255,255,0.18)');
+        innerShine.addColorStop(0.3,'rgba(255,255,255,0.05)');
+        innerShine.addColorStop(1.0,'rgba(255,255,255,0.0)');
         ctx.fillStyle = innerShine;
-        ctx.fillRect(topHalf * 0.1, topY, topHalf * 0.9, bottomY - topY);
+        ctx.fillRect(topHalf*0.1,topY,topHalf*0.9,bottomY-topY);
 
         ctx.restore();
 
-        ctx.strokeStyle = 'rgba(148,163,184,0.85)';
-        ctx.lineWidth = 2.4;
-        ctx.stroke(glassPath);
-
-        ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-        ctx.lineWidth = 1.1;
-        ctx.stroke(glassPath);
+        ctx.strokeStyle='rgba(148,163,184,0.85)';ctx.lineWidth=2.4;ctx.stroke(glassPath);
+        ctx.strokeStyle='rgba(255,255,255,0.9)';ctx.lineWidth=1.1;ctx.stroke(glassPath);
 
         ctx.restore();
       }
 
-      function frame() {
+      function frame(){
         const nowMs = Date.now();
-
         const elapsedMs = nowMs - YEAR2_START_MS;
-        const clamped   = Math.max(0, Math.min(TOTAL_MS, elapsedMs));
-        const progress  = TOTAL_MS === 0 ? 1 : clamped / TOTAL_MS;
+        const clamped = Math.max(0,Math.min(TOTAL_MS,elapsedMs));
+        const progress = TOTAL_MS === 0 ? 1 : clamped / TOTAL_MS;
+        const msLeft = Math.max(0,YEAR2_END_MS - nowMs);
+        const finished = msLeft <= 0;
+        const left = breakdown(msLeft);
+        const color = phaseColor(msLeft,finished);
 
-        const msLeft    = Math.max(0, YEAR2_END_MS - nowMs);
-        const finished  = msLeft <= 0;
-
-        const left  = breakdown(msLeft);
-        const color = phaseColor(msLeft, finished);
-
-        if (finished) {
-          dhmEl.textContent = 'TIME EXPIRED';
-          pctEl.textContent = '100% elapsed — pivot or perish.';
-          footEl.textContent = 'No alibis. Ship.';
-        } else {
-          dhmEl.textContent =
-            `${left.d}d ${pad2(left.h)}h ${pad2(left.m)}m ${pad2(left.s)}s ` +
-            `${pad3(left.ms)}ms`;
-
-          const pct = Math.round(progress * 100);
-          pctEl.textContent = `${pct}% of Year 2 elapsed`;
-          footEl.textContent = 'Lead Gen → Lead Nurture → Sales.';
+        if(finished){
+          dhmEl.textContent='TIME EXPIRED';
+          pctEl.textContent='100% elapsed - pivot or perish.';
+          footEl.textContent='No alibis. Ship.';
+        }else{
+          dhmEl.textContent=`${left.d}d ${pad2(left.h)}h ${pad2(left.m)}m ${pad2(left.s)}s ${pad3(left.ms)}ms`;
+          pctEl.textContent=`${Math.round(progress*100)}% of Year 2 elapsed`;
+          footEl.textContent='Lead Gen → Lead Nurture → Sales.';
         }
-
         dhmEl.style.color = color;
 
         const animPhase = (performance.now() % 4000) / 4000;
-        drawHourglass(progress, finished, animPhase);
-
+        drawHourglass(progress,finished,animPhase);
         requestAnimationFrame(frame);
       }
 
