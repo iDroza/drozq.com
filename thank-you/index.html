@@ -220,6 +220,8 @@
 
     @media (max-width: 540px){
       html,body{ overflow:auto; height:auto; }
+      body{ display:flex; flex-direction:column; min-height:100vh; }
+      .wrap{ flex:1; }
       .topbar{
         position:sticky;top:0;left:0;width:100%;z-index:20;pointer-events:auto;
         padding:calc(env(safe-area-inset-top) + .9rem) 1.1rem .65rem;
@@ -242,6 +244,8 @@
 
     @media (max-height: 760px){
       html,body{ overflow:auto; height:auto; }
+      body{ display:flex; flex-direction:column; min-height:100vh; }
+      .wrap{ flex:1; }
       footer.site-footer{ position:static; }
       .wrap{ padding-bottom:2rem; }
       .backdrop{ display:none; }
@@ -273,7 +277,7 @@
         <p style="color:var(--fg); font-weight:600; font-size:17px; margin-bottom:10px;">
           We'll be in touch.
         </p>
-        <p>Your inquiry has been submitted. Expect a response within one business day.</p>
+        <p>Your inquiry has been submitted. Expect a response within one hour.</p>
         <a href="/" class="home-btn">Back to Home</a>
       </section>
     </div>
