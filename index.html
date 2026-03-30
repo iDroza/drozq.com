@@ -210,15 +210,21 @@ p:last-child { margin-bottom: 0; }
 }
 .faq__question:hover { color: var(--color-navy-light); }
 .faq__icon {
-  flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
-  background: var(--color-green); color: var(--color-white);
+  flex-shrink: 0; width: 22px; height: 22px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px; transition: transform 0.3s, background 0.3s;
 }
-.faq__item.active .faq__icon { transform: rotate(180deg); }
-.faq__answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
-.faq__item.active .faq__answer { max-height: 600px; }
-.faq__answer-inner { padding: 0 0 18px; font-size: 14px; line-height: 1.7; }
+.faq__icon svg { width: 22px; height: 22px; }
+.faq__icon .icon-chevron { display: block; }
+.faq__icon .icon-bar { display: none; }
+.faq__item.active .faq__icon .icon-chevron { display: none; }
+.faq__item.active .faq__icon .icon-bar { display: block; }
+.faq__answer {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease;
+}
+.faq__item.active .faq__answer { grid-template-rows: 1fr; }
+.faq__answer-inner { overflow: hidden; font-size: 14px; line-height: 1.7; }
+.faq__answer-inner > div { padding: 0 0 18px; }
 
 /* Footer */
 .footer { background: var(--color-navy); color: var(--color-white); padding: 60px 0 20px; }
@@ -689,51 +695,66 @@ p:last-child { margin-bottom: 0; }
         <div class="faq__item">
           <button class="faq__question" aria-expanded="false">
             <span>How do you determine the right listing price for my home?</span>
-            <span class="faq__icon">&#9660;</span>
+            <span class="faq__icon">
+              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </span>
           </button>
-          <div class="faq__answer"><div class="faq__answer-inner">
+          <div class="faq__answer"><div class="faq__answer-inner"><div>
             <p>I prepare a detailed Comparative Market Analysis (CMA) that looks at recent sales of similar homes in your area, current market conditions, your home's unique features, and buyer demand trends. The goal is to price your home competitively enough to generate strong interest while maximizing your net proceeds. I'll walk you through the data so you feel confident in the strategy.</p>
-          </div></div>
+          </div></div></div>
         </div>
 
         <div class="faq__item">
           <button class="faq__question" aria-expanded="false">
             <span>What does your marketing plan include?</span>
-            <span class="faq__icon">&#9660;</span>
+            <span class="faq__icon">
+              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </span>
           </button>
-          <div class="faq__answer"><div class="faq__answer-inner">
+          <div class="faq__answer"><div class="faq__answer-inner"><div>
             <p>Every listing gets professional HDR photography, 3D virtual tour, drone video (where applicable), custom property website, MLS syndication to 100+ sites including Zillow and Realtor.com, targeted Facebook and Instagram ads, email campaigns to my buyer database, strategic open houses, and broker-to-broker outreach. The goal is maximum exposure to qualified buyers.</p>
-          </div></div>
+          </div></div></div>
         </div>
 
         <div class="faq__item">
           <button class="faq__question" aria-expanded="false">
             <span>How long will it take to sell my home?</span>
-            <span class="faq__icon">&#9660;</span>
+            <span class="faq__icon">
+              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </span>
           </button>
-          <div class="faq__answer"><div class="faq__answer-inner">
+          <div class="faq__answer"><div class="faq__answer-inner"><div>
             <p>Timeline depends on your local market, price point, and property condition — but with proper pricing and marketing, most of my listings receive offers within the first two weeks. I'll give you a realistic timeline estimate during our initial consultation based on current market data for your specific neighborhood.</p>
-          </div></div>
+          </div></div></div>
         </div>
 
         <div class="faq__item">
           <button class="faq__question" aria-expanded="false">
             <span>Do I need to make repairs before listing?</span>
-            <span class="faq__icon">&#9660;</span>
+            <span class="faq__icon">
+              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </span>
           </button>
-          <div class="faq__answer"><div class="faq__answer-inner">
+          <div class="faq__answer"><div class="faq__answer-inner"><div>
             <p>Not necessarily. During our pre-listing walkthrough, I'll identify which improvements offer the best return on investment and which you can skip. Sometimes a fresh coat of paint and deep clean are all you need. I also have a network of trusted vendors who offer competitive rates if repairs do make financial sense. I'll also connect you with investor buyers if selling as-is makes more sense for your situation.</p>
-          </div></div>
+          </div></div></div>
         </div>
 
         <div class="faq__item">
           <button class="faq__question" aria-expanded="false">
             <span>What if I just want to sell quickly without listing on the market?</span>
-            <span class="faq__icon">&#9660;</span>
+            <span class="faq__icon">
+              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </span>
           </button>
-          <div class="faq__answer"><div class="faq__answer-inner">
+          <div class="faq__answer"><div class="faq__answer-inner"><div>
             <p>I work with a network of vetted cash investors and can present you with off-market cash offers if speed and simplicity are your priority. You'll have the option to compare a traditional listing approach against an investor offer — and I'll help you evaluate both so you can make the best decision for your situation. Either way, I'm here to represent your interests.</p>
-          </div></div>
+          </div></div></div>
         </div>
 
       </div>
