@@ -10,11 +10,6 @@
   <link rel="preload" as="image" href="https://www.sellersadvantage.com/wp-content/uploads/2025/02/damon-and-doug-home-buyers.webp" fetchpriority="high">
 
   <style>
-/* ============================================
-   Listing Agent Lead Gen – Stylesheet
-   Visual DNA: Seller's Advantage clone
-   ============================================ */
-
 :root {
   --color-white: #ffffff;
   --color-black: #000000;
@@ -39,8 +34,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
-  font-family: var(--font); font-size: 16px; font-weight: 400;
-  line-height: 1.6; color: var(--color-black); background: var(--color-white);
+  font-family: var(--font); font-size: 18px; font-weight: 400;
+  line-height: 1.7; color: var(--color-black); background: var(--color-white);
   overflow-x: hidden;
 }
 img { max-width: 100%; height: auto; display: block; border: 0; }
@@ -49,23 +44,21 @@ a:hover { color: var(--color-green); }
 ul, ol { list-style: none; }
 button { font-family: var(--font); }
 h1,h2,h3,h4,h5,h6 { font-family: var(--font); font-weight: 600; line-height: 1.3; color: var(--color-black); }
-h1 { font-size: clamp(2rem,5vw,3.125rem); font-weight: 700; }
-h2 { font-size: clamp(1.5rem,3.5vw,2rem); font-weight: 700; }
-h3 { font-size: clamp(1.25rem,3vw,1.75rem); }
-h4 { font-size: 1.25rem; color: var(--color-green); }
-h5 { font-size: 1rem; font-weight: 600; color: var(--color-navy-light); }
+h1 { font-size: clamp(2.25rem,5vw,3.5rem); font-weight: 700; }
+h2 { font-size: clamp(1.75rem,3.5vw,2.5rem); font-weight: 700; }
+h3 { font-size: clamp(1.375rem,3vw,1.875rem); }
+h4 { font-size: 1.375rem; color: var(--color-green); }
+h5 { font-size: 1.125rem; font-weight: 600; color: var(--color-navy-light); }
 p { margin-bottom: 1em; }
 p:last-child { margin-bottom: 0; }
 
-/* Layout */
 .container { width: 100%; max-width: var(--site-width); margin: 0 auto; padding: 0 30px; }
-.section { padding: 50px 0; }
+.section { padding: 60px 0; }
 .text-center { text-align: center; }
 
-/* Buttons */
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
-  padding: 14px 25px; font-family: var(--font); font-size: 18px;
+  padding: 16px 30px; font-family: var(--font); font-size: 19px;
   font-weight: 600; text-transform: uppercase; line-height: 1.1;
   border: 2px solid transparent; border-radius: var(--radius);
   cursor: pointer; transition: all var(--transition);
@@ -75,145 +68,170 @@ p:last-child { margin-bottom: 0; }
 .btn--outline { background: transparent; color: var(--color-white); border-color: var(--color-white); }
 .btn--outline:hover { background: var(--color-white); color: var(--color-navy); }
 .btn--full { width: 100%; }
-.btn--phone { background: var(--color-green); color: var(--color-white); font-size: 20px; font-weight: 700; padding: 10px 20px; }
+.btn--phone {
+  background: var(--color-green); color: var(--color-white);
+  font-size: 20px; font-weight: 700; padding: 14px 32px;
+  letter-spacing: 0.5px; min-width: 230px; white-space: nowrap;
+}
 .btn--phone:hover { background: var(--color-green-hover); color: var(--color-white); }
 
-/* Top Bar */
-.topbar { text-align: center; padding: 10px 0; font-size: 14px; border-bottom: 1px solid rgba(52,63,86,0.15); }
+.topbar { text-align: center; padding: 12px 0; font-size: 15px; border-bottom: 1px solid rgba(52,63,86,0.15); }
 
-/* Header */
 .header {
   position: sticky; top: 0; z-index: 1000;
   background: var(--color-white); border-bottom: 1px solid rgba(52,63,86,0.15); padding: 0 30px;
 }
-.header .container { display: flex; align-items: center; justify-content: space-between; min-height: 60px; gap: 20px; position: relative; }
-.header__logo img { max-width: 200px; }
-.nav { display: flex; align-items: center; gap: 20px; }
-.nav a { font-size: 15px; font-weight: 500; padding: 8px 0; }
+.header .container { display: flex; align-items: center; justify-content: space-between; min-height: 78px; gap: 25px; position: relative; }
+.header__logo img { max-width: 220px; }
+.nav { display: flex; align-items: center; gap: 30px; }
+.nav a { font-size: 17px; font-weight: 500; padding: 14px 0; letter-spacing: 0.2px; }
 .nav a:hover { color: var(--color-green); }
-.nav__toggle { display: none; background: none; border: none; font-size: 28px; cursor: pointer; color: var(--color-navy); padding: 5px; }
+.nav__toggle { display: none; background: none; border: none; font-size: 32px; cursor: pointer; color: var(--color-navy); padding: 8px; }
 
-/* Hero */
-.hero { padding: 40px 0 0; background: linear-gradient(114deg, var(--color-white) 67%, var(--color-navy) 62%); }
+.hero { padding: 50px 0 0; background: linear-gradient(114deg, var(--color-white) 67%, var(--color-navy) 62%); }
 .hero .container { display: flex; flex-wrap: wrap; align-items: flex-end; }
-.hero__content { flex: 1 1 45%; min-width: 300px; padding-bottom: 20px; }
+.hero__content { flex: 1 1 45%; min-width: 300px; padding-bottom: 25px; }
 .hero__image { flex: 1 1 25%; min-width: 200px; }
 .hero__badge { flex: 1 1 25%; min-width: 200px; display: flex; justify-content: center; }
 .hero__badge img { max-width: 300px; }
-.hero h1 { color: var(--color-navy); margin-bottom: 10px; }
-.hero__subtitle { font-size: 18px; margin-bottom: 20px; }
-.hero__trust { font-weight: 500; margin-top: 10px; }
+.hero h1 { color: var(--color-navy); margin-bottom: 14px; }
+.hero__subtitle { font-size: 20px; margin-bottom: 24px; }
+.hero__trust { font-weight: 500; margin-top: 12px; font-size: 17px; }
 
-/* Lead Form with Google Places */
 .lead-form { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
 .lead-form__address-wrap { flex: 1 1 70%; min-width: 200px; position: relative; }
 .lead-form__address-wrap input {
-  width: 100%; padding: 16px 20px; font-size: 16px; font-family: var(--font);
+  width: 100%; padding: 18px 22px; font-size: 17px; font-family: var(--font);
   border: 2px solid var(--color-gray-light); border-radius: var(--radius);
   outline: none; transition: border-color var(--transition);
 }
 .lead-form__address-wrap input:focus { border-color: var(--color-green); }
 .lead-form__unit {
-  flex: 0 0 80px; min-width: 80px; padding: 16px 12px; font-size: 16px;
+  flex: 0 0 85px; min-width: 85px; padding: 18px 14px; font-size: 17px;
   font-family: var(--font); border: 2px solid var(--color-gray-light);
   border-radius: var(--radius); outline: none; transition: border-color var(--transition);
 }
 .lead-form__unit:focus { border-color: var(--color-green); }
-.lead-form .btn { flex: 1 1 100%; padding: 18px 25px; }
+.lead-form .btn { flex: 1 1 100%; padding: 20px 25px; font-size: 19px; }
 .lead-form__hidden { display: none; }
 
-/* Google Places autocomplete dropdown */
 .pac-container { font-family: var(--font) !important; border-radius: 0 0 var(--radius) var(--radius); border: 2px solid var(--color-green); border-top: none; box-shadow: var(--shadow); z-index: 10000 !important; }
-.pac-item { padding: 8px 12px; font-size: 14px; cursor: pointer; }
+.pac-item { padding: 10px 14px; font-size: 15px; cursor: pointer; }
 .pac-item:hover, .pac-item-selected { background: var(--color-mint); }
 
-/* Stats Bar */
-.stats-bar { background: var(--color-navy); padding: 15px 0; color: var(--color-white); }
-.stats-bar .container { display: flex; flex-wrap: wrap; justify-content: space-around; gap: 20px; }
+.stats-bar { background: var(--color-navy); padding: 20px 0; color: var(--color-white); }
+.stats-bar .container { display: flex; flex-wrap: wrap; justify-content: space-around; gap: 24px; }
 .stat { display: flex; align-items: center; gap: 15px; flex: 1 1 250px; }
 .stat__icon { width: 50px; flex-shrink: 0; }
-.stat__icon img { width: 40px; }
-.stat h4 { font-size: 20px; color: var(--color-white); margin-bottom: 2px; }
-.stat p { font-size: 14px; margin: 0; opacity: 0.85; }
+.stat__icon img { width: 44px; }
+.stat h4 { font-size: 22px; color: var(--color-white); margin-bottom: 2px; }
+.stat p { font-size: 15px; margin: 0; opacity: 0.85; }
 
-/* Media Logos */
-.media-logos { padding: 30px 0; text-align: center; }
-.media-logos p { font-size: 18px; margin-bottom: 15px; }
-.media-logos__grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 30px; }
-.media-logos__grid img { height: 35px; width: auto; opacity: 0.7; }
+.media-logos { padding: 35px 0; text-align: center; }
+.media-logos p { font-size: 19px; margin-bottom: 18px; }
+.media-logos__grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 35px; }
+.media-logos__grid img { height: 38px; width: auto; opacity: 0.7; }
 
-/* Reviews */
-.reviews { padding: 20px 0 40px; }
-.reviews__track { display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding: 20px 0; scrollbar-width: none; }
-.reviews__track::-webkit-scrollbar { display: none; }
-.review-card { flex: 0 0 340px; scroll-snap-align: start; background: var(--color-navy); color: var(--color-white); border-radius: 15px; padding: 30px; position: relative; }
-.review-card__platform { position: absolute; top: 15px; left: 15px; width: 20px; }
-.review-card__name { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
-.review-card__stars { color: var(--color-star); margin-bottom: 4px; font-size: 14px; }
-.review-card__date { font-size: 12px; opacity: 0.6; margin-bottom: 12px; }
-.review-card__text { font-size: 14px; line-height: 1.6; }
-.review-card__info { text-align: center; padding-top: 20px; }
+/* Reviews carousel */
+.reviews { padding: 30px 0 50px; }
+.reviews__wrapper { position: relative; }
+.reviews__viewport { overflow: hidden; }
+.reviews__track {
+  display: flex; gap: 24px;
+  transition: transform 0.35s ease;
+  padding: 10px 0;
+}
+.review-card {
+  flex: 0 0 calc(33.333% - 16px);
+  background: var(--color-navy); color: var(--color-white);
+  border-radius: 15px; padding: 28px; position: relative;
+  display: flex; flex-direction: column;
+  min-height: 260px; max-height: 260px;
+}
+.review-card__platform { position: absolute; top: 15px; left: 15px; width: 22px; }
+.review-card__name { font-size: 19px; font-weight: 700; margin-bottom: 2px; }
+.review-card__stars { color: var(--color-star); margin-bottom: 4px; font-size: 15px; }
+.review-card__date { font-size: 13px; opacity: 0.6; margin-bottom: 10px; }
+.review-card__text {
+  font-size: 15px; line-height: 1.65;
+  flex: 1; overflow-y: auto;
+  padding-right: 6px;
+}
+.review-card__text::-webkit-scrollbar { width: 4px; }
+.review-card__text::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 4px; }
+.review-card__text::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+.review-card__text::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); }
+.review-card__info { text-align: center; padding-top: 16px; }
 
-/* Two-Column */
-.two-col { display: flex; flex-wrap: wrap; align-items: center; gap: 40px; }
+.reviews__arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--color-green); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition); z-index: 5;
+}
+.reviews__arrow:hover { background: var(--color-green-hover); }
+.reviews__arrow svg { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.reviews__arrow--left { left: -23px; }
+.reviews__arrow--right { right: -23px; }
+
+.two-col { display: flex; flex-wrap: wrap; align-items: center; gap: 50px; }
 .two-col__text { flex: 1 1 45%; min-width: 300px; }
 .two-col__image { flex: 1 1 45%; min-width: 300px; }
 .two-col__image img { border-radius: var(--radius-lg); width: 100%; aspect-ratio: 1/1; object-fit: cover; }
-.pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-.pain-item img { width: 28px; margin-bottom: 6px; }
-.pain-item h5 { margin-bottom: 2px; }
-.pain-item p { font-size: 14px; margin: 0; }
+.two-col__text p { font-size: 18px; }
+.pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
+.pain-item img { width: 30px; margin-bottom: 8px; }
+.pain-item h5 { margin-bottom: 4px; }
+.pain-item p { font-size: 15px; margin: 0; line-height: 1.6; }
 
-/* Comparison */
-.comparison__title { text-align: center; margin-bottom: 40px; }
+.comparison__title { text-align: center; margin-bottom: 45px; }
 .comparison__grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
-.comparison__card { flex: 1 1 400px; max-width: 520px; border: 1px solid var(--color-green); border-radius: var(--radius-lg); padding: 30px; }
+.comparison__card { flex: 1 1 400px; max-width: 520px; border: 1px solid var(--color-green); border-radius: var(--radius-lg); padding: 35px; }
 .comparison__card--red { border-color: var(--color-red); }
-.comparison__card h3 { font-weight: 400; font-size: 1.5rem; margin-bottom: 20px; color: var(--color-navy); }
-.checklist li { display: flex; align-items: flex-start; gap: 12px; padding: 13px 0; font-size: 16px; line-height: 1.7; }
-.checklist__icon { flex-shrink: 0; width: 27px; height: 27px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--color-white); font-size: 13px; margin-top: 2px; }
+.comparison__card h3 { font-weight: 400; font-size: 1.625rem; margin-bottom: 22px; color: var(--color-navy); }
+.checklist li { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; font-size: 17px; line-height: 1.7; }
+.checklist__icon { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--color-white); font-size: 14px; margin-top: 2px; }
 .checklist__icon--green { background: var(--color-green); }
 .checklist__icon--red { background: var(--color-red); }
 
-/* Advantage Box */
-.advantage { background: var(--color-navy); border-radius: var(--radius-lg); padding: 50px; color: var(--color-white); text-align: center; }
+.advantage { background: var(--color-navy); border-radius: var(--radius-lg); padding: 55px; color: var(--color-white); text-align: center; }
 .advantage h2, .advantage p { color: var(--color-white); }
-.advantage__subtitle { font-weight: 600; margin-bottom: 5px; }
-.advantage__features { display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; margin: 30px 0; }
+.advantage__subtitle { font-weight: 600; margin-bottom: 5px; font-size: 18px; }
+.advantage__features { display: flex; flex-wrap: wrap; justify-content: center; gap: 45px; margin: 35px 0; }
 .advantage__feature { flex: 1 1 200px; max-width: 280px; }
-.advantage__feature img { width: 60px; margin: 0 auto 10px; }
-.advantage__feature h3 { font-size: 1.2rem; color: var(--color-white); margin-bottom: 8px; }
-.advantage__feature p { font-size: 14px; line-height: 1.4; opacity: 0.9; }
-.advantage__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 30px; }
+.advantage__feature img { width: 64px; margin: 0 auto 12px; }
+.advantage__feature h3 { font-size: 1.3rem; color: var(--color-white); margin-bottom: 10px; }
+.advantage__feature p { font-size: 15px; line-height: 1.5; opacity: 0.9; }
+.advantage__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 35px; }
 
-/* Body Text */
-.body-text { max-width: 800px; margin: 0 auto; }
+.body-text { max-width: 850px; margin: 0 auto; }
+.body-text p { font-size: 18px; line-height: 1.8; }
 .body-text a { color: var(--color-green); text-decoration: underline; }
 .body-text a:hover { color: var(--color-green-hover); }
 
-/* CTA Form */
-.cta-form { background: var(--color-mint); padding: 50px 0; }
-.cta-form__inner { max-width: 700px; margin: 0 auto; text-align: center; }
+.cta-form { background: var(--color-mint); padding: 60px 0; }
+.cta-form__inner { max-width: 720px; margin: 0 auto; text-align: center; }
 .cta-form h2 { color: var(--color-navy); }
-.cta-form .bbb { max-width: 160px; margin: 15px auto 0; }
+.cta-form__inner > p { font-size: 18px; }
+.cta-form .bbb { max-width: 160px; margin: 18px auto 0; }
 
-/* FAQ */
-.faq { max-width: 800px; margin: 0 auto; }
-.faq h2 { text-align: center; margin-bottom: 30px; }
+.faq { max-width: 850px; margin: 0 auto; }
+.faq h2 { text-align: center; margin-bottom: 35px; }
 .faq__item { border-bottom: 1px solid var(--color-gray-light); }
 .faq__question {
   display: flex; justify-content: space-between; align-items: center;
-  width: 100%; padding: 18px 0; background: none; border: none;
-  font-family: var(--font); font-size: 15px; font-weight: 500;
+  width: 100%; padding: 22px 0; background: none; border: none;
+  font-family: var(--font); font-size: 17px; font-weight: 500;
   text-align: left; cursor: pointer; color: var(--color-black);
-  gap: 15px; transition: color var(--transition);
+  gap: 18px; transition: color var(--transition);
 }
 .faq__question:hover { color: var(--color-navy-light); }
 .faq__icon {
-  flex-shrink: 0; width: 22px; height: 22px;
+  flex-shrink: 0; width: 24px; height: 24px;
   display: flex; align-items: center; justify-content: center;
 }
-.faq__icon svg { width: 22px; height: 22px; }
+.faq__icon svg { width: 24px; height: 24px; }
 .faq__icon .icon-chevron { display: block; }
 .faq__icon .icon-bar { display: none; }
 .faq__item.active .faq__icon .icon-chevron { display: none; }
@@ -223,31 +241,35 @@ p:last-child { margin-bottom: 0; }
   transition: grid-template-rows 0.2s ease;
 }
 .faq__item.active .faq__answer { grid-template-rows: 1fr; }
-.faq__answer-inner { overflow: hidden; font-size: 14px; line-height: 1.7; }
-.faq__answer-inner > div { padding: 0 0 18px; }
+.faq__answer-inner { overflow: hidden; }
+.faq__answer-inner > div { padding: 0 0 22px; font-size: 16px; line-height: 1.8; }
 
-/* Footer */
 .footer { background: var(--color-navy); color: var(--color-white); padding: 60px 0 20px; }
 .footer a { color: var(--color-white); opacity: 0.85; }
 .footer a:hover { opacity: 1; color: var(--color-green); }
-.footer .container { display: flex; flex-wrap: wrap; gap: 40px; }
+.footer__top { display: flex; flex-wrap: wrap; gap: 40px; }
 .footer__brand { flex: 2 1 300px; }
 .footer__brand img { max-width: 200px; margin-bottom: 15px; }
-.footer__brand p { font-size: 14px; opacity: 0.85; margin-bottom: 8px; }
-.footer__brand .phone { font-size: 18px; font-weight: 600; }
+.footer__brand p { font-size: 15px; opacity: 0.85; margin-bottom: 8px; }
+.footer__brand .phone { font-size: 19px; font-weight: 600; }
 .footer__links { flex: 1 1 150px; }
-.footer__links a { display: block; font-size: 14px; padding: 5px 0; }
+.footer__links a { display: block; font-size: 15px; padding: 6px 0; }
 .footer__right { flex: 1 1 180px; text-align: right; }
 .footer__right img { max-width: 160px; margin-left: auto; margin-bottom: 15px; }
 .footer__social { display: flex; gap: 10px; justify-content: flex-end; }
-.footer__social a { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 18px; opacity: 1; }
+.footer__social a { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; opacity: 1; }
 .footer__social a:hover { opacity: 0.8; }
-.footer__social a svg { width: 22px; height: 22px; fill: #ffffff; }
+.footer__social a svg { width: 24px; height: 24px; fill: #ffffff; }
 .footer__social a:hover svg { fill: var(--color-green); }
-.footer__bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.15); font-size: 13px; opacity: 0.7; }
-.footer__legal { font-size: 14px; opacity: 0.7; margin-top: 10px; }
+.footer__bottom {
+  margin-top: 45px; padding-top: 25px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  text-align: center;
+}
+.footer__legal { font-size: 14px; opacity: 0.7; margin-bottom: 10px; }
+.footer__copyright { font-size: 14px; opacity: 0.6; }
+.footer__copyright a { font-size: 14px; }
 
-/* Toast notification */
 .toast {
   display: none; position: fixed; top: 20px; right: 20px;
   background: var(--color-green); color: var(--color-white);
@@ -258,19 +280,22 @@ p:last-child { margin-bottom: 0; }
 .toast.show { display: block; }
 @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-/* Responsive */
 @media (max-width: 1024px) {
   .hero { background: linear-gradient(112deg, var(--color-white) 80%, var(--color-navy) 62%); }
   .hero__badge { display: none; }
   .nav { display: none; }
   .nav__toggle { display: block; }
   .nav.open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-white); padding: 20px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 999; }
+  .nav.open a { font-size: 18px; padding: 14px 0; }
   .btn--phone-desktop { display: none; }
   .advantage { padding: 40px 25px; }
+  .review-card { flex: 0 0 calc(50% - 12px); }
+  .reviews__arrow--left { left: -10px; }
+  .reviews__arrow--right { right: -10px; }
 }
 @media (max-width: 768px) {
   .container { padding: 0 20px; }
-  .section { padding: 40px 0; }
+  .section { padding: 45px 0; }
   .hero { background: linear-gradient(154deg, var(--color-white) 67%, var(--color-navy) 15%); padding-top: 30px; }
   .hero__image { display: none; }
   .hero__content { flex: 1 1 100%; }
@@ -278,48 +303,24 @@ p:last-child { margin-bottom: 0; }
   .two-col__text, .two-col__image { flex: 1 1 100%; }
   .pain-grid { grid-template-columns: 1fr; }
   .comparison__card { flex: 1 1 100%; }
-  .footer .container { gap: 30px; }
+  .footer__top { gap: 30px; }
   .footer__right { text-align: left; }
   .footer__right img { margin-left: 0; }
   .footer__social { justify-content: flex-start; }
-  .review-card { flex: 0 0 280px; }
+  .review-card { flex: 0 0 calc(100% - 0px); min-height: 240px; max-height: 240px; }
+  .reviews__arrow { width: 40px; height: 40px; }
+  .reviews__arrow--left { left: -6px; }
+  .reviews__arrow--right { right: -6px; }
 }
 @media (max-width: 480px) {
-  h1 { font-size: 2rem; }
-  .lead-form__address-wrap input { padding: 14px 16px; font-size: 15px; }
-  .lead-form__unit { padding: 14px 10px; font-size: 15px; }
+  h1 { font-size: 2.125rem; }
+  .lead-form__address-wrap input { padding: 16px 16px; font-size: 16px; }
+  .lead-form__unit { padding: 16px 10px; font-size: 16px; }
 }
   </style>
 </head>
 <body>
 
-  <!-- ==========================================
-       SETUP INSTRUCTIONS (delete before launch):
-
-       1. GOOGLE PLACES API KEY
-          - Go to https://console.cloud.google.com
-          - Create project → Enable "Places API" + "Maps JavaScript API"
-          - Create API key → restrict to your domain
-          - Replace YOUR_GOOGLE_API_KEY at the bottom of this file
-
-       2. FORMSPREE (instant email leads)
-          - Go to https://formspree.io → sign up free
-          - Create a new form → copy your form ID (e.g. "xpwdabcd")
-          - Replace YOUR_FORMSPREE_ID in BOTH forms below
-          - Leads will instantly email you with all address data
-
-       3. CUSTOMIZATION
-          - Search & replace Joshua Guerrero with your name
-          - Search & replace Active Realty Team - REAL BROKER with your brokerage
-          - Search & replace (510) 935-5701 with your phone number
-          - Search & replace 5109355701 with digits only (e.g. 18005551234)
-          - Search & replace 02267255 with your license number
-          - Search & replace Josh@Drozq.com with your email
-          - Search & replace Irvine with your primary city
-          - Replace all images with self-hosted before launch
-       ========================================== -->
-
-  <!-- Toast notification for form success -->
   <div class="toast" id="successToast">&#10003; Got it! We'll be in touch within the hour.</div>
 
   <!-- ========== TOP BAR ========== -->
@@ -330,21 +331,20 @@ p:last-child { margin-bottom: 0; }
   <!-- ========== HEADER ========== -->
   <header class="header">
     <div class="container">
-      <a href="/" class="header__logo">
-        <!-- REPLACE: Your logo -->
+      <a href="https://drozq.com" class="header__logo">
         <img src="https://www.sellersadvantage.com/wp-content/uploads/2022/06/sellers-advantage-company-buys-homes-logo.webp" alt="Joshua Guerrero Real Estate" width="250" height="50">
       </a>
 
       <nav class="nav" id="mainNav">
-        <a href="/">Home</a>
+        <a href="https://drozq.com">Home</a>
         <a href="#process">How It Works</a>
         <a href="#why-us">Why Choose Me</a>
-        <a href="#reviews">Reviews</a>
+        <a href="https://drozq.com/reviews">Reviews</a>
         <a href="#faq">FAQ</a>
         <a href="#contact">Contact</a>
       </nav>
 
-      <a href="tel:5109355701" class="btn btn--phone btn--phone-desktop">(510) 935-5701</a>
+      <a href="tel:15109355701" class="btn btn--phone btn--phone-desktop">1-510-935-5701</a>
       <button class="nav__toggle" id="navToggle" aria-label="Toggle Navigation">&#9776;</button>
     </div>
   </header>
@@ -354,22 +354,19 @@ p:last-child { margin-bottom: 0; }
     <div class="container">
 
       <div class="hero__image">
-        <!-- REPLACE: Your professional photo -->
         <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/02/doug-and-domaini-tall.webp" alt="Joshua Guerrero - Listing Agent" width="600" height="710" fetchpriority="high">
       </div>
 
       <div class="hero__content">
-        <h1>Sell Your Home For Top Dollar &mdash; Fast</h1>
+        <h1>Sell Your Home For Top Dollar, Fast</h1>
         <p class="hero__subtitle">Expert marketing. Strategic pricing. Maximum results. Zero stress.</p>
 
-        <!-- === LEAD FORM #1 (HERO) === -->
         <form class="lead-form" id="heroForm" data-formspree="YOUR_FORMSPREE_ID">
           <div class="lead-form__address-wrap">
             <input type="text" id="heroAddress" name="address_display" placeholder="Enter your home address" autocomplete="off" required>
           </div>
           <input type="text" class="lead-form__unit" name="unit" placeholder="Unit" maxlength="5">
 
-          <!-- Hidden fields populated by Google Places -->
           <div class="lead-form__hidden">
             <input type="hidden" name="street_address" id="heroStreet">
             <input type="hidden" name="city" id="heroCity">
@@ -391,7 +388,6 @@ p:last-child { margin-bottom: 0; }
       </div>
 
       <div class="hero__badge">
-        <!-- REPLACE: Your badge/logo mark -->
         <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/02/sellers-advantage-logo-hero.webp" alt="Joshua Guerrero emblem" width="300" height="289" loading="lazy">
       </div>
 
@@ -430,7 +426,6 @@ p:last-child { margin-bottom: 0; }
     <div class="container">
       <p>As Featured On:</p>
       <div class="media-logos__grid">
-        <!-- REPLACE: Your own media/press logos -->
         <img src="https://www.drozq.com/media/icons/klos-heidi-and-frank-1.webp.webp" alt="KLOS Radio" width="110" height="39" loading="lazy">
         <img src="https://www.drozq.com/media/icons/kfi-john-and-ken-radio-show-1.webp.webp" alt="KFI AM 640" width="111" height="39" loading="lazy">
         <img src="https://www.drozq.com/media/icons/companies-that-buy-houses-near-me-abc-1.webp.webp" alt="ABC" width="117" height="41" loading="lazy">
@@ -444,58 +439,80 @@ p:last-child { margin-bottom: 0; }
   <!-- ========== REVIEWS ========== -->
   <section class="reviews" id="reviews">
     <div class="container">
-      <div class="reviews__track">
+      <div class="reviews__wrapper">
+        <button class="reviews__arrow reviews__arrow--left" id="reviewPrev" aria-label="Previous reviews">
+          <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
 
-        <div class="review-card">
-          <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="20" height="20" loading="lazy">
-          <div class="review-card__info">
-            <div class="review-card__name">Sarah M.</div>
-            <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-            <div class="review-card__date">March 2026</div>
+        <div class="reviews__viewport">
+          <div class="reviews__track" id="reviewTrack">
+
+            <div class="review-card">
+              <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
+              <div class="review-card__info">
+                <div class="review-card__name">Sarah M.</div>
+                <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <div class="review-card__date">March 2026</div>
+              </div>
+              <p class="review-card__text">Joshua Guerrero sold our home in just 12 days for $40K over asking. The marketing was incredible: professional photos, drone video, and a strategy that brought in multiple offers. Best decision we made.</p>
+            </div>
+
+            <div class="review-card">
+              <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
+              <div class="review-card__info">
+                <div class="review-card__name">David &amp; Lisa R.</div>
+                <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <div class="review-card__date">February 2026</div>
+              </div>
+              <p class="review-card__text">We interviewed three agents and Joshua Guerrero stood out immediately. The market analysis was detailed, the pricing strategy was spot-on, and communication throughout was exceptional. Sold above asking in two weeks.</p>
+            </div>
+
+            <div class="review-card">
+              <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
+              <div class="review-card__info">
+                <div class="review-card__name">Jennifer T.</div>
+                <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <div class="review-card__date">January 2026</div>
+              </div>
+              <p class="review-card__text">I was nervous about selling my first home, but Joshua Guerrero walked me through everything. From staging recommendations to negotiating with buyers, I felt completely supported. Couldn't recommend more highly.</p>
+            </div>
+
+            <div class="review-card">
+              <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
+              <div class="review-card__info">
+                <div class="review-card__name">Michael P.</div>
+                <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <div class="review-card__date">December 2025</div>
+              </div>
+              <p class="review-card__text">Our home had been sitting on the market for 60 days with another agent. Joshua Guerrero relisted it, repositioned the pricing, and had it under contract in 9 days. The difference was night and day.</p>
+            </div>
+
+            <div class="review-card">
+              <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
+              <div class="review-card__info">
+                <div class="review-card__name">Robert &amp; Ana G.</div>
+                <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <div class="review-card__date">November 2025</div>
+              </div>
+              <p class="review-card__text">Responsive, professional, and genuinely cared about getting us the best price. The virtual tour and social media marketing brought in buyers we never would have reached. Closed smoothly and on schedule.</p>
+            </div>
+
+            <div class="review-card">
+              <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
+              <div class="review-card__info">
+                <div class="review-card__name">Karen &amp; Steve W.</div>
+                <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <div class="review-card__date">October 2025</div>
+              </div>
+              <p class="review-card__text">After a bad experience with our previous agent, Joshua was a breath of fresh air. Transparent communication, a clear marketing plan, and he delivered exactly what he promised. Sold for $25K over asking in 10 days.</p>
+            </div>
+
           </div>
-          <p class="review-card__text">Joshua Guerrero sold our home in just 12 days for $40K over asking. The marketing was incredible — professional photos, drone video, and a strategy that brought in multiple offers. Best decision we made.</p>
         </div>
 
-        <div class="review-card">
-          <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="20" height="20" loading="lazy">
-          <div class="review-card__info">
-            <div class="review-card__name">David &amp; Lisa R.</div>
-            <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-            <div class="review-card__date">February 2026</div>
-          </div>
-          <p class="review-card__text">We interviewed three agents and Joshua Guerrero stood out immediately. The market analysis was detailed, the pricing strategy was spot-on, and communication throughout was exceptional. Sold above asking in two weeks.</p>
-        </div>
-
-        <div class="review-card">
-          <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="20" height="20" loading="lazy">
-          <div class="review-card__info">
-            <div class="review-card__name">Jennifer T.</div>
-            <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-            <div class="review-card__date">January 2026</div>
-          </div>
-          <p class="review-card__text">I was nervous about selling my first home, but Joshua Guerrero walked me through everything. From staging recommendations to negotiating with buyers — I felt completely supported. Couldn't recommend more highly.</p>
-        </div>
-
-        <div class="review-card">
-          <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="20" height="20" loading="lazy">
-          <div class="review-card__info">
-            <div class="review-card__name">Michael P.</div>
-            <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-            <div class="review-card__date">December 2025</div>
-          </div>
-          <p class="review-card__text">Our home had been sitting on the market for 60 days with another agent. Joshua Guerrero relisted it, repositioned the pricing, and had it under contract in 9 days. The difference was night and day.</p>
-        </div>
-
-        <div class="review-card">
-          <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="20" height="20" loading="lazy">
-          <div class="review-card__info">
-            <div class="review-card__name">Robert &amp; Ana G.</div>
-            <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-            <div class="review-card__date">November 2025</div>
-          </div>
-          <p class="review-card__text">Responsive, professional, and genuinely cared about getting us the best price. The virtual tour and social media marketing brought in buyers we never would have reached. Closed smoothly and on schedule.</p>
-        </div>
-
+        <button class="reviews__arrow reviews__arrow--right" id="reviewNext" aria-label="Next reviews">
+          <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
       </div>
     </div>
   </section>
@@ -506,7 +523,7 @@ p:last-child { margin-bottom: 0; }
       <div class="two-col">
         <div class="two-col__text">
           <h1>Why Selling With an Expert Agent Matters</h1>
-          <p>Selling a home involves dozens of decisions that directly impact your bottom line. The right listing agent doesn't just put a sign in the yard — they build a strategy to maximize your sale price and minimize your stress.</p>
+          <p>Selling a home involves dozens of decisions that directly impact your bottom line. The right listing agent doesn't just put a sign in the yard. They build a strategy to maximize your sale price and minimize your stress.</p>
           <div class="pain-grid">
             <div class="pain-item">
               <img src="https://www.drozq.com/media/icons/hand_holding_house.svg" alt="" width="30" height="29" loading="lazy">
@@ -561,12 +578,12 @@ p:last-child { margin-bottom: 0; }
             <div class="pain-item">
               <img src="https://www.drozq.com/media/icons/encrypted.svg" alt="" width="23" height="29" loading="lazy">
               <h5>Transaction Management</h5>
-              <p>Every detail handled from listing to closing — nothing falls through the cracks.</p>
+              <p>Every detail handled from listing to closing. Nothing falls through the cracks.</p>
             </div>
             <div class="pain-item">
               <img src="https://www.drozq.com/media/icons/fastclock.svg" alt="" width="31" height="23" loading="lazy">
               <h5>Your Timeline</h5>
-              <p>Sell on your schedule — whether that's 2 weeks or 2 months.</p>
+              <p>Sell on your schedule, whether that's 2 weeks or 2 months.</p>
             </div>
           </div>
         </div>
@@ -587,7 +604,7 @@ p:last-child { margin-bottom: 0; }
             <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Professional photography, video tours &amp; drone footage</li>
             <li><span class="checklist__icon checklist__icon--green">&#10003;</span> MLS listing + targeted digital marketing campaigns</li>
             <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Expert pricing strategy backed by real comp data</li>
-            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Skilled negotiation — average 3-5% more than FSBO</li>
+            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Skilled negotiation: average 3-5% more than FSBO</li>
             <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Full transaction management from listing to close</li>
           </ul>
         </div>
@@ -595,8 +612,8 @@ p:last-child { margin-bottom: 0; }
           <h3>Selling On Your Own (FSBO)</h3>
           <ul class="checklist">
             <li><span class="checklist__icon checklist__icon--red">&#10005;</span> DIY photos that don't showcase your home's potential</li>
-            <li><span class="checklist__icon checklist__icon--red">&#10005;</span> Limited exposure — most buyers search MLS first</li>
-            <li><span class="checklist__icon checklist__icon--red">&#10005;</span> Guessing on price — overpricing kills momentum</li>
+            <li><span class="checklist__icon checklist__icon--red">&#10005;</span> Limited exposure: most buyers search MLS first</li>
+            <li><span class="checklist__icon checklist__icon--red">&#10005;</span> Guessing on price. Overpricing kills momentum</li>
             <li><span class="checklist__icon checklist__icon--red">&#10005;</span> Negotiating against experienced buyer's agents</li>
             <li><span class="checklist__icon checklist__icon--red">&#10005;</span> Managing paperwork, disclosures &amp; legal compliance alone</li>
           </ul>
@@ -642,8 +659,8 @@ p:last-child { margin-bottom: 0; }
     <div class="container">
       <div class="body-text text-center">
         <h2>Sell Your Home With Confidence</h2>
-        <p>Selling a home in Southern California is one of the biggest financial decisions you'll make. Whether you're upsizing, downsizing, relocating, or navigating a life change — having the right listing agent in your corner makes all the difference between leaving money on the table and maximizing your sale price.</p>
-        <p>I specialize in helping homeowners throughout <a href="#">Irvine</a> and the surrounding areas sell their homes faster and for more money. With a proven marketing system, deep local market knowledge, and hands-on transaction management, my sellers consistently achieve above-market results with minimal stress.</p>
+        <p>Selling a home in Southern California is one of the biggest financial decisions you'll make. Whether you're upsizing, downsizing, relocating, or navigating a life change, having the right listing agent in your corner makes all the difference between leaving money on the table and maximizing your sale price.</p>
+        <p>I specialize in helping homeowners throughout <a href="https://drozq.com/irvine">Irvine</a> and the surrounding areas sell their homes faster and for more money. With a proven marketing system, deep local market knowledge, and hands-on transaction management, my sellers consistently achieve above-market results with minimal stress.</p>
         <p>Every listing gets the full treatment: professional staging consultation, HD photography, cinematic video tours, targeted social media advertising, and strategic open houses designed to create competition among buyers. <strong><a href="#contact">Get your free home valuation today</a></strong> and find out what your home is really worth in today's market.</p>
       </div>
     </div>
@@ -654,9 +671,8 @@ p:last-child { margin-bottom: 0; }
     <div class="container">
       <div class="cta-form__inner">
         <h2>Get Your Free<br>Home Valuation</h2>
-        <p>Call me at <a href="tel:5109355701">(510) 935-5701</a> or enter your address below. You'll hear back within the hour.</p>
+        <p>Call me at <a href="tel:15109355701" style="text-decoration:underline; font-weight:600;">1-510-935-5701</a> or enter your address below. You'll hear back within the hour.</p>
 
-        <!-- === LEAD FORM #2 (CTA) === -->
         <form class="lead-form" id="ctaForm" data-formspree="YOUR_FORMSPREE_ID">
           <div class="lead-form__address-wrap">
             <input type="text" id="ctaAddress" name="address_display" placeholder="Enter your home address" autocomplete="off" required>
@@ -727,7 +743,7 @@ p:last-child { margin-bottom: 0; }
             </span>
           </button>
           <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Timeline depends on your local market, price point, and property condition — but with proper pricing and marketing, most of my listings receive offers within the first two weeks. I'll give you a realistic timeline estimate during our initial consultation based on current market data for your specific neighborhood.</p>
+            <p>Timeline depends on your local market, price point, and property condition, but with proper pricing and marketing, most of my listings receive offers within the first two weeks. I'll give you a realistic timeline estimate during our initial consultation based on current market data for your specific neighborhood.</p>
           </div></div></div>
         </div>
 
@@ -753,7 +769,7 @@ p:last-child { margin-bottom: 0; }
             </span>
           </button>
           <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>I work with a network of vetted cash investors and can present you with off-market cash offers if speed and simplicity are your priority. You'll have the option to compare a traditional listing approach against an investor offer — and I'll help you evaluate both so you can make the best decision for your situation. Either way, I'm here to represent your interests.</p>
+            <p>I work with a network of vetted cash investors and can present you with off-market cash offers if speed and simplicity are your priority. You'll have the option to compare a traditional listing approach against an investor offer, and I'll help you evaluate both so you can make the best decision for your situation. Either way, I'm here to represent your interests.</p>
           </div></div></div>
         </div>
 
@@ -764,169 +780,139 @@ p:last-child { margin-bottom: 0; }
   <!-- ========== FOOTER ========== -->
   <footer class="footer">
     <div class="container">
-      <div class="footer__brand">
-        <!-- REPLACE: Your logo (white version) -->
-        <img src="https://www.sellersadvantage.com/wp-content/uploads/2022/06/sellers-advantage-logo-white.webp" alt="Joshua Guerrero Real Estate" width="200" loading="lazy">
-        <p>17875 Von Karman Ave, Suite 150, Irvine 92614<br>Irvine, CA 92614</p>
-        <p class="phone"><a href="tel:5109355701">(510) 935-5701</a></p>
-        <p><a href="mailto:Josh@Drozq.com">Josh@Drozq.com</a></p>
-      </div>
+      <div class="footer__top">
+        <div class="footer__brand">
+          <img src="https://www.sellersadvantage.com/wp-content/uploads/2022/06/sellers-advantage-logo-white.webp" alt="Joshua Guerrero Real Estate" width="200" loading="lazy">
+          <p>17875 Von Karman Ave, Suite 150<br>Irvine, CA 92614</p>
+          <p class="phone"><a href="tel:15109355701">1-510-935-5701</a></p>
+          <p><a href="mailto:Josh@Drozq.com">Josh@Drozq.com</a></p>
+        </div>
 
-      <div class="footer__links">
-        <a href="/">Home</a>
-        <a href="#process">How It Works</a>
-        <a href="#why-us">Why Choose Me</a>
-        <a href="#reviews">Reviews</a>
-        <a href="#contact">Get Valuation</a>
-      </div>
+        <div class="footer__links">
+          <a href="https://drozq.com">Home</a>
+          <a href="#process">How It Works</a>
+          <a href="#why-us">Why Choose Me</a>
+          <a href="https://drozq.com/reviews">Reviews</a>
+          <a href="#contact">Get Valuation</a>
+        </div>
 
-      <div class="footer__links">
-        <a href="#faq">FAQ</a>
-        <a href="#contact">Contact</a>
-      </div>
+        <div class="footer__links">
+          <a href="#faq">FAQ</a>
+          <a href="#contact">Contact</a>
+        </div>
 
-      <div class="footer__right">
-        <img src="https://www.drozq.com/media/icons/bbb-accredited-a-plus.webp" alt="Accredited" width="160" loading="lazy">
-        <div class="footer__social">
-          <a href="https://www.facebook.com/Drozq/" target="_blank" rel="noopener" aria-label="Facebook">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-          </a>
-          <a href="https://www.instagram.com/drozq/" target="_blank" rel="noopener" aria-label="Instagram">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-          </a>
-          <a href="https://www.youtube.com/@drozq" target="_blank" rel="noopener" aria-label="YouTube">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          </a>
+        <div class="footer__right">
+          <img src="https://www.drozq.com/media/icons/bbb-accredited-a-plus.webp" alt="Accredited" width="160" loading="lazy">
+          <div class="footer__social">
+            <a href="https://www.facebook.com/Drozq/" target="_blank" rel="noopener" aria-label="Facebook">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/drozq/" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="https://www.youtube.com/@drozq" target="_blank" rel="noopener" aria-label="YouTube">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="container">
-      <div class="footer__legal">
-        <p>Joshua Guerrero is a licensed real estate agent in the state of California DRE# 02267255</p>
-      </div>
       <div class="footer__bottom">
-        <a href="/privacy/" rel="nofollow">Privacy Policy</a> &mdash;
-        Copyright &copy; 2025-2026 Joshua Guerrero. All Rights Reserved.
+        <div class="footer__legal">
+          <p>Joshua Guerrero is a licensed real estate agent in the state of California DRE# 02267255</p>
+        </div>
+        <div class="footer__copyright">
+          <a href="https://drozq.com/privacy">Privacy Policy</a> &nbsp;|&nbsp;
+          <a href="https://drozq.com/reviews">Joshua Guerrero Reviews</a> &nbsp;|&nbsp;
+          Copyright &copy; 2025-2026 Drozq. All Rights Reserved.
+        </div>
       </div>
     </div>
   </footer>
 
-  <!-- ==========================================================
-       JAVASCRIPT: Google Places Autocomplete + Formspree Submit
-       ========================================================== -->
+  <!-- ========== JAVASCRIPT ========== -->
   <script>
   (function () {
     'use strict';
 
-    // ──────────────────────────────────────────
     // 1. GOOGLE PLACES AUTOCOMPLETE
-    //    Populates hidden fields on place select
-    // ──────────────────────────────────────────
     function initAutocomplete(inputId, prefix) {
       var input = document.getElementById(inputId);
       if (!input) return;
-
       var autocomplete = new google.maps.places.Autocomplete(input, {
         types: ['address'],
         componentRestrictions: { country: 'us' },
         fields: ['address_components', 'formatted_address', 'geometry']
       });
-
       autocomplete.addListener('place_changed', function () {
         var place = autocomplete.getPlace();
         if (!place.address_components) return;
-
-        // Clear previous
         var fields = { street: '', city: '', state: '', zip: '' };
-        var streetNumber = '';
-        var route = '';
-
+        var streetNumber = '', route = '';
         place.address_components.forEach(function (c) {
           var t = c.types;
-          if (t.includes('street_number'))           streetNumber = c.long_name;
-          if (t.includes('route'))                   route = c.long_name;
-          if (t.includes('locality'))                fields.city = c.long_name;
+          if (t.includes('street_number')) streetNumber = c.long_name;
+          if (t.includes('route')) route = c.long_name;
+          if (t.includes('locality')) fields.city = c.long_name;
           if (t.includes('sublocality_level_1') && !fields.city) fields.city = c.long_name;
           if (t.includes('administrative_area_level_1')) fields.state = c.short_name;
-          if (t.includes('postal_code'))             fields.zip = c.long_name;
+          if (t.includes('postal_code')) fields.zip = c.long_name;
         });
-
         fields.street = (streetNumber + ' ' + route).trim();
-
-        // Set hidden fields
         document.getElementById(prefix + 'Street').value = fields.street;
-        document.getElementById(prefix + 'City').value   = fields.city;
-        document.getElementById(prefix + 'State').value  = fields.state;
-        document.getElementById(prefix + 'Zip').value    = fields.zip;
-        document.getElementById(prefix + 'Full').value   = place.formatted_address || '';
-
+        document.getElementById(prefix + 'City').value = fields.city;
+        document.getElementById(prefix + 'State').value = fields.state;
+        document.getElementById(prefix + 'Zip').value = fields.zip;
+        document.getElementById(prefix + 'Full').value = place.formatted_address || '';
         if (place.geometry && place.geometry.location) {
           document.getElementById(prefix + 'Lat').value = place.geometry.location.lat();
           document.getElementById(prefix + 'Lng').value = place.geometry.location.lng();
         }
       });
-
-      // Prevent form submit on Enter while dropdown is open
       input.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
-          var pacContainer = document.querySelector('.pac-container');
-          if (pacContainer && pacContainer.style.display !== 'none') {
-            e.preventDefault();
-          }
+          var pac = document.querySelector('.pac-container');
+          if (pac && pac.style.display !== 'none') e.preventDefault();
         }
       });
     }
-
-    // Called by Google Maps callback
     window.initGooglePlaces = function () {
       initAutocomplete('heroAddress', 'hero');
       initAutocomplete('ctaAddress', 'cta');
     };
 
-    // ──────────────────────────────────────────
-    // 2. FORMSPREE AJAX SUBMISSION
-    //    Sends lead data, shows toast, resets form
-    // ──────────────────────────────────────────
+    // 2. FORMSPREE AJAX
     function handleFormSubmit(form) {
       form.addEventListener('submit', function (e) {
         e.preventDefault();
-
         var formspreeId = form.getAttribute('data-formspree');
         if (!formspreeId || formspreeId === 'YOUR_FORMSPREE_ID') {
-          alert('Setup required: Replace YOUR_FORMSPREE_ID in the HTML. See setup instructions at the top of the file.');
+          alert('Setup required: Replace YOUR_FORMSPREE_ID in the HTML.');
           return;
         }
-
-        // Set metadata
         var prefix = form.id === 'heroForm' ? 'hero' : 'cta';
         document.getElementById(prefix + 'PageUrl').value = window.location.href;
         document.getElementById(prefix + 'Timestamp').value = new Date().toISOString();
-
         var data = new FormData(form);
         var btn = form.querySelector('button[type="submit"]');
         var origText = btn.textContent;
         btn.textContent = 'Sending...';
         btn.disabled = true;
-
         fetch('https://formspree.io/f/' + formspreeId, {
-          method: 'POST',
-          body: data,
-          headers: { 'Accept': 'application/json' }
+          method: 'POST', body: data, headers: { 'Accept': 'application/json' }
         })
-        .then(function (response) {
-          if (response.ok) {
-            // Show success toast
+        .then(function (r) {
+          if (r.ok) {
             var toast = document.getElementById('successToast');
             toast.classList.add('show');
             setTimeout(function () { toast.classList.remove('show'); }, 5000);
             form.reset();
           } else {
-            alert('Something went wrong. Please call us directly at (510) 935-5701.');
+            alert('Something went wrong. Please call us directly at 1-510-935-5701.');
           }
         })
         .catch(function () {
-          alert('Network error. Please call us directly at (510) 935-5701.');
+          alert('Network error. Please call us directly at 1-510-935-5701.');
         })
         .finally(function () {
           btn.textContent = origText;
@@ -934,23 +920,17 @@ p:last-child { margin-bottom: 0; }
         });
       });
     }
-
-    // Init forms
     var heroForm = document.getElementById('heroForm');
     var ctaForm = document.getElementById('ctaForm');
     if (heroForm) handleFormSubmit(heroForm);
     if (ctaForm) handleFormSubmit(ctaForm);
 
-    // ──────────────────────────────────────────
-    // 3. MOBILE NAV TOGGLE
-    // ──────────────────────────────────────────
+    // 3. MOBILE NAV
     document.getElementById('navToggle').addEventListener('click', function () {
       document.getElementById('mainNav').classList.toggle('open');
     });
 
-    // ──────────────────────────────────────────
     // 4. FAQ ACCORDION
-    // ──────────────────────────────────────────
     document.querySelectorAll('.faq__question').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var item = this.closest('.faq__item');
@@ -966,10 +946,36 @@ p:last-child { margin-bottom: 0; }
       });
     });
 
+    // 5. REVIEW CAROUSEL (2 pages of 3, auto-cycles every 40s)
+    var track = document.getElementById('reviewTrack');
+    var prevBtn = document.getElementById('reviewPrev');
+    var nextBtn = document.getElementById('reviewNext');
+    var currentPage = 0;
+    var totalPages = 2;
+    var autoTimer;
+
+    function goToPage(page) {
+      currentPage = page;
+      track.style.transform = 'translateX(-' + (page * 100) + '%)';
+    }
+    function nextPage() {
+      goToPage(currentPage === totalPages - 1 ? 0 : currentPage + 1);
+    }
+    function prevPage() {
+      goToPage(currentPage === 0 ? totalPages - 1 : currentPage - 1);
+    }
+    function resetTimer() {
+      clearInterval(autoTimer);
+      autoTimer = setInterval(nextPage, 40000);
+    }
+    nextBtn.addEventListener('click', function () { nextPage(); resetTimer(); });
+    prevBtn.addEventListener('click', function () { prevPage(); resetTimer(); });
+    resetTimer();
+
   })();
   </script>
 
-  <!-- Google Maps JavaScript API — loads Places library + calls our init -->
+  <!-- Google Maps JavaScript API -->
   <!-- REPLACE YOUR_GOOGLE_API_KEY below -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places&callback=initGooglePlaces"></script>
 </body>
