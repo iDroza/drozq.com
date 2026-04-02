@@ -27,15 +27,28 @@ export async function onRequestPost(context) {
     }
 
     // 3) Extract fields
-    const name = String(formData.get("name") || "").trim();
+    const firstName = String(formData.get("first_name") || "").trim();
+    const lastName = String(formData.get("last_name") || "").trim();
+    const name = (firstName + " " + lastName).trim() || String(formData.get("name") || "").trim();
     const email = String(formData.get("email") || "").trim();
     const phone = String(formData.get("phone") || "").trim();
 
-    const intent = String(formData.get("intent") || "").trim(); // inquiry type
-    const message = String(formData.get("message") || "").trim(); // optional
+    const intent = String(formData.get("intent") || "").trim();
+    const message = String(formData.get("message") || "").trim();
 
-    const sourcePage = String(formData.get("source_page") || "").trim();
-    const consent = String(formData.get("consent") || "").trim(); // "yes" when checked
+    // Address fields
+    const streetAddress = String(formData.get("street_address") || "").trim();
+    const addressLine2 = String(formData.get("address_line_2") || "").trim();
+    const city = String(formData.get("city") || "").trim();
+    const state = String(formData.get("state") || "").trim();
+    const zip = String(formData.get("zip") || "").trim();
+    const fullAddress = String(formData.get("full_address") || "").trim();
+    const lat = String(formData.get("lat") || "").trim();
+    const lng = String(formData.get("lng") || "").trim();
+
+    const referralSource = String(formData.get("referral_source") || "").trim();
+    const sourcePage = String(formData.get("source_page") || formData.get("source") || "").trim();
+    const consent = String(formData.get("consent") || "").trim();
 
     // 4) Server-side validation
     if (!name || !email || !phone) {
@@ -55,7 +68,9 @@ export async function onRequestPost(context) {
       phone.length > 50 ||
       intent.length > 80 ||
       sourcePage.length > 100 ||
-      message.length > 5000
+      message.length > 5000 ||
+      streetAddress.length > 300 ||
+      fullAddress.length > 500
     ) {
       return json({ ok: false, error: "Payload too large" }, 413);
     }
@@ -86,30 +101,45 @@ export async function onRequestPost(context) {
     const ua = request.headers.get("user-agent") || "";
     const url = new URL(request.url);
 
-    // 8) Compose email
+    // 8) Compose address block
+    const addressBlock = [
+      streetAddress,
+      addressLine2,
+      [city, state, zip].filter(Boolean).join(", ")
+    ].filter(Boolean).join("\n");
+
+    // 9) Compose email
     const emailBody =
-`New inquiry from drozq.com/contact
+`New lead from drozq.com
 
 IDENTITY
 Name: ${name}
 Email: ${email}
 Phone: ${phone}
 
+ADDRESS
+${addressBlock || fullAddress || "—"}
+Full (Google): ${fullAddress || "—"}
+Lat/Lng: ${lat || "—"}, ${lng || "—"}
+
 INQUIRY
 Type: ${intent}
+Referral Source: ${referralSource || "—"}
 
 NOTES
 ${message || "—"}
 
 META
-Source page: ${sourcePage || "contact"}
+Source: ${sourcePage || "—"}
+Page URL: ${String(formData.get("page_url") || "—")}
+Submitted: ${String(formData.get("submitted_at") || "—")}
 Endpoint: ${url.pathname}
 IP: ${ip || "—"}
 User-Agent: ${ua || "—"}
 Consent: ${consent}
 `;
 
-    // 9) Send (MailChannels)
+    // 10) Send (MailChannels)
     const sendReq = new Request("https://api.mailchannels.net/tx/v1/send", {
       method: "POST",
       headers: {
@@ -121,7 +151,7 @@ Consent: ${consent}
         personalizations: [{ to: [{ email: TO_EMAIL }] }],
         from: { email: FROM_EMAIL, name: "drozq.com Lead Form" },
         reply_to: { email, name },
-        subject: `New Inquiry (${intent}): ${name}`,
+        subject: `🏠 New Lead (${intent}): ${name} — ${city || "Unknown City"}, ${state || "CA"}`,
         content: [{ type: "text/plain", value: emailBody }]
       })
     });
@@ -136,19 +166,30 @@ Consent: ${consent}
       );
     }
 
-    // 10) Optional Zapier forward
+    // 11) Optional Zapier forward
     if (env.ZAPIER_WEBHOOK_URL) {
       context.waitUntil(
         fetch(env.ZAPIER_WEBHOOK_URL, {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
+            first_name: firstName,
+            last_name: lastName,
             name,
             email,
             phone,
             intent,
+            street_address: streetAddress,
+            address_line_2: addressLine2,
+            city,
+            state,
+            zip,
+            full_address: fullAddress,
+            lat,
+            lng,
+            referral_source: referralSource,
             message,
-            source_page: sourcePage || "contact",
+            source_page: sourcePage,
             consent,
             ip,
             user_agent: ua
