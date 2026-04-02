@@ -343,11 +343,165 @@ p:last-child { margin-bottom: 0; }
   .lead-form__address-wrap input { padding: 16px 16px; font-size: 16px; }
   .lead-form__unit { padding: 16px 10px; font-size: 16px; }
 }
+/* ===== Follow-up Lead Modal ===== */
+.lead-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 10001;
+  background: rgba(0,0,0,0.55); align-items: center; justify-content: center;
+  padding: 20px; overflow-y: auto;
+}
+.lead-modal-overlay.open { display: flex; }
+.lead-modal {
+  background: var(--color-white); border-radius: var(--radius-lg);
+  width: 100%; max-width: 620px; padding: 45px 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25); position: relative;
+  max-height: 90vh; overflow-y: auto;
+}
+.lead-modal__close {
+  position: absolute; top: 16px; right: 20px;
+  background: none; border: none; font-size: 28px;
+  cursor: pointer; color: #999; line-height: 1;
+}
+.lead-modal__close:hover { color: var(--color-black); }
+.lead-modal h2 { text-align: center; color: var(--color-navy); margin-bottom: 6px; font-size: clamp(1.5rem,3vw,2rem); }
+.lead-modal__privacy { text-align: center; font-size: 14px; color: #666; margin-bottom: 28px; }
+.lead-modal__row { display: flex; gap: 14px; margin-bottom: 16px; }
+.lead-modal__row--single { flex-direction: column; }
+.lead-modal__field { flex: 1; display: flex; flex-direction: column; }
+.lead-modal__field label { font-size: 14px; font-weight: 600; margin-bottom: 5px; color: var(--color-navy); }
+.lead-modal__field label .req { color: var(--color-red); }
+.lead-modal__field input,
+.lead-modal__field select,
+.lead-modal__field textarea {
+  width: 100%; padding: 14px 16px; font-size: 16px; font-family: var(--font);
+  border: 2px solid var(--color-gray-light); border-radius: var(--radius);
+  outline: none; transition: border-color var(--transition); background: var(--color-white);
+}
+.lead-modal__field input:focus,
+.lead-modal__field select:focus,
+.lead-modal__field textarea:focus { border-color: var(--color-green); }
+.lead-modal__field textarea { resize: vertical; min-height: 90px; }
+.lead-modal__field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+.lead-modal__address-confirm { font-size: 15px; font-weight: 600; color: var(--color-navy); margin-bottom: 4px; background: var(--color-mint); padding: 10px 14px; border-radius: var(--radius); margin-bottom: 18px; }
+.lead-modal .btn--submit {
+  width: 100%; padding: 20px; font-size: 20px; margin-top: 10px;
+  background: var(--color-green); color: var(--color-white); border: none;
+  border-radius: var(--radius); cursor: pointer; font-family: var(--font);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  transition: background var(--transition);
+}
+.lead-modal .btn--submit:hover { background: var(--color-green-hover); }
+@media (max-width: 540px) {
+  .lead-modal { padding: 30px 22px; }
+  .lead-modal__row { flex-direction: column; gap: 12px; }
+}
   </style>
 </head>
 <body>
 
   <div class="toast" id="successToast">&#10003; Got it! We'll be in touch within the hour.</div>
+
+  <!-- ========== FOLLOW-UP LEAD MODAL ========== -->
+  <div class="lead-modal-overlay" id="leadModalOverlay">
+    <div class="lead-modal">
+      <button class="lead-modal__close" id="leadModalClose" aria-label="Close">&times;</button>
+      <h2>Get Your No Obligation Cash Offer</h2>
+      <p class="lead-modal__privacy">We respect your privacy. We will not share, rent or sell the information you provide.</p>
+
+      <div class="lead-modal__address-confirm" id="modalAddressPreview"></div>
+
+      <form id="leadModalForm">
+        <div class="lead-modal__row">
+          <div class="lead-modal__field">
+            <label>Name <span class="req">*</span></label>
+            <div style="display:flex;gap:10px;">
+              <input type="text" name="first_name" placeholder="First" required>
+              <input type="text" name="last_name" placeholder="Last" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="lead-modal__row">
+          <div class="lead-modal__field">
+            <label>Email <span class="req">*</span></label>
+            <input type="email" name="email" placeholder="Email" required>
+          </div>
+        </div>
+
+        <div class="lead-modal__row">
+          <div class="lead-modal__field">
+            <label>Phone <span class="req">*</span></label>
+            <input type="tel" name="phone" placeholder="Phone" required>
+          </div>
+        </div>
+
+        <div class="lead-modal__row lead-modal__row--single">
+          <div class="lead-modal__field">
+            <label>Please Confirm Your Home Address <span class="req">*</span></label>
+            <input type="text" name="street_address" placeholder="Street Address" required>
+          </div>
+        </div>
+        <div class="lead-modal__row">
+          <div class="lead-modal__field">
+            <input type="text" name="address_line_2" placeholder="Suite, Apartment Number, etc">
+          </div>
+        </div>
+        <div class="lead-modal__row">
+          <div class="lead-modal__field">
+            <input type="text" name="city" placeholder="City" required>
+          </div>
+          <div class="lead-modal__field">
+            <input type="text" name="state" placeholder="State" required>
+          </div>
+          <div class="lead-modal__field">
+            <input type="text" name="zip" placeholder="Zipcode" required>
+          </div>
+        </div>
+
+        <div class="lead-modal__row lead-modal__row--single">
+          <div class="lead-modal__field">
+            <label>Where did you hear about us?</label>
+            <select name="referral_source">
+              <option value="">Where did you hear about us?</option>
+              <option value="Google Search">Google Search</option>
+              <option value="Facebook">Facebook</option>
+              <option value="Instagram">Instagram</option>
+              <option value="YouTube">YouTube</option>
+              <option value="Zillow">Zillow</option>
+              <option value="Referral">Referral / Word of Mouth</option>
+              <option value="Radio">Radio</option>
+              <option value="Direct Mail">Direct Mail</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="lead-modal__row lead-modal__row--single">
+          <div class="lead-modal__field">
+            <label>Tell us about your home (optional)</label>
+            <textarea name="message" placeholder="Tell us about your home..."></textarea>
+          </div>
+        </div>
+
+        <!-- Honeypot -->
+        <div style="position:absolute;left:-9999px;" aria-hidden="true">
+          <input type="text" name="company_website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <!-- Hidden fields carried from address form -->
+        <input type="hidden" name="full_address" id="modalFullAddress">
+        <input type="hidden" name="lat" id="modalLat">
+        <input type="hidden" name="lng" id="modalLng">
+        <input type="hidden" name="source" id="modalSource">
+        <input type="hidden" name="page_url" id="modalPageUrl">
+        <input type="hidden" name="submitted_at" id="modalTimestamp">
+        <input type="hidden" name="consent" value="yes">
+        <input type="hidden" name="intent" value="Home Valuation">
+        <input type="hidden" name="source_page" id="modalSourcePage">
+
+        <button type="submit" class="btn--submit">Submit My Information</button>
+      </form>
+    </div>
+  </div>
 
   <!-- ========== TOP BAR ========== -->
   <div class="topbar">
@@ -387,7 +541,7 @@ p:last-child { margin-bottom: 0; }
         <h1>Sell Your Home For Top Dollar, Fast</h1>
         <p class="hero__subtitle">Expert marketing. Strategic pricing. Maximum results. Zero stress.</p>
 
-        <form class="lead-form" id="heroForm" data-formspree="YOUR_FORMSPREE_ID">
+        <form class="lead-form" id="heroForm">
           <div class="lead-form__address-wrap">
             <input type="text" id="heroAddress" name="address_display" placeholder="Enter your home address" autocomplete="off" required>
           </div>
@@ -699,7 +853,7 @@ p:last-child { margin-bottom: 0; }
         <h2>Get Your Free<br>Home Valuation</h2>
         <p>Call me at <a href="tel:15109355701" style="text-decoration:underline; font-weight:600;">1-510-935-5701</a> or enter your address below. You'll hear back within the hour.</p>
 
-        <form class="lead-form" id="ctaForm" data-formspree="YOUR_FORMSPREE_ID">
+        <form class="lead-form" id="ctaForm">
           <div class="lead-form__address-wrap">
             <input type="text" id="ctaAddress" name="address_display" placeholder="Enter your home address" autocomplete="off" required>
           </div>
@@ -907,49 +1061,99 @@ p:last-child { margin-bottom: 0; }
       initAutocomplete('ctaAddress', 'cta');
     };
 
-    // 2. FORMSPREE AJAX
-    function handleFormSubmit(form) {
+    // 2. ADDRESS FORM → OPEN FOLLOW-UP MODAL
+    var overlay = document.getElementById('leadModalOverlay');
+    var modalForm = document.getElementById('leadModalForm');
+
+    function openLeadModal(prefix) {
+      var street = document.getElementById(prefix + 'Street').value;
+      var city   = document.getElementById(prefix + 'City').value;
+      var state  = document.getElementById(prefix + 'State').value;
+      var zip    = document.getElementById(prefix + 'Zip').value;
+      var full   = document.getElementById(prefix + 'Full').value;
+      var lat    = document.getElementById(prefix + 'Lat').value;
+      var lng    = document.getElementById(prefix + 'Lng').value;
+
+      // Pre-fill the modal address fields
+      modalForm.querySelector('[name="street_address"]').value = street;
+      modalForm.querySelector('[name="city"]').value = city;
+      modalForm.querySelector('[name="state"]').value = state;
+      modalForm.querySelector('[name="zip"]').value = zip;
+      document.getElementById('modalFullAddress').value = full;
+      document.getElementById('modalLat').value = lat;
+      document.getElementById('modalLng').value = lng;
+      document.getElementById('modalSource').value = prefix === 'hero' ? 'Hero Form' : 'CTA Form';
+      document.getElementById('modalSourcePage').value = window.location.pathname;
+      document.getElementById('modalPageUrl').value = window.location.href;
+
+      // Show address preview
+      var preview = document.getElementById('modalAddressPreview');
+      preview.textContent = full || (street + ', ' + city + ', ' + state + ' ' + zip);
+      preview.style.display = full || street ? 'block' : 'none';
+
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLeadModal() {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('leadModalClose').addEventListener('click', closeLeadModal);
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closeLeadModal();
+    });
+
+    function handleAddressForm(form, prefix) {
       form.addEventListener('submit', function (e) {
         e.preventDefault();
-        var formspreeId = form.getAttribute('data-formspree');
-        if (!formspreeId || formspreeId === 'YOUR_FORMSPREE_ID') {
-          alert('Setup required: Replace YOUR_FORMSPREE_ID in the HTML.');
-          return;
-        }
-        var prefix = form.id === 'heroForm' ? 'hero' : 'cta';
-        document.getElementById(prefix + 'PageUrl').value = window.location.href;
-        document.getElementById(prefix + 'Timestamp').value = new Date().toISOString();
-        var data = new FormData(form);
-        var btn = form.querySelector('button[type="submit"]');
-        var origText = btn.textContent;
-        btn.textContent = 'Sending...';
-        btn.disabled = true;
-        fetch('https://formspree.io/f/' + formspreeId, {
-          method: 'POST', body: data, headers: { 'Accept': 'application/json' }
-        })
-        .then(function (r) {
-          if (r.ok) {
-            var toast = document.getElementById('successToast');
-            toast.classList.add('show');
-            setTimeout(function () { toast.classList.remove('show'); }, 5000);
-            form.reset();
-          } else {
-            alert('Something went wrong. Please call us directly at 1-510-935-5701.');
-          }
-        })
-        .catch(function () {
-          alert('Network error. Please call us directly at 1-510-935-5701.');
-        })
-        .finally(function () {
-          btn.textContent = origText;
-          btn.disabled = false;
-        });
+        openLeadModal(prefix);
       });
     }
     var heroForm = document.getElementById('heroForm');
     var ctaForm = document.getElementById('ctaForm');
-    if (heroForm) handleFormSubmit(heroForm);
-    if (ctaForm) handleFormSubmit(ctaForm);
+    if (heroForm) handleAddressForm(heroForm, 'hero');
+    if (ctaForm) handleAddressForm(ctaForm, 'cta');
+
+    // 2b. MODAL FORM → MAILCHANNELS VIA CLOUDFLARE WORKER
+    modalForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      document.getElementById('modalTimestamp').value = new Date().toISOString();
+
+      var btn = modalForm.querySelector('.btn--submit');
+      var origText = btn.textContent;
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      var data = new FormData(modalForm);
+
+      fetch('/api/lead', {
+        method: 'POST',
+        body: data
+      })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, data: j }; }); })
+      .then(function (res) {
+        if (res.ok && res.data.ok) {
+          closeLeadModal();
+          modalForm.reset();
+          var toast = document.getElementById('successToast');
+          toast.classList.add('show');
+          setTimeout(function () { toast.classList.remove('show'); }, 5000);
+          if (heroForm) heroForm.reset();
+          if (ctaForm) ctaForm.reset();
+        } else {
+          alert('Something went wrong. Please call us directly at 1-510-935-5701.');
+        }
+      })
+      .catch(function () {
+        alert('Network error. Please call us directly at 1-510-935-5701.');
+      })
+      .finally(function () {
+        btn.textContent = origText;
+        btn.disabled = false;
+      });
+    });
 
     // 3. MOBILE NAV
     document.getElementById('navToggle').addEventListener('click', function () {
@@ -1001,8 +1205,7 @@ p:last-child { margin-bottom: 0; }
   })();
   </script>
 
-  <!-- Google Maps JavaScript API -->
-  <!-- REPLACE YOUR_GOOGLE_API_KEY below -->
+  <!-- Google Maps JavaScript API (Places Autocomplete) -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAO__0suXD6CDECevon18renbKLmCF-0ks&libraries=places&callback=initGooglePlaces"></script>
 </body>
 </html>
