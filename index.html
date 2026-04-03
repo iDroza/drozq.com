@@ -158,48 +158,29 @@ p:last-child { margin-bottom: 0; }
 .media-logos__grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 35px; }
 .media-logos__grid img { height: 38px; width: auto; opacity: 0.7; }
 
-/* Reviews carousel */
+/* Reviews */
 .reviews { padding: 30px 0 50px; }
-.reviews__wrapper { position: relative; }
-.reviews__viewport { overflow: hidden; }
-.reviews__track {
-  display: flex; gap: 24px;
-  transition: transform 0.35s ease;
-  padding: 10px 0;
-}
+.reviews__heading { text-align: center; margin-bottom: 8px; font-size: clamp(1.25rem,2.5vw,1.5rem); color: var(--color-navy); }
+.reviews__subheading { text-align: center; font-size: 15px; color: #888; margin-bottom: 28px; }
+.reviews__grid { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
 .review-card {
-  flex: 0 0 calc(33.333% - 16px);
+  flex: 0 1 420px; max-width: 500px;
   background: var(--color-navy); color: var(--color-white);
-  border-radius: 15px; padding: 28px; position: relative;
+  border-radius: 15px; padding: 28px;
   display: flex; flex-direction: column;
-  min-height: 260px; max-height: 260px;
 }
-.review-card__platform { position: absolute; top: 15px; left: 15px; width: 22px; }
-.review-card__name { font-size: 19px; font-weight: 700; margin-bottom: 2px; }
-.review-card__stars { color: var(--color-star); margin-bottom: 4px; font-size: 15px; }
-.review-card__date { font-size: 13px; opacity: 0.6; margin-bottom: 10px; }
-.review-card__text {
-  font-size: 15px; line-height: 1.65;
-  flex: 1; overflow-y: auto;
-  padding-right: 6px;
+.review-card__header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.review-card__platform { width: 22px; height: 22px; }
+.review-card__name { font-size: 18px; font-weight: 700; }
+.review-card__stars { color: var(--color-star); font-size: 15px; margin-bottom: 4px; }
+.review-card__date { font-size: 13px; opacity: 0.6; margin-bottom: 12px; }
+.review-card__text { font-size: 15px; line-height: 1.7; }
+.reviews__cta { text-align: center; margin-top: 24px; }
+.reviews__cta a {
+  color: var(--color-green); font-weight: 600; font-size: 16px;
+  text-decoration: underline;
 }
-.review-card__text::-webkit-scrollbar { width: 4px; }
-.review-card__text::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 4px; }
-.review-card__text::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
-.review-card__text::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); }
-.review-card__info { text-align: center; padding-top: 16px; }
-
-.reviews__arrow {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  width: 46px; height: 46px; border-radius: 50%;
-  background: var(--color-green); border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background var(--transition); z-index: 5;
-}
-.reviews__arrow:hover { background: var(--color-green-hover); }
-.reviews__arrow svg { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.reviews__arrow--left { left: -23px; }
-.reviews__arrow--right { right: -23px; }
+.reviews__cta a:hover { color: var(--color-green-hover); }
 
 .two-col { display: flex; flex-wrap: wrap; align-items: center; gap: 50px; }
 .two-col__text { flex: 1 1 45%; min-width: 300px; }
@@ -240,7 +221,7 @@ p:last-child { margin-bottom: 0; }
 .cta-form__inner { max-width: 720px; margin: 0 auto; text-align: center; }
 .cta-form h2 { color: var(--color-navy); }
 .cta-form__inner > p { font-size: 18px; }
-.cta-form .bbb { max-width: 160px; margin: 18px auto 0; }
+.cta-form .broker-badge { max-width: 160px; margin: 18px auto 0; }
 
 .faq { max-width: 850px; margin: 0 auto; }
 .faq h2 { text-align: center; margin-bottom: 35px; }
@@ -315,9 +296,6 @@ p:last-child { margin-bottom: 0; }
   .nav.open a { font-size: 18px; padding: 14px 0; }
   .btn--phone-desktop { display: none; }
   .advantage { padding: 40px 25px; }
-  .review-card { flex: 0 0 calc(50% - 12px); }
-  .reviews__arrow--left { left: -10px; }
-  .reviews__arrow--right { right: -10px; }
 }
 @media (max-width: 768px) {
   .container { padding: 0 20px; }
@@ -333,10 +311,7 @@ p:last-child { margin-bottom: 0; }
   .footer__right { text-align: left; }
   .footer__right img { margin-left: 0; }
   .footer__social { justify-content: flex-start; }
-  .review-card { flex: 0 0 calc(100% - 0px); min-height: 240px; max-height: 240px; }
-  .reviews__arrow { width: 40px; height: 40px; }
-  .reviews__arrow--left { left: -6px; }
-  .reviews__arrow--right { right: -6px; }
+  .review-card { flex: 1 1 100%; }
 }
 @media (max-width: 480px) {
   h1 { font-size: 2.125rem; }
@@ -580,8 +555,8 @@ p:last-child { margin-bottom: 0; }
       <div class="stat">
         <div class="stat__icon"><img src="https://www.drozq.com/media/icons/kid_star.svg" alt="" width="50" height="48" loading="lazy"></div>
         <div>
-          <h4>5-Star Rated Agent</h4>
-          <p>Hundreds of happy sellers on Google &amp; Zillow</p>
+          <h4>5-Star Rated on Google</h4>
+          <p>Committed to exceptional client service</p>
         </div>
       </div>
       <div class="stat">
@@ -604,14 +579,12 @@ p:last-child { margin-bottom: 0; }
   <!-- ========== MEDIA LOGOS ========== -->
   <section class="media-logos section">
     <div class="container">
-      <p>As Featured On:</p>
+      <p>Find Me On:</p>
       <div class="media-logos__grid">
-        <img src="https://www.drozq.com/media/icons/klos-heidi-and-frank-1.webp.webp" alt="KLOS Radio" width="110" height="39" loading="lazy">
-        <img src="https://www.drozq.com/media/icons/kfi-john-and-ken-radio-show-1.webp.webp" alt="KFI AM 640" width="111" height="39" loading="lazy">
-        <img src="https://www.drozq.com/media/icons/companies-that-buy-houses-near-me-abc-1.webp.webp" alt="ABC" width="117" height="41" loading="lazy">
-        <img src="https://www.drozq.com/media/icons/cash-home-buyers-on-tv-cbs-1.webp.webp" alt="CBS" width="117" height="41" loading="lazy">
-        <img src="https://www.drozq.com/media/icons/we-buy-houses-fast-fox-1.webp.webp" alt="FOX" width="117" height="41" loading="lazy">
-        <img src="https://www.drozq.com/media/icons/companies-that-buy-houses-near-me-nbc-1.webp.webp" alt="NBC" width="117" height="41" loading="lazy">
+        <a href="https://www.zillow.com/" target="_blank" rel="noopener"><img src="https://www.drozq.com/media/icons/zillow-logo.svg" alt="Zillow" width="120" height="40" loading="lazy"></a>
+        <a href="https://www.realtor.com/" target="_blank" rel="noopener"><img src="https://www.drozq.com/media/icons/realtor-com-logo.svg" alt="Realtor.com" width="140" height="40" loading="lazy"></a>
+        <a href="https://www.redfin.com/" target="_blank" rel="noopener"><img src="https://www.drozq.com/media/icons/redfin-logo.svg" alt="Redfin" width="120" height="40" loading="lazy"></a>
+        <a href="https://maps.app.goo.gl/f6PwyX3U64uvMCeF9" target="_blank" rel="noopener"><img src="https://www.drozq.com/media/icons/google-logo.svg" alt="Google" width="110" height="40" loading="lazy"></a>
       </div>
     </div>
   </section>
@@ -619,80 +592,23 @@ p:last-child { margin-bottom: 0; }
   <!-- ========== REVIEWS ========== -->
   <section class="reviews" id="reviews">
     <div class="container">
-      <div class="reviews__wrapper">
-        <button class="reviews__arrow reviews__arrow--left" id="reviewPrev" aria-label="Previous reviews">
-          <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
+      <h3 class="reviews__heading">Most Recent Review</h3>
+      <p class="reviews__subheading">What our clients are saying on Google</p>
 
-        <div class="reviews__viewport">
-          <div class="reviews__track" id="reviewTrack">
-
-            <div class="review-card">
-              <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
-              <div class="review-card__info">
-                <div class="review-card__name">Sarah M.</div>
-                <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                <div class="review-card__date">March 2026</div>
-              </div>
-              <p class="review-card__text">Joshua Guerrero sold our home in just 12 days for $40K over asking. The marketing was incredible: professional photos, drone video, and a strategy that brought in multiple offers. Best decision we made.</p>
-            </div>
-
-            <div class="review-card">
-              <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
-              <div class="review-card__info">
-                <div class="review-card__name">David &amp; Lisa R.</div>
-                <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                <div class="review-card__date">February 2026</div>
-              </div>
-              <p class="review-card__text">We interviewed three agents and Joshua Guerrero stood out immediately. The market analysis was detailed, the pricing strategy was spot-on, and communication throughout was exceptional. Sold above asking in two weeks.</p>
-            </div>
-
-            <div class="review-card">
-              <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
-              <div class="review-card__info">
-                <div class="review-card__name">Jennifer T.</div>
-                <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                <div class="review-card__date">January 2026</div>
-              </div>
-              <p class="review-card__text">I was nervous about selling my first home, but Joshua Guerrero walked me through everything. From staging recommendations to negotiating with buyers, I felt completely supported. Couldn't recommend more highly.</p>
-            </div>
-
-            <div class="review-card">
-              <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
-              <div class="review-card__info">
-                <div class="review-card__name">Michael P.</div>
-                <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                <div class="review-card__date">December 2025</div>
-              </div>
-              <p class="review-card__text">Our home had been sitting on the market for 60 days with another agent. Joshua Guerrero relisted it, repositioned the pricing, and had it under contract in 9 days. The difference was night and day.</p>
-            </div>
-
-            <div class="review-card">
-              <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
-              <div class="review-card__info">
-                <div class="review-card__name">Robert &amp; Ana G.</div>
-                <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                <div class="review-card__date">November 2025</div>
-              </div>
-              <p class="review-card__text">Responsive, professional, and genuinely cared about getting us the best price. The virtual tour and social media marketing brought in buyers we never would have reached. Closed smoothly and on schedule.</p>
-            </div>
-
-            <div class="review-card">
-              <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
-              <div class="review-card__info">
-                <div class="review-card__name">Karen &amp; Steve W.</div>
-                <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                <div class="review-card__date">October 2025</div>
-              </div>
-              <p class="review-card__text">After a bad experience with our previous agent, Joshua was a breath of fresh air. Transparent communication, a clear marketing plan, and he delivered exactly what he promised. Sold for $25K over asking in 10 days.</p>
-            </div>
-
+      <div class="reviews__grid">
+        <div class="review-card">
+          <div class="review-card__header">
+            <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
+            <div class="review-card__name">Eli Donoso</div>
           </div>
+          <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <div class="review-card__date">March 2026</div>
+          <p class="review-card__text">Working with Josh was a great experience. He's a young real estate agent but did extremely well. He was always by my side and answered any questions I had. Josh was quick to respond and if he didn't have an answer for me he worked hard to figure the information out and get it back to me as soon as possible. He did excellent work during negotiations and fought well for me. I would definitely recommend Josh!</p>
         </div>
+      </div>
 
-        <button class="reviews__arrow reviews__arrow--right" id="reviewNext" aria-label="Next reviews">
-          <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
+      <div class="reviews__cta">
+        <a href="https://maps.app.goo.gl/f6PwyX3U64uvMCeF9" target="_blank" rel="noopener">See all reviews on Google &rarr;</a>
       </div>
     </div>
   </section>
@@ -877,7 +793,7 @@ p:last-child { margin-bottom: 0; }
         </form>
 
         <p>Trusted by Southern California homeowners</p>
-        <img class="bbb" src="https://www.drozq.com/media/icons/bbb-accredited-a-plus.webp" alt="Accredited Business" width="160" height="44" loading="lazy">
+        <img class="broker-badge" src="https://www.drozq.com/media/icons/real/real-broker-logo.png" alt="Real Broker" width="160" height="44" loading="lazy">
       </div>
     </div>
   </section>
@@ -982,7 +898,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="footer__right">
-          <img src="https://www.drozq.com/media/icons/bbb-accredited-a-plus.webp" alt="Accredited" width="160" loading="lazy">
+          <img src="https://www.drozq.com/media/icons/real/real-broker-logo.png" alt="Real Broker" width="160" loading="lazy">
           <div class="footer__social">
             <a href="https://www.facebook.com/Drozq/" target="_blank" rel="noopener" aria-label="Facebook">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
@@ -1169,32 +1085,6 @@ p:last-child { margin-bottom: 0; }
         }
       });
     });
-
-    // 5. REVIEW CAROUSEL (2 pages of 3, auto-cycles every 40s)
-    var track = document.getElementById('reviewTrack');
-    var prevBtn = document.getElementById('reviewPrev');
-    var nextBtn = document.getElementById('reviewNext');
-    var currentPage = 0;
-    var totalPages = 2;
-    var autoTimer;
-
-    function goToPage(page) {
-      currentPage = page;
-      track.style.transform = 'translateX(-' + (page * 100) + '%)';
-    }
-    function nextPage() {
-      goToPage(currentPage === totalPages - 1 ? 0 : currentPage + 1);
-    }
-    function prevPage() {
-      goToPage(currentPage === 0 ? totalPages - 1 : currentPage - 1);
-    }
-    function resetTimer() {
-      clearInterval(autoTimer);
-      autoTimer = setInterval(nextPage, 40000);
-    }
-    nextBtn.addEventListener('click', function () { nextPage(); resetTimer(); });
-    prevBtn.addEventListener('click', function () { prevPage(); resetTimer(); });
-    resetTimer();
 
   })();
   </script>
