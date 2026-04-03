@@ -155,32 +155,10 @@ p:last-child { margin-bottom: 0; }
 
 .media-logos { padding: 35px 0; text-align: center; }
 .media-logos p { font-size: 19px; margin-bottom: 18px; }
-.media-logos__grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 35px; }
-.media-logos__grid img { height: 38px; width: auto; opacity: 0.7; }
+.media-logos__grid { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 30px; }
+.media-logos__grid a { flex: 1 1 0; display: flex; justify-content: center; }
+.media-logos__grid img { height: 55px; width: auto; opacity: 0.7; }
 
-/* Reviews */
-.reviews { padding: 30px 0 50px; }
-.reviews__heading { text-align: center; margin-bottom: 8px; font-size: clamp(1.25rem,2.5vw,1.5rem); color: var(--color-navy); }
-.reviews__subheading { text-align: center; font-size: 15px; color: #888; margin-bottom: 28px; }
-.reviews__grid { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
-.review-card {
-  flex: 0 1 420px; max-width: 500px;
-  background: var(--color-navy); color: var(--color-white);
-  border-radius: 15px; padding: 28px;
-  display: flex; flex-direction: column;
-}
-.review-card__header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-.review-card__platform { width: 22px; height: 22px; }
-.review-card__name { font-size: 18px; font-weight: 700; }
-.review-card__stars { color: var(--color-star); font-size: 15px; margin-bottom: 4px; }
-.review-card__date { font-size: 13px; opacity: 0.6; margin-bottom: 12px; }
-.review-card__text { font-size: 15px; line-height: 1.7; }
-.reviews__cta { text-align: center; margin-top: 24px; }
-.reviews__cta a {
-  color: var(--color-green); font-weight: 600; font-size: 16px;
-  text-decoration: underline;
-}
-.reviews__cta a:hover { color: var(--color-green-hover); }
 
 .two-col { display: flex; flex-wrap: wrap; align-items: center; gap: 50px; }
 .two-col__text { flex: 1 1 45%; min-width: 300px; }
@@ -311,7 +289,7 @@ p:last-child { margin-bottom: 0; }
   .footer__right { text-align: left; }
   .footer__right img { margin-left: 0; }
   .footer__social { justify-content: flex-start; }
-  .review-card { flex: 1 1 100%; }
+
 }
 @media (max-width: 480px) {
   h1 { font-size: 2.125rem; }
@@ -589,29 +567,6 @@ p:last-child { margin-bottom: 0; }
     </div>
   </section>
 
-  <!-- ========== REVIEWS ========== -->
-  <section class="reviews" id="reviews">
-    <div class="container">
-      <h3 class="reviews__heading">Most Recent Review</h3>
-      <p class="reviews__subheading">What our clients are saying on Google</p>
-
-      <div class="reviews__grid">
-        <div class="review-card">
-          <div class="review-card__header">
-            <img class="review-card__platform" src="https://www.drozq.com/media/icons/icon-google-small.webp" alt="Google" width="22" height="22" loading="lazy">
-            <div class="review-card__name">Eli Donoso</div>
-          </div>
-          <div class="review-card__stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <div class="review-card__date">March 2026</div>
-          <p class="review-card__text">Working with Josh was a great experience. He's a young real estate agent but did extremely well. He was always by my side and answered any questions I had. Josh was quick to respond and if he didn't have an answer for me he worked hard to figure the information out and get it back to me as soon as possible. He did excellent work during negotiations and fought well for me. I would definitely recommend Josh!</p>
-        </div>
-      </div>
-
-      <div class="reviews__cta">
-        <a href="https://maps.app.goo.gl/f6PwyX3U64uvMCeF9" target="_blank" rel="noopener">See all reviews on Google &rarr;</a>
-      </div>
-    </div>
-  </section>
 
   <!-- ========== WHY HIRE A LISTING AGENT ========== -->
   <section class="section" id="process">
