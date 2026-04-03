@@ -85,21 +85,27 @@ p:last-child { margin-bottom: 0; }
 .nav__toggle { display: none; background: none; border: none; font-size: 32px; cursor: pointer; color: var(--color-navy); padding: 8px; }
 
 /* Thank You content */
-.thankyou { padding: 70px 0 80px; }
-.thankyou .container { display: flex; flex-wrap: wrap; gap: 50px; align-items: flex-start; }
-.thankyou__content { flex: 1 1 55%; min-width: 300px; }
-.thankyou__sidebar { flex: 1 1 35%; min-width: 300px; }
-
+.thankyou-hero {
+  padding: 50px 0 45px; text-align: center;
+}
 .thankyou__check {
   display: inline-flex; align-items: center; justify-content: center;
   width: 70px; height: 70px; border-radius: 50%;
   background: var(--color-mint); margin-bottom: 20px;
 }
 .thankyou__check svg { width: 36px; height: 36px; stroke: var(--color-green); stroke-width: 2.5; fill: none; }
+.thankyou-hero h1 { color: var(--color-green); margin-bottom: 10px; }
+.thankyou-hero p { font-size: 19px; line-height: 1.8; color: #444; max-width: 700px; margin: 0 auto; }
 
-.thankyou__content h1 { color: var(--color-green); margin-bottom: 8px; }
-.thankyou__content h2 { color: var(--color-navy); margin-bottom: 16px; font-size: clamp(1.5rem,3vw,2rem); }
-.thankyou__content p { font-size: 18px; line-height: 1.8; color: #444; }
+.thankyou-details { padding: 0 0 80px; }
+.thankyou-details .container { display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start; }
+.thankyou__card {
+  flex: 1 1 55%; min-width: 300px;
+  background: var(--color-gray-bg, #f7f7f7); border-radius: var(--radius-lg);
+  padding: 40px 38px;
+}
+.thankyou__card h2 { color: var(--color-navy); margin-bottom: 14px; font-size: clamp(1.5rem,3vw,2rem); }
+.thankyou__card p { font-size: 18px; line-height: 1.8; color: #444; }
 
 .thankyou__phone-link {
   display: inline-flex; align-items: center; gap: 10px;
@@ -111,6 +117,7 @@ p:last-child { margin-bottom: 0; }
 .thankyou__phone-link:hover { background: var(--color-navy-light); color: var(--color-white); }
 .thankyou__phone-link svg { width: 24px; height: 24px; fill: var(--color-green); }
 
+.thankyou__sidebar { flex: 1 1 35%; min-width: 300px; }
 .thankyou__map {
   border-radius: var(--radius-lg); overflow: hidden;
   box-shadow: var(--shadow); border: 1px solid var(--color-gray-light);
@@ -153,8 +160,10 @@ p:last-child { margin-bottom: 0; }
 }
 @media (max-width: 768px) {
   .container { padding: 0 20px; }
-  .thankyou { padding: 40px 0 50px; }
-  .thankyou .container { flex-direction: column; gap: 35px; }
+  .thankyou-hero { padding: 35px 0 30px; }
+  .thankyou-details { padding: 0 0 50px; }
+  .thankyou-details .container { flex-direction: column; gap: 30px; }
+  .thankyou__card { padding: 30px 24px; }
   .thankyou__sidebar { width: 100%; }
   .thankyou__map iframe { height: 350px; }
   .footer__top { gap: 30px; }
@@ -195,20 +204,24 @@ p:last-child { margin-bottom: 0; }
     </div>
   </header>
 
-  <!-- ========== THANK YOU CONTENT ========== -->
-  <section class="thankyou">
+  <!-- ========== SUCCESS BANNER ========== -->
+  <section class="thankyou-hero">
+    <div class="container">
+      <div class="thankyou__check">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      </div>
+      <h1>Success!</h1>
+      <p>Joshua Guerrero has helped homeowners across Southern California sell their homes quickly and for top dollar. There is no obligation, so you've made a great first step.</p>
+    </div>
+  </section>
+
+  <!-- ========== DETAILS + MAP ========== -->
+  <section class="thankyou-details">
     <div class="container">
 
-      <div class="thankyou__content">
-        <div class="thankyou__check">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        </div>
-
-        <h1>Success!</h1>
-        <p>Joshua Guerrero has helped homeowners across Southern California sell their homes quickly and for top dollar. There is no obligation, so you've made a great first step.</p>
-
+      <div class="thankyou__card">
         <h2>Thank You!</h2>
         <p>Since I work with a limited number of sellers at a time to give each client my full attention, please contact me now to discuss your time-sensitive situation.</p>
 
