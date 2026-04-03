@@ -58,7 +58,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; scroll-padding-top: 100px; -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--font); font-size: 18px; font-weight: 400;
   line-height: 1.7; color: var(--color-black); background: var(--color-white);
@@ -498,7 +498,7 @@ p:last-child { margin-bottom: 0; }
         <input type="hidden" name="intent" value="Home Valuation">
         <input type="hidden" name="source_page" id="modalSourcePage">
 
-        <button type="submit" class="btn--submit">Submit My Information</button>
+        <button type="submit" class="btn--submit">Next</button>
       </form>
     </div>
   </div>
@@ -564,7 +564,7 @@ p:last-child { margin-bottom: 0; }
           <button type="submit" class="btn btn--green btn--full">Get My Free Home Valuation</button>
         </form>
 
-        <p class="hero__trust">Trusted by 500+ Southern California homeowners</p>
+        <p class="hero__trust">Trusted by Southern California homeowners</p>
       </div>
 
       <div class="hero__badge">
@@ -587,14 +587,14 @@ p:last-child { margin-bottom: 0; }
       <div class="stat">
         <div class="stat__icon"><img src="https://www.drozq.com/media/icons/verified check.svg" alt="" width="50" height="47" loading="lazy"></div>
         <div>
-          <h4>$XXM+ in Sales</h4>
+          <h4>$1.1M+ in Sales</h4>
           <p>Proven track record in Southern California</p>
         </div>
       </div>
       <div class="stat">
         <div class="stat__icon"><img src="https://www.drozq.com/media/icons/money_bag.svg" alt="" width="50" height="50" loading="lazy"></div>
         <div>
-          <h4>XX Days Avg. on Market</h4>
+          <h4>Fast Closings</h4>
           <p>Homes sell faster with expert pricing &amp; marketing</p>
         </div>
       </div>
@@ -876,7 +876,7 @@ p:last-child { margin-bottom: 0; }
           <button type="submit" class="btn btn--green btn--full">Get My Free Home Valuation</button>
         </form>
 
-        <p>Trusted by 500+ Southern California homeowners</p>
+        <p>Trusted by Southern California homeowners</p>
         <img class="bbb" src="https://www.drozq.com/media/icons/bbb-accredited-a-plus.webp" alt="Accredited Business" width="160" height="44" loading="lazy">
       </div>
     </div>
@@ -1135,13 +1135,7 @@ p:last-child { margin-bottom: 0; }
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, data: j }; }); })
       .then(function (res) {
         if (res.ok && res.data.ok) {
-          closeLeadModal();
-          modalForm.reset();
-          var toast = document.getElementById('successToast');
-          toast.classList.add('show');
-          setTimeout(function () { toast.classList.remove('show'); }, 5000);
-          if (heroForm) heroForm.reset();
-          if (ctaForm) ctaForm.reset();
+          window.location.href = '/thank-you/';
         } else {
           alert('Something went wrong. Please call us directly at 1-510-935-5701.');
         }

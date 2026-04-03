@@ -17,286 +17,281 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Received | Joshua Guerrero</title>
-  <meta name="description" content="Your inquiry has been received. Joshua Guerrero will be in touch." />
+  <title>Thank You | Joshua Guerrero</title>
+  <meta name="description" content="Your inquiry has been received. Joshua Guerrero will be in touch shortly." />
   <link rel="canonical" href="https://drozq.com/thank-you/" />
-
-  <meta property="og:title" content="Inquiry Received" />
-  <meta property="og:url" content="https://drozq.com/thank-you/" />
-  <meta property="og:type" content="website" />
-
   <meta name="robots" content="noindex,nofollow" />
-  <meta name="theme-color" content="#000000" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
+  <link rel="icon" href="https://www.drozq.com/media/icons/Joshua Guerrero Favicon.png" type="image/png" />
 
   <style>
-    :root{
-      --bg:#000;
-      --fg:#fff;
-      --muted:rgba(255,255,255,.70);
-      --muted2:rgba(255,255,255,.50);
-      --accent:#9900FF;
-      --surface:#1c1c1e;
-      --border:#2c2c2e;
-      --shadow:0 22px 70px rgba(0,0,0,.72);
-      --radius-lg:22px;
-    }
+:root {
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-green: #42cc93;
+  --color-green-hover: #34aa83;
+  --color-mint: #d0f4e0;
+  --color-navy: #1e2f49;
+  --color-navy-light: #343f56;
+  --color-gray-light: #eaeaea;
+  --font: -apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --site-width: 1400px;
+  --radius: 6px;
+  --radius-lg: 20px;
+  --transition: 0.2s ease;
+  --shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
 
-    *{ box-sizing:border-box; }
-    html,body{
-      height:100%;
-      margin:0;
-      background:var(--bg);
-      color:var(--fg);
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
-      -webkit-font-smoothing:antialiased;
-      overflow:hidden;
-    }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font); font-size: 18px; font-weight: 400;
+  line-height: 1.7; color: var(--color-black); background: var(--color-white);
+  overflow-x: hidden;
+}
+img { max-width: 100%; height: auto; display: block; border: 0; }
+a { text-decoration: none; color: inherit; transition: color var(--transition); }
+a:hover { color: var(--color-green); }
+ul, ol { list-style: none; }
+button { font-family: var(--font); }
+h1,h2,h3 { font-family: var(--font); font-weight: 700; line-height: 1.3; color: var(--color-black); }
+h1 { font-size: clamp(2.25rem,5vw,3.5rem); }
+h2 { font-size: clamp(1.75rem,3.5vw,2.5rem); }
+p { margin-bottom: 1em; }
+p:last-child { margin-bottom: 0; }
 
-    .topbar{
-      display:flex;
-      align-items:center;
-      gap:.5rem;
-      padding:1.2rem 1.4rem 0.4rem;
-      position:fixed;
-      top:0;
-      left:0;
-      z-index:10;
-      width:100%;
-      pointer-events:none;
-    }
-    .topbar > a{ pointer-events:auto; }
+.container { width: 100%; max-width: var(--site-width); margin: 0 auto; padding: 0 30px; }
 
-    .back-link{
-      position:relative;
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.01em;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .back-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .back-link:hover{ opacity:.55; }
-    .back-link:hover::after{ width:100%; }
-    .back-link span.arrow{ font-size:1.1rem; line-height:1; }
+.btn--phone {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--color-green); color: var(--color-white);
+  font-family: var(--font); font-size: 20px; font-weight: 700;
+  padding: 14px 32px; letter-spacing: 0.5px; min-width: 230px;
+  white-space: nowrap; border: none; border-radius: var(--radius);
+  cursor: pointer; transition: all var(--transition);
+}
+.btn--phone:hover { background: var(--color-green-hover); color: var(--color-white); }
 
-    .backdrop{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.55);
-      z-index:1;
-      pointer-events:none;
-    }
+.topbar { text-align: center; padding: 12px 0; font-size: 15px; border-bottom: 1px solid rgba(52,63,86,0.15); }
 
-    .wrap{
-      min-height:100%;
-      display:grid;
-      place-items:center;
-      padding:2.2rem 2rem 5.6rem;
-      position:relative;
-      z-index:2;
-    }
+.header {
+  position: sticky; top: 0; z-index: 1000;
+  background: var(--color-white); border-bottom: 1px solid rgba(52,63,86,0.15); padding: 0 30px;
+}
+.header .container { display: flex; align-items: center; justify-content: space-between; min-height: 78px; gap: 25px; position: relative; }
+.header__logo img { max-width: 220px; }
+.nav { display: flex; align-items: center; gap: 30px; }
+.nav a { font-size: 17px; font-weight: 500; padding: 14px 0; letter-spacing: 0.2px; }
+.nav a:hover { color: var(--color-green); }
+.nav__toggle { display: none; background: none; border: none; font-size: 32px; cursor: pointer; color: var(--color-navy); padding: 8px; }
 
-    .stack{
-      width:min(640px, 100%);
-      display:grid;
-      gap:18px;
-      text-align:center;
-    }
+/* Thank You content */
+.thankyou { padding: 70px 0 80px; }
+.thankyou .container { display: flex; flex-wrap: wrap; gap: 50px; align-items: flex-start; }
+.thankyou__content { flex: 1 1 55%; min-width: 300px; }
+.thankyou__sidebar { flex: 1 1 35%; min-width: 300px; }
 
-    .page-title{
-      margin:0;
-      letter-spacing:-0.03em;
-      line-height:1.05;
-      font-weight:700;
-      font-size:clamp(32px, 5.4vw, 66px);
-      text-shadow:0 0 10px rgba(153,0,255,.18), 0 0 35px rgba(153,0,255,.12);
-    }
-    .accent{ color:var(--accent); }
+.thankyou__check {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 70px; height: 70px; border-radius: 50%;
+  background: var(--color-mint); margin-bottom: 20px;
+}
+.thankyou__check svg { width: 36px; height: 36px; stroke: var(--color-green); stroke-width: 2.5; fill: none; }
 
-    .card{
-      background:var(--surface);
-      border:1px solid var(--border);
-      border-radius:var(--radius-lg);
-      box-shadow:var(--shadow);
-      padding:32px 28px;
-      text-align:center;
-    }
+.thankyou__content h1 { color: var(--color-green); margin-bottom: 8px; }
+.thankyou__content h2 { color: var(--color-navy); margin-bottom: 16px; font-size: clamp(1.5rem,3vw,2rem); }
+.thankyou__content p { font-size: 18px; line-height: 1.8; color: #444; }
 
-    .card p{
-      margin:0 0 6px;
-      color:var(--muted);
-      font-size:15px;
-      line-height:1.55;
-      font-weight:500;
-    }
-    .card p:last-of-type{ margin-bottom:0; }
+.thankyou__phone-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin: 24px 0; padding: 18px 32px;
+  background: var(--color-navy); color: var(--color-white);
+  border-radius: var(--radius-lg); font-size: 24px; font-weight: 700;
+  letter-spacing: 0.5px; transition: background var(--transition);
+}
+.thankyou__phone-link:hover { background: var(--color-navy-light); color: var(--color-white); }
+.thankyou__phone-link svg { width: 24px; height: 24px; fill: var(--color-green); }
 
-    .check{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width:56px;
-      height:56px;
-      border-radius:50%;
-      background:rgba(153,0,255,.14);
-      margin-bottom:16px;
-    }
-    .check svg{
-      width:28px;
-      height:28px;
-      stroke:var(--accent);
-      stroke-width:2.5;
-      fill:none;
-    }
+.thankyou__map {
+  border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: var(--shadow); border: 1px solid var(--color-gray-light);
+}
+.thankyou__map iframe { width: 100%; height: 450px; border: 0; }
 
-    .home-btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      margin-top:18px;
-      border:none;
-      border-radius:12px;
-      padding:12px 24px;
-      font-size:15px;
-      font-weight:750;
-      cursor:pointer;
-      background:var(--accent);
-      color:#fff;
-      text-decoration:none;
-      box-shadow:0 12px 28px rgba(0,0,0,.45);
-      transition:background .15s ease, transform .06s ease;
-    }
-    .home-btn:hover{ background:#a61aff; }
-    .home-btn:active{ transform:translateY(1px); }
+/* Footer */
+.footer { background: var(--color-navy); color: var(--color-white); padding: 60px 0 20px; }
+.footer a { color: var(--color-white); opacity: 0.85; }
+.footer a:hover { opacity: 1; color: var(--color-green); }
+.footer__top { display: flex; flex-wrap: wrap; gap: 40px; }
+.footer__brand { flex: 2 1 300px; }
+.footer__brand img { max-width: 200px; margin-bottom: 15px; }
+.footer__brand p { font-size: 15px; opacity: 0.85; margin-bottom: 8px; }
+.footer__brand .phone { font-size: 19px; font-weight: 600; }
+.footer__links { flex: 1 1 150px; }
+.footer__links a { display: block; font-size: 15px; padding: 6px 0; }
+.footer__right { flex: 1 1 180px; text-align: right; }
+.footer__right img { max-width: 160px; margin-left: auto; margin-bottom: 15px; }
+.footer__social { display: flex; gap: 10px; justify-content: flex-end; }
+.footer__social a { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; opacity: 1; }
+.footer__social a:hover { opacity: 0.8; }
+.footer__social a svg { width: 24px; height: 24px; fill: #ffffff; }
+.footer__social a:hover svg { fill: var(--color-green); }
+.footer__bottom {
+  margin-top: 45px; padding-top: 25px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  text-align: center;
+}
+.footer__legal { font-size: 14px; opacity: 0.7; margin-bottom: 10px; }
+.footer__copyright { font-size: 14px; opacity: 0.6; }
+.footer__copyright a { font-size: 14px; }
 
-    /* Footer */
-    footer.site-footer{
-      position:fixed;
-      left:0;right:0;bottom:0;
-      z-index:5;
-      background:rgba(0,0,0,.4);
-      backdrop-filter:blur(8px);
-      -webkit-backdrop-filter:blur(8px);
-      display:flex;
-      justify-content:center;
-      gap:2.5rem;
-      padding:1.35rem 1.5rem 1.1rem;
-      border-top:1px solid rgba(255,255,255,.06);
-    }
-    .footer-link{
-      position:relative;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.02em;
-      cursor:pointer;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .footer-link::after{
-      content:'';
-      position:absolute;
-      left:0;bottom:-0.35rem;
-      height:2px;width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .footer-link:hover{ opacity:.55; }
-    .footer-link:hover::after{ width:100%; }
-
-    @media (max-width: 540px){
-      html,body{ overflow:auto; height:auto; }
-      body{ display:flex; flex-direction:column; min-height:100vh; }
-      .wrap{ flex:1; }
-      .topbar{
-        position:sticky;top:0;left:0;width:100%;z-index:20;pointer-events:auto;
-        padding:calc(env(safe-area-inset-top) + .9rem) 1.1rem .65rem;
-        background:rgba(0,0,0,.55);
-        backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-        border-bottom:1px solid rgba(255,255,255,.06);
-      }
-      .wrap{
-        min-height:calc(100vh - 120px);
-        place-items:center;
-        padding:.9rem 1.1rem 0;
-      }
-      .card{ padding:24px 18px; }
-      footer.site-footer{
-        position:static;flex-wrap:wrap;justify-content:flex-start;
-        gap:1rem 1.5rem;padding:1.1rem 1.4rem 1.4rem;
-      }
-      .footer-link{ font-size:.85rem; }
-    }
-
-    @media (max-height: 760px){
-      html,body{ overflow:auto; height:auto; }
-      body{ display:flex; flex-direction:column; min-height:100vh; }
-      .wrap{ flex:1; }
-      footer.site-footer{ position:static; }
-      .wrap{ padding-bottom:2rem; }
-      .backdrop{ display:none; }
-      .topbar{ position:static; width:auto; pointer-events:auto; }
-    }
+@media (max-width: 1024px) {
+  .nav { display: none; }
+  .nav__toggle { display: block; }
+  .nav.open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-white); padding: 20px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 999; }
+  .nav.open a { font-size: 18px; padding: 14px 0; }
+  .btn--phone-desktop { display: none; }
+}
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .thankyou { padding: 40px 0 50px; }
+  .thankyou .container { flex-direction: column; gap: 35px; }
+  .thankyou__sidebar { width: 100%; }
+  .thankyou__map iframe { height: 350px; }
+  .footer__top { gap: 30px; }
+  .footer__right { text-align: left; }
+  .footer__right img { margin-left: 0; }
+  .footer__social { justify-content: flex-start; }
+}
+@media (max-width: 480px) {
+  .thankyou__phone-link { font-size: 20px; padding: 14px 24px; }
+}
   </style>
 </head>
-
 <body>
-  <div class="backdrop" aria-hidden="true"></div>
 
-  <header class="topbar">
-    <a href="/" class="back-link">
-      <span class="arrow">←</span>
-      <span>Return to Home</span>
-    </a>
+  <!-- ========== TOP BAR ========== -->
+  <div class="topbar">
+    <div class="container">Southern California's Top-Rated Listing Agent</div>
+  </div>
+
+  <!-- ========== HEADER ========== -->
+  <header class="header">
+    <div class="container">
+      <a href="https://drozq.com" class="header__logo">
+        <img src="https://www.drozq.com/media/icons/Joshua Guerrero Rectangle in line.png" alt="Joshua Guerrero Real Estate" width="250" height="50">
+      </a>
+
+      <nav class="nav" id="mainNav">
+        <a href="https://drozq.com">Home</a>
+        <a href="https://drozq.com#process">How It Works</a>
+        <a href="https://drozq.com#why-us">Why Choose Me</a>
+        <a href="https://drozq.com/reviews">Reviews</a>
+        <a href="https://drozq.com#faq">FAQ</a>
+        <a href="https://drozq.com#contact">Contact</a>
+      </nav>
+
+      <a href="tel:15109355701" class="btn--phone btn--phone-desktop">1-510-935-5701</a>
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle Navigation">&#9776;</button>
+    </div>
   </header>
 
-  <main class="wrap">
-    <div class="stack">
-      <h1 class="page-title"><span class="accent">Received.</span></h1>
+  <!-- ========== THANK YOU CONTENT ========== -->
+  <section class="thankyou">
+    <div class="container">
 
-      <section class="card">
-        <div class="check">
+      <div class="thankyou__content">
+        <div class="thankyou__check">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
-        <p style="color:var(--fg); font-weight:600; font-size:17px; margin-bottom:10px;">
-          We'll be in touch.
-        </p>
-        <p>Your inquiry has been submitted. Expect a response within one hour.</p>
-        <a href="/" class="home-btn">Back to Home</a>
-      </section>
-    </div>
-  </main>
 
-  <div id="site-footer"></div>
+        <h1>Success!</h1>
+        <p>Joshua Guerrero has helped homeowners across Southern California sell their homes quickly and for top dollar. There is no obligation, so you've made a great first step.</p>
+
+        <h2>Thank You!</h2>
+        <p>Since I work with a limited number of sellers at a time to give each client my full attention, please contact me now to discuss your time-sensitive situation.</p>
+
+        <a href="tel:15109355701" class="thankyou__phone-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.36 11.36 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.36 11.36 0 00.57 3.58 1 1 0 01-.24 1.01l-2.2 2.2z"/></svg>
+          1-510-935-5701
+        </a>
+
+        <p>Otherwise, one of our experienced professionals will be contacting you shortly to discuss your individual situation. We look forward to helping you sell your home fast in the most convenient way possible.</p>
+      </div>
+
+      <div class="thankyou__sidebar">
+        <div class="thankyou__map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d13293!2d-117.855!3d33.684!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80dcdf04b0929a7b%3A0x156432d3a5e58a6!2sJoshua+Guerrero+-+Realtor!5e0!3m2!1sen!2sus!4v1680000000000"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Joshua Guerrero - Realtor on Google Maps">
+          </iframe>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <img src="https://www.drozq.com/media/icons/Joshua Guerrero Logo Rectangle Stacked.png" alt="Joshua Guerrero Real Estate" width="200" loading="lazy">
+          <p>17875 Von Karman Ave, Suite 150<br>Irvine, CA 92614</p>
+          <p class="phone"><a href="tel:15109355701">1-510-935-5701</a></p>
+          <p><a href="mailto:Josh@Drozq.com">Josh@Drozq.com</a></p>
+        </div>
+
+        <div class="footer__links">
+          <a href="https://drozq.com">Home</a>
+          <a href="https://drozq.com#process">How It Works</a>
+          <a href="https://drozq.com#why-us">Why Choose Me</a>
+          <a href="https://drozq.com/reviews">Reviews</a>
+          <a href="https://drozq.com#contact">Get Valuation</a>
+        </div>
+
+        <div class="footer__links">
+          <a href="https://drozq.com#faq">FAQ</a>
+          <a href="https://drozq.com#contact">Contact</a>
+        </div>
+
+        <div class="footer__right">
+          <img src="https://www.drozq.com/media/icons/bbb-accredited-a-plus.webp" alt="Accredited" width="160" loading="lazy">
+          <div class="footer__social">
+            <a href="https://www.facebook.com/Drozq/" target="_blank" rel="noopener" aria-label="Facebook">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/drozq/" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="https://www.youtube.com/@drozq" target="_blank" rel="noopener" aria-label="YouTube">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <div class="footer__legal">
+          <p>Joshua Guerrero is a licensed real estate agent in the state of California DRE# 02267255</p>
+        </div>
+        <div class="footer__copyright">
+          <a href="https://drozq.com/privacy">Privacy Policy</a> &nbsp;|&nbsp;
+          <a href="https://drozq.com/reviews">Joshua Guerrero Reviews</a> &nbsp;|&nbsp;
+          Copyright &copy; 2025-2026 Drozq. All Rights Reserved.
+        </div>
+      </div>
+    </div>
+  </footer>
 
   <script>
-    (function () {
-      var target = document.getElementById('site-footer');
-      if (!target) return;
-      fetch('/footer.html', { cache: 'no-cache' })
-        .then(function (res) {
-          if (!res.ok) throw new Error('Failed to load footer');
-          return res.text();
-        })
-        .then(function (html) { target.innerHTML = html; })
-        .catch(function (err) { console.error('Footer load error:', err); });
-    })();
+    document.getElementById('navToggle').addEventListener('click', function () {
+      document.getElementById('mainNav').classList.toggle('open');
+    });
   </script>
 </body>
 </html>
