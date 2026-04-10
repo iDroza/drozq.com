@@ -172,13 +172,13 @@ p:last-child { margin-bottom: 0; }
 .honeypot { position: absolute; left: -9999px; opacity: 0; pointer-events: none; height: 0; width: 0; }
 
 /* ===== WHY CHOOSE SECTION ===== */
-.why-choose { background: var(--color-gray-bg); }
-.why-choose__layout { display: flex; flex-wrap: wrap; gap: 50px; align-items: center; }
-.why-choose__text { flex: 1 1 55%; min-width: 300px; }
+.why-choose { background: var(--color-gray-bg); padding-bottom: 0; }
+.why-choose__layout { display: flex; flex-wrap: wrap; gap: 50px; align-items: flex-end; }
+.why-choose__text { flex: 1 1 55%; min-width: 300px; padding-bottom: 60px; }
 .why-choose__text h2 { margin-bottom: 20px; }
 .why-choose__text p { font-size: 18px; line-height: 1.8; }
 .why-choose__image { flex: 1 1 35%; min-width: 260px; text-align: center; }
-.why-choose__image img { max-width: 400px; width: 100%; border-radius: var(--radius-lg); margin: 0 auto; }
+.why-choose__image img { max-width: 400px; width: 100%; border-radius: var(--radius-lg) var(--radius-lg) 0 0; margin: 0 auto; display: block; }
 
 /* Toast */
 .toast {
