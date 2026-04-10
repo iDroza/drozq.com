@@ -15,13 +15,11 @@
   <title>Contact Us | Joshua Guerrero - Southern California Listing Agent</title>
   <meta name="description" content="Contact Joshua Guerrero today. Get a free, no-obligation home valuation. Southern California's top-rated listing agent." />
   <link rel="canonical" href="https://drozq.com/contact/" />
-  <!-- Open Graph -->
   <meta property="og:title" content="Contact Joshua Guerrero" />
   <meta property="og:description" content="Get a free, no-obligation home valuation from Southern California's top-rated listing agent." />
   <meta property="og:url" content="https://drozq.com/contact/" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://www.drozq.com/media/images/preview.png" />
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Contact Joshua Guerrero" />
   <meta name="twitter:description" content="Get a free, no-obligation home valuation from Southern California's top-rated listing agent." />
@@ -33,7 +31,6 @@
 :root {
   --color-white: #ffffff;
   --color-black: #000000;
-  --color-teal-dark: #0d625f;
   --color-green: #42cc93;
   --color-green-hover: #34aa83;
   --color-mint: #d0f4e0;
@@ -42,7 +39,6 @@
   --color-gray-light: #eaeaea;
   --color-gray-bg: #f7f7f7;
   --color-red: #bd4c47;
-  --color-star: #f7b80c;
   --font: -apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
   --site-width: 1400px;
   --radius: 6px;
@@ -50,14 +46,9 @@
   --transition: 0.2s ease;
   --shadow: 0 8px 30px rgba(0,0,0,0.08);
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-body {
-  font-family: var(--font); font-size: 18px; font-weight: 400;
-  line-height: 1.7; color: var(--color-black); background: var(--color-white);
-  overflow-x: hidden;
-}
+body { font-family: var(--font); font-size: 18px; font-weight: 400; line-height: 1.7; color: var(--color-black); background: var(--color-white); overflow-x: hidden; }
 img { max-width: 100%; height: auto; display: block; border: 0; }
 a { text-decoration: none; color: inherit; transition: color var(--transition); }
 a:hover { color: var(--color-green); }
@@ -69,10 +60,8 @@ h2 { font-size: clamp(1.75rem,3.5vw,2.5rem); font-weight: 700; }
 h3 { font-size: clamp(1.375rem,3vw,1.875rem); }
 p { margin-bottom: 1em; }
 p:last-child { margin-bottom: 0; }
-
 .container { width: 100%; max-width: var(--site-width); margin: 0 auto; padding: 0 30px; }
 .section { padding: 60px 0; }
-.text-center { text-align: center; }
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
@@ -83,9 +72,6 @@ p:last-child { margin-bottom: 0; }
 }
 .btn--green { background: var(--color-green); color: var(--color-white); border-color: var(--color-green); }
 .btn--green:hover { background: var(--color-green-hover); border-color: var(--color-green-hover); color: var(--color-white); }
-.btn--outline { background: transparent; color: var(--color-white); border-color: var(--color-white); }
-.btn--outline:hover { background: var(--color-white); color: var(--color-navy); }
-.btn--full { width: 100%; }
 .btn--phone {
   background: var(--color-green); color: var(--color-white);
   font-size: 20px; font-weight: 700; padding: 14px 32px;
@@ -94,7 +80,6 @@ p:last-child { margin-bottom: 0; }
 .btn--phone:hover { background: var(--color-green-hover); color: var(--color-white); }
 
 .topbar { text-align: center; padding: 12px 0; font-size: 15px; border-bottom: 1px solid rgba(52,63,86,0.15); }
-
 .header {
   position: sticky; top: 0; z-index: 1000;
   background: var(--color-white); border-bottom: 1px solid rgba(52,63,86,0.15); padding: 0 30px;
@@ -106,29 +91,38 @@ p:last-child { margin-bottom: 0; }
 .nav a:hover { color: var(--color-green); }
 .nav__toggle { display: none; background: none; border: none; font-size: 32px; cursor: pointer; color: var(--color-navy); padding: 8px; }
 
-/* ===== CONTACT PAGE HERO ===== */
-.contact-hero { background: var(--color-navy); padding: 50px 0; text-align: center; color: var(--color-white); }
-.contact-hero h1 { color: var(--color-white); margin-bottom: 14px; }
-.contact-hero p { color: var(--color-white); opacity: 0.9; font-size: 19px; max-width: 700px; margin: 0 auto 10px; }
-.contact-hero__info { margin-top: 20px; font-size: 17px; }
-.contact-hero__info a { color: var(--color-green); font-weight: 600; }
-.contact-hero__info a:hover { color: var(--color-green-hover); }
-
-/* ===== TWO-COLUMN CONTACT LAYOUT ===== */
+/* ===== CONTACT TWO-COL LAYOUT ===== */
 .contact-layout { display: flex; flex-wrap: wrap; gap: 40px; padding: 50px 0; }
-.contact-map { flex: 1 1 45%; min-width: 320px; }
-.contact-map iframe { width: 100%; height: 100%; min-height: 550px; border: 0; border-radius: var(--radius-lg); }
-.contact-form-panel { flex: 1 1 45%; min-width: 320px; }
 
-/* ===== CONTACT FORM ===== */
-.contact-form-panel h2 { color: var(--color-navy); margin-bottom: 6px; }
-.contact-form-panel .form-subtitle { font-size: 17px; margin-bottom: 24px; color: var(--color-navy-light); }
-.contact-form-panel .form-subtitle a { color: var(--color-green); font-weight: 600; text-decoration: underline; }
+/* LEFT PANEL: info + map */
+.contact-left { flex: 1 1 45%; min-width: 320px; }
+.contact-left h1 { color: var(--color-navy); margin-bottom: 16px; }
+.contact-left > p { font-size: 18px; color: var(--color-navy-light); line-height: 1.7; margin-bottom: 24px; }
+.contact-info-item { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.contact-info-icon {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--color-green); color: var(--color-white);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.contact-info-icon svg { width: 18px; height: 18px; fill: var(--color-white); }
+.contact-info-item span { font-size: 17px; color: var(--color-navy); font-weight: 500; }
+.contact-info-item a { font-size: 17px; color: var(--color-navy); font-weight: 600; }
+.contact-info-item a:hover { color: var(--color-green); }
+.contact-map { margin-top: 28px; }
+.contact-map iframe { width: 100%; height: 300px; border: 0; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
 
-.contact-form { display: grid; gap: 18px; }
+/* RIGHT PANEL: form card */
+.contact-right { flex: 1 1 45%; min-width: 320px; }
+.form-card {
+  background: var(--color-gray-bg); border-radius: var(--radius-lg);
+  padding: 36px 32px; box-shadow: var(--shadow);
+}
+.form-card h2 { color: var(--color-navy); margin-bottom: 6px; }
+.form-card .form-subtitle { font-size: 17px; margin-bottom: 22px; color: var(--color-navy-light); }
+.form-card .form-subtitle a { color: var(--color-green); font-weight: 600; text-decoration: underline; }
+
+.contact-form { display: grid; gap: 14px; }
 .contact-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.contact-form label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--color-navy); }
-.contact-form .req { color: var(--color-red); margin-left: 2px; }
 .contact-form input,
 .contact-form select,
 .contact-form textarea {
@@ -142,13 +136,13 @@ p:last-child { margin-bottom: 0; }
 .contact-form textarea:focus { border-color: var(--color-green); }
 .contact-form input::placeholder,
 .contact-form textarea::placeholder { color: #999; }
-.contact-form textarea { min-height: 110px; resize: vertical; line-height: 1.6; }
+.contact-form textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
 .contact-form select {
   appearance: none; -webkit-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23343f56' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px;
 }
-.contact-form .consent-text { font-size: 13px; line-height: 1.5; color: #666; }
+.contact-form .consent-text { font-size: 13px; line-height: 1.5; color: #666; margin: 0; }
 .contact-form .consent-text a { color: var(--color-green); text-decoration: underline; }
 .contact-form .btn--submit {
   display: inline-flex; align-items: center; justify-content: center;
@@ -159,22 +153,18 @@ p:last-child { margin-bottom: 0; }
   background: var(--color-green); color: var(--color-white);
 }
 .contact-form .btn--submit:hover { background: var(--color-green-hover); border-color: var(--color-green-hover); }
-
-/* Honeypot */
 .honeypot { position: absolute; left: -9999px; opacity: 0; pointer-events: none; height: 0; width: 0; }
 
 /* ===== WHY CHOOSE SECTION ===== */
 .why-choose { background: var(--color-gray-bg); }
-.why-choose .body-text { max-width: 850px; margin: 0 auto; }
-.why-choose .body-text p { font-size: 18px; line-height: 1.8; }
-
-/* Toast */
-.toast {
-  display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-  background: var(--color-green); color: #fff; padding: 16px 30px; border-radius: var(--radius);
-  font-weight: 600; z-index: 9999; box-shadow: var(--shadow);
-}
-.toast.show { display: block; }
+.why-choose .container > h2 { text-align: center; margin-bottom: 40px; }
+.why-choose-layout { display: flex; flex-wrap: wrap; align-items: center; gap: 50px; }
+.why-choose-text { flex: 1 1 50%; min-width: 300px; }
+.why-choose-text p { font-size: 18px; line-height: 1.8; }
+.why-choose-text a { color: var(--color-green); text-decoration: underline; }
+.why-choose-text a:hover { color: var(--color-green-hover); }
+.why-choose-image { flex: 1 1 35%; min-width: 280px; display: flex; justify-content: center; }
+.why-choose-image img { border-radius: var(--radius-lg); max-width: 400px; width: 100%; object-fit: cover; }
 
 /* ===== FOOTER ===== */
 .footer { background: var(--color-navy); color: var(--color-white); padding: 60px 0 20px; }
@@ -194,11 +184,7 @@ p:last-child { margin-bottom: 0; }
 .footer__social a:hover { opacity: 0.8; }
 .footer__social a svg { width: 24px; height: 24px; fill: #ffffff; }
 .footer__social a:hover svg { fill: var(--color-green); }
-.footer__bottom {
-  margin-top: 45px; padding-top: 25px;
-  border-top: 1px solid rgba(255,255,255,0.15);
-  text-align: center;
-}
+.footer__bottom { margin-top: 45px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.15); text-align: center; }
 .footer__legal { font-size: 14px; opacity: 0.7; margin-bottom: 10px; }
 .footer__copyright { font-size: 14px; opacity: 0.6; }
 .footer__copyright a { font-size: 14px; }
@@ -215,9 +201,12 @@ p:last-child { margin-bottom: 0; }
   .container { padding: 0 20px; }
   .section { padding: 45px 0; }
   .contact-layout { gap: 30px; }
-  .contact-map, .contact-form-panel { flex: 1 1 100%; }
-  .contact-map iframe { min-height: 350px; }
-  .contact-form .form-row { grid-template-columns: 1fr; }
+  .contact-left, .contact-right { flex: 1 1 100%; }
+  .form-card { padding: 28px 20px; }
+  .why-choose-layout { gap: 30px; }
+  .why-choose-text, .why-choose-image { flex: 1 1 100%; }
+  .why-choose-image { order: -1; }
+  .why-choose-image img { max-width: 300px; }
   .footer__top { gap: 30px; }
   .footer__right { text-align: left; }
   .footer__right img { margin-left: 0; }
@@ -225,35 +214,11 @@ p:last-child { margin-bottom: 0; }
 }
 @media (max-width: 480px) {
   h1 { font-size: 2.125rem; }
+  .contact-form .form-row { grid-template-columns: 1fr; }
 }
   </style>
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "ContactPage",
-    "name": "Contact Joshua Guerrero",
-    "url": "https://drozq.com/contact/",
-    "about": {
-      "@type": "Person",
-      "name": "Joshua Guerrero",
-      "jobTitle": "Real Estate Agent",
-      "telephone": "+1-510-935-5701",
-      "email": "Josh@Drozq.com",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "17875 Von Karman Ave, Suite 150",
-        "addressLocality": "Irvine",
-        "addressRegion": "CA",
-        "postalCode": "92614"
-      }
-    }
-  }
-  </script>
 </head>
 <body>
-
-  <div class="toast" id="successToast">&#10003; Got it! We'll be in touch within the hour.</div>
 
   <!-- ========== TOP BAR ========== -->
   <div class="topbar">
@@ -266,7 +231,6 @@ p:last-child { margin-bottom: 0; }
       <a href="https://drozq.com" class="header__logo">
         <img src="https://www.drozq.com/media/icons/Joshua Guerrero Rectangle in line.png" alt="Joshua Guerrero Real Estate" width="250" height="50">
       </a>
-
       <nav class="nav" id="mainNav">
         <a href="https://drozq.com">Home</a>
         <a href="https://drozq.com#process">How It Works</a>
@@ -275,66 +239,63 @@ p:last-child { margin-bottom: 0; }
         <a href="https://drozq.com#faq">FAQ</a>
         <a href="https://drozq.com/contact">Contact</a>
       </nav>
-
       <a href="tel:15109355701" class="btn btn--phone btn--phone-desktop">1-510-935-5701</a>
       <button class="nav__toggle" id="navToggle" aria-label="Toggle Navigation">&#9776;</button>
     </div>
   </header>
 
-  <!-- ========== CONTACT HERO ========== -->
-  <section class="contact-hero">
-    <div class="container">
-      <h1>Contact Us Today</h1>
-      <p>I've helped homeowners across Southern California sell their homes faster and for top dollar. There is no obligation, so contact me today and let's talk about your home selling goals!</p>
-      <div class="contact-hero__info">
-        <p>17875 Von Karman Ave, Suite 150, Irvine, CA 92614</p>
-        <p><a href="tel:15109355701">1-510-935-5701</a></p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== MAP + FORM ========== -->
+  <!-- ========== CONTACT: LEFT INFO/MAP + RIGHT FORM ========== -->
   <section class="section">
     <div class="container">
       <div class="contact-layout">
 
-        <!-- LEFT: Google Maps -->
-        <div class="contact-map">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3321.0!2d-117.8543!3d33.6846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80dcde0e689f9b99%3A0x6e424913e6027b09!2s17875%20Von%20Karman%20Ave%20%23150%2C%20Irvine%2C%20CA%2092614!5e0!3m2!1sen!2sus!4v1700000000000"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            title="Office Location - 17875 Von Karman Ave, Suite 150, Irvine, CA 92614">
-          </iframe>
+        <!-- LEFT: Heading, copy, address, phone, map -->
+        <div class="contact-left">
+          <h1>Contact Us Today</h1>
+          <p>I've helped homeowners across Southern California sell their homes faster and for top dollar. There is no obligation, so contact me today and let's talk about your home selling goals!</p>
+
+          <div class="contact-info-item">
+            <div class="contact-info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>
+            </div>
+            <span>17875 Von Karman Ave, Suite 150, Irvine, CA 92614</span>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="contact-info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1.003 1.003 0 011.01-.24c1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.1.31.03.66-.25.94l-2.2 2.2z"/></svg>
+            </div>
+            <a href="tel:15109355701">1-510-935-5701</a>
+          </div>
+
+          <div class="contact-map">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000!2d-117.8473843!3d33.6860012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80dcdf8dbfbe3395%3A0xc09c886b39a043c2!2sJoshua%20Guerrero%20-%20Realtor!5e0!3m2!1sen!2sus!4v1"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Joshua Guerrero - Realtor on Google Maps">
+            </iframe>
+          </div>
         </div>
 
-        <!-- RIGHT: Contact Form -->
-        <div class="contact-form-panel">
-          <h2>Get My Free, No-Obligation Quote</h2>
-          <p class="form-subtitle">Call me today at <a href="tel:15109355701">1-510-935-5701</a>. Get expert guidance to sell your home fast and for top dollar. It's quick and easy!</p>
+        <!-- RIGHT: Form in gray card -->
+        <div class="contact-right">
+          <div class="form-card">
+            <h2>Get My Free, No-Obligation Quote</h2>
+            <p class="form-subtitle">Call me today at <a href="tel:15109355701">1-510-935-5701</a>. Get expert guidance to sell your home fast and for top dollar. It's quick and easy!</p>
 
-          <form class="contact-form" id="contactForm" novalidate>
-            <!-- Honeypot -->
-            <div class="honeypot" aria-hidden="true">
-              <input type="text" name="company_website" autocomplete="off" tabindex="-1">
-            </div>
-
-            <div>
-              <label>Name <span class="req">*</span></label>
-              <div class="form-row">
-                <div>
-                  <input type="text" name="first_name" placeholder="First Name" required>
-                </div>
-                <div>
-                  <input type="text" name="last_name" placeholder="Last Name" required>
-                </div>
+            <form class="contact-form" id="contactForm" novalidate>
+              <div class="honeypot" aria-hidden="true">
+                <input type="text" name="company_website" autocomplete="off" tabindex="-1">
               </div>
-            </div>
 
-            <div>
-              <label for="contactAddress">Property Address <span class="req">*</span></label>
-              <input type="text" id="contactAddress" name="address_display" placeholder="Enter your home address" autocomplete="off" required>
+              <div class="form-row">
+                <input type="text" name="first_name" placeholder="First Name *" required>
+                <input type="text" name="last_name" placeholder="Last Name *" required>
+              </div>
+
+              <input type="text" id="contactAddress" name="address_display" placeholder="Enter your home address *" autocomplete="off" required>
               <input type="hidden" name="street_address" id="contactStreet">
               <input type="hidden" name="city" id="contactCity">
               <input type="hidden" name="state" id="contactState">
@@ -342,21 +303,13 @@ p:last-child { margin-bottom: 0; }
               <input type="hidden" name="full_address" id="contactFull">
               <input type="hidden" name="lat" id="contactLat">
               <input type="hidden" name="lng" id="contactLng">
-            </div>
 
-            <div>
-              <label for="contactPhone">Phone <span class="req">*</span></label>
-              <input type="tel" id="contactPhone" name="phone" placeholder="Phone" autocomplete="tel" required>
-            </div>
+              <div class="form-row">
+                <input type="tel" name="phone" placeholder="Phone *" autocomplete="tel" required>
+                <input type="email" name="email" placeholder="Email *" autocomplete="email" required>
+              </div>
 
-            <div>
-              <label for="contactEmail">Email <span class="req">*</span></label>
-              <input type="email" id="contactEmail" name="email" placeholder="Email" autocomplete="email" required>
-            </div>
-
-            <div>
-              <label for="contactReferral">Where did you hear about us?</label>
-              <select id="contactReferral" name="referral_source">
+              <select name="referral_source">
                 <option value="">Where did you hear about us?</option>
                 <option value="Google Search">Google Search</option>
                 <option value="Facebook">Facebook</option>
@@ -368,24 +321,21 @@ p:last-child { margin-bottom: 0; }
                 <option value="Direct Mail">Direct Mail</option>
                 <option value="Other">Other</option>
               </select>
-            </div>
 
-            <div>
-              <label for="contactMessage">Tell us about your home (optional)</label>
-              <textarea id="contactMessage" name="message" placeholder="Tell us about your home (Interior/exterior, recent upgrades, required maintenance/improvements)"></textarea>
-            </div>
+              <textarea name="message" placeholder="Tell us about your home (Interior/exterior, recent upgrades, required maintenance/improvements)"></textarea>
 
-            <p class="consent-text">By submitting your phone number, you agree to receive text messages from Joshua Guerrero regarding the sale of your home. You can opt-out anytime. Message and data rates may apply. <a href="https://drozq.com/privacy">View Privacy Policy</a>.</p>
+              <p class="consent-text">By submitting your phone number, you agree to receive text messages from Joshua Guerrero regarding the sale of your home. You can opt-out anytime. Message and data rates may apply. <a href="https://drozq.com/privacy">View Privacy Policy</a>.</p>
 
-            <input type="hidden" name="source" value="Contact Page Form">
-            <input type="hidden" name="source_page" value="contact">
-            <input type="hidden" name="consent" value="yes">
-            <input type="hidden" name="intent" value="Home Valuation">
-            <input type="hidden" name="page_url" id="contactPageUrl">
-            <input type="hidden" name="submitted_at" id="contactTimestamp">
+              <input type="hidden" name="source" value="Contact Page Form">
+              <input type="hidden" name="source_page" value="contact">
+              <input type="hidden" name="consent" value="yes">
+              <input type="hidden" name="intent" value="Home Valuation">
+              <input type="hidden" name="page_url" id="contactPageUrl">
+              <input type="hidden" name="submitted_at" id="contactTimestamp">
 
-            <button type="submit" class="btn--submit">Get My Free Quote</button>
-          </form>
+              <button type="submit" class="btn--submit">Get My Free Quote</button>
+            </form>
+          </div>
         </div>
 
       </div>
@@ -395,11 +345,16 @@ p:last-child { margin-bottom: 0; }
   <!-- ========== WHY CHOOSE ========== -->
   <section class="section why-choose">
     <div class="container">
-      <div class="body-text text-center">
-        <h2>Why Choose Joshua Guerrero</h2>
-        <p>Are you looking to sell your home and wondering where to start? Whether you've been searching for "how to sell my house fast in Southern California" or thinking about listing your home for sale by owner, I can help you navigate the process and get the best possible result.</p>
-        <p>There are many companies and websites that promise quick home sales, but it's important to work with someone who has a proven track record of delivering results. With a strategic marketing system, hands-on transaction management, and deep local market expertise, my sellers consistently achieve above-market results with minimal stress.</p>
-        <p>When choosing who to work with to sell your home, make sure to review their history and online testimonials. I'm proud to be 5-star rated on Google because of the care, expertise, and results I bring to every transaction. Don't take a chance with your largest asset — <strong><a href="#contactForm" style="color:var(--color-green);text-decoration:underline;">contact me today</a></strong> and let's get started.</p>
+      <h2>Why Choose Joshua Guerrero</h2>
+      <div class="why-choose-layout">
+        <div class="why-choose-text">
+          <p>Are you looking to sell your home and wondering where to start? Whether you've been searching for "how to sell my house fast in Southern California" or thinking about listing your home for sale by owner, I can help you navigate the process and get the best possible result.</p>
+          <p>There are many companies and websites that promise quick home sales, but it's important to work with someone who has a proven track record of delivering results. With a strategic marketing system, hands-on transaction management, and deep local market expertise, my sellers consistently achieve above-market results with minimal stress.</p>
+          <p>When choosing who to work with to sell your home, make sure to review their history and online testimonials. I'm proud to be 5-star rated on Google because of the care, expertise, and results I bring to every transaction. Don't take a chance with your largest asset — <strong><a href="#contactForm">contact me today</a></strong> and let's get started.</p>
+        </div>
+        <div class="why-choose-image">
+          <img src="https://www.drozq.com/media/images/Joshua Guerrero - Transparent Headshot.png" alt="Joshua Guerrero" loading="lazy">
+        </div>
       </div>
     </div>
   </section>
@@ -414,7 +369,6 @@ p:last-child { margin-bottom: 0; }
           <p class="phone"><a href="tel:15109355701">1-510-935-5701</a></p>
           <p><a href="mailto:Josh@Drozq.com">Josh@Drozq.com</a></p>
         </div>
-
         <div class="footer__links">
           <a href="https://drozq.com">Home</a>
           <a href="https://drozq.com#process">How It Works</a>
@@ -422,12 +376,10 @@ p:last-child { margin-bottom: 0; }
           <a href="https://drozq.com/reviews">Reviews</a>
           <a href="https://drozq.com/contact">Contact</a>
         </div>
-
         <div class="footer__links">
           <a href="https://drozq.com#faq">FAQ</a>
           <a href="tel:15109355701">Call Now</a>
         </div>
-
         <div class="footer__right">
           <img src="https://www.drozq.com/media/icons/real/real-broker-logo.png" alt="Real Broker" width="160" loading="lazy">
           <div class="footer__social">
@@ -443,7 +395,6 @@ p:last-child { margin-bottom: 0; }
           </div>
         </div>
       </div>
-
       <div class="footer__bottom">
         <div class="footer__legal">
           <p>Joshua Guerrero is a licensed real estate agent in the state of California DRE# 02267255</p>
@@ -462,7 +413,6 @@ p:last-child { margin-bottom: 0; }
   (function () {
     'use strict';
 
-    // Google Places Autocomplete
     function initAutocomplete(inputId, prefix) {
       var input = document.getElementById(inputId);
       if (!input) return;
@@ -507,30 +457,18 @@ p:last-child { margin-bottom: 0; }
       initAutocomplete('contactAddress', 'contact');
     };
 
-    // Contact Form Submission
     var form = document.getElementById('contactForm');
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-      }
-
+      if (!form.checkValidity()) { form.reportValidity(); return; }
       document.getElementById('contactPageUrl').value = window.location.href;
       document.getElementById('contactTimestamp').value = new Date().toISOString();
-
       var btn = form.querySelector('.btn--submit');
       var origText = btn.textContent;
       btn.textContent = 'Sending...';
       btn.disabled = true;
-
       var data = new FormData(form);
-
-      fetch('/api/lead', {
-        method: 'POST',
-        body: data
-      })
+      fetch('/api/lead', { method: 'POST', body: data })
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, data: j }; }); })
       .then(function (res) {
         if (res.ok && res.data.ok) {
@@ -542,21 +480,14 @@ p:last-child { margin-bottom: 0; }
       .catch(function () {
         alert('Network error. Please call us directly at 1-510-935-5701.');
       })
-      .finally(function () {
-        btn.textContent = origText;
-        btn.disabled = false;
-      });
+      .finally(function () { btn.textContent = origText; btn.disabled = false; });
     });
 
-    // Mobile Nav Toggle
     document.getElementById('navToggle').addEventListener('click', function () {
       document.getElementById('mainNav').classList.toggle('open');
     });
-
   })();
   </script>
-
-  <!-- Google Maps JavaScript API (Places Autocomplete) -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAO__0suXD6CDECevon18renbKLmCF-0ks&libraries=places&callback=initGooglePlaces"></script>
 </body>
 </html>
