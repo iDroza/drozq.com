@@ -71,6 +71,12 @@
   .drozq-header .drozq-home:hover::after,
   .drozq-header .drozq-contact:hover::after{ width:100%; }
 
+  /* Active link highlight */
+  .drozq-header .drozq-home.active,
+  .drozq-header .drozq-contact.active{ color:#42cc93; opacity:1; }
+  .drozq-header .drozq-home.active::after,
+  .drozq-header .drozq-contact.active::after{ width:100%; background:#42cc93; }
+
   .drozq-header .arrow{
     font-size:1.1rem;
     line-height:1;
@@ -99,10 +105,13 @@
 <script>
   (function(){
     try{
-      var p = (location.pathname || '').toLowerCase();
-      if (p === '/contact/' || p === '/contact'){
+      var p = (location.pathname || '').toLowerCase().replace(/\/+$/,'');
+      if (p === '/contact'){
         var c = document.querySelector('.drozq-contact');
-        if (c) c.setAttribute('aria-current','page');
+        if (c){ c.setAttribute('aria-current','page'); c.classList.add('active'); }
+      } else {
+        var h = document.querySelector('.drozq-home');
+        if (h) h.classList.add('active');
       }
     }catch(e){}
   })();
