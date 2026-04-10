@@ -112,6 +112,7 @@ p:last-child { margin-bottom: 0; }
 .nav { display: flex; align-items: center; gap: 30px; }
 .nav a { font-size: 17px; font-weight: 500; padding: 14px 0; letter-spacing: 0.2px; }
 .nav a:hover { color: var(--color-green); }
+.nav a.active { color: var(--color-green); }
 .nav__toggle { display: none; background: none; border: none; font-size: 32px; cursor: pointer; color: var(--color-navy); padding: 8px; }
 
 .hero { padding: 50px 0 0; background: linear-gradient(114deg, var(--color-white) 67%, var(--color-navy) 62%); }
@@ -1024,6 +1025,19 @@ p:last-child { margin-bottom: 0; }
     document.getElementById('navToggle').addEventListener('click', function () {
       document.getElementById('mainNav').classList.toggle('open');
     });
+
+    // 3b. ACTIVE NAV HIGHLIGHT
+    (function(){
+      var p = location.pathname.replace(/\/+$/,'') || '/';
+      document.querySelectorAll('#mainNav a').forEach(function(a){
+        var href = a.getAttribute('href');
+        if(!href) return;
+        try{ var u = new URL(href, location.origin); }catch(e){ return; }
+        var ap = u.pathname.replace(/\/+$/,'') || '/';
+        if(u.hash || ap !== p) return;
+        a.classList.add('active');
+      });
+    })();
 
     // 4. FAQ ACCORDION
     document.querySelectorAll('.faq__question').forEach(function (btn) {
