@@ -139,34 +139,26 @@ User-Agent: ${ua || "—"}
 Consent: ${consent}
 `;
 
-    // 10) Send (MailChannels)
-    const sendReq = new Request("https://api.mailchannels.net/tx/v1/send", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "X-Api-Key": MAILCHANNELS_API_KEY,
-        "Accept": "application/json"
-      },
-      body: JSON.stringify({
-        personalizations: [{ to: [{ email: TO_EMAIL }] }],
-        from: { email: FROM_EMAIL, name: "drozq.com Lead Form" },
-        reply_to: { email, name },
-        subject: `🏠 New Lead (${intent}): ${name} — ${city || "Unknown City"}, ${state || "CA"}`,
-        content: [{ type: "text/plain", value: emailBody }]
+    // 10) Send email via MailChannels (non-blocking)
+    context.waitUntil(
+      fetch("https://api.mailchannels.net/tx/v1/send", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "X-Api-Key": MAILCHANNELS_API_KEY,
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          personalizations: [{ to: [{ email: TO_EMAIL }] }],
+          from: { email: FROM_EMAIL, name: "drozq.com Lead Form" },
+          reply_to: { email, name },
+          subject: `🏠 New Lead (${intent}): ${name} — ${city || "Unknown City"}, ${state || "CA"}`,
+          content: [{ type: "text/plain", value: emailBody }]
+        })
       })
-    });
+    );
 
-    const resp = await fetch(sendReq);
-    const respText = await resp.text().catch(() => "");
-
-    if (!resp.ok) {
-      return json(
-        { ok: false, error: "Email failed", provider_status: resp.status, provider_body: respText },
-        502
-      );
-    }
-
-    // 11) Optional Zapier forward
+    // 11) Optional Zapier forward (non-blocking)
     if (env.ZAPIER_WEBHOOK_URL) {
       context.waitUntil(
         fetch(env.ZAPIER_WEBHOOK_URL, {
