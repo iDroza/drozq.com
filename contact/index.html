@@ -157,15 +157,15 @@ p:last-child { margin-bottom: 0; }
 .honeypot { position: absolute; left: -9999px; opacity: 0; pointer-events: none; height: 0; width: 0; }
 
 /* ===== WHY CHOOSE SECTION ===== */
-.why-choose { background: var(--color-gray-bg); }
+.why-choose { background: var(--color-gray-bg); padding-top: 60px; padding-bottom: 0; }
 .why-choose .container > h2 { text-align: center; margin-bottom: 40px; }
-.why-choose-layout { display: flex; flex-wrap: wrap; align-items: center; gap: 50px; }
-.why-choose-text { flex: 1 1 50%; min-width: 300px; }
+.why-choose-layout { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 50px; }
+.why-choose-text { flex: 1 1 50%; min-width: 300px; padding-bottom: 60px; }
 .why-choose-text p { font-size: 18px; line-height: 1.8; }
 .why-choose-text a { color: var(--color-green); text-decoration: underline; }
 .why-choose-text a:hover { color: var(--color-green-hover); }
-.why-choose-image { flex: 1 1 35%; min-width: 280px; display: flex; justify-content: center; }
-.why-choose-image img { border-radius: var(--radius-lg); max-width: 400px; width: 100%; object-fit: cover; }
+.why-choose-image { flex: 1 1 35%; min-width: 280px; display: flex; justify-content: center; align-items: flex-end; }
+.why-choose-image img { border-radius: var(--radius-lg) var(--radius-lg) 0 0; max-width: 400px; width: 100%; object-fit: cover; display: block; }
 
 /* ===== FOOTER ===== */
 .footer { background: var(--color-navy); color: var(--color-white); padding: 60px 0 20px; }
@@ -207,7 +207,8 @@ p:last-child { margin-bottom: 0; }
   .why-choose-layout { gap: 30px; }
   .why-choose-text, .why-choose-image { flex: 1 1 100%; }
   .why-choose-image { order: -1; }
-  .why-choose-image img { max-width: 300px; }
+  .why-choose-image img { max-width: 300px; border-radius: var(--radius-lg); }
+  .why-choose-text { padding-bottom: 30px; }
   .footer__top { gap: 30px; }
   .footer__right { text-align: left; }
   .footer__right img { margin-left: 0; }
@@ -344,7 +345,7 @@ p:last-child { margin-bottom: 0; }
   </section>
 
   <!-- ========== WHY CHOOSE ========== -->
-  <section class="section why-choose">
+  <section class="why-choose">
     <div class="container">
       <h2>Why Choose Joshua Guerrero</h2>
       <div class="why-choose-layout">
