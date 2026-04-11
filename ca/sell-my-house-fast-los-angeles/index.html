@@ -256,6 +256,106 @@ p:last-child { margin-bottom: 0; }
 .footer__copyright { font-size: 14px; opacity: 0.6; }
 .footer__copyright a { font-size: 14px; }
 
+/* ===== Seller's Advantage styled sections ===== */
+.sa-layout { display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start; }
+.sa-layout__main { flex: 1 1 60%; min-width: 300px; }
+.sa-layout__side { flex: 1 1 30%; min-width: 260px; }
+.sa-layout__main p { font-size: 17px; line-height: 1.7; margin-bottom: 16px; }
+.sa-layout__main h3 { margin: 18px 0 14px; color: var(--color-navy); }
+.sa-list { margin: 18px 0; }
+.sa-list li {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 10px 0; font-size: 16px; line-height: 1.6;
+}
+.sa-list li::before {
+  content: '\2713'; flex-shrink: 0; width: 24px; height: 24px;
+  border-radius: 50%; background: var(--color-green); color: var(--color-white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; margin-top: 2px;
+}
+.sa-side-card {
+  background: var(--color-navy); color: var(--color-white);
+  border-radius: var(--radius-lg); padding: 28px;
+  margin-bottom: 20px; text-align: center;
+}
+.sa-side-card h3 { color: var(--color-white); margin-bottom: 18px; font-size: 1.25rem; }
+.sa-side-card ul { text-align: left; }
+.sa-side-card ul li {
+  padding: 8px 0; font-size: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.sa-side-card ul li:last-child { border-bottom: none; }
+.sa-side-card ul li a { color: var(--color-green); }
+.sa-side-hero {
+  border-radius: var(--radius-lg); overflow: hidden;
+  background: linear-gradient(135deg, var(--color-green) 0%, var(--color-teal-dark) 100%);
+  color: var(--color-white); padding: 34px 24px; text-align: center;
+}
+.sa-side-hero h3 { color: var(--color-white); font-size: 1.5rem; margin-bottom: 8px; }
+.sa-side-hero p { font-size: 15px; font-weight: 600; opacity: 0.95; margin: 0; }
+
+.we-want {
+  background: var(--color-navy); color: var(--color-white);
+  border-radius: var(--radius-lg); padding: 55px 40px; text-align: center;
+}
+.we-want h2 { color: var(--color-white); margin-bottom: 30px; }
+.we-want__grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px 30px;
+  max-width: 760px; margin: 0 auto;
+}
+.we-want__grid div {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 19px; font-weight: 600;
+}
+.we-want__grid div::before {
+  content: '\2713'; flex-shrink: 0; width: 28px; height: 28px;
+  border-radius: 50%; background: var(--color-green); color: var(--color-white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+}
+.we-want__license {
+  margin-top: 30px; font-size: 15px; opacity: 0.85;
+}
+
+.market-stats { max-width: 900px; margin: 0 auto; }
+.market-stats h2 { margin-bottom: 24px; color: var(--color-navy); text-align: center; }
+.market-stats h3 { margin: 30px 0 16px; color: var(--color-navy); }
+.market-stats ul { margin: 16px 0 20px; padding-left: 0; }
+.market-stats ul li {
+  position: relative; padding: 8px 0 8px 26px; font-size: 17px; line-height: 1.65;
+}
+.market-stats ul li::before {
+  content: ''; position: absolute; left: 4px; top: 18px;
+  width: 8px; height: 8px; border-radius: 50%; background: var(--color-green);
+}
+.market-stats p { font-size: 17px; line-height: 1.75; margin-bottom: 16px; }
+.market-stats__seal { text-align: center; margin: 26px 0; }
+.market-stats__seal p { font-size: 14px; opacity: 0.7; margin-top: 6px; }
+
+.why-cash { max-width: 900px; margin: 0 auto; }
+.why-cash h2 { color: var(--color-navy); margin-bottom: 20px; text-align: center; }
+.why-cash h3 { color: var(--color-navy); margin: 30px 0 12px; }
+.why-cash p { font-size: 17px; line-height: 1.75; margin-bottom: 16px; }
+.why-cash ul { margin: 12px 0 20px; padding-left: 0; }
+.why-cash ul li {
+  position: relative; padding: 6px 0 6px 26px; font-size: 17px; line-height: 1.65;
+}
+.why-cash ul li::before {
+  content: ''; position: absolute; left: 4px; top: 16px;
+  width: 8px; height: 8px; border-radius: 50%; background: var(--color-green);
+}
+
+@media (max-width: 768px) {
+  .sa-layout { gap: 30px; }
+  .sa-layout__main, .sa-layout__side { flex: 1 1 100%; }
+  .we-want { padding: 40px 22px; }
+  .we-want__grid { grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+  .we-want__grid div { font-size: 16px; }
+}
+@media (max-width: 480px) {
+  .we-want__grid { grid-template-columns: 1fr; }
+}
+
 .toast {
   display: none; position: fixed; top: 20px; right: 20px;
   background: var(--color-green); color: var(--color-white);
@@ -493,11 +593,11 @@ p:last-child { margin-bottom: 0; }
 
       <div class="hero__content">
         <h1>Sell My House Fast Los Angeles</h1>
-        <p class="hero__subtitle">Get a free cash offer in 24 hours. No repairs. No fees. No hassle.</p>
+        <p class="hero__subtitle">Seller's Advantage has purchased thousands of homes in Los Angeles California and we pay cash fast. Find out how much money you can get today!</p>
 
         <form class="lead-form" id="heroForm">
           <div class="lead-form__address-wrap">
-            <input type="text" id="heroAddress" name="address_display" placeholder="Enter your Los Angeles home address" autocomplete="off" required>
+            <input type="text" id="heroAddress" name="address_display" placeholder="Enter your home address" autocomplete="off" required>
           </div>
           <input type="text" class="lead-form__unit" name="unit" placeholder="Unit" maxlength="5">
 
@@ -515,10 +615,10 @@ p:last-child { margin-bottom: 0; }
             <input type="hidden" name="submitted_at" id="heroTimestamp">
           </div>
 
-          <button type="submit" class="btn btn--green btn--full">Get My Free Cash Offer</button>
+          <button type="submit" class="btn btn--green btn--full">Get My Free Quote</button>
         </form>
 
-        <p class="hero__trust">Trusted by Los Angeles homeowners</p>
+        <p class="hero__trust">We Buy Houses As-Is in Los Angeles CA</p>
       </div>
 
       <div class="hero__badge">
@@ -534,22 +634,22 @@ p:last-child { margin-bottom: 0; }
       <div class="stat">
         <div class="stat__icon"><img src="https://www.drozq.com/media/icons/kid_star.svg" alt="" width="50" height="48" loading="lazy"></div>
         <div>
-          <h4>5-Star Rated on Google</h4>
-          <p>Trusted by Los Angeles homeowners</p>
+          <h4>4.7 Star Rating</h4>
+          <p>From 800+ happy reviews on BBB, Google and Yelp</p>
         </div>
       </div>
       <div class="stat">
         <div class="stat__icon"><img src="https://www.drozq.com/media/icons/verified check.svg" alt="" width="50" height="47" loading="lazy"></div>
         <div>
-          <h4>Close in 7-14 Days</h4>
-          <p>Get cash in your hands fast</p>
+          <h4>25+ Years of Experience</h4>
+          <p>We have helped 1,000s of home sellers</p>
         </div>
       </div>
       <div class="stat">
         <div class="stat__icon"><img src="https://www.drozq.com/media/icons/money_bag.svg" alt="" width="50" height="50" loading="lazy"></div>
         <div>
-          <h4>Zero Fees or Commissions</h4>
-          <p>No closing costs. No repairs. As-is.</p>
+          <h4>$20k Cash Advance</h4>
+          <p>We can pay upfront and close confidently</p>
         </div>
       </div>
     </div>
@@ -569,151 +669,38 @@ p:last-child { margin-bottom: 0; }
   </section>
 
 
-  <!-- ========== WHY SELL FAST IN LA ========== -->
+  <!-- ========== WE BUY HOUSES IN LA ========== -->
   <section class="section" id="process">
     <div class="container">
-      <div class="two-col">
-        <div class="two-col__text">
-          <h1>We Buy Houses in Los Angeles, As-Is</h1>
-          <p>Whether you're facing foreclosure, inherited a property, dealing with difficult tenants, or just need to move fast, I help Los Angeles homeowners sell their houses quickly and for top dollar. No repairs, no cleaning, no showings, no stress.</p>
-          <div class="pain-grid">
-            <div class="pain-item">
-              <img src="https://www.drozq.com/media/icons/hand_holding_house.svg" alt="" width="30" height="29" loading="lazy">
-              <h5>Any Condition</h5>
-              <p>Outdated, damaged, or full of junk. We buy it exactly as it stands.</p>
-            </div>
-            <div class="pain-item">
-              <img src="https://www.drozq.com/media/icons/request_quote.svg" alt="" width="23" height="29" loading="lazy">
-              <h5>Cash Offer in 24 Hours</h5>
-              <p>Skip the banks. Get a fair, no-obligation cash offer within a day.</p>
-            </div>
-            <div class="pain-item">
-              <img src="https://www.drozq.com/media/icons/handshake.svg" alt="" width="29" height="27" loading="lazy">
-              <h5>No Fees or Commissions</h5>
-              <p>Keep more of your sale. Zero closing costs, zero agent fees.</p>
-            </div>
-            <div class="pain-item">
-              <img src="https://www.drozq.com/media/icons/door_open.svg" alt="" width="25" height="26" loading="lazy">
-              <h5>Close on Your Timeline</h5>
-              <p>Sell in 7 days or 60 days. Pick the date that works for you.</p>
-            </div>
-          </div>
-        </div>
-        <div class="two-col__image">
-          <img style="object-position: 68% 62%;" src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Los Angeles home for sale" width="800" height="532" loading="lazy">
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== WE BUY ANY SITUATION ========== -->
-  <section class="section">
-    <div class="container">
-      <div class="two-col">
-        <div class="two-col__image">
-          <img style="object-position: 60% 52%;" src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Sell house fast in Los Angeles" width="800" height="533" loading="lazy">
-        </div>
-        <div class="two-col__text">
-          <h1>Any Situation,<br>Any Condition</h1>
-          <p>Life happens. When you need to sell your Los Angeles home fast, I'm here to help. We buy houses in every situation, including:</p>
-          <div class="pain-grid">
-            <div class="pain-item">
-              <img src="https://www.drozq.com/media/icons/data_loss_prevention.svg" alt="" width="28" height="28" loading="lazy">
-              <h5>Facing Foreclosure</h5>
-              <p>Avoid foreclosure and protect your credit with a fast, discreet sale.</p>
-            </div>
-            <div class="pain-item">
-              <img src="https://www.drozq.com/media/icons/saw.svg" alt="" width="26" height="30" loading="lazy">
-              <h5>Inherited Property</h5>
-              <p>Skip the probate headache. Sell the inherited home and split the cash.</p>
-            </div>
-            <div class="pain-item">
-              <img src="https://www.drozq.com/media/icons/encrypted.svg" alt="" width="23" height="29" loading="lazy">
-              <h5>Problem Tenants</h5>
-              <p>Difficult tenants or damaged rentals - we buy with tenants in place.</p>
-            </div>
-            <div class="pain-item">
-              <img src="https://www.drozq.com/media/icons/fastclock.svg" alt="" width="31" height="23" loading="lazy">
-              <h5>Relocating Fast</h5>
-              <p>Job transfer or life change. Close on your schedule, not theirs.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== COMPARISON ========== -->
-  <section class="comparison section" id="why-us">
-    <div class="container">
-      <div class="comparison__title">
-        <h2>Cash Offer vs. Traditional Sale in LA</h2>
-      </div>
-      <div class="comparison__grid">
-        <div class="comparison__card">
-          <h3>Selling to Joshua Guerrero</h3>
-          <ul class="checklist">
-            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Free, no-obligation cash offer within 24 hours</li>
-            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Close in as little as 7 days, or pick your date</li>
-            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Zero fees, zero commissions, zero closing costs</li>
-            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Skip repairs, cleaning, staging, and showings</li>
-            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> We buy as-is in any condition or situation</li>
+      <div class="sa-layout">
+        <div class="sa-layout__main">
+          <p>We buy houses in Los Angeles California in Any Condition As-is and fast for cash! Some of the ways we help you are:</p>
+          <ul class="sa-list">
+            <li>Leverage our local LA real estate Realtors that understand the market.</li>
+            <li>Receive an almost instant cash buyer offer that's better than any other company.</li>
+            <li>Forget having strange people moving through your home at inconvenient times.</li>
+            <li>Forget about expensive repairs, unrealistic buyers, or bothersome inspections.</li>
+            <li>Skip fixing up any repairs or dealing with predatory contractors.</li>
+            <li>Worry no more about last minute back outs by inexperienced buyers.</li>
+            <li>Choose a closing date that fits your timeline.</li>
           </ul>
+          <p>The alternative method of home selling could be the perfect solution for you. Over the past few years, Seller's Advantage has bought thousands of LA properties from California property owners eager to sell their homes fast without the hassle or stress. We buy houses and homes in any condition, no matter the circumstances leading to the sale.</p>
+          <p>Seller's Advantage is one of the best home buying services in Southern California, handling all the necessary repairs before reselling the properties over time. While you could attempt this independently, it might prove more expensive, time-consuming, and stressful due to a lack of expertise and experience. Whenever we profit or not, our sellers never have to deal with any of our challenges.</p>
+          <p>We are experts in providing quick cash offers and are genuinely interested in buying your land, rental property, home, or commercial building immediately. If you need to <a href="#contact" style="color:var(--color-green);text-decoration:underline;">sell my house fast Los Angeles</a> without any complications, reach out to Seller's Advantage for a cash offer within 24 hours.</p>
         </div>
-        <div class="comparison__card comparison__card--red">
-          <h3>Traditional LA Home Sale</h3>
-          <ul class="checklist">
-            <li><span class="checklist__icon checklist__icon--red">&#10005;</span> 60-90 days average time on market in Los Angeles</li>
-            <li><span class="checklist__icon checklist__icon--red">&#10005;</span> 6% agent commission plus 2-3% closing costs</li>
-            <li><span class="checklist__icon checklist__icon--red">&#10005;</span> Thousands in repairs, staging, and inspections</li>
-            <li><span class="checklist__icon checklist__icon--red">&#10005;</span> Strangers touring your home every weekend</li>
-            <li><span class="checklist__icon checklist__icon--red">&#10005;</span> Deals fall through when buyer financing fails</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== MARKET ADVANTAGE ========== -->
-  <section class="section">
-    <div class="container">
-      <div class="advantage">
-        <p class="advantage__subtitle">What's Happening in the LA Market?</p>
-        <h2>Your Los Angeles Market Advantage</h2>
-        <p>Deep local knowledge of every LA neighborhood, from Downtown to the Valley to the South Bay.</p>
-        <div class="advantage__features">
-          <div class="advantage__feature">
-            <img src="https://www.drozq.com/media/icons/arrow_trend.svg" alt="" width="60" height="61" loading="lazy">
-            <h3>Real LA Comps</h3>
-            <p>Hyperlocal sales data for your exact Los Angeles neighborhood and price range</p>
+        <div class="sa-layout__side">
+          <div class="sa-side-card">
+            <h3>We buy California houses in all Southern CA cities</h3>
+            <ul>
+              <li><a href="#">Los Angeles</a></li>
+              <li><a href="#">California</a></li>
+            </ul>
           </div>
-          <div class="advantage__feature">
-            <img src="https://www.drozq.com/media/icons/tv-segments.svg" alt="" width="60" height="61" loading="lazy">
-            <h3>Fast Close</h3>
-            <p>Most LA sellers close in 7-14 days. We can move even faster if you need to</p>
-          </div>
-          <div class="advantage__feature">
-            <img src="https://www.drozq.com/media/icons/radio-shows.svg" alt="" width="60" height="61" loading="lazy">
-            <h3>Top Dollar Offer</h3>
-            <p>Cash offers backed by real LA market data, not lowball investor pricing</p>
+          <div class="sa-side-hero">
+            <h3>Selling Your Los Angeles Home Quick</h3>
+            <p>Sell My House Fast Los Angeles</p>
           </div>
         </div>
-        <div class="advantage__actions">
-          <a href="#contact" class="btn btn--outline">See Market Data</a>
-          <a href="#contact" class="btn btn--green">Get My Free Cash Offer</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== BODY TEXT / SEO ========== -->
-  <section class="section">
-    <div class="container">
-      <div class="body-text text-center">
-        <h2>Sell Your Los Angeles House With Confidence</h2>
-        <p>Selling a home in Los Angeles is one of the biggest financial decisions you'll make. Whether you're in Downtown LA, Hollywood, Silver Lake, Echo Park, the San Fernando Valley, or anywhere in between, I help homeowners sell their houses fast for the best possible price. With a proven marketing system, deep local market knowledge, and a network of vetted cash buyers, my sellers consistently achieve above-market results with minimal stress.</p>
-        <p>Whether you need a fast cash sale or a traditional listing, I'll walk you through both options so you can make the best decision for your situation. I also work across <a href="https://drozq.com/irvine">Irvine</a> and the greater Southern California market. Life changes fast, and sometimes you need a buyer who can close in days, not months.</p>
-        <p>Every seller gets a no-obligation cash offer within 24 hours, zero closing costs, and the flexibility to pick your own closing date. <strong><a href="#contact">Get your free Los Angeles cash offer today</a></strong> and find out what your home is really worth.</p>
       </div>
     </div>
   </section>
@@ -722,12 +709,12 @@ p:last-child { margin-bottom: 0; }
   <section class="cta-form" id="contact">
     <div class="container">
       <div class="cta-form__inner">
-        <h2>Get Your Free<br>Los Angeles Cash Offer</h2>
-        <p>Call me at <a href="tel:15109355701" style="text-decoration:underline; font-weight:600;">1-510-935-5701</a> or enter your address below. You'll hear back within the hour.</p>
+        <h2>Get My Free,<br>No-Obligation Quote</h2>
+        <p>Call us today at <a href="tel:18002083243" style="text-decoration:underline; font-weight:600;">800-208-3243</a> and get an offer in as little as 24 hours. It's quick and easy!</p>
 
         <form class="lead-form" id="ctaForm">
           <div class="lead-form__address-wrap">
-            <input type="text" id="ctaAddress" name="address_display" placeholder="Enter your Los Angeles home address" autocomplete="off" required>
+            <input type="text" id="ctaAddress" name="address_display" placeholder="Enter your home address" autocomplete="off" required>
           </div>
           <input type="text" class="lead-form__unit" name="unit" placeholder="Unit" maxlength="5">
 
@@ -745,83 +732,243 @@ p:last-child { margin-bottom: 0; }
             <input type="hidden" name="submitted_at" id="ctaTimestamp">
           </div>
 
-          <button type="submit" class="btn btn--green btn--full">Get My Free Cash Offer</button>
+          <button type="submit" class="btn btn--green btn--full">Get My Free Quote</button>
         </form>
 
-        <p>Trusted by Los Angeles homeowners</p>
-        <img class="broker-badge" src="https://www.drozq.com/media/icons/real/real-broker-logo.png" alt="Real Broker" width="160" height="44" loading="lazy">
+        <p><strong>Southern California's Most Trusted Home Buyers</strong></p>
+        <img class="broker-badge" src="https://www.drozq.com/media/icons/real/real-broker-logo.png" alt="BBB A+ Accredited Business" width="160" height="44" loading="lazy">
       </div>
     </div>
   </section>
 
-  <!-- ========== FAQ ========== -->
+  <!-- ========== COMMON QUESTIONS ========== -->
   <section class="section" id="faq">
     <div class="container">
       <div class="faq">
-        <h2>Questions LA Sellers Ask</h2>
+        <h2>Common Questions Seller's Advantage Hears From Homeowners Selling a House As-Is</h2>
 
         <div class="faq__item">
           <button class="faq__question" aria-expanded="false">
-            <span>How fast can you buy my Los Angeles house?</span>
+            <span>What should I look for from companies that buy houses in any condition or companies that buy houses for cash?</span>
             <span class="faq__icon">
               <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
             </span>
           </button>
           <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Most cash sales close in 7-14 days from the day we agree on price. If you need to close faster, we can often do it in as little as 5-7 days. If you need more time, no problem - you can pick a closing date up to 60+ days out. The timeline is yours to choose.</p>
+            <p>Look for a licensed, accredited company with a long track record, verified reviews on BBB, Google, and Yelp, and transparent offers with no hidden fees. Seller's Advantage has 25+ years of experience and hundreds of happy customers across Southern California.</p>
           </div></div></div>
         </div>
 
         <div class="faq__item">
           <button class="faq__question" aria-expanded="false">
-            <span>Do I have to make any repairs or clean the house?</span>
+            <span>Where do you purchase homes for cash?</span>
             <span class="faq__icon">
               <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
             </span>
           </button>
           <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>No. We buy houses in Los Angeles in any condition - outdated, damaged, full of belongings, or mid-renovation. You don't have to fix anything, clean anything, or even haul away trash. Take what you want and leave the rest. We handle it all.</p>
+            <p>We purchase homes throughout Los Angeles and all of Southern California, including surrounding counties and cities.</p>
           </div></div></div>
         </div>
 
         <div class="faq__item">
           <button class="faq__question" aria-expanded="false">
-            <span>Are there any fees or commissions?</span>
+            <span>Do all people who buy houses have the same process as Seller's Advantage?</span>
             <span class="faq__icon">
               <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
             </span>
           </button>
           <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Zero. No agent commissions, no closing costs, no hidden fees. The cash offer I give you is the amount you walk away with. Compare that to a traditional LA sale where you'd lose 6% to agents and another 2-3% to closing costs - on a $900K LA home, that's nearly $80,000 saved.</p>
+            <p>No. Seller's Advantage offers a streamlined, transparent process with cash offers in as little as 24 hours, no fees, no commissions, and no surprises. Many other cash buyers have hidden fees or low-ball offers.</p>
+          </div></div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== WE WANT TO BUY YOUR HOUSE ========== -->
+  <section class="section">
+    <div class="container">
+      <div class="we-want">
+        <h2>We Want to Buy Your House!</h2>
+        <div class="we-want__grid">
+          <div>NO FEES</div>
+          <div>NO BANKS</div>
+          <div>NO SURPRISES</div>
+          <div>NO COMMISSIONS</div>
+          <div>NO REPAIRS</div>
+          <div>NO HASSLES</div>
+        </div>
+        <p class="we-want__license">Seller's Advantage is a licensed brokerage in the state of California BRE #01961658.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== LA MARKET TRENDS AND STATS ========== -->
+  <section class="section">
+    <div class="container">
+      <div class="market-stats">
+        <p style="text-align:center;"><em>Learn more about Los Angeles housing and real estate.</em></p>
+        <h2>Los Angeles Real Estate Market Trends and Statistics for 2023-2024</h2>
+        <ul>
+          <li>House prices in Los Angeles have increased by 16.7% in 2023 and by 114.2% over the last five years.</li>
+          <li>Los Angeles is the second largest city in the United States.</li>
+          <li>The current median house price in Los Angeles is approximately $900,000.</li>
+          <li>Two banks in the region, Silicon Valley Bank and Signature Bank have recently gone bankrupt, causing some instability.</li>
+          <li>Most cities in California received a C-minus rating for their efforts in providing affordable housing.</li>
+          <li>The median income in Los Angeles is $62,142, a figure that is outpaced by the rise in housing and rent prices.</li>
+          <li>Home prices in Los Angeles have started experiencing some drops, with some as much as 20%.</li>
+          <li>The Los Angeles housing market is experiencing high prices, with some of the highest recorded ever.</li>
+          <li>The prices of single-family homes in California have also dropped slightly.</li>
+          <li>Despite its high cost of living, Los Angeles offers numerous options for affordable housing and has met California's state-mandated housing goals, unlike most other cities.</li>
+          <li>Rental prices in Los Angeles have increased by around 11%, with the average monthly rent for an apartment being $2,644.</li>
+          <li>Los Angeles received an A+ rating from the Southern California News Group for its efforts to provide affordable housing.</li>
+          <li>The issue of overinflated housing prices began in 2020 and has progressively worsened, pushing many people out of the housing market.</li>
+          <li>Home sales in California have increased recently but are lower than the previous year.</li>
+          <li>Cities across the United States, including Los Angeles, are facing challenges with providing affordable housing.</li>
+          <li>Mortgage prices in California are currently declining.</li>
+          <li>The report predicts that housing prices in Los Angeles will continue to increase, with interest rates also expected to rise due to high demand and a shortage of homes for sale.</li>
+          <li>The population of Los Angeles is around 3.92 million as of 2023.</li>
+          <li>California is experiencing a housing shortage, leading to a rise in house prices.</li>
+          <li>The housing market is showing signs of potential change, making it an important time for current or potential homeowners to monitor the situation.</li>
+          <li>Los Angeles is experiencing a growing homeless population due to the affordability crisis.</li>
+        </ul>
+
+        <h3>Key Los Angeles Real Estate Stats and Facts</h3>
+        <p>As of 2023, Los Angeles, the second-largest city in the U.S., hosts a population of approximately 3.92 million. Despite its high living costs, the city has managed to outperform other Californian cities in its endeavors to provide affordable housing, receiving an A+ rating from the Southern California News Group. Meanwhile, most other towns lag with C-minus ratings. Interestingly, while property prices in Los Angeles have witnessed an upward trend with a staggering 114.2% increase over the last five years, recent trends have shown slight price drops, as high as 20% in some cases.</p>
+
+        <div class="market-stats__seal">
+          <p><strong>Los Angeles California County Seal</strong></p>
+          <p>LA County Seal</p>
+        </div>
+
+        <p>Despite this, the median house price remains at around $900,000, greatly overshadowing the median income of $62,142. Rentals, too, have seen an 11% surge, leading to an average monthly rental of $2,644 for an apartment. Concurrently, the housing market is going through an interesting phase, marked by the bankruptcy of two local banks, Silicon Valley Bank and Signature Bank, causing some instability in the sector.</p>
+
+        <p>The state of California is experiencing a housing shortage that exacerbates the issue, causing prices of available properties to escalate.</p>
+
+        <p>Even with a slight decline in mortgage prices and a minor decrease in single-family home prices, the gap between income and housing costs is substantial. With rising house prices and a simultaneous shortfall of homes for sale, predictions suggest further price escalations and climbing interest rates. The ripple effects of these issues are reflected in the city's growing homeless population, marking the severity of the affordability crisis in Los Angeles.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== WHY SELECT A CASH HOME BUYER ========== -->
+  <section class="section">
+    <div class="container">
+      <div class="why-cash">
+        <h2>Why select a cash home buyer like Seller's Advantage?</h2>
+        <p>Life can be uncertain, and it can interfere with selling your home easily. There are many advantages of a cash sale for any number of reasons that can help your family in a difficult situation.</p>
+
+        <h3>Quickly Get Needed Cash in Your Hands</h3>
+        <p>A traditional real estate sale takes a long time. In fact, the average time is over 1 month before an offer is accepted. When you need money in an emergency that is just too long.</p>
+        <p>The best way to sell your property fast is to work with cash buyers like Seller's Advantage because they can finish the purchase in just 7-14 days.</p>
+
+        <h3>We will buy your house As-Is</h3>
+        <p>There are any number of problems that can lead to a huge problem when you list real estate for sale. We buy houses as is and in any condition and do not require you to make any updates or repairs. We don't even require you to clean up. Below are examples of the types of homes we pay cash for.</p>
+
+        <h3>We Buy As-Is</h3>
+        <p>Properties can bring an abundance of issues that become a seller's worst nightmare at listing time. We buy houses in any condition and do not require sellers to make repairs or updates. Here are some examples of the kinds of homes we sell for cash:</p>
+        <ul>
+          <li>Outdated or old homes</li>
+          <li>Storm damaged homes</li>
+          <li>Homes with Pest infestations</li>
+          <li>Homes with lots of junk or full of trash</li>
+          <li>Houses that need to be repaired</li>
+          <li>Rentals with tenant issues</li>
+          <li>Incomplete construction or renovations</li>
+        </ul>
+        <p>Most buyers or sellers prefer not to deal with these kinds of issues when it comes time to sell. Seller's Advantage with pay you cash fast and will complete the process without any work or fees to your family.</p>
+
+        <h3>Your privacy is safe and secure.</h3>
+        <p>If you wish to be discreet a large for sale sign and MLS listings on Zillow will announce to everyone your property is potentially vacant. Criminals may then make it a target. Likewise showing your neighbors you could be in foreclosure is not really a pleasant feeling.</p>
+        <p>When you allow Sellers' Advantage to buy your home for cash the entire process is discreet and quick.</p>
+
+        <h3>Get top dollar paid with zero commissions or fees.</h3>
+        <p>We will give you our highest price in an off-market cash offer so you can get as most money possible no matter the condition. Our offers consider the condition, location, repairs needed and more. This is so you can have a fair sale without any closing costs.</p>
+        <p>Just accept our offer and move on your time frame and begin your fresh start.</p>
+        <p>You don't have to believe us though; our customers have given us over 300 happy 5-star Google reviews in Los Angeles County.</p>
+        <p>But don't take our word for it. Read the testimonials from our happy customers in San Diego County. We have over 500 five-star reviews!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== HOME SELLING FAQS ========== -->
+  <section class="section">
+    <div class="container">
+      <div class="faq">
+        <h2>Home Selling FAQs</h2>
+
+        <div class="faq__item">
+          <button class="faq__question" aria-expanded="false">
+            <span>What are the benefits of working with cash home buyers in Los Angeles?</span>
+            <span class="faq__icon">
+              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </span>
+          </button>
+          <div class="faq__answer"><div class="faq__answer-inner"><div>
+            <ul style="margin-left:20px;list-style:disc;">
+              <li>Get your cash payout in as quick as 7 days.</li>
+              <li>Skip making any repairs.</li>
+              <li>Avoid foreclosure in LA.</li>
+              <li>Zero costs for closing.</li>
+              <li>No one will know that you're selling.</li>
+            </ul>
           </div></div></div>
         </div>
 
         <div class="faq__item">
           <button class="faq__question" aria-expanded="false">
-            <span>How do you determine your cash offer?</span>
+            <span>How do you figure out the value of my Los Angeles property?</span>
             <span class="faq__icon">
               <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
             </span>
           </button>
           <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>I use real Los Angeles comparable sales data, current market conditions, and the specific condition of your home. I'll walk you through the numbers so you understand exactly how I arrived at the offer. No lowball pricing, no pressure, and no obligation. If my offer doesn't work for you, I'll still help you explore a traditional listing option.</p>
+            <p>We assess many factors of your property and calculate how much your house is worth to us in its current condition. Request a hassle free no obligation cash offer today to see how much you would pay you for your home.</p>
           </div></div></div>
         </div>
 
         <div class="faq__item">
           <button class="faq__question" aria-expanded="false">
-            <span>What if I want to list traditionally instead of taking a cash offer?</span>
+            <span>How long do cash deals take?</span>
             <span class="faq__icon">
               <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
             </span>
           </button>
           <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>I can help with that too. As a licensed listing agent, I'll present both options side by side - a fast cash offer versus a full MLS listing with marketing, staging, and professional photography. You'll see the real net numbers for both paths and choose what's best for your timeline and situation. Either way, you're in control.</p>
+            <p>Most transactions take 1-2 weeks but can be done in as quickly as seven days. However, you can choose for a longer time period if that works better for you.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq__item">
+          <button class="faq__question" aria-expanded="false">
+            <span>Do I have to pay any fees to sell my house fast for cash?</span>
+            <span class="faq__icon">
+              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </span>
+          </button>
+          <div class="faq__answer"><div class="faq__answer-inner"><div>
+            <p>When you use Seller's Advantage there are no closing costs or fees at all. Zero. Zilch.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq__item">
+          <button class="faq__question" aria-expanded="false">
+            <span>Do you offer cash offers for houses in all conditions?</span>
+            <span class="faq__icon">
+              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </span>
+          </button>
+          <div class="faq__answer"><div class="faq__answer-inner"><div>
+            <p>Yes, we buy any home in any condition in Los Angeles California and the surrounding cities. We do not require any cleaning, repairing, or upgrading.</p>
           </div></div></div>
         </div>
 
