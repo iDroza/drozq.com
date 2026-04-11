@@ -41,9 +41,18 @@ p:last-child{margin-bottom:0;}
 .header .container{display:flex;align-items:center;justify-content:space-between;min-height:78px;gap:25px;position:relative;}
 .header__logo img{max-width:220px;}
 .nav{display:flex;align-items:center;gap:30px;}
-.nav a{font-size:17px;font-weight:500;padding:14px 0;color:#000;}
+.nav > a,.nav__item > a{font-size:17px;font-weight:500;padding:14px 0;color:#000;}
 .nav a:hover,.nav a.active{color:var(--color-green);}
 .nav__toggle{display:none;background:none;border:none;font-size:32px;cursor:pointer;color:var(--color-navy);padding:8px;}
+.nav__item{position:relative;}
+.nav__item > a{display:inline-flex;align-items:center;gap:6px;cursor:pointer;}
+.nav__item > a .nav__caret{width:12px;height:7px;flex-shrink:0;transition:transform var(--transition);}
+.nav__item > a .nav__caret path{stroke:currentColor;}
+.nav__item:hover > a .nav__caret{transform:rotate(180deg);}
+.nav__dropdown{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(8px);background:#fff;border:1px solid rgba(52,63,86,.12);border-radius:var(--radius);box-shadow:0 12px 30px rgba(0,0,0,.12);min-width:200px;padding:10px 0;opacity:0;visibility:hidden;transition:opacity var(--transition),transform var(--transition),visibility var(--transition);z-index:1001;}
+.nav__dropdown a{display:block;padding:10px 20px;font-size:16px;font-weight:500;color:var(--color-navy);white-space:nowrap;}
+.nav__dropdown a:hover{background:var(--color-mint);color:var(--color-green);}
+.nav__item:hover .nav__dropdown,.nav__item:focus-within .nav__dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);}
 .mint-block{background:var(--color-mint);padding:70px 0;text-align:center;}
 .mint-block h1{margin-bottom:14px;}
 .mint-block .meta{font-size:15px;color:var(--color-navy-light);font-weight:500;}
@@ -76,7 +85,7 @@ p:last-child{margin-bottom:0;}
 .footer__bottom{margin-top:45px;padding-top:25px;border-top:1px solid rgba(255,255,255,.15);text-align:center;}
 .footer__legal{font-size:14px;opacity:.7;margin-bottom:10px;}
 .footer__copyright{font-size:14px;opacity:.6;}
-@media (max-width:1024px){.nav{display:none;}.nav__toggle{display:block;}.nav.open{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:#fff;padding:20px 30px;box-shadow:0 10px 30px rgba(0,0,0,.1);z-index:999;}.btn--phone-desktop{display:none;}}
+@media (max-width:1024px){.nav{display:none;}.nav__toggle{display:block;}.nav.open{display:flex;flex-direction:column;align-items:flex-start;position:absolute;top:100%;left:0;right:0;background:#fff;padding:20px 30px;box-shadow:0 10px 30px rgba(0,0,0,.1);z-index:999;}.nav.open .nav__item{width:100%;}.nav.open .nav__item > a .nav__caret{display:none;}.nav.open .nav__dropdown{position:static;transform:none;opacity:1;visibility:visible;box-shadow:none;border:none;padding:0 0 10px 20px;min-width:0;background:transparent;}.nav.open .nav__dropdown a{padding:8px 0;font-size:16px;}.btn--phone-desktop{display:none;}}
 @media (max-width:768px){.container{padding:0 20px;}.mint-block,.policy{padding:50px 0;}.footer__right{text-align:left;}.footer__right img{margin-left:0;}.footer__social{justify-content:flex-start;}}
 @media (max-width:480px){h1{font-size:2.125rem;}}
 </style>
@@ -86,7 +95,25 @@ p:last-child{margin-bottom:0;}
 <header class="header"><div class="container">
 <a href="https://drozq.com" class="header__logo"><img src="https://www.drozq.com/media/icons/Joshua Guerrero Rectangle in line.png" alt="Joshua Guerrero Real Estate" width="250" height="50"></a>
 <nav class="nav" id="mainNav">
-<a href="https://drozq.com">Home</a><a href="https://drozq.com/process">How It Works</a><a href="https://drozq.com#why-us">Why Choose Me</a><a href="https://drozq.com/reviews">Reviews</a><a href="https://drozq.com#faq">FAQ</a><a href="https://drozq.com/contact">Contact</a>
+<a href="/">Home</a>
+<a href="/process">The Process</a>
+<div class="nav__item">
+<a href="/where-we-help" aria-haspopup="true">Where We Help<svg class="nav__caret" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 2l9 8 9-8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+<div class="nav__dropdown">
+<a href="/los-angeles">Los Angeles</a>
+</div>
+</div>
+<a href="/testimonials">Testimonials</a>
+<div class="nav__item">
+<a href="/about" aria-haspopup="true">About<svg class="nav__caret" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 2l9 8 9-8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+<div class="nav__dropdown">
+<a href="/meet-the-team">Meet the Team</a>
+<a href="/blog">Blog</a>
+<a href="/faq">FAQ</a>
+</div>
+</div>
+<a href="/market-insights">Market Insights</a>
+<a href="/contact">Contact</a>
 </nav>
 <a href="tel:15109355701" class="btn btn--phone btn--phone-desktop">1-510-935-5701</a>
 <button class="nav__toggle" id="navToggle" aria-label="Toggle Navigation">&#9776;</button>
@@ -151,8 +178,8 @@ p:last-child{margin-bottom:0;}
 <footer class="footer"><div class="container">
 <div class="footer__top">
 <div class="footer__brand"><img src="https://www.drozq.com/media/icons/Joshua Guerrero Logo Rectangle Stacked.png" alt="Joshua Guerrero Real Estate" width="200" loading="lazy"><p>17875 Von Karman Ave, Suite 150<br>Irvine, CA 92614</p><p class="phone"><a href="tel:15109355701">1-510-935-5701</a></p><p><a href="mailto:Josh@Drozq.com">Josh@Drozq.com</a></p></div>
-<div class="footer__links"><a href="https://drozq.com">Home</a><a href="https://drozq.com/process">How It Works</a><a href="https://drozq.com#why-us">Why Choose Me</a><a href="https://drozq.com/reviews">Reviews</a><a href="https://drozq.com/contact">Contact</a></div>
-<div class="footer__links"><a href="https://drozq.com#faq">FAQ</a><a href="tel:15109355701">Call Now</a></div>
+<div class="footer__links"><a href="/">Home</a><a href="/process">The Process</a><a href="/sell-my-house-fast-los-angeles">Sell My House Fast Los Angeles</a><a href="/where-we-help">Where We Help</a><a href="/california">California</a></div>
+<div class="footer__links"><a href="/faq">FAQ</a><a href="/testimonials">Testimonials</a><a href="/about">About</a><a href="/blog">Blog</a><a href="/contact-us">Contact Us</a></div>
 <div class="footer__right"><img src="https://www.drozq.com/media/icons/real/real-broker-logo.png" alt="Real Broker" width="160" loading="lazy">
 <div class="footer__social">
 <a href="https://www.facebook.com/Drozq/" target="_blank" rel="noopener" aria-label="Facebook"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
