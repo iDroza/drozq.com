@@ -115,15 +115,14 @@ p:last-child { margin-bottom: 0; }
 .nav a.active { color: var(--color-green); }
 .nav__toggle { display: none; background: none; border: none; font-size: 32px; cursor: pointer; color: var(--color-navy); padding: 8px; }
 
-.hero { padding: 50px 0 0; background: linear-gradient(114deg, var(--color-white) 67%, var(--color-navy) 62%); }
-.hero .container { display: flex; flex-wrap: wrap; align-items: flex-end; }
-.hero__content { flex: 1 1 45%; min-width: 300px; padding-bottom: 25px; }
-.hero__image { flex: 1 1 25%; min-width: 200px; }
-.hero__badge { flex: 1 1 25%; min-width: 200px; display: flex; justify-content: center; }
-.hero__badge img { max-width: 300px; }
-.hero h1 { color: var(--color-navy); margin-bottom: 14px; }
-.hero__subtitle { font-size: 20px; margin-bottom: 24px; }
-.hero__trust { font-weight: 500; margin-top: 12px; font-size: 17px; }
+.hero { padding: 70px 0 0; background: var(--color-mint); }
+.hero .container { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 30px; }
+.hero__content { flex: 1 1 50%; min-width: 300px; padding-bottom: 60px; }
+.hero__image { flex: 1 1 40%; min-width: 280px; display: flex; justify-content: flex-end; align-items: flex-end; }
+.hero__image img { max-width: 100%; height: auto; }
+.hero h1 { color: var(--color-navy); margin-bottom: 18px; font-size: clamp(2.5rem, 5vw, 4rem); }
+.hero__subtitle { font-size: 19px; margin-bottom: 26px; color: var(--color-navy); max-width: 560px; }
+.hero__contact-note { font-size: 17px; margin-top: 18px; color: var(--color-navy); }
 
 .lead-form { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
 .lead-form__address-wrap { flex: 1 1 70%; min-width: 200px; position: relative; }
@@ -319,8 +318,7 @@ p:last-child { margin-bottom: 0; }
   .areas-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 1024px) {
-  .hero { background: linear-gradient(112deg, var(--color-white) 80%, var(--color-navy) 62%); }
-  .hero__badge { display: none; }
+  .hero { padding: 50px 0 0; }
   .nav { display: none; }
   .nav__toggle { display: block; }
   .nav.open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-white); padding: 20px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 999; }
@@ -332,9 +330,9 @@ p:last-child { margin-bottom: 0; }
 @media (max-width: 768px) {
   .container { padding: 0 20px; }
   .section { padding: 45px 0; }
-  .hero { background: linear-gradient(154deg, var(--color-white) 67%, var(--color-navy) 15%); padding-top: 30px; }
+  .hero { padding-top: 30px; }
   .hero__image { display: none; }
-  .hero__content { flex: 1 1 100%; }
+  .hero__content { flex: 1 1 100%; padding-bottom: 40px; }
   .two-col { gap: 30px; }
   .two-col__text, .two-col__image { flex: 1 1 100%; }
   .pain-grid { grid-template-columns: 1fr; }
@@ -541,13 +539,9 @@ p:last-child { margin-bottom: 0; }
   <section class="hero">
     <div class="container">
 
-      <div class="hero__image">
-        <img src="https://www.drozq.com/media/images/Waist.png" alt="Joshua Guerrero - Listing Agent" width="600" height="710" fetchpriority="high">
-      </div>
-
       <div class="hero__content">
-        <h1>Serving Home Sellers Across Southern California</h1>
-        <p class="hero__subtitle">Hyperlocal expertise from Los Angeles to San Diego. Enter your address to get started.</p>
+        <h1>We Buy Homes For Cash</h1>
+        <p class="hero__subtitle">Seller's Advantage has purchased thousands of houses and we can buy yours in just a few days and there is no obligation.</p>
 
         <form class="lead-form" id="heroForm">
           <div class="lead-form__address-wrap">
@@ -569,91 +563,89 @@ p:last-child { margin-bottom: 0; }
             <input type="hidden" name="submitted_at" id="heroTimestamp">
           </div>
 
-          <button type="submit" class="btn btn--green btn--full">Get My Free Home Valuation</button>
+          <button type="submit" class="btn btn--green btn--full">Get My Free Quote</button>
         </form>
 
-        <p class="hero__trust">Trusted by Southern California homeowners</p>
+        <p class="hero__contact-note">Contact us today to see if we are buying in your area.</p>
       </div>
 
-      <div class="hero__badge">
-        <img src="https://www.drozq.com/media/icons/Joshua Guerrero Square Stacked Logo WHITE.png" alt="Joshua Guerrero emblem" width="300" height="289" loading="lazy">
+      <div class="hero__image">
+        <img src="https://www.drozq.com/media/images/Waist.png" alt="Joshua Guerrero - Listing Agent" width="600" height="710" fetchpriority="high">
       </div>
 
     </div>
   </section>
 
-  <!-- ========== STATS BAR ========== -->
-  <section class="stats-bar">
+  <!-- ========== INTRO / METROPOLITAN AREAS ========== -->
+  <section class="section">
     <div class="container">
-      <div class="stat">
-        <div class="stat__icon"><img src="https://www.drozq.com/media/icons/kid_star.svg" alt="" width="50" height="48" loading="lazy"></div>
-        <div>
-          <h4>5-Star Rated on Google</h4>
-          <p>Committed to exceptional client service</p>
-        </div>
+      <div class="areas-intro">
+        <h2>We Are Currently Buying Homes for Cash In Most Major Metropolitan Areas</h2>
       </div>
-      <div class="stat">
-        <div class="stat__icon"><img src="https://www.drozq.com/media/icons/verified check.svg" alt="" width="50" height="47" loading="lazy"></div>
-        <div>
-          <h4>$1.1M+ in Sales</h4>
-          <p>Proven track record in Southern California</p>
-        </div>
-      </div>
-      <div class="stat">
-        <div class="stat__icon"><img src="https://www.drozq.com/media/icons/money_bag.svg" alt="" width="50" height="50" loading="lazy"></div>
-        <div>
-          <h4>Fast Closings</h4>
-          <p>Homes sell faster with expert pricing &amp; marketing</p>
-        </div>
+      <div class="body-text text-center">
+        <p>When it comes to <a href="#contact">we buy houses California</a> companies or cash-buyers for homes, there are many who claim that they are qualified home buyers, but few who deliver like Seller's Advantage. If you've ever said, "I want someone to buy my home for cash, but I don't want the hassle," that's a good sign that we're the right fit for you. We don't want to waste your time and we can let you know right away if we can buy your home for the price you want. It's that simple.</p>
+        <p>We are always looking to help people like you <a href="#contact">sell my house fast Los Angeles</a>. If you live in Southern California, LA county or any other major metropolitan area and are thinking of selling your home, call us first. You may get everything you hoped for in selling your home without all the headaches!</p>
       </div>
     </div>
   </section>
 
-  <!-- ========== MEDIA LOGOS ========== -->
-  <section class="media-logos section">
-    <div class="container">
-      <p>Find Me On:</p>
-      <div class="media-logos__grid">
-        <a href="https://www.zillow.com/" target="_blank" rel="noopener"><img src="https://www.drozq.com/media/icons/Zillow.png" alt="Zillow" width="120" height="40" loading="lazy"></a>
-        <a href="https://www.realtor.com/" target="_blank" rel="noopener"><img src="https://www.drozq.com/media/icons/realtor-com-logo.png" alt="Realtor.com" loading="lazy" style="height:55px;width:auto;"></a>
-        <a href="https://www.redfin.com/" target="_blank" rel="noopener"><img src="https://www.drozq.com/media/icons/Redfin.png" alt="Redfin" width="120" height="40" loading="lazy"></a>
-        <a href="https://maps.app.goo.gl/f6PwyX3U64uvMCeF9" target="_blank" rel="noopener"><img src="https://www.drozq.com/media/icons/Google.png" alt="Google" width="110" height="40" loading="lazy"></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== INTRO / OVERVIEW ========== -->
+  <!-- ========== PROPERTY TYPES ========== -->
   <section class="section">
     <div class="container">
       <div class="two-col">
         <div class="two-col__text">
-          <h1>Hyperlocal Expertise, Across Southern California</h1>
-          <p>From the coast to the foothills, Southern California is made up of dozens of distinct markets — each with its own buyer pool, price dynamics, and neighborhood nuances. I list and sell homes throughout these communities, so sellers get a strategy tuned to their exact market, not a generic playbook.</p>
+          <h2>What Types of Properties Do We Purchase?</h2>
+          <p>Selling your home can be time-consuming, frustrating, and complicated. At Seller's Advantage, we're here to make the process smoother and quicker, so you can move on without the usual headaches.</p>
           <div class="pain-grid">
             <div class="pain-item">
               <img src="https://www.drozq.com/media/icons/hand_holding_house.svg" alt="" width="30" height="29" loading="lazy">
-              <h5>Local Pricing</h5>
-              <p>Comps, timing, and list price strategy tuned to your neighborhood.</p>
+              <h5>All Home Types:</h5>
+              <p>Single-family residences, duplexes, triplexes, and four-plexes.</p>
             </div>
             <div class="pain-item">
               <img src="https://www.drozq.com/media/icons/request_quote.svg" alt="" width="23" height="29" loading="lazy">
-              <h5>Targeted Marketing</h5>
-              <p>HD photos, video tours, and digital ads aimed at local buyers.</p>
+              <h5>Fast Cash Sales:</h5>
+              <p>We streamline the process, completing purchases quickly and hassle-free.</p>
             </div>
             <div class="pain-item">
               <img src="https://www.drozq.com/media/icons/handshake.svg" alt="" width="29" height="27" loading="lazy">
-              <h5>Expert Negotiation</h5>
-              <p>Skilled negotiation that protects your interests and gets top dollar.</p>
-            </div>
-            <div class="pain-item">
-              <img src="https://www.drozq.com/media/icons/door_open.svg" alt="" width="25" height="26" loading="lazy">
-              <h5>Managed Showings</h5>
-              <p>Coordinated showings that respect your schedule and privacy.</p>
+              <h5>Homes in Any Condition:</h5>
+              <p>Major repairs? No problem! We buy homes with structural, internal, or aesthetic issues.</p>
             </div>
           </div>
         </div>
         <div class="two-col__image">
           <img style="object-position: 68% 62%;" src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Southern California home for sale" width="800" height="532" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ORIGIN STORY ========== -->
+  <section class="section">
+    <div class="container">
+      <div class="two-col">
+        <div class="two-col__image">
+          <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Southern California neighborhood" width="800" height="532" loading="lazy">
+        </div>
+        <div class="two-col__text">
+          <h2>Our Origin Story</h2>
+          <p>Seller's Advantage started in Phoenix, where we gained a reputation for helping home sellers facing challenges like:</p>
+          <div class="pain-grid">
+            <div class="pain-item">
+              <img src="https://www.drozq.com/media/icons/hand_holding_house.svg" alt="" width="30" height="29" loading="lazy">
+              <h5>Poorly maintained properties needing extensive repairs.</h5>
+            </div>
+            <div class="pain-item">
+              <img src="https://www.drozq.com/media/icons/request_quote.svg" alt="" width="23" height="29" loading="lazy">
+              <h5>Overwhelming repair schedules and delays.</h5>
+            </div>
+            <div class="pain-item">
+              <img src="https://www.drozq.com/media/icons/handshake.svg" alt="" width="29" height="27" loading="lazy">
+              <h5>Frustration with hiring and managing contractors.</h5>
+            </div>
+          </div>
+          <p style="margin-top: 18px;">Building on the success we experienced in the Phoenix area, we opened additional locations in Las Vegas NV and Irvine, CA. to serve home sellers in San Diego, <a href="#contact">Orange County</a>, Riverside, San Bernardino, Los Angeles, and Ventura Counties. If you live in any of these areas, we can help make the home selling process faster and easier for you. Give us a call, or fill out the online request for a quote and get your home SOLD today because... <a href="#contact">We buy homes in California</a>!</p>
         </div>
       </div>
     </div>
@@ -674,7 +666,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Irvine California" loading="lazy">
           </div>
-          <a href="https://drozq.com/irvine"><h3>Sell Your Home in Irvine</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-irvine/"><h3>Sell Your Home in Irvine</h3></a>
         </div>
 
         <div class="area-card">
@@ -682,7 +674,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Los Angeles California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Los Angeles</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-los-angeles/"><h3>Sell Your Home in Los Angeles</h3></a>
         </div>
 
         <div class="area-card">
@@ -690,7 +682,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Newport Beach California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Newport Beach</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-newport-beach/"><h3>Sell Your Home in Newport Beach</h3></a>
         </div>
 
         <div class="area-card">
@@ -698,7 +690,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Costa Mesa California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Costa Mesa</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-costa-mesa/"><h3>Sell Your Home in Costa Mesa</h3></a>
         </div>
 
         <div class="area-card">
@@ -706,7 +698,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Mission Viejo California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Mission Viejo</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-mission-viejo/"><h3>Sell Your Home in Mission Viejo</h3></a>
         </div>
 
         <div class="area-card">
@@ -714,7 +706,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Laguna Niguel California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Laguna Niguel</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-laguna-niguel/"><h3>Sell Your Home in Laguna Niguel</h3></a>
         </div>
 
         <div class="area-card">
@@ -722,7 +714,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Lake Forest California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Lake Forest</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-lake-forest/"><h3>Sell Your Home in Lake Forest</h3></a>
         </div>
 
         <div class="area-card">
@@ -730,7 +722,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Laguna Hills California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Laguna Hills</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-laguna-hills/"><h3>Sell Your Home in Laguna Hills</h3></a>
         </div>
 
         <div class="area-card">
@@ -738,7 +730,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Tustin California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Tustin</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-tustin/"><h3>Sell Your Home in Tustin</h3></a>
         </div>
 
         <div class="area-card">
@@ -746,7 +738,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Anaheim California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Anaheim</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-anaheim/"><h3>Sell Your Home in Anaheim</h3></a>
         </div>
 
         <div class="area-card">
@@ -754,7 +746,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Fullerton California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Fullerton</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-fullerton/"><h3>Sell Your Home in Fullerton</h3></a>
         </div>
 
         <div class="area-card">
@@ -762,7 +754,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Huntington Beach California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Huntington Beach</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-huntington-beach/"><h3>Sell Your Home in Huntington Beach</h3></a>
         </div>
 
         <div class="area-card">
@@ -770,7 +762,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Garden Grove California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Garden Grove</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-garden-grove/"><h3>Sell Your Home in Garden Grove</h3></a>
         </div>
 
         <div class="area-card">
@@ -778,7 +770,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Santa Ana California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Santa Ana</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-santa-ana/"><h3>Sell Your Home in Santa Ana</h3></a>
         </div>
 
         <div class="area-card">
@@ -786,7 +778,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Westminster California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Westminster</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-westminster/"><h3>Sell Your Home in Westminster</h3></a>
         </div>
 
         <div class="area-card">
@@ -794,7 +786,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Yorba Linda California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Yorba Linda</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-yorba-linda/"><h3>Sell Your Home in Yorba Linda</h3></a>
         </div>
 
         <div class="area-card">
@@ -802,7 +794,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Pasadena California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Pasadena</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-pasadena/"><h3>Sell Your Home in Pasadena</h3></a>
         </div>
 
         <div class="area-card">
@@ -810,7 +802,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Long Beach California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Long Beach</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-long-beach/"><h3>Sell Your Home in Long Beach</h3></a>
         </div>
 
         <div class="area-card">
@@ -818,7 +810,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Santa Monica California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Santa Monica</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-santa-monica/"><h3>Sell Your Home in Santa Monica</h3></a>
         </div>
 
         <div class="area-card">
@@ -826,7 +818,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Torrance California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Torrance</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-torrance/"><h3>Sell Your Home in Torrance</h3></a>
         </div>
 
         <div class="area-card">
@@ -834,7 +826,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Redondo Beach California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Redondo Beach</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-redondo-beach/"><h3>Sell Your Home in Redondo Beach</h3></a>
         </div>
 
         <div class="area-card">
@@ -842,7 +834,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Burbank California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Burbank</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-burbank/"><h3>Sell Your Home in Burbank</h3></a>
         </div>
 
         <div class="area-card">
@@ -850,7 +842,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Glendale California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Glendale</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-glendale/"><h3>Sell Your Home in Glendale</h3></a>
         </div>
 
         <div class="area-card">
@@ -858,7 +850,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Malibu California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Malibu</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-malibu/"><h3>Sell Your Home in Malibu</h3></a>
         </div>
 
         <div class="area-card">
@@ -866,7 +858,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Riverside California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Riverside</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-riverside/"><h3>Sell Your Home in Riverside</h3></a>
         </div>
 
         <div class="area-card">
@@ -874,7 +866,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Corona California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Corona</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-corona/"><h3>Sell Your Home in Corona</h3></a>
         </div>
 
         <div class="area-card">
@@ -882,7 +874,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Murrieta California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Murrieta</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-murrieta/"><h3>Sell Your Home in Murrieta</h3></a>
         </div>
 
         <div class="area-card">
@@ -890,7 +882,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Temecula California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Temecula</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-temecula/"><h3>Sell Your Home in Temecula</h3></a>
         </div>
 
         <div class="area-card">
@@ -898,7 +890,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Lake Elsinore California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Lake Elsinore</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-lake-elsinore/"><h3>Sell Your Home in Lake Elsinore</h3></a>
         </div>
 
         <div class="area-card">
@@ -906,7 +898,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Rancho Cucamonga California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Rancho Cucamonga</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-rancho-cucamonga/"><h3>Sell Your Home in Rancho Cucamonga</h3></a>
         </div>
 
         <div class="area-card">
@@ -914,7 +906,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Fontana California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Fontana</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-fontana/"><h3>Sell Your Home in Fontana</h3></a>
         </div>
 
         <div class="area-card">
@@ -922,7 +914,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Chino California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Chino</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-chino/"><h3>Sell Your Home in Chino</h3></a>
         </div>
 
         <div class="area-card">
@@ -930,7 +922,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Chino Hills California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Chino Hills</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-chino-hills/"><h3>Sell Your Home in Chino Hills</h3></a>
         </div>
 
         <div class="area-card">
@@ -938,7 +930,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="San Diego California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in San Diego</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-san-diego/"><h3>Sell Your Home in San Diego</h3></a>
         </div>
 
         <div class="area-card">
@@ -946,7 +938,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Carlsbad California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Carlsbad</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-carlsbad/"><h3>Sell Your Home in Carlsbad</h3></a>
         </div>
 
         <div class="area-card">
@@ -954,7 +946,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Oceanside California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Oceanside</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-oceanside/"><h3>Sell Your Home in Oceanside</h3></a>
         </div>
 
         <div class="area-card">
@@ -962,7 +954,7 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Thousand Oaks California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Thousand Oaks</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-thousand-oaks/"><h3>Sell Your Home in Thousand Oaks</h3></a>
         </div>
 
         <div class="area-card">
@@ -970,53 +962,22 @@ p:last-child { margin-bottom: 0; }
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Simi Valley California" loading="lazy">
           </div>
-          <a href="#contact"><h3>Sell Your Home in Simi Valley</h3></a>
+          <a href="https://www.drozq.com/ca/sell-my-house-fast-simi-valley/"><h3>Sell Your Home in Simi Valley</h3></a>
         </div>
 
       </div>
     </div>
   </section>
 
-  <!-- ========== MARKET ADVANTAGE ========== -->
-  <section class="section">
-    <div class="container">
-      <div class="advantage">
-        <p class="advantage__subtitle">Every Market, Every Neighborhood</p>
-        <h2>Your Local Market Advantage</h2>
-        <p>Hyperlocal expertise, real-time data, and strategic guidance for Southern California sellers — wherever your home is.</p>
-        <div class="advantage__features">
-          <div class="advantage__feature">
-            <img src="https://www.drozq.com/media/icons/arrow_trend.svg" alt="" width="60" height="61" loading="lazy">
-            <h3>Comp Analysis</h3>
-            <p>Detailed comparable sales data for your specific neighborhood and price range</p>
-          </div>
-          <div class="advantage__feature">
-            <img src="https://www.drozq.com/media/icons/tv-segments.svg" alt="" width="60" height="61" loading="lazy">
-            <h3>Market Timing</h3>
-            <p>Know exactly when to list for maximum buyer activity and competing offers</p>
-          </div>
-          <div class="advantage__feature">
-            <img src="https://www.drozq.com/media/icons/radio-shows.svg" alt="" width="60" height="61" loading="lazy">
-            <h3>Pricing Strategy</h3>
-            <p>Data-backed pricing that creates urgency and drives multiple offers</p>
-          </div>
-        </div>
-        <div class="advantage__actions">
-          <a href="#contact" class="btn btn--outline">See Market Data</a>
-          <a href="#contact" class="btn btn--green">Get My Free Home Valuation</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== BODY TEXT / SEO ========== -->
+  <!-- ========== WHAT MAKES US DIFFERENT ========== -->
   <section class="section">
     <div class="container">
       <div class="body-text text-center">
-        <h2>One Agent, The Full SoCal Map</h2>
-        <p>Southern California isn't one market — it's dozens. A home in Irvine doesn't sell the same way as a home in Long Beach, and a beach property in Huntington Beach prices very differently than an equestrian lot in Yorba Linda. That's why a generic listing strategy leaves money on the table.</p>
-        <p>I work with sellers across <a href="https://drozq.com/irvine">Irvine</a>, greater Orange County, Los Angeles County, Riverside, San Bernardino, San Diego, and Ventura County. Every listing gets a plan built for its specific city, buyer profile, and price point — not a copy-paste playbook.</p>
-        <p>If you're thinking about selling, <strong><a href="#contact">get your free home valuation today</a></strong> and find out what your home is really worth in your specific market.</p>
+        <h2>What Makes Us Different?</h2>
+        <p style="margin-top: 24px;"><strong>No Hassles:</strong><br>If you've ever thought, "I want someone to buy my home for cash, but I don't want the hassle," we're the right choice.</p>
+        <p><strong>Trusted Buyers:</strong><br>Our reputation for reliability ensures a stress-free experience.</p>
+        <p><strong>Straightforward Process:</strong><br>We provide quick answers and let you know immediately if we can meet your price.</p>
+        <p style="margin-top: 24px;">Seller's Advantage known is one of the most known home buying companies because we buy houses in any condition. The company started in the home buying business in Southern California, LA and Los Angeles CA where we have been helping people sell their properties quickly and effortlessly for years. If you live in the greater Phoenix area or Las Vegas Metro, and are thinking of selling your home, call us.</p>
       </div>
     </div>
   </section>
