@@ -526,196 +526,244 @@ p:last-child { margin-bottom: 0; }
     </div>
   </header>
 
-  <!-- ========== PAGE INTRO ========== -->
+  <!-- ========== HERO ========== -->
+  <section class="hero">
+    <div class="container">
+
+      <div class="hero__image">
+        <img src="https://www.drozq.com/media/images/Waist.png" alt="Joshua Guerrero - Listing Agent" width="600" height="710" fetchpriority="high">
+      </div>
+
+      <div class="hero__content">
+        <h1>Customer Reviews and Testimonials</h1>
+        <p class="hero__subtitle">Seller's Advantage has purchased thousands of houses and we can buy yours in just a few days. There is no obligation, so contact us today!</p>
+
+        <form class="lead-form" id="heroForm">
+          <div class="lead-form__address-wrap">
+            <input type="text" id="heroAddress" name="address_display" placeholder="Enter your home address" autocomplete="off" required>
+          </div>
+          <input type="text" class="lead-form__unit" name="unit" placeholder="Unit" maxlength="5">
+
+          <div class="lead-form__hidden">
+            <input type="hidden" name="street_address" id="heroStreet">
+            <input type="hidden" name="city" id="heroCity">
+            <input type="hidden" name="state" id="heroState">
+            <input type="hidden" name="zip" id="heroZip">
+            <input type="hidden" name="full_address" id="heroFull">
+            <input type="hidden" name="lat" id="heroLat">
+            <input type="hidden" name="lng" id="heroLng">
+            <input type="hidden" name="_subject" value="🏠 New Lead: Home Valuation Request">
+            <input type="hidden" name="source" value="Hero Form">
+            <input type="hidden" name="page_url" id="heroPageUrl">
+            <input type="hidden" name="submitted_at" id="heroTimestamp">
+          </div>
+
+          <button type="submit" class="btn btn--green btn--full">Get My Free Quote</button>
+        </form>
+
+        <p class="hero__trust">Southern California's Most Trusted Home Buyers</p>
+      </div>
+
+      <div class="hero__badge">
+        <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/02/sellers-advantage-bbb-accredited-a-plus.png -- replace with self-hosted version -->
+        <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/02/sellers-advantage-bbb-accredited-a-plus.png" alt="BBB Accredited A+ Rating" width="300" loading="lazy">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== STATS BAR ========== -->
+  <section class="stats-bar">
+    <div class="container">
+      <div class="stat">
+        <div class="stat__icon">
+          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/01/kid_star.svg -- replace with self-hosted version -->
+          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/01/kid_star.svg" alt="" width="50" height="48" loading="lazy">
+        </div>
+        <div>
+          <h4>4.7 Star Rating</h4>
+          <p>From 800+ happy reviews on BBB, Google, and Yelp</p>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat__icon">
+          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/01/verified.svg -- replace with self-hosted version -->
+          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/01/verified.svg" alt="" width="50" height="47" loading="lazy">
+        </div>
+        <div>
+          <h4>25+ Years of Experience</h4>
+          <p>We have helped 1,000s of home sellers</p>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat__icon">
+          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/01/money_bag.svg -- replace with self-hosted version -->
+          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/01/money_bag.svg" alt="" width="50" height="50" loading="lazy">
+        </div>
+        <div>
+          <h4>$20k Cash Advance</h4>
+          <p>Receive your cash upfront and close confidently</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== HOMEOWNER REVIEWS INTRO ========== -->
   <section class="section">
     <div class="container">
       <div class="body-text text-center">
-        <h1>Meet The Team</h1>
-        <p>Joshua Guerrero Real Estate, headquartered in Irvine, CA, is a family-owned operation focused on eliminating the pain points traditionally associated with selling your house. Meet the people helping you <a href="/">sell your house</a>.</p>
+        <h2>Homeowner Reviews</h2>
+        <p>Real feedback from sellers who worked with Seller's Advantage. With a 4.7 out of 5 star rating based on 574 ratings from Google and Yelp, we're proud of the service we deliver to Southern California homeowners.</p>
       </div>
     </div>
   </section>
 
-  <!-- ========== CLIENT EXPERIENCE TEAM ========== -->
+  <!-- ========== REVIEWS GRID ========== -->
   <section class="section">
     <div class="container">
-      <h2 class="text-center">Client Experience Team</h2>
-      <div class="pain-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:40px;gap:40px;">
+      <div class="comparison__grid">
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/tyson-b.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/tyson-b.webp" alt="Tyson, Client Experience Manager" loading="lazy">
-          <h3>Tyson</h3>
-          <p>Client Experience Manager</p>
+        <div class="comparison__card">
+          <!-- TODO:IMAGE -- hotlinked from: https://lh3.googleusercontent.com/a-/ALV-UjXNr38sLFpZJfuEW2pwqlOTgZxrWhCK0ZvNfd-BWuTtJZMO21A=s120-c-rp-mo-ba6-br100 -- replace with self-hosted version -->
+          <img src="https://lh3.googleusercontent.com/a-/ALV-UjXNr38sLFpZJfuEW2pwqlOTgZxrWhCK0ZvNfd-BWuTtJZMO21A=s120-c-rp-mo-ba6-br100" alt="Siam Ahmed" width="60" height="60" loading="lazy">
+          <h3>Siam Ahmed</h3>
+          <h4>&#9733;&#9733;&#9733;&#9733;&#9733;</h4>
+          <p><em>March 30, 2026 &middot; Google</em></p>
+          <p>Seller's Advantage delivers an outstanding real estate experience with professionalism, expertise, and a strong focus on client success. Their team is knowledgeable, responsive, and dedicated to making the selling process smooth and stress-free. They provide clear guidance, pay close attention to every detail, and go above and beyond to achieve the best possible results. Highly recommend Seller's Advantage for anyone looking for reliable and top-quality service!</p>
         </div>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/06/lebs-h.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/06/lebs-h.webp" alt="Lebs, Client Experience Coordinator" loading="lazy">
-          <h3>Lebs</h3>
-          <p>Client Experience Coordinator</p>
+        <div class="comparison__card">
+          <!-- TODO:IMAGE -- hotlinked from: https://lh3.googleusercontent.com/a/ACg8ocIIwd2QBwZkyLHqzhCiEgZkFquNb6SKoSQDw0DDy9xu6QZDuw=s120-c-rp-mo-br100 -- replace with self-hosted version -->
+          <img src="https://lh3.googleusercontent.com/a/ACg8ocIIwd2QBwZkyLHqzhCiEgZkFquNb6SKoSQDw0DDy9xu6QZDuw=s120-c-rp-mo-br100" alt="Margaret Covello" width="60" height="60" loading="lazy">
+          <h3>Margaret Covello</h3>
+          <h4>&#9733;&#9733;&#9733;&#9733;&#9733;</h4>
+          <p><em>March 19, 2026 &middot; Google</em></p>
+          <p>We used Seller's Advantage to get a very fair cash offer for our home of 45 years. Andrew really made us feel appreciated and made the selling process easy. With my husband's health issues it was important for us not to have a lot of people coming in and out of our home as we prepared to move to our retirement property. Megan and Michelle were both very responsive during the escrow process. Getting the 20k of proceeds before close of escrow to help with moving expenses was a great help to us. It was also great to get up to 10 days after closing to stay in our home while we finalized our retirement property purchase. We would highly recommend SA to any of our friends and family who are relocating!</p>
         </div>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/holden-t.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/holden-t.webp" alt="Holden, Client Experience Coordinator" loading="lazy">
-          <h3>Holden</h3>
-          <p>Client Experience Coordinator</p>
+        <div class="comparison__card">
+          <!-- TODO:IMAGE -- hotlinked from: https://lh3.googleusercontent.com/a/ACg8ocJR35kaiQvu-l8KRFtMHRbtl8KUbeO8YRkjGkJfEYOrDsBXcw=s120-c-rp-mo-br100 -- replace with self-hosted version -->
+          <img src="https://lh3.googleusercontent.com/a/ACg8ocJR35kaiQvu-l8KRFtMHRbtl8KUbeO8YRkjGkJfEYOrDsBXcw=s120-c-rp-mo-br100" alt="Anne-Marie Older" width="60" height="60" loading="lazy">
+          <h3>Anne-Marie Older</h3>
+          <h4>&#9733;&#9733;&#9733;&#9733;&#9733;</h4>
+          <p><em>March 19, 2026 &middot; Google</em></p>
+          <p>I helped my parents as their point of contact with Seller's Advantage. Everyone involved was so kind, caring and helpful. They really made our family feel important. Logan and Andrew were our sales agents. Andrew really went the extra mile and even helped with a package that got sent to the home after they vacated. Megan and Michelle were very prompt with all our questions during escrow. Their fair offer at the beginning, the 20k for moving and the ability to stay in the home for up to 10 days after closing were all executed and we were so impressed with the entire process. We would definitely recommend SA to any of our friends who are relocating.</p>
         </div>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/rider-l.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/rider-l.webp" alt="Rider, Client Experience Coordinator" loading="lazy">
-          <h3>Rider</h3>
-          <p>Client Experience Coordinator</p>
+        <div class="comparison__card">
+          <!-- TODO:IMAGE -- hotlinked from: https://lh3.googleusercontent.com/a/ACg8ocJ3lDWLJ3NdyWivZCGuXeCWFuS86MaxYJkIVdhp-4DmJrEK-Q=s120-c-rp-mo-br100 -- replace with self-hosted version -->
+          <img src="https://lh3.googleusercontent.com/a/ACg8ocJ3lDWLJ3NdyWivZCGuXeCWFuS86MaxYJkIVdhp-4DmJrEK-Q=s120-c-rp-mo-br100" alt="Krista Grace" width="60" height="60" loading="lazy">
+          <h3>Krista Grace</h3>
+          <h4>&#9733;&#9733;&#9733;&#9733;&#9733;</h4>
+          <p><em>March 17, 2026 &middot; Google</em></p>
+          <p>Seller's Advantage was absolutely AMAZING from the very start and made the moving process so smoothly! In the middle of the process we had a life changing experience happen and yet Seller's Advantage remain understanding and supportive throughout it. I would definitely recommend them to anyone. We are so thankful for all their support and dedication through the process!</p>
         </div>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/ajani-w.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/ajani-w.webp" alt="Ajani, Client Experience Coordinator" loading="lazy">
-          <h3>Ajani</h3>
-          <p>Client Experience Coordinator</p>
+        <div class="comparison__card">
+          <!-- TODO:IMAGE -- hotlinked from: https://lh3.googleusercontent.com/a-/ALV-UjVkEiFefu6VPXli5wGaDNwUnHOU0QLUNA_3BQyQCqj84oYmcHY=s120-c-rp-mo-br100 -- replace with self-hosted version -->
+          <img src="https://lh3.googleusercontent.com/a-/ALV-UjVkEiFefu6VPXli5wGaDNwUnHOU0QLUNA_3BQyQCqj84oYmcHY=s120-c-rp-mo-br100" alt="Laura Reimer" width="60" height="60" loading="lazy">
+          <h3>Laura Reimer</h3>
+          <h4>&#9733;&#9733;&#9733;&#9733;&#9733;</h4>
+          <p><em>March 16, 2026 &middot; Google</em></p>
+          <p>We needed to sale quickly. Sellers Advantage was easy to work with from beginning to closing. They communicated with us every step of the way. I would work with them again if I need to.</p>
         </div>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/logan-h.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/logan-h.webp" alt="Logan, Client Experience Coordinator" loading="lazy">
-          <h3>Logan</h3>
-          <p>Client Experience Coordinator</p>
+        <div class="comparison__card">
+          <!-- TODO:IMAGE -- hotlinked from: https://lh3.googleusercontent.com/a/ACg8ocJJexLuxdnzGsU5zak-hAgTXAKnAJcKmQ0ZgoZoYmylKMvZgQ=s120-c-rp-mo-br100 -- replace with self-hosted version -->
+          <img src="https://lh3.googleusercontent.com/a/ACg8ocJJexLuxdnzGsU5zak-hAgTXAKnAJcKmQ0ZgoZoYmylKMvZgQ=s120-c-rp-mo-br100" alt="esaldibar" width="60" height="60" loading="lazy">
+          <h3>esaldibar</h3>
+          <h4>&#9733;&#9733;&#9733;&#9733;&#9733;</h4>
+          <p><em>March 5, 2026 &middot; Google</em></p>
+          <p>The Sellers Advantage team was very professional and knowledgeable.</p>
         </div>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/05/christina.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/05/christina.webp" alt="Christina, Client Experience Coordinator" loading="lazy">
-          <h3>Christina</h3>
-          <p>Client Experience Coordinator</p>
+        <div class="comparison__card">
+          <!-- TODO:IMAGE -- hotlinked from: https://lh3.googleusercontent.com/a/ACg8ocJFGvLw92Pmf1rydzXiLEMOQGWxQ0yXPhfSDFZXd-RX6du3aQ=s120-c-rp-mo-br100 -- replace with self-hosted version -->
+          <img src="https://lh3.googleusercontent.com/a/ACg8ocJFGvLw92Pmf1rydzXiLEMOQGWxQ0yXPhfSDFZXd-RX6du3aQ=s120-c-rp-mo-br100" alt="98 Kaser" width="60" height="60" loading="lazy">
+          <h3>98 Kaser</h3>
+          <h4>&#9733;&#9733;&#9733;&#9733;&#9733;</h4>
+          <p><em>March 1, 2026 &middot; Google</em></p>
+          <p>Selling our house with Sellers Advantage was a great decision. Andrew and Tara were absolutely fantastic to work with. They showed up on time, and their follow-up was impeccable&mdash;they actually called with updates exactly when they said they would. The whole team is professional and reliable. If you want a stress-free experience, I highly recommend asking for Andrew and Tara!</p>
         </div>
 
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== ACQUISITION TEAM ========== -->
-  <section class="section">
-    <div class="container">
-      <h2 class="text-center">Acquisition Team</h2>
-      <div class="pain-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:40px;gap:40px;">
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/james-r.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/james-r.webp" alt="James, Acquisition Team Manager" loading="lazy">
-          <h3>James</h3>
-          <p>Acquisition Team Manager</p>
+        <div class="comparison__card">
+          <!-- TODO:IMAGE -- hotlinked from: https://lh3.googleusercontent.com/a/ACg8ocJGL6OuCrCQOsyYO2-fG0ZvyxqAsIDSkTEIj87df7vqyFHVEQ=s120-c-rp-mo-br100 -- replace with self-hosted version -->
+          <img src="https://lh3.googleusercontent.com/a/ACg8ocJGL6OuCrCQOsyYO2-fG0ZvyxqAsIDSkTEIj87df7vqyFHVEQ=s120-c-rp-mo-br100" alt="Bobbi Gaedtke" width="60" height="60" loading="lazy">
+          <h3>Bobbi Gaedtke</h3>
+          <h4>&#9733;&#9733;&#9733;&#9733;&#9733;</h4>
+          <p><em>February 25, 2026 &middot; Google</em></p>
+          <p>Selling my home felt overwhelming at first, but Seller's Advantage made the entire process smooth and stress-free. They were always there when I called, patiently walking me through the paperwork and answering every question along the way. What really stood out was their consistent communication - I received regular updates and always knew what was happening. Everyone I worked with was kind, professional, and extremely knowledgeable. Their support truly took the stress out of selling and made my life a little easier during an important time. I'm very grateful for their guidance and highly recommend Seller's Advantage to anyone looking to sell their home.</p>
         </div>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/andre-j.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/andre-j.webp" alt="Andre, Acquisition Manager" loading="lazy">
-          <h3>Andre</h3>
-          <p>Acquisition Manager</p>
+        <div class="comparison__card">
+          <!-- TODO:IMAGE -- hotlinked from: https://lh3.googleusercontent.com/a/ACg8ocLlEg9xwHvZWWp7berPYzrg3BgsrJGSajprVY6NVOm9Kx_CYA=s120-c-rp-mo-br100 -- replace with self-hosted version -->
+          <img src="https://lh3.googleusercontent.com/a/ACg8ocLlEg9xwHvZWWp7berPYzrg3BgsrJGSajprVY6NVOm9Kx_CYA=s120-c-rp-mo-br100" alt="Kris Winemiller" width="60" height="60" loading="lazy">
+          <h3>Kris Winemiller</h3>
+          <h4>&#9733;&#9733;&#9733;&#9733;&#9733;</h4>
+          <p><em>February 20, 2026 &middot; Google</em></p>
+          <p>I had a positive experience with Seller's Advantage. The associates were friendly and helpful. They made selling my home fast and problem free.</p>
         </div>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/alvin-c.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/alvin-c.webp" alt="Alvin, Acquisition Manager" loading="lazy">
-          <h3>Alvin</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/russ-n.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/russ-n.webp" alt="Russell, Acquisition Manager" loading="lazy">
-          <h3>Russell</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/matt-sloan.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/matt-sloan.webp" alt="Matt, Acquisition Manager" loading="lazy">
-          <h3>Matt</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/andrew-n.jpg -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/andrew-n.jpg" alt="Andrew, Acquisition Manager" loading="lazy">
-          <h3>Andrew</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/10/jose-s.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/10/jose-s.webp" alt="Jose, Acquisition Manager" loading="lazy">
-          <h3>Jose</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/steve-e.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/steve-e.webp" alt="Steve, Acquisition Manager" loading="lazy">
-          <h3>Steve</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/shanon-b.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/shanon-b.webp" alt="Shanon, Acquisition Manager" loading="lazy">
-          <h3>Shanon</h3>
-          <p>Acquisition Manager</p>
+        <div class="comparison__card">
+          <!-- TODO:IMAGE -- hotlinked from: https://lh3.googleusercontent.com/a-/ALV-UjUCVD7HttqO9x4XYeXPlR-IgwAR0FiMP4BKbAatNBoEfIPKuYc=s120-c-rp-mo-ba7-br100 -- replace with self-hosted version -->
+          <img src="https://lh3.googleusercontent.com/a-/ALV-UjUCVD7HttqO9x4XYeXPlR-IgwAR0FiMP4BKbAatNBoEfIPKuYc=s120-c-rp-mo-ba7-br100" alt="Maksuda Nabi" width="60" height="60" loading="lazy">
+          <h3>Maksuda Nabi</h3>
+          <h4>&#9733;&#9733;&#9733;&#9733;&#9733;</h4>
+          <p><em>February 20, 2026 &middot; Google</em></p>
+          <p>Seller's Advantage provided an outstanding real estate experience! Their team is professional, knowledgeable, and truly dedicated to their clients. They guided me through every step of the selling process with clear communication, expert advice, and personalized attention, making everything smooth and stress-free. I highly recommend Seller's Advantage to anyone looking for a trusted and results-driven real estate team!</p>
         </div>
 
       </div>
     </div>
   </section>
 
-  <!-- ========== DISPOSITION TEAM ========== -->
+  <!-- ========== VIDEO TESTIMONIALS ========== -->
   <section class="section">
     <div class="container">
-      <h2 class="text-center">Disposition Team</h2>
-      <div class="pain-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:40px;gap:40px;">
+      <div class="body-text text-center">
+        <h2>Our Customers Say It Best&hellip;</h2>
+        <p>One of the best ways for you to find out if Seller's Advantage is right for you, is to read what just a few of our past customers have had to say about our <a href="https://drozq.com/">we buy houses</a> service and integrity. As a member of the BBB, unfiltered Seller's Advantage reviews are published about us on an on-going basis. We can't control what is being said about us, but we try hard to live up to your expectations. With a 96% positive customer experience and high likelihood of being recommended, we must be doing something right to LA homeowners who need to <a href="https://drozq.com/sell-my-house-fast-los-angeles">sell their house fast in Los Angeles</a>.</p>
+      </div>
+      <div class="comparison__grid" style="margin-top:45px;">
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/troy-l.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/troy-l.webp" alt="Troy, Disposition Manager" loading="lazy">
-          <h3>Troy</h3>
-          <p>Disposition Manager</p>
-        </div>
+        <a href="https://www.youtube.com/watch?v=BzyRe9WhWmQ" target="_blank" rel="noopener" aria-label="Customer testimonial video 1">
+          <!-- TODO:IMAGE -- hotlinked from: https://i.ytimg.com/vi/BzyRe9WhWmQ/hqdefault.jpg -- replace with self-hosted version -->
+          <img src="https://i.ytimg.com/vi/BzyRe9WhWmQ/hqdefault.jpg" alt="Customer testimonial video 1" width="480" height="360" loading="lazy">
+        </a>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/sutton-e.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/sutton-e.webp" alt="Sutton, Disposition Manager" loading="lazy">
-          <h3>Sutton</h3>
-          <p>Disposition Manager</p>
-        </div>
+        <a href="https://www.youtube.com/watch?v=85_6aB3XcTA" target="_blank" rel="noopener" aria-label="Customer testimonial video 2">
+          <!-- TODO:IMAGE -- hotlinked from: https://i.ytimg.com/vi/85_6aB3XcTA/hqdefault.jpg -- replace with self-hosted version -->
+          <img src="https://i.ytimg.com/vi/85_6aB3XcTA/hqdefault.jpg" alt="Customer testimonial video 2" width="480" height="360" loading="lazy">
+        </a>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/melissa-e.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/melissa-e.webp" alt="Melissa, Transaction Manager" loading="lazy">
-          <h3>Melissa</h3>
-          <p>Transaction Manager</p>
-        </div>
+        <a href="https://www.youtube.com/watch?v=_2gvrZjUaGw" target="_blank" rel="noopener" aria-label="Customer testimonial video 3">
+          <!-- TODO:IMAGE -- hotlinked from: https://i.ytimg.com/vi/_2gvrZjUaGw/hqdefault.jpg -- replace with self-hosted version -->
+          <img src="https://i.ytimg.com/vi/_2gvrZjUaGw/hqdefault.jpg" alt="Customer testimonial video 3" width="480" height="360" loading="lazy">
+        </a>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/michelle-l.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/michelle-l.webp" alt="Michelle, Transaction Coordinator" loading="lazy">
-          <h3>Michelle</h3>
-          <p>Transaction Coordinator</p>
-        </div>
+        <a href="https://www.youtube.com/watch?v=Gvp0pV50XTI" target="_blank" rel="noopener" aria-label="Customer testimonial video 4">
+          <!-- TODO:IMAGE -- hotlinked from: https://i.ytimg.com/vi/Gvp0pV50XTI/hqdefault.jpg -- replace with self-hosted version -->
+          <img src="https://i.ytimg.com/vi/Gvp0pV50XTI/hqdefault.jpg" alt="Customer testimonial video 4" width="480" height="360" loading="lazy">
+        </a>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/05/tara.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/05/tara.webp" alt="Tara, Transaction Coordinator" loading="lazy">
-          <h3>Tara</h3>
-          <p>Transaction Coordinator</p>
-        </div>
+        <a href="https://www.youtube.com/watch?v=CZMrUnxN_BU" target="_blank" rel="noopener" aria-label="Customer testimonial video 5">
+          <!-- TODO:IMAGE -- hotlinked from: https://i.ytimg.com/vi/CZMrUnxN_BU/hqdefault.jpg -- replace with self-hosted version -->
+          <img src="https://i.ytimg.com/vi/CZMrUnxN_BU/hqdefault.jpg" alt="Customer testimonial video 5" width="480" height="360" loading="lazy">
+        </a>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/meggan-n.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/meggan-n.webp" alt="Meggan, Transaction Assistant" loading="lazy">
-          <h3>Meggan</h3>
-          <p>Transaction Assistant</p>
-        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- ========== FEATURED WRITTEN TESTIMONIALS ========== -->
+  <section class="section">
+    <div class="container">
+      <div class="body-text text-center">
+        <h2>What Our Customers Are Saying</h2>
+        <p>My wife and I sold her mother's house with Seller Advantage, and the ENTIRE process was delightful, from the time Chas and Courtney arrived at the house to provide a quote, until I recently visited the sold house yesterday. The entire team was extremely professional, Chas was very easy to deal with and provided me a satisfactory quote to buy the house. We were pleased with the offer and the entire construction team did a fantastic job of renovating the house that our entire family was extremely pleased with. Even better was the escrow closed in about 3 weeks. I HIGHLY Recommend Seller Advantage and to anyone who is wants to sell their home fast and wants to work with real professionals like Chas.</p>
+        <p><strong>&mdash; Robert, Home Seller</strong></p>
+        <p>I can't speak highly enough about Seller's Advantage and my experience selling my home to them. They delivered 100% on every verbal promise they made to me and on every point in our contract. They were just as pleasant and accessible after I signed the contract as before. My home was in southern California and, of course, I have no personal knowledge of the offices and personnel in other areas but wholeheartedly recommend them to anyone motivated to sell quickly. I was happy to accept their offer and hope they make a good profit on my home. In return for a fast, no hassle sale, I was happy to give them some of my equity in my home. Money should be used to make your life easier and Seller's Advantage was a blessing for me and made the sale and my move as stress free as possible.</p>
+        <p><strong>&mdash; Lori, Home Seller</strong></p>
       </div>
     </div>
   </section>
@@ -725,7 +773,7 @@ p:last-child { margin-bottom: 0; }
     <div class="container">
       <div class="cta-form__inner">
         <h2>Get My Free,<br>No-Obligation Quote</h2>
-        <p>Call me at <a href="tel:15109355701" style="text-decoration:underline; font-weight:600;">1-510-935-5701</a> or enter your address below. You'll hear back within the hour.</p>
+        <p>Call us today at <a href="tel:15109355701" style="text-decoration:underline; font-weight:600;">1-510-935-5701</a> and get an offer in as little as 24 hours. It's quick and easy!</p>
 
         <form class="lead-form" id="ctaForm">
           <div class="lead-form__address-wrap">
@@ -750,8 +798,9 @@ p:last-child { margin-bottom: 0; }
           <button type="submit" class="btn btn--green btn--full">Get My Free Quote</button>
         </form>
 
-        <p>Trusted by Southern California homeowners</p>
-        <img class="broker-badge" src="https://www.drozq.com/media/icons/real/real-broker-logo.png" alt="Real Broker" width="160" height="44" loading="lazy">
+        <p>Southern California's Most Trusted Home Buyers</p>
+        <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/02/sellers-advantage-bbb-accredited-a-plus.png -- replace with self-hosted version -->
+        <img class="broker-badge" src="https://www.sellersadvantage.com/wp-content/uploads/2025/02/sellers-advantage-bbb-accredited-a-plus.png" alt="BBB Accredited A+ Rating" width="160" loading="lazy">
       </div>
     </div>
   </section>
@@ -760,7 +809,7 @@ p:last-child { margin-bottom: 0; }
   <section class="section" id="faq">
     <div class="container">
       <div class="faq">
-        <h2>Common Questions Homeowners Ask</h2>
+        <h2>Common Questions Seller's Advantage Hears From Homeowners Selling a House As-Is</h2>
 
         <div class="faq__item">
           <button class="faq__question" aria-expanded="false">
@@ -771,8 +820,8 @@ p:last-child { margin-bottom: 0; }
             </span>
           </button>
           <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Many businesses claim they'll buy your home in any condition or pay cash, but their efficiency and reliability can vary widely. We've helped homeowners throughout Southern California and Los Angeles navigate the sale process. Our approach is designed to make things easy for you, the homeowner, so you can get results quickly and with minimal hassle.</p>
-            <p>We only move forward when we're confident we can complete the transaction smoothly. When considering any company, always check their track record and read online reviews. When it comes to selling your biggest asset, trust someone with proven results.</p>
+            <p>Many businesses claim they'll buy your home in any condition or pay cash, but their efficiency and reliability can vary widely. At Seller's Advantage, we've purchased thousands of homes throughout Southern California and Los Angeles. Our process is designed to make things easy for you, the homeowner, so you can get cash quickly and with minimal hassle.</p>
+            <p>We only make a cash offer if we're confident we can complete the transaction quickly and smoothly. When considering any company, always check their track record and read online reviews. We're proud to have an A+ rating with the Better Business Bureau because of our experience and customer satisfaction. When it comes to selling your biggest asset, trust a company with proven results.</p>
           </div></div></div>
         </div>
 
@@ -785,20 +834,20 @@ p:last-child { margin-bottom: 0; }
             </span>
           </button>
           <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>We work with homeowners throughout most major metropolitan areas of Southern California — serving Los Angeles, San Diego, and the surrounding communities. We're continually expanding, so contact us today if you need to sell your home, commercial property, or land quickly.</p>
+            <p>We are currently purchasing homes in most major metropolitan areas across the country. Our company started in Northern and Southern California&mdash;serving Los Angeles, San Diego, and San Francisco&mdash;and quickly expanded into other markets. We're continually adding new locations, so contact us today if you need to <strong>sell your home, commercial property or land quickly</strong>.</p>
           </div></div></div>
         </div>
 
         <div class="faq__item">
           <button class="faq__question" aria-expanded="false">
-            <span>Do all companies follow the same process as yours?</span>
+            <span>Do all people who buy houses have the same process as Seller's Advantage?</span>
             <span class="faq__icon">
               <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
             </span>
           </button>
           <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>No — experience levels and procedures vary widely. Our process is straightforward: after an initial phone call, one of our qualified team members will visit your property and walk you through your options on the spot, so you can make an informed decision without any pressure. While our approach isn't right for everyone, most people find the simplicity and reduced stress compared to traditional home sales makes it an excellent option.</p>
+            <p>No, not all buyers follow the same process, and experience levels and procedures can vary widely. Our process is straightforward: After an initial phone call, we'll send one of our qualified team members to visit your property and assess its cash value. We determine that value with you on the spot, so you can make an informed decision&mdash;without any pressure. While our program isn't right for everyone, most people find that the simplicity and reduced stress compared to traditional home sales make it an excellent option.</p>
           </div></div></div>
         </div>
 
@@ -1043,28 +1092,24 @@ p:last-child { margin-bottom: 0; }
 </body>
 </html>
 
-<!-- IMAGE MANIFEST -->
-<!--
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/tyson-b.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/06/lebs-h.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/holden-t.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/rider-l.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/ajani-w.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/logan-h.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/05/christina.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/james-r.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/andre-j.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/alvin-c.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/russ-n.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/matt-sloan.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/andrew-n.jpg
-https://www.sellersadvantage.com/wp-content/uploads/2025/10/jose-s.webp
-https://www.sellersadvantage.com/wp-content/uploads/2026/03/steve-e.webp
-https://www.sellersadvantage.com/wp-content/uploads/2026/03/shanon-b.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/troy-l.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/sutton-e.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/melissa-e.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/michelle-l.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/05/tara.webp
-https://www.sellersadvantage.com/wp-content/uploads/2025/04/meggan-n.webp
+<!-- IMAGE MANIFEST
+https://www.sellersadvantage.com/wp-content/uploads/2025/02/sellers-advantage-bbb-accredited-a-plus.png
+https://www.sellersadvantage.com/wp-content/uploads/2025/01/kid_star.svg
+https://www.sellersadvantage.com/wp-content/uploads/2025/01/verified.svg
+https://www.sellersadvantage.com/wp-content/uploads/2025/01/money_bag.svg
+https://lh3.googleusercontent.com/a-/ALV-UjXNr38sLFpZJfuEW2pwqlOTgZxrWhCK0ZvNfd-BWuTtJZMO21A=s120-c-rp-mo-ba6-br100
+https://lh3.googleusercontent.com/a/ACg8ocIIwd2QBwZkyLHqzhCiEgZkFquNb6SKoSQDw0DDy9xu6QZDuw=s120-c-rp-mo-br100
+https://lh3.googleusercontent.com/a/ACg8ocJR35kaiQvu-l8KRFtMHRbtl8KUbeO8YRkjGkJfEYOrDsBXcw=s120-c-rp-mo-br100
+https://lh3.googleusercontent.com/a/ACg8ocJ3lDWLJ3NdyWivZCGuXeCWFuS86MaxYJkIVdhp-4DmJrEK-Q=s120-c-rp-mo-br100
+https://lh3.googleusercontent.com/a-/ALV-UjVkEiFefu6VPXli5wGaDNwUnHOU0QLUNA_3BQyQCqj84oYmcHY=s120-c-rp-mo-br100
+https://lh3.googleusercontent.com/a/ACg8ocJJexLuxdnzGsU5zak-hAgTXAKnAJcKmQ0ZgoZoYmylKMvZgQ=s120-c-rp-mo-br100
+https://lh3.googleusercontent.com/a/ACg8ocJFGvLw92Pmf1rydzXiLEMOQGWxQ0yXPhfSDFZXd-RX6du3aQ=s120-c-rp-mo-br100
+https://lh3.googleusercontent.com/a/ACg8ocJGL6OuCrCQOsyYO2-fG0ZvyxqAsIDSkTEIj87df7vqyFHVEQ=s120-c-rp-mo-br100
+https://lh3.googleusercontent.com/a/ACg8ocLlEg9xwHvZWWp7berPYzrg3BgsrJGSajprVY6NVOm9Kx_CYA=s120-c-rp-mo-br100
+https://lh3.googleusercontent.com/a-/ALV-UjUCVD7HttqO9x4XYeXPlR-IgwAR0FiMP4BKbAatNBoEfIPKuYc=s120-c-rp-mo-ba7-br100
+https://i.ytimg.com/vi/BzyRe9WhWmQ/hqdefault.jpg
+https://i.ytimg.com/vi/85_6aB3XcTA/hqdefault.jpg
+https://i.ytimg.com/vi/_2gvrZjUaGw/hqdefault.jpg
+https://i.ytimg.com/vi/Gvp0pV50XTI/hqdefault.jpg
+https://i.ytimg.com/vi/CZMrUnxN_BU/hqdefault.jpg
 -->
