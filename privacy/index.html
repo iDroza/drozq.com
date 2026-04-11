@@ -1,346 +1,174 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17807777337"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'AW-17807777337');
-</script>
-
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- Primary SEO -->
-  <title>Privacy | drozq</title>
-  <meta name="description" content="Privacy Policy for drozq.com. Learn how Joshua Guerrero (d/b/a VIRELLO) collects, uses, stores, and protects lead data, cookies, advertising audiences, and California privacy rights." />
-  <link rel="canonical" href="https://drozq.com/privacy/" />
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="Privacy Policy | drozq" />
-  <meta property="og:description" content="Review the Privacy Policy for drozq.com, covering data collection, lead forms, cookies, retargeting, and your rights as a California resident." />
-  <meta property="og:url" content="https://drozq.com/privacy/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://drozq.com/preview.jpg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:type" content="image/jpeg" />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Privacy Policy | drozq" />
-  <meta name="twitter:description" content="Understand how drozq.com handles your lead information, analytics data, cookies, advertising, and California privacy rights." />
-  <meta name="twitter:image" content="https://drozq.com/preview.jpg" />
-
-  <!-- Indexing -->
-  <meta name="robots" content="index,follow" />
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="/flavicon.png" />
-
-  <style>
-    :root{
-      --bg:#000;
-      --fg:#fff;
-      --muted:rgba(255,255,255,.65);
-      --accent:#9900FF;
-      --border:rgba(255,255,255,.14);
-    }
-    *{box-sizing:border-box;}
-
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--fg);
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
-      -webkit-font-smoothing:antialiased;
-      min-height:100vh;
-      padding-bottom:5.5rem; /* matches Constraint */
-    }
-
-    /* These remain for other pages / legacy markup; harmless to keep */
-    .topbar{
-      display:flex;
-      align-items:center;
-      gap:.5rem;
-      padding:1.2rem 1.4rem 0.4rem;
-    }
-    .back-link{
-      position:relative;
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.01em;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .back-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .back-link:hover{ opacity:.55; }
-    .back-link:hover::after{ width:100%; }
-    .back-link span.arrow{
-      font-size:1.1rem;
-      line-height:1;
-    }
-
-    main{
-      max-width:880px;
-      margin:1.5rem auto 0;
-      padding:0 1.4rem 3rem;
-    }
-
-    h1{
-      font-size:1.5rem;
-      margin:0 0 .4rem;
-      font-weight:700;
-    }
-
-    .meta{
-      color:var(--muted);
-      font-size:.8rem;
-      margin:0 0 1.4rem;
-      line-height:1.5;
-      font-weight:500;
-    }
-
-    section{
-      margin-bottom:1.25rem;
-      border:1px solid rgba(255,255,255,.04);
-      background:rgba(255,255,255,.012);
-      border-radius:12px;
-      padding:1rem 1rem .35rem;
-    }
-
-    h2{
-      font-size:.9rem;
-      margin:0 0 .4rem;
-      font-weight:650;
-    }
-
-    p{
-      line-height:1.55;
-      margin:0 0 .65rem;
-      font-weight:500;
-    }
-
-    ul{
-      margin:0 0 .8rem 1.2rem;
-      padding:0;
-      line-height:1.45;
-    }
-    li{ margin-bottom:.4rem; }
-
-    code{
-      background:rgba(255,255,255,.04);
-      padding:.12rem .45rem;
-      border-radius:4px;
-      font-size:.7rem;
-    }
-
-    footer.site-footer{
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
-      z-index:5;
-      background:rgba(0,0,0,.4);
-      backdrop-filter:blur(8px);
-      display:flex;
-      justify-content:center;
-      gap:2.5rem;
-      padding:1.35rem 1.5rem 1.1rem;
-    }
-    .footer-link{
-      position:relative;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      letter-spacing:.02em;
-      cursor:pointer;
-      padding-bottom:.35rem;
-      transition:opacity .2s ease;
-    }
-    .footer-link::after{
-      content:'';
-      position:absolute;
-      left:0;
-      bottom:-0.35rem;
-      height:2px;
-      width:0;
-      background:#fff;
-      transition:width .2s ease-out;
-    }
-    .footer-link:hover{ opacity:.55; }
-    .footer-link:hover::after{ width:100%; }
-
-    @media (max-width:540px){
-      body{ padding-bottom:0; }
-      footer.site-footer{
-        position:static;
-        flex-wrap:wrap;
-        justify-content:flex-start;
-        gap:1rem 1.5rem;
-        padding:1.1rem 1.4rem 1.4rem;
-      }
-    }
-  </style>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','AW-17807777337');</script>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Privacy Policy | Joshua Guerrero - Southern California Listing Agent</title>
+<meta name="description" content="Privacy Policy for drozq.com. How Joshua Guerrero collects, uses, and protects lead data, cookies, and California privacy rights."/>
+<link rel="canonical" href="https://drozq.com/privacy/"/>
+<meta property="og:title" content="Privacy Policy | Joshua Guerrero"/>
+<meta property="og:description" content="Privacy Policy for drozq.com covering data collection, cookies, and California privacy rights."/>
+<meta property="og:url" content="https://drozq.com/privacy/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:image" content="https://www.drozq.com/media/images/preview.png"/>
+<meta name="robots" content="index,follow"/>
+<link rel="icon" href="https://www.drozq.com/media/icons/Joshua Guerrero Favicon.png" type="image/png"/>
+<style>
+:root{--color-white:#fff;--color-black:#000;--color-green:#42cc93;--color-green-hover:#34aa83;--color-mint:#d0f4e0;--color-navy:#1e2f49;--color-navy-light:#343f56;--color-gray-light:#eaeaea;--color-gray-bg:#f7f7f7;--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;--site-width:1400px;--radius:6px;--transition:.2s ease;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+body{font-family:var(--font);font-size:18px;line-height:1.7;color:var(--color-black);background:#fff;overflow-x:hidden;}
+img{max-width:100%;height:auto;display:block;border:0;}
+a{text-decoration:none;color:inherit;transition:color var(--transition);}
+a:hover{color:var(--color-green);}
+ul,ol{list-style:none;}
+button{font-family:var(--font);}
+h1,h2,h3,h4,h5,h6{font-family:var(--font);font-weight:700;line-height:1.2;color:var(--color-navy);}
+h1{font-size:clamp(2.5rem,5.5vw,4rem);}
+h2{font-size:clamp(1.5rem,2.8vw,2rem);}
+p{margin-bottom:1em;}
+p:last-child{margin-bottom:0;}
+.container{width:100%;max-width:var(--site-width);margin:0 auto;padding:0 30px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:16px 30px;font-size:19px;font-weight:700;text-transform:uppercase;line-height:1.1;border:2px solid transparent;border-radius:var(--radius);cursor:pointer;transition:all var(--transition);letter-spacing:.5px;}
+.btn--green{background:var(--color-green);color:#fff;border-color:var(--color-green);}
+.btn--green:hover{background:var(--color-green-hover);border-color:var(--color-green-hover);color:#fff;}
+.btn--phone{background:var(--color-green);color:#fff;font-size:20px;padding:14px 32px;min-width:230px;white-space:nowrap;}
+.btn--phone:hover{background:var(--color-green-hover);color:#fff;}
+.topbar{text-align:center;padding:12px 0;font-size:15px;border-bottom:1px solid rgba(52,63,86,.15);}
+.header{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid rgba(52,63,86,.15);padding:0 30px;}
+.header .container{display:flex;align-items:center;justify-content:space-between;min-height:78px;gap:25px;position:relative;}
+.header__logo img{max-width:220px;}
+.nav{display:flex;align-items:center;gap:30px;}
+.nav a{font-size:17px;font-weight:500;padding:14px 0;color:#000;}
+.nav a:hover,.nav a.active{color:var(--color-green);}
+.nav__toggle{display:none;background:none;border:none;font-size:32px;cursor:pointer;color:var(--color-navy);padding:8px;}
+.mint-block{background:var(--color-mint);padding:70px 0;text-align:center;}
+.mint-block h1{margin-bottom:14px;}
+.mint-block .meta{font-size:15px;color:var(--color-navy-light);font-weight:500;}
+.policy{padding:70px 0;background:#fff;}
+.policy__inner{max-width:850px;margin:0 auto;}
+.policy h2{margin:0 0 12px;}
+.policy section{margin-bottom:36px;}
+.policy section:last-child{margin-bottom:0;}
+.policy p{font-size:17px;color:var(--color-navy-light);line-height:1.75;margin-bottom:12px;}
+.policy p:last-child{margin-bottom:0;}
+.policy p strong{color:var(--color-navy);}
+.policy a{color:var(--color-navy);text-decoration:underline;font-weight:600;}
+.policy a:hover{color:var(--color-green);}
+.footer{background:var(--color-navy);color:#fff;padding:60px 0 20px;}
+.footer a{color:#fff;opacity:.85;}
+.footer a:hover{opacity:1;color:var(--color-green);}
+.footer__top{display:flex;flex-wrap:wrap;gap:40px;}
+.footer__brand{flex:2 1 300px;}
+.footer__brand img{max-width:200px;margin-bottom:15px;}
+.footer__brand p{font-size:15px;opacity:.85;margin-bottom:8px;}
+.footer__brand .phone{font-size:19px;font-weight:600;}
+.footer__links{flex:1 1 150px;}
+.footer__links a{display:block;font-size:15px;padding:6px 0;}
+.footer__right{flex:1 1 180px;text-align:right;}
+.footer__right img{max-width:160px;margin-left:auto;margin-bottom:15px;}
+.footer__social{display:flex;gap:10px;justify-content:flex-end;}
+.footer__social a{width:38px;height:38px;display:flex;align-items:center;justify-content:center;}
+.footer__social a svg{width:24px;height:24px;fill:#fff;}
+.footer__social a:hover svg{fill:var(--color-green);}
+.footer__bottom{margin-top:45px;padding-top:25px;border-top:1px solid rgba(255,255,255,.15);text-align:center;}
+.footer__legal{font-size:14px;opacity:.7;margin-bottom:10px;}
+.footer__copyright{font-size:14px;opacity:.6;}
+@media (max-width:1024px){.nav{display:none;}.nav__toggle{display:block;}.nav.open{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:#fff;padding:20px 30px;box-shadow:0 10px 30px rgba(0,0,0,.1);z-index:999;}.btn--phone-desktop{display:none;}}
+@media (max-width:768px){.container{padding:0 20px;}.mint-block,.policy{padding:50px 0;}.footer__right{text-align:left;}.footer__right img{margin-left:0;}.footer__social{justify-content:flex-start;}}
+@media (max-width:480px){h1{font-size:2.125rem;}}
+</style>
 </head>
-
 <body>
-  <!-- Shared header inject point -->
-  <div id="site-header"></div>
+<div class="topbar"><div class="container">Southern California's Top-Rated Listing Agent</div></div>
+<header class="header"><div class="container">
+<a href="https://drozq.com" class="header__logo"><img src="https://www.drozq.com/media/icons/Joshua Guerrero Rectangle in line.png" alt="Joshua Guerrero Real Estate" width="250" height="50"></a>
+<nav class="nav" id="mainNav">
+<a href="https://drozq.com">Home</a><a href="https://drozq.com/process">How It Works</a><a href="https://drozq.com#why-us">Why Choose Me</a><a href="https://drozq.com/reviews">Reviews</a><a href="https://drozq.com#faq">FAQ</a><a href="https://drozq.com/contact">Contact</a>
+</nav>
+<a href="tel:15109355701" class="btn btn--phone btn--phone-desktop">1-510-935-5701</a>
+<button class="nav__toggle" id="navToggle" aria-label="Toggle Navigation">&#9776;</button>
+</div></header>
 
-  <main>
-    <h1>Privacy Policy</h1>
-    <div class="meta">Effective date: 11/10/2025 • Site: drozq.com • Owner: Joshua Guerrero (d/b/a VIRELLO / associated projects)</div>
+<section class="mint-block"><div class="container">
+<h1>Privacy Policy</h1>
+<p class="meta">Effective 11/10/2025 &middot; drozq.com</p>
+</div></section>
 
-    <section>
-      <h2>1. Overview</h2>
-      <p>This Privacy Policy describes how we collect, use, store, and share information when you visit drozq.com or submit your information through any form, funnel, or call-to-action hosted on this domain. This site is intended to function as a lead generation and nurturing environment for present and future offers, including (but not limited to) real estate services, brokerage services, and related advisory products.</p>
-      <p>By using this site, you consent to the practices described below.</p>
-    </section>
+<section class="policy"><div class="container"><div class="policy__inner">
 
-    <section>
-      <h2>2. Information We Collect</h2>
-      <p>We may collect the following categories of information:</p>
-      <ul>
-        <li><strong>Information you provide directly:</strong> name, email address, phone number, property details, business information, or any other data you submit through forms, calendars, or intake pages.</li>
-        <li><strong>Lead intent data:</strong> the page you submitted the form from, the offer you expressed interest in, and timestamps.</li>
-        <li><strong>Technical/usage data:</strong> IP address, device and browser type, pages viewed, referring/exit pages, and general location (city/region). This may be captured via standard server logs or analytics.</li>
-        <li><strong>Marketing/attribution data:</strong> UTM parameters, ad campaign identifiers, and traffic source so we can understand which ads or channels generated the lead.</li>
-      </ul>
-    </section>
+<section>
+<h2>Overview</h2>
+<p>This policy describes how drozq.com collects, uses, and protects information when you visit the site or submit a form. By using this site, you consent to the practices below.</p>
+</section>
 
-    <section>
-      <h2>3. How We Use Your Information</h2>
-      <p>We use the information we collect for the following purposes:</p>
-      <ul>
-        <li><strong>Lead follow-up:</strong> to contact you about the service, property, or offer you inquired about, via email, SMS, or phone.</li>
-        <li><strong>Retargeting and remarketing:</strong> to show you ads across platforms (e.g. Meta, Google, other networks) based on your interactions with this site.</li>
-        <li><strong>Funnel optimization:</strong> to analyze which pages, messages, or ads are performing and improve them.</li>
-        <li><strong>Security and abuse prevention:</strong> to prevent spam and unauthorized activity.</li>
-        <li><strong>Compliance:</strong> to maintain records required by law or legitimate business interests.</li>
-      </ul>
-      <p>We do <strong>not</strong> sell your personal information in the sense commonly prohibited under modern privacy laws; however, we may share limited data with service providers and ad platforms to deliver the services described above.</p>
-    </section>
+<section>
+<h2>What We Collect</h2>
+<p><strong>Information you provide:</strong> name, email, phone, property details, and anything else you submit through a form.</p>
+<p><strong>Technical data:</strong> IP address, device and browser type, pages viewed, and general location from server logs and analytics.</p>
+<p><strong>Marketing data:</strong> UTM parameters, campaign identifiers, and referral source so we can understand which channels generated the lead.</p>
+</section>
 
-    <section>
-      <h2>4. Cookies, Pixels, and Similar Technologies</h2>
-      <p>This site may use cookies, tracking pixels, and similar technologies to:</p>
-      <ul>
-        <li>Recognize returning visitors.</li>
-        <li>Build custom audiences for ads.</li>
-        <li>Measure ad performance and conversions.</li>
-      </ul>
-      <p>These tools may be provided by third parties (for example, Meta Pixel, Google Analytics, or other marketing/CRM platforms). These third parties may set their own cookies and process your data according to their own policies.</p>
-      <p>You can usually control cookies at the browser level. If you disable cookies, some lead tracking or personalization features may not function correctly.</p>
-    </section>
+<section>
+<h2>How We Use It</h2>
+<p>We use your information to follow up on your inquiry by email, SMS, or phone, to run and measure advertising, to improve the site, and to comply with legal requirements. We do not sell your personal information.</p>
+</section>
 
-    <section>
-      <h2>5. Advertising and Retargeting</h2>
-      <p>Because this site is designed to acquire customers profitably, we may use your visit to create or update advertising audiences. That means:</p>
-      <ul>
-        <li>Your visit may be associated with an ad account (e.g. Meta, Google) for retargeting.</li>
-        <li>Your form submission may be used to create lookalike/similar audiences to reach people similar to you.</li>
-        <li>We may run sequential ads that speak to the specific stage you are in (cold → warm → hot).</li>
-      </ul>
-      <p>If you do not wish to be retargeted, you can clear your cookies and/or use the “ad preferences” tools provided by the platform where you see the ad.</p>
-    </section>
+<section>
+<h2>Cookies and Advertising</h2>
+<p>We use cookies and pixels from services like Meta and Google to recognize visitors, build custom audiences, and measure ad performance. Your visit may be used for retargeting. You can manage cookies in your browser and ad preferences on each platform.</p>
+</section>
 
-    <section>
-      <h2>6. How We Share Information</h2>
-      <p>We may share your information with:</p>
-      <ul>
-        <li><strong>Service providers:</strong> hosting, email/SMS delivery, CRM, lead management, analytics.</li>
-        <li><strong>Advertising platforms:</strong> to run and measure ad campaigns.</li>
-        <li><strong>Business partners / future brokerage entity:</strong> if your inquiry relates to a real estate transaction or brokerage service that requires coordination.</li>
-        <li><strong>Legal authorities:</strong> if required to comply with law, enforce our rights, or protect users.</li>
-      </ul>
-      <p>We do not authorize third parties to use your data for their own independent marketing unless you have given that permission directly.</p>
-    </section>
+<section>
+<h2>How We Share It</h2>
+<p>We share limited data with service providers (hosting, CRM, email/SMS, analytics), advertising platforms, and, where relevant, brokerage partners handling your transaction. We may disclose information if required by law.</p>
+</section>
 
-    <section>
-      <h2>7. Data Security</h2>
-      <p>We use reasonable technical and organizational safeguards appropriate to the size and current stage of this project to protect your information from unauthorized access, disclosure, or misuse. No system is perfectly secure, so you should only submit data you are comfortable sharing for business purposes.</p>
-    </section>
+<section>
+<h2>Your California Rights</h2>
+<p>California residents may request details about the personal information we collect, its sources and purpose, and may request deletion subject to legal exceptions. To make a request, contact us and mention that it is a &ldquo;privacy request.&rdquo;</p>
+</section>
 
-    <section>
-      <h2>8. Data Retention</h2>
-      <p>Lead and contact data may be retained for as long as it is relevant to ongoing campaigns, follow-up, or required recordkeeping (for example, for real estate–related inquiries). Technical logs may be kept longer for security, fraud prevention, and analytics.</p>
-    </section>
+<section>
+<h2>Email and SMS</h2>
+<p>If you share your email or phone number, you agree we may contact you about your inquiry and related services. Unsubscribe from emails at any time using the link in the message. For SMS, reply <strong>STOP</strong> to opt out.</p>
+</section>
 
-    <section>
-      <h2>9. Your Rights (California / U.S.)</h2>
-      <p>If you are a California resident, you may have rights under the California Consumer Privacy Act (CCPA/CPRA), including the right to request:</p>
-      <ul>
-        <li>What categories of personal information we collected about you.</li>
-        <li>What sources we collected it from.</li>
-        <li>The business or commercial purpose for collecting it.</li>
-        <li>That we delete certain information, subject to legal and business exceptions.</li>
-      </ul>
-      <p>To make a request, contact us using the contact information made available on the main site and specify that it is a “privacy request.” We may need to verify your identity before responding.</p>
-    </section>
+<section>
+<h2>Updates</h2>
+<p>We may update this policy from time to time. When we do, we will update the effective date above. Continued use of the site means you accept the updated policy.</p>
+</section>
 
-    <section>
-      <h2>10. Email and SMS Communications</h2>
-      <p>If you provide your email or phone number, you agree we may contact you regarding the offer you requested, related services, and future opportunities. You can opt out of emails at any time by using the unsubscribe link. For SMS, reply with the opt-out keyword provided (commonly “STOP”).</p>
-    </section>
+<section>
+<h2>Contact</h2>
+<p>Questions or privacy requests? Reach Joshua Guerrero at <a href="mailto:Josh@Drozq.com">Josh@Drozq.com</a> or <a href="tel:15109355701">1-510-935-5701</a>.</p>
+</section>
 
-    <section>
-      <h2>11. Third-Party Links</h2>
-      <p>This site may link to external sites (social platforms, schedulers, payment pages). We are not responsible for the privacy practices of those sites. Review their policies separately.</p>
-    </section>
+</div></div></section>
 
-    <section>
-      <h2>12. Changes to This Policy</h2>
-      <p>We may update this Privacy Policy to reflect changes in how the site operates (for example, adding a new CRM, or scaling ad spend). When we do, we will update the effective date at the top. Continued use of the site after an update means you accept the updated policy.</p>
-    </section>
+<footer class="footer"><div class="container">
+<div class="footer__top">
+<div class="footer__brand"><img src="https://www.drozq.com/media/icons/Joshua Guerrero Logo Rectangle Stacked.png" alt="Joshua Guerrero Real Estate" width="200" loading="lazy"><p>17875 Von Karman Ave, Suite 150<br>Irvine, CA 92614</p><p class="phone"><a href="tel:15109355701">1-510-935-5701</a></p><p><a href="mailto:Josh@Drozq.com">Josh@Drozq.com</a></p></div>
+<div class="footer__links"><a href="https://drozq.com">Home</a><a href="https://drozq.com/process">How It Works</a><a href="https://drozq.com#why-us">Why Choose Me</a><a href="https://drozq.com/reviews">Reviews</a><a href="https://drozq.com/contact">Contact</a></div>
+<div class="footer__links"><a href="https://drozq.com#faq">FAQ</a><a href="tel:15109355701">Call Now</a></div>
+<div class="footer__right"><img src="https://www.drozq.com/media/icons/real/real-broker-logo.png" alt="Real Broker" width="160" loading="lazy">
+<div class="footer__social">
+<a href="https://www.facebook.com/Drozq/" target="_blank" rel="noopener" aria-label="Facebook"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+<a href="https://www.instagram.com/drozq/" target="_blank" rel="noopener" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+<a href="https://www.youtube.com/@drozq" target="_blank" rel="noopener" aria-label="YouTube"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+</div></div>
+</div>
+<div class="footer__bottom">
+<div class="footer__legal"><p>Joshua Guerrero is a licensed real estate agent in the state of California DRE# 02267255</p></div>
+<div class="footer__copyright"><a href="https://drozq.com/privacy">Privacy Policy</a> &nbsp;|&nbsp; <a href="https://drozq.com/reviews">Joshua Guerrero Reviews</a> &nbsp;|&nbsp; Copyright &copy; 2025-2026 Drozq. All Rights Reserved.</div>
+</div>
+</div></footer>
 
-    <section>
-      <h2>13. Contact</h2>
-      <p>If you have questions about this Privacy Policy or wish to exercise a privacy right, contact the site owner using the email or contact method listed on the homepage or primary sales page. Include enough detail to identify yourself and your request.</p>
-    </section>
-  </main>
-
-  <!-- Shared footer inject point -->
-  <div id="site-footer"></div>
-
-  <script>
-    (function () {
-      function inject(id, url, label) {
-        var target = document.getElementById(id);
-        if (!target) return;
-
-        fetch(url, { cache: 'no-cache' })
-          .then(function (res) {
-            if (!res.ok) throw new Error('Failed to load ' + label);
-            return res.text();
-          })
-          .then(function (html) {
-            target.innerHTML = html;
-          })
-          .catch(function (err) {
-            console.error(label + ' load error:', err);
-          });
-      }
-
-      inject('site-header', '/header.html', 'header');
-      inject('site-footer', '/footer.html', 'footer');
-    })();
-  </script>
+<script>
+document.getElementById('navToggle').addEventListener('click',function(){document.getElementById('mainNav').classList.toggle('open');});
+(function(){var p=location.pathname.replace(/\/+$/,'')||'/';document.querySelectorAll('#mainNav a').forEach(function(a){var href=a.getAttribute('href');if(!href)return;try{var u=new URL(href,location.origin);}catch(e){return;}var ap=u.pathname.replace(/\/+$/,'')||'/';if(u.hash||ap!==p)return;a.classList.add('active');});})();
+</script>
 </body>
 </html>
