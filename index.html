@@ -110,10 +110,30 @@ p:last-child { margin-bottom: 0; }
 .header .container { display: flex; align-items: center; justify-content: space-between; min-height: 78px; gap: 25px; position: relative; }
 .header__logo img { max-width: 220px; }
 .nav { display: flex; align-items: center; gap: 30px; }
-.nav a { font-size: 17px; font-weight: 500; padding: 14px 0; letter-spacing: 0.2px; }
+.nav > a, .nav__item > a { font-size: 17px; font-weight: 500; padding: 14px 0; letter-spacing: 0.2px; }
 .nav a:hover { color: var(--color-green); }
 .nav a.active { color: var(--color-green); }
 .nav__toggle { display: none; background: none; border: none; font-size: 32px; cursor: pointer; color: var(--color-navy); padding: 8px; }
+.nav__item { position: relative; }
+.nav__item > a { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+.nav__item > a::after { content: '\25BE'; font-size: 11px; line-height: 1; }
+.nav__dropdown {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(8px);
+  background: var(--color-white); border: 1px solid rgba(52,63,86,0.12);
+  border-radius: var(--radius); box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  min-width: 200px; padding: 10px 0; opacity: 0; visibility: hidden;
+  transition: opacity var(--transition), transform var(--transition), visibility var(--transition);
+  z-index: 1001;
+}
+.nav__dropdown a {
+  display: block; padding: 10px 20px; font-size: 16px; font-weight: 500;
+  color: var(--color-navy); white-space: nowrap;
+}
+.nav__dropdown a:hover { background: var(--color-mint); color: var(--color-green); }
+.nav__item:hover .nav__dropdown,
+.nav__item:focus-within .nav__dropdown {
+  opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
+}
 
 .hero { padding: 50px 0 0; background: linear-gradient(114deg, var(--color-white) 67%, var(--color-navy) 62%); }
 .hero .container { display: flex; flex-wrap: wrap; align-items: flex-end; }
@@ -271,8 +291,16 @@ p:last-child { margin-bottom: 0; }
   .hero__badge { display: none; }
   .nav { display: none; }
   .nav__toggle { display: block; }
-  .nav.open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-white); padding: 20px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 999; }
+  .nav.open { display: flex; flex-direction: column; align-items: flex-start; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-white); padding: 20px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 999; }
   .nav.open a { font-size: 18px; padding: 14px 0; }
+  .nav.open .nav__item { width: 100%; }
+  .nav.open .nav__item > a::after { display: none; }
+  .nav.open .nav__dropdown {
+    position: static; transform: none; opacity: 1; visibility: visible;
+    box-shadow: none; border: none; padding: 0 0 10px 20px; min-width: 0;
+    background: transparent;
+  }
+  .nav.open .nav__dropdown a { padding: 8px 0; font-size: 16px; }
   .btn--phone-desktop { display: none; }
   .advantage { padding: 40px 25px; }
 }
@@ -470,12 +498,25 @@ p:last-child { margin-bottom: 0; }
       </a>
 
       <nav class="nav" id="mainNav">
-        <a href="https://drozq.com">Home</a>
-        <a href="process">How It Works</a>
-        <a href="why-us">Why Choose Me</a>
-        <a href="https://drozq.com/reviews">Reviews</a>
-        <a href="faq">FAQ</a>
-        <a href="https://drozq.com/contact">Contact</a>
+        <a href="/home">Home</a>
+        <a href="/the-process">The Process</a>
+        <div class="nav__item">
+          <a href="/where-we-help" aria-haspopup="true">Where We Help</a>
+          <div class="nav__dropdown">
+            <a href="/los-angeles">Los Angeles</a>
+          </div>
+        </div>
+        <a href="/testimonials">Testimonials</a>
+        <div class="nav__item">
+          <a href="/about" aria-haspopup="true">About</a>
+          <div class="nav__dropdown">
+            <a href="/meet-the-team">Meet the Team</a>
+            <a href="/blog">Blog</a>
+            <a href="/faq">FAQ</a>
+          </div>
+        </div>
+        <a href="/market-insights">Market Insights</a>
+        <a href="/contact">Contact</a>
       </nav>
 
       <a href="tel:15109355701" class="btn btn--phone btn--phone-desktop">1-510-935-5701</a>
