@@ -177,13 +177,13 @@ p:last-child { margin-bottom: 0; }
 
 .areas-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 36px;
 }
 .area-card {
   border: 1px solid var(--color-gray-light);
   border-radius: var(--radius-lg);
-  padding: 22px;
+  padding: 32px;
   text-align: center;
   background: var(--color-white);
   transition: all var(--transition);
@@ -197,9 +197,9 @@ p:last-child { margin-bottom: 0; }
   transform: translateY(-3px);
 }
 .area-card h5 {
-  font-size: 15px;
+  font-size: 16px;
   color: var(--color-navy-light);
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   font-weight: 500;
 }
 .area-card__image {
@@ -207,7 +207,7 @@ p:last-child { margin-bottom: 0; }
   aspect-ratio: 4/3;
   overflow: hidden;
   border-radius: var(--radius);
-  margin-bottom: 14px;
+  margin-bottom: 18px;
   background: var(--color-gray-bg);
 }
 .area-card__image img {
@@ -218,7 +218,7 @@ p:last-child { margin-bottom: 0; }
 }
 .area-card:hover .area-card__image img { transform: scale(1.05); }
 .area-card h3 {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
   color: var(--color-green);
   margin: 0;
@@ -315,7 +315,7 @@ p:last-child { margin-bottom: 0; }
 @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
 @media (max-width: 1200px) {
-  .areas-grid { grid-template-columns: repeat(3, 1fr); }
+  .areas-grid { grid-template-columns: repeat(3, 1fr); gap: 28px; }
 }
 @media (max-width: 1024px) {
   .hero { padding: 50px 0 0; }
@@ -651,6 +651,38 @@ p:last-child { margin-bottom: 0; }
     </div>
   </section>
 
+  <!-- ========== WHAT MAKES US DIFFERENT ========== -->
+  <section class="section">
+    <div class="container">
+      <div class="two-col">
+        <div class="two-col__text">
+          <h2>What Makes Us Different?</h2>
+          <div class="pain-grid">
+            <div class="pain-item">
+              <img src="https://www.drozq.com/media/icons/hand_holding_house.svg" alt="" width="30" height="29" loading="lazy">
+              <h5>No Hassles:</h5>
+              <p>If you've ever thought, "I want someone to buy my home for cash, but I don't want the hassle," we're the right choice.</p>
+            </div>
+            <div class="pain-item">
+              <img src="https://www.drozq.com/media/icons/request_quote.svg" alt="" width="23" height="29" loading="lazy">
+              <h5>Trusted Buyers:</h5>
+              <p>Our reputation for reliability ensures a stress-free experience.</p>
+            </div>
+            <div class="pain-item">
+              <img src="https://www.drozq.com/media/icons/handshake.svg" alt="" width="29" height="27" loading="lazy">
+              <h5>Straightforward Process:</h5>
+              <p>We provide quick answers and let you know immediately if we can meet your price.</p>
+            </div>
+          </div>
+          <p style="margin-top: 18px;">Seller's Advantage known is one of the most known home buying companies because we buy houses in any condition. The company started in the home buying business in Southern California, LA and Los Angeles CA where we have been helping people sell their properties quickly and effortlessly for years. If you live in the greater Phoenix area or Las Vegas Metro, and are thinking of selling your home, call us.</p>
+        </div>
+        <div class="two-col__image">
+          <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Southern California home" width="800" height="532" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ========== SERVICE AREAS GRID ========== -->
   <section class="section" id="areas" style="background: var(--color-gray-bg);">
     <div class="container">
@@ -662,7 +694,7 @@ p:last-child { margin-bottom: 0; }
       <div class="areas-grid">
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Irvine, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Irvine California" loading="lazy">
           </div>
@@ -670,7 +702,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Los Angeles County</h5>
+          <h5>Los Angeles, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Los Angeles California" loading="lazy">
           </div>
@@ -678,7 +710,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Newport Beach, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Newport Beach California" loading="lazy">
           </div>
@@ -686,7 +718,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Costa Mesa, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Costa Mesa California" loading="lazy">
           </div>
@@ -694,7 +726,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Mission Viejo, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Mission Viejo California" loading="lazy">
           </div>
@@ -702,7 +734,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Laguna Niguel, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Laguna Niguel California" loading="lazy">
           </div>
@@ -710,7 +742,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Lake Forest, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Lake Forest California" loading="lazy">
           </div>
@@ -718,7 +750,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Laguna Hills, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Laguna Hills California" loading="lazy">
           </div>
@@ -726,7 +758,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Tustin, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Tustin California" loading="lazy">
           </div>
@@ -734,7 +766,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Anaheim, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Anaheim California" loading="lazy">
           </div>
@@ -742,7 +774,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Fullerton, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Fullerton California" loading="lazy">
           </div>
@@ -750,7 +782,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Huntington Beach, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Huntington Beach California" loading="lazy">
           </div>
@@ -758,7 +790,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Garden Grove, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Garden Grove California" loading="lazy">
           </div>
@@ -766,7 +798,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Santa Ana, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Santa Ana California" loading="lazy">
           </div>
@@ -774,7 +806,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Westminster, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Westminster California" loading="lazy">
           </div>
@@ -782,7 +814,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Orange County, California</h5>
+          <h5>Yorba Linda, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Yorba Linda California" loading="lazy">
           </div>
@@ -790,7 +822,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Los Angeles County</h5>
+          <h5>Pasadena, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Pasadena California" loading="lazy">
           </div>
@@ -798,7 +830,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Los Angeles County</h5>
+          <h5>Long Beach, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Long Beach California" loading="lazy">
           </div>
@@ -806,7 +838,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Los Angeles County</h5>
+          <h5>Santa Monica, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Santa Monica California" loading="lazy">
           </div>
@@ -814,7 +846,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Los Angeles County</h5>
+          <h5>Torrance, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Torrance California" loading="lazy">
           </div>
@@ -822,7 +854,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Los Angeles County</h5>
+          <h5>Redondo Beach, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Redondo Beach California" loading="lazy">
           </div>
@@ -830,7 +862,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Los Angeles County</h5>
+          <h5>Burbank, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Burbank California" loading="lazy">
           </div>
@@ -838,7 +870,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Los Angeles County</h5>
+          <h5>Glendale, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Glendale California" loading="lazy">
           </div>
@@ -846,7 +878,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Los Angeles County</h5>
+          <h5>Malibu, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Malibu California" loading="lazy">
           </div>
@@ -854,7 +886,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Riverside County</h5>
+          <h5>Riverside, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Riverside California" loading="lazy">
           </div>
@@ -862,7 +894,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Riverside County</h5>
+          <h5>Corona, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Corona California" loading="lazy">
           </div>
@@ -870,7 +902,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Riverside County</h5>
+          <h5>Murrieta, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Murrieta California" loading="lazy">
           </div>
@@ -878,7 +910,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Riverside County</h5>
+          <h5>Temecula, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Temecula California" loading="lazy">
           </div>
@@ -886,7 +918,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Riverside County</h5>
+          <h5>Lake Elsinore, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Lake Elsinore California" loading="lazy">
           </div>
@@ -894,7 +926,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>San Bernardino County</h5>
+          <h5>Rancho Cucamonga, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Rancho Cucamonga California" loading="lazy">
           </div>
@@ -902,7 +934,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>San Bernardino County</h5>
+          <h5>Fontana, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Fontana California" loading="lazy">
           </div>
@@ -910,7 +942,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>San Bernardino County</h5>
+          <h5>Chino, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Chino California" loading="lazy">
           </div>
@@ -918,7 +950,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>San Bernardino County</h5>
+          <h5>Chino Hills, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Chino Hills California" loading="lazy">
           </div>
@@ -926,7 +958,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>San Diego County</h5>
+          <h5>San Diego, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="San Diego California" loading="lazy">
           </div>
@@ -934,7 +966,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>San Diego County</h5>
+          <h5>Carlsbad, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Carlsbad California" loading="lazy">
           </div>
@@ -942,7 +974,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>San Diego County</h5>
+          <h5>Oceanside, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Oceanside California" loading="lazy">
           </div>
@@ -950,7 +982,7 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Ventura County</h5>
+          <h5>Thousand Oaks, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic1.webp" alt="Thousand Oaks California" loading="lazy">
           </div>
@@ -958,26 +990,13 @@ p:last-child { margin-bottom: 0; }
         </div>
 
         <div class="area-card">
-          <h5>Ventura County</h5>
+          <h5>Simi Valley, California</h5>
           <div class="area-card__image">
             <img src="https://www.drozq.com/media/images/outside-home-pic2.webp" alt="Simi Valley California" loading="lazy">
           </div>
           <a href="https://www.drozq.com/ca/sell-my-house-fast-simi-valley/"><h3>Sell Your Home in Simi Valley</h3></a>
         </div>
 
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== WHAT MAKES US DIFFERENT ========== -->
-  <section class="section">
-    <div class="container">
-      <div class="body-text text-center">
-        <h2>What Makes Us Different?</h2>
-        <p style="margin-top: 24px;"><strong>No Hassles:</strong><br>If you've ever thought, "I want someone to buy my home for cash, but I don't want the hassle," we're the right choice.</p>
-        <p><strong>Trusted Buyers:</strong><br>Our reputation for reliability ensures a stress-free experience.</p>
-        <p><strong>Straightforward Process:</strong><br>We provide quick answers and let you know immediately if we can meet your price.</p>
-        <p style="margin-top: 24px;">Seller's Advantage known is one of the most known home buying companies because we buy houses in any condition. The company started in the home buying business in Southern California, LA and Los Angeles CA where we have been helping people sell their properties quickly and effortlessly for years. If you live in the greater Phoenix area or Las Vegas Metro, and are thinking of selling your home, call us.</p>
       </div>
     </div>
   </section>
