@@ -225,12 +225,13 @@ p:last-child { margin-bottom: 0; }
 .advantage { background: var(--color-navy); border-radius: var(--radius-lg); padding: 55px; color: var(--color-white); text-align: center; }
 .advantage h2, .advantage p { color: var(--color-white); }
 .advantage__subtitle { font-weight: 600; margin-bottom: 5px; font-size: 18px; color: var(--color-green); text-transform: uppercase; letter-spacing: 1px; }
-.advantage__list { display: grid; grid-template-columns: repeat(2, minmax(200px, 1fr)); gap: 14px 40px; max-width: 640px; margin: 32px auto 24px; text-align: left; }
-.advantage__list li { display: flex; align-items: center; gap: 14px; font-size: 19px; font-weight: 600; letter-spacing: 0.5px; color: var(--color-white); }
+.advantage__list { display: grid; grid-template-columns: repeat(2, max-content); justify-content: center; gap: 14px 50px; margin: 32px auto 24px; text-align: left; }
+.advantage__list li { display: flex; align-items: center; gap: 14px; font-size: 19px; font-weight: 600; letter-spacing: 0.4px; color: var(--color-white); white-space: nowrap; }
 .advantage__list .checklist__icon { width: 28px; height: 28px; flex-shrink: 0; }
 .advantage__dre { font-size: 15px; opacity: 0.85; margin-top: 28px; max-width: 640px; margin-left: auto; margin-right: auto; }
 @media (max-width: 540px) {
-  .advantage__list { grid-template-columns: 1fr; gap: 12px; max-width: 260px; }
+  .advantage__list { grid-template-columns: max-content; gap: 12px; }
+  .advantage__list li { font-size: 17px; }
 }
 
 .body-text { max-width: 850px; margin: 0 auto; }
