@@ -378,6 +378,213 @@ p:last-child { margin-bottom: 0; }
   .lead-modal { padding: 30px 22px; }
   .lead-modal__row { flex-direction: column; gap: 12px; }
 }
+
+/* ========== CASE FILE SYSTEM (shared with /testimonials/ and /about/) ========== */
+.cf-label {
+  display: inline-block; font-size: 0.875rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--color-green); margin-bottom: 28px;
+}
+.cf-section { padding: 110px 0; background: var(--color-white); color: var(--color-navy); }
+.cf-section--alt { background: var(--color-gray-bg); }
+.cf-narrow { max-width: 720px; margin: 0 auto; padding: 0 30px; text-align: center; }
+.cf-wide { max-width: 1100px; margin: 0 auto; padding: 0 30px; }
+.cf-body {
+  font-size: 1.25rem; line-height: 1.6;
+  color: var(--color-navy-light); margin: 0;
+}
+.cf-body + .cf-body { margin-top: 1.2em; }
+.cf-reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.cf-reveal.is-visible { opacity: 1; transform: translateY(0); }
+.cf-cta-strip { padding: 96px 0; background: var(--color-gray-bg); text-align: center; color: var(--color-navy); }
+.cf-cta-strip h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700;
+  line-height: 1.15; letter-spacing: -0.015em; color: var(--color-navy);
+  margin-bottom: 18px;
+}
+.cf-cta-strip__sub {
+  font-size: 1.125rem; line-height: 1.6; color: var(--color-navy-light);
+  max-width: 540px; margin: 0 auto 32px;
+}
+.cf-cta-strip .btn { padding: 20px 42px; font-size: 18px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-reveal { transition: none; opacity: 1; transform: none; }
+}
+
+/* ========== FAQ PAGE ========== */
+.faq-hero {
+  position: relative; min-height: 56vh;
+  display: flex; align-items: center;
+  padding: 100px 0; color: var(--color-white);
+  background-size: cover; background-position: center;
+  background-repeat: no-repeat;
+}
+.faq-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(30, 47, 73, 0.65) 0%, rgba(30, 47, 73, 0.78) 100%);
+}
+.faq-hero__inner {
+  position: relative; width: 100%;
+  max-width: 1100px; margin: 0 auto; padding: 0 30px; text-align: center;
+}
+.faq-hero__eyebrow {
+  display: inline-block; font-size: 0.875rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--color-mint); margin-bottom: 24px;
+}
+.faq-hero h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700;
+  line-height: 1.08; letter-spacing: -0.02em;
+  color: var(--color-white); max-width: 22ch; margin: 0 auto 20px;
+}
+.faq-hero__sub {
+  font-size: 1.25rem; line-height: 1.6; font-weight: 400;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 640px; margin: 0 auto;
+}
+
+/* Jump nav pills */
+.faq-jump-nav {
+  background: #f1f4f7;
+  border-top: 1px solid rgba(30, 47, 73, 0.06);
+  border-bottom: 1px solid rgba(30, 47, 73, 0.06);
+  padding: 28px 0;
+  position: sticky; top: 78px; z-index: 100;
+  backdrop-filter: saturate(1.2);
+}
+.faq-jump-nav__inner {
+  max-width: 1100px; margin: 0 auto; padding: 0 30px;
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 10px;
+}
+.faq-pill {
+  display: inline-flex; align-items: center;
+  padding: 10px 18px; border-radius: 999px;
+  border: 1px solid var(--color-gray-light);
+  background: var(--color-white);
+  font-size: 0.875rem; font-weight: 600;
+  color: var(--color-navy); letter-spacing: 0.01em;
+  transition: border-color var(--transition), color var(--transition), background var(--transition), transform var(--transition);
+}
+.faq-pill:hover {
+  border-color: var(--color-green); color: var(--color-green);
+  transform: translateY(-1px);
+}
+.faq-pill__num {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em;
+  color: var(--color-green); margin-right: 8px; opacity: 0.85;
+}
+
+/* Category sections */
+.faq-category { padding: 110px 0; background: var(--color-white); color: var(--color-navy); scroll-margin-top: 150px; }
+.faq-category--alt { background: var(--color-gray-bg); }
+.faq-category__inner { max-width: 1150px; margin: 0 auto; padding: 0 30px; }
+
+.faq-cat-header {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center; margin-bottom: 60px;
+}
+.faq-cat-header__text { min-width: 0; }
+.faq-cat-header__image-wrap { display: flex; justify-content: flex-end; }
+.faq-cat-header__image {
+  width: 100%; max-width: 480px; height: auto;
+  border-radius: 8px; display: block;
+  box-shadow: 0 16px 40px rgba(30, 47, 73, 0.1);
+  aspect-ratio: 4 / 3; object-fit: cover;
+}
+.faq-cat-headline {
+  font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700;
+  line-height: 1.1; letter-spacing: -0.02em;
+  color: var(--color-navy); margin: 0 0 18px;
+}
+.faq-cat-sub {
+  font-size: 1.125rem; line-height: 1.6;
+  color: var(--color-navy-light); margin: 0;
+  max-width: 40ch;
+}
+
+/* Accordion */
+.faq-list {
+  max-width: 820px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.faq-item {
+  border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.faq-item:hover { border-color: rgba(66, 204, 147, 0.5); }
+.faq-item.is-open { border-color: var(--color-green); box-shadow: 0 10px 30px rgba(66, 204, 147, 0.1); }
+.faq-category--alt .faq-item { background: var(--color-white); }
+
+.faq-question {
+  width: 100%; display: flex; align-items: center; gap: 16px;
+  padding: 22px 26px; min-height: 44px;
+  background: transparent; border: 0; cursor: pointer;
+  text-align: left; font-family: var(--font);
+  color: var(--color-navy);
+  transition: color var(--transition);
+}
+.faq-question:hover { color: var(--color-green); }
+.faq-question:focus-visible {
+  outline: 2px solid var(--color-green); outline-offset: 2px;
+  border-radius: var(--radius-lg);
+}
+.faq-question__icon {
+  flex: 0 0 auto; width: 28px; height: 28px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--color-green);
+  transition: transform 0.25s ease;
+}
+.faq-question__icon svg { width: 22px; height: 22px; display: block; }
+.faq-item.is-open .faq-question__icon { transform: rotate(180deg); }
+.faq-question__text {
+  flex: 1 1 auto; font-size: 1.125rem; font-weight: 600;
+  line-height: 1.4; letter-spacing: -0.005em;
+}
+
+.faq-answer {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows 0.28s ease;
+}
+.faq-item.is-open .faq-answer { grid-template-rows: 1fr; }
+.faq-answer__inner { overflow: hidden; }
+.faq-answer__content {
+  padding: 0 26px 24px 70px;
+  font-size: 1.0625rem; line-height: 1.65;
+  color: var(--color-navy-light);
+}
+.faq-answer__content p { margin: 0; }
+.faq-answer__content p + p { margin-top: 1em; }
+.faq-answer__content a { color: var(--color-green); font-weight: 600; }
+.faq-answer__content a:hover { color: var(--color-green-hover); }
+
+/* Mobile */
+@media (max-width: 960px) {
+  .faq-cat-header { grid-template-columns: 1fr; gap: 36px; }
+  .faq-cat-header__image-wrap { justify-content: center; }
+  .faq-cat-header__image { max-width: 520px; aspect-ratio: 16 / 10; }
+}
+@media (max-width: 768px) {
+  .cf-section, .faq-category { padding: 64px 0; }
+  .cf-narrow, .cf-wide { padding: 0 24px; }
+  .cf-cta-strip { padding: 64px 0; }
+  .faq-hero { min-height: 48vh; padding: 80px 0; }
+  .faq-category__inner { padding: 0 24px; }
+  .faq-jump-nav { padding: 18px 0; position: static; }
+  .faq-jump-nav__inner { padding: 0 18px; gap: 8px; }
+  .faq-pill { padding: 9px 14px; font-size: 0.82rem; }
+  .faq-cat-header { margin-bottom: 40px; }
+  .faq-question { padding: 18px 20px; gap: 12px; }
+  .faq-question__text { font-size: 1rem; }
+  .faq-answer__content { padding: 0 20px 20px 56px; font-size: 1rem; }
+}
+@media (max-width: 480px) {
+  .faq-pill { padding: 8px 12px; font-size: 0.78rem; }
+  .faq-pill__num { margin-right: 6px; font-size: 0.65rem; }
+}
   </style>
 </head>
 <body>
@@ -526,456 +733,102 @@ p:last-child { margin-bottom: 0; }
     </div>
   </header>
 
-  <!-- ========== PAGE INTRO ========== -->
-  <section class="section">
-    <div class="container">
-      <div class="body-text text-center">
-        <h1>We're Here To Answer Your Questions</h1>
-        <p>Seller's Advantage has purchased thousands of houses and we can buy yours in just a few days. There is no obligation, so contact us today!</p>
-        <p><a href="#contact" class="btn btn--green">Get My Free Quote</a></p>
-        <div style="margin-top: 35px;">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/02/sellers-advantage-bbb-accredited-a-plus.png -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/02/sellers-advantage-bbb-accredited-a-plus.png" alt="Seller's Advantage BBB Accredited A+ Rated" style="max-width: 260px; margin: 0 auto;" loading="lazy">
-        </div>
-        <p style="margin-top: 12px; font-weight: 600; color: var(--color-navy);">Southern California's Most Trusted Home Buyers</p>
-      </div>
+  <!-- ========== SECTION 1: HERO ========== -->
+  <!-- SWAP: Wide-format Irvine home exterior at golden hour from /media/images/ -->
+  <section class="faq-hero" style="background-image: url('/media/images/outside-home-pic1.webp');">
+    <div class="faq-hero__inner">
+      <div class="faq-hero__eyebrow">Frequently Asked Questions</div>
+      <h1>The questions sellers actually ask. Answered honestly.</h1>
+      <p class="faq-hero__sub">No canned answers. No dodging the uncomfortable questions. If you've been thinking it, it's probably on this page. If it's not, the final question tells you how to ask it directly.</p>
     </div>
   </section>
 
-  <!-- ========== FAQ SECTION WITH FEATURED IMAGE ========== -->
-  <section class="section" id="faq" style="background: var(--color-gray-bg);">
-    <div class="container">
-      <div class="two-col">
-        <div class="two-col__text">
-          <h2 style="margin-bottom: 25px;">Pricing, Timelines &amp; Process</h2>
+  <!-- ========== SECTION 2: JUMP NAV ========== -->
+  <nav class="faq-jump-nav" aria-label="FAQ categories">
+    <div class="faq-jump-nav__inner">
+      <a class="faq-pill" href="#getting-started"><span class="faq-pill__num">01</span>Getting Started</a>
+      <a class="faq-pill" href="#working-with-joshua"><span class="faq-pill__num">02</span>Working With Joshua</a>
+      <a class="faq-pill" href="#pricing-offers"><span class="faq-pill__num">03</span>Pricing &amp; Offers</a>
+      <a class="faq-pill" href="#the-process"><span class="faq-pill__num">04</span>The Process</a>
+      <a class="faq-pill" href="#after-the-sale"><span class="faq-pill__num">05</span>After the Sale</a>
+    </div>
+  </nav>
 
-          <h3 style="color: var(--color-navy); margin-bottom: 10px;">Pricing and Value</h3>
-
-          <div class="faq__item">
-            <button class="faq__question" aria-expanded="false">
-              <span>How much would you give me right now on the spot without seeing the home?</span>
-              <span class="faq__icon">
-                <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-              </span>
-            </button>
-            <div class="faq__answer"><div class="faq__answer-inner"><div>
-              <p>We won't be able to give you a fair offer without seeing the home.</p>
-            </div></div></div>
-          </div>
-
-          <div class="faq__item">
-            <button class="faq__question" aria-expanded="false">
-              <span>Is this offer negotiable?</span>
-              <span class="faq__icon">
-                <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-              </span>
-            </button>
-            <div class="faq__answer"><div class="faq__answer-inner"><div>
-              <p>Yes, however we try to give you the best and final offer right from the get-go.</p>
-            </div></div></div>
-          </div>
-
-          <div class="faq__item">
-            <button class="faq__question" aria-expanded="false">
-              <span>Do you offer fair market value for the home?</span>
-              <span class="faq__icon">
-                <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-              </span>
-            </button>
-            <div class="faq__answer"><div class="faq__answer-inner"><div>
-              <p>We base our offers on your home's condition and the local market. Since we buy "as-is" and cover all costs/fees and do not charge any fix fees we provide you with a NET take home number.</p>
-            </div></div></div>
-          </div>
-
-          <div class="faq__item">
-            <button class="faq__question" aria-expanded="false">
-              <span>How much are your fees?</span>
-              <span class="faq__icon">
-                <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-              </span>
-            </button>
-            <div class="faq__answer"><div class="faq__answer-inner"><div>
-              <p>There are no fees. Unlike selling with a realtor or an agent, you don't pay any commission, listing costs, or repair expenses. We even cover closing costs.</p>
-            </div></div></div>
-          </div>
-
-          <h3 style="color: var(--color-navy); margin-top: 45px; margin-bottom: 10px;">Timeline and Process</h3>
-
-          <div class="faq__item">
-            <button class="faq__question" aria-expanded="false">
-              <span>Can I change my closing date?</span>
-              <span class="faq__icon">
-                <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-              </span>
-            </button>
-            <div class="faq__answer"><div class="faq__answer-inner"><div>
-              <p>Absolutely! We work with your schedule. If you need to close earlier or later, we can adjust to match the timeline that works best for you.</p>
-            </div></div></div>
-          </div>
-
-          <div class="faq__item">
-            <button class="faq__question" aria-expanded="false">
-              <span>How much time do I have in the house after closing?</span>
-              <span class="faq__icon">
-                <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-              </span>
-            </button>
-            <div class="faq__answer"><div class="faq__answer-inner"><div>
-              <p>We are flexible and can give you extra time after closing, provided we agree on the timeline beforehand.</p>
-            </div></div></div>
-          </div>
-
-          <div class="faq__item">
-            <button class="faq__question" aria-expanded="false">
-              <span>How long is my offer good for?</span>
-              <span class="faq__icon">
-                <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-              </span>
-            </button>
-            <div class="faq__answer"><div class="faq__answer-inner"><div>
-              <p>Your offer does not expire right away. With us, there's enough time to review it and make a decision.</p>
-              <p>If a lot of time passes or market conditions change, we'll be in touch to provide you with an updated offer.</p>
-            </div></div></div>
-          </div>
-
-          <div class="faq__item">
-            <button class="faq__question" aria-expanded="false">
-              <span>When will I receive the offer?</span>
-              <span class="faq__icon">
-                <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-              </span>
-            </button>
-            <div class="faq__answer"><div class="faq__answer-inner"><div>
-              <p>You'll receive the offer right after we visited and evaluated the property &ndash; which, in many cases, happens on the same day as the walkthrough.</p>
-            </div></div></div>
-          </div>
-
-          <div class="faq__item">
-            <button class="faq__question" aria-expanded="false">
-              <span>How long does the process take?</span>
-              <span class="faq__icon">
-                <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-              </span>
-            </button>
-            <div class="faq__answer"><div class="faq__answer-inner"><div>
-              <p>The process can take anywhere from 14&nbsp;&ndash;&nbsp;90 days it all depends on your timeline!</p>
-            </div></div></div>
-          </div>
-
-          <div class="faq__item">
-            <button class="faq__question" aria-expanded="false">
-              <span>How does the process work?</span>
-              <span class="faq__icon">
-                <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-              </span>
-            </button>
-            <div class="faq__answer"><div class="faq__answer-inner"><div>
-              <p>It's simple:</p>
-              <ol style="margin-left: 20px; list-style: decimal;">
-                <li>We gather some basic home details over the phone.</li>
-                <li>We schedule a quick visit to see it in person.</li>
-                <li>We make a cash offer on your home.</li>
-              </ol>
-              <p>If you accept, you choose the closing date. It's all on your timeline.</p>
-            </div></div></div>
-          </div>
+  <!-- ========== SECTION 3: CATEGORY 01 ========== -->
+  <section class="faq-category" id="getting-started">
+    <div class="faq-category__inner">
+      <div class="faq-cat-header cf-reveal">
+        <div class="faq-cat-header__text">
+          <div class="cf-label">Category 01</div>
+          <h2 class="faq-cat-headline">Getting Started</h2>
+          <p class="faq-cat-sub">The questions that come up before you've even decided to list.</p>
         </div>
-
-        <div class="two-col__image">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/02/california-cash-home-buyer.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/02/california-cash-home-buyer.webp" alt="Southern California cash home buyer" loading="lazy" style="object-position: 50% 50%;">
+        <div class="faq-cat-header__image-wrap">
+          <!-- SWAP: Warm interior shot (living room or kitchen) from /media/images/ -->
+          <img class="faq-cat-header__image" src="/media/images/outside-home-pic2.webp" alt="Warm interior of a Southern California home" loading="lazy">
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ========== MORE FAQ CATEGORIES ========== -->
-  <section class="section">
-    <div class="container">
-      <div class="faq">
-        <h2>More Questions Answered</h2>
+      <div class="faq-list cf-reveal">
 
-        <h3 style="color: var(--color-navy); margin-bottom: 10px;">Escrow and Paperwork</h3>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>How does the transfer of ownership work?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <!-- SWAP: Replace inline chevron with /media/icons/chevron.svg if preferred -->
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
+            <span class="faq-question__text">How do I know if it's the right time to sell?</span>
           </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>The transfer of ownership is managed entirely through escrow. Once you accept our offer, escrow prepares the necessary documents, including the deed.</p>
-            <p>You will sign the deed to transfer ownership, and escrow will record it with the county once closing is complete. At that point, Seller's Advantage becomes the official owner of the property, and you receive your funds.</p>
-            <p>With this process, everything is legally binding, properly recorded, and transparent. So, you don't have to worry about handling any of the filings yourself.</p>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>The honest answer: nobody can time the market perfectly, and most people who try end up waiting too long. The better question is whether selling now lines up with your personal situation. Are you trying to move up, move out of state, cash in on equity, or simplify? Each of those has different timing dynamics. On our first call, I'll walk you through where the Irvine market is, what comparable homes are doing right now, and what selling in the next 30 to 90 days would realistically look like for your home specifically. No pressure, no "you should list tomorrow" pitch. Just clear numbers.</p>
           </div></div></div>
         </div>
 
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Will escrow pay my mortgage and other liens, or do I need to pay them after we close?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
+            <span class="faq-question__text">What is my home actually worth?</span>
           </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Escrow will handle paying your mortgage and any other recorded liens at closing. For this reason, there's no need for you to settle these accounts on your own.</p>
-            <p>The escrow officer collects the payoff amounts directly from your lender or creditors. From here, the amounts are subtracted from the sale proceeds.</p>
-            <p>What remains is your net proceeds, which you receive on the closing date. The escrow structure protects you by ensuring that debts tied to the property are cleared properly and that the home transfers free of those obligations.</p>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>The Zillow Zestimate is a starting point, not an answer. Real home valuation comes from analyzing three things: recently sold comparable homes, currently active listings, and your home's specific condition and features. I'll run a full comparative market analysis (CMA) for you before we even meet in person. That report will give you a realistic price range, not the inflated number some agents throw out to win your listing.</p>
           </div></div></div>
         </div>
 
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>How can I know what my net proceeds will be?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
+            <span class="faq-question__text">Should I make repairs or improvements before listing?</span>
           </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Escrow provides a settlement statement that breaks down the numbers clearly. This is what you will see on this document:</p>
-            <ul style="margin-left: 20px; list-style: disc;">
-              <li>The purchase price</li>
-              <li>Mortgages, liens and property taxes</li>
-              <li>The net number you will take home</li>
-            </ul>
-            <p>And because we shoulder the closing costs, there won't be any additional fees taken out on the statement.</p>
-            <p>Reviewing this document ensures you know exactly what your net proceeds are before closing. And if you ever have questions about the numbers, the escrow officer will be happy to go through the details line by line.</p>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>Sometimes yes, often no. Over-improving before a sale is one of the most common ways sellers burn money. A fresh coat of paint, minor landscaping, and a deep clean almost always return more than they cost. A full kitchen remodel almost never does. When I walk your home, I'll tell you the three highest-leverage improvements and the three things not to bother touching. Being honest about what not to do is part of the service.</p>
           </div></div></div>
         </div>
 
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Do I need to go to the escrow office to sign the paperwork?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
+            <span class="faq-question__text">How long will it take to sell?</span>
           </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>You don't have to go into the escrow office.</p>
-            <p>In most cases, the paperwork can be handled in a way that is convenient for you. Escrow officers can arrange for a notary to meet you at your home or another location, so you can sign where it works best.</p>
-            <p>If you prefer to go into the office, this option is available as well. We aim to make the process as simple and stress-free as possible, especially if mobility or scheduling is an issue.</p>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>In a balanced Irvine market, a well-priced home typically sells within 14 to 30 days. Overpriced homes sit for 60+ days and then sell for less than they would have if priced correctly on day one. Speed is a function of pricing strategy, preparation, and marketing. I build a timeline with you upfront so you know exactly what to expect at every stage.</p>
           </div></div></div>
         </div>
 
-        <h3 style="color: var(--color-navy); margin-top: 45px; margin-bottom: 10px;">Location and Property Type</h3>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Where is your company located?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
+            <span class="faq-question__text">What does "off-market" mean and should I consider it?</span>
           </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Our office is located at 17875 Von Karman Ave, Suite 150, Irvine, California.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Do you buy mobile homes?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Yes. If the mobile home is on leased land, then it might be a little tricky. If you're not sure about yours, reach out. We can review the details and let you know.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Do you buy townhomes?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Yes. Townhomes are among the properties we purchase across Southern California. Whether attached or stand-alone, we can purchase them in any condition.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Do you buy condos?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Yes, we purchase condos all over Southern California.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>What areas do you purchase in?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>We purchase in these counties:</p>
-            <ol style="margin-left: 20px; list-style: decimal;">
-              <li>Los Angeles</li>
-              <li>Orange County</li>
-              <li>Riverside</li>
-              <li>San Bernardino</li>
-              <li>San Diego</li>
-            </ol>
-          </div></div></div>
-        </div>
-
-        <h3 style="color: var(--color-navy); margin-top: 45px; margin-bottom: 10px;">Move-Out and Property Condition</h3>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>How much time do you provide for me to vacate the property?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>It's up to you and your schedule. We can provide anywhere from 14-90 days to vacate the property.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Can I stay in the home after closing (rent-back) if I need more time?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Yes. We can work out a short rent-back arrangement if you need extra time before moving. This is something we'll discuss before closing, so the terms are clear.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Can I leave things behind in the house?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Absolutely! Anything you don't want to take with you feel free to leave behind we will take care of it.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Do I need to clean my home before you come see it?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>No, you don't. We have seen homes in all conditions. We come out to look at the bones and structure, the items in the house don't affect our offer.</p>
-          </div></div></div>
-        </div>
-
-        <h3 style="color: var(--color-navy); margin-top: 45px; margin-bottom: 10px;">Ownership, Tenants, and Occupancy</h3>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>What do you do with the property once you take ownership?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>We renovate or repair all the homes we purchase.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Can you purchase the home tenant-occupied?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Yes. We can purchase homes that have tenants living in them. After closing, we'll take on the responsibility of managing or relocating them.</p>
-          </div></div></div>
-        </div>
-
-        <h3 style="color: var(--color-navy); margin-top: 45px; margin-bottom: 10px;">Advance and Contract</h3>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Who will be my main point of contact?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>When you reach out, you'll work with a dedicated representative from Seller's Advantage who will guide you through the process.</p>
-            <p>Our representative will:</p>
-            <ol style="margin-left: 20px; list-style: decimal;">
-              <li>Answer your questions</li>
-              <li>Schedule your walkthrough</li>
-              <li>Keep you updated from offer to closing</li>
-            </ol>
-            <p>There are no bots, third-party contractors, or agents. It's just us.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>How does the cash advance work?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>We are happy to work out up to a $20k cash advance to sellers who qualify. It's helpful for those who need money for moving expenses, deposits on your next house, or other urgent costs. When we agree on an advance, we deduct it from our final proceeds at closing.</p>
-          </div></div></div>
-        </div>
-
-        <h3 style="color: var(--color-navy); margin-top: 45px; margin-bottom: 10px;">Objections &amp; Concerns</h3>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Why aren't more people going this route?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>There are many reasons why property owners in LA County still go the traditional sales route. But often, it comes down to maximizing convenience.</p>
-            <p>Selling to a cash buyer, like Seller's Advantage, enables you to sidestep many hurdles, especially if you need money fast. It's the right choice for people who value speed, convenience, and certainty.</p>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>An off-market sale means your home is sold without being listed publicly on the MLS. It can be faster and more private, but it almost always costs you money because you lose competitive tension between buyers. I'll explore off-market options for clients who genuinely need privacy or speed over price, but I'll be upfront that for most sellers, going to market publicly nets more.</p>
           </div></div></div>
         </div>
 
@@ -983,39 +836,385 @@ p:last-child { margin-bottom: 0; }
     </div>
   </section>
 
-  <!-- ========== CTA FORM ========== -->
-  <section class="cta-form" id="contact">
-    <div class="container">
-      <div class="cta-form__inner">
-        <h2>Get Your Free,<br>No-Obligation Quote</h2>
-        <p>Call me at <a href="tel:15109355701" style="text-decoration:underline; font-weight:600;">1-510-935-5701</a> or enter your address below. You'll hear back within the hour.</p>
-
-        <form class="lead-form" id="ctaForm">
-          <div class="lead-form__address-wrap">
-            <input type="text" id="ctaAddress" name="address_display" placeholder="Enter your home address" autocomplete="off" required>
-          </div>
-          <input type="text" class="lead-form__unit" name="unit" placeholder="Unit" maxlength="5">
-
-          <div class="lead-form__hidden">
-            <input type="hidden" name="street_address" id="ctaStreet">
-            <input type="hidden" name="city" id="ctaCity">
-            <input type="hidden" name="state" id="ctaState">
-            <input type="hidden" name="zip" id="ctaZip">
-            <input type="hidden" name="full_address" id="ctaFull">
-            <input type="hidden" name="lat" id="ctaLat">
-            <input type="hidden" name="lng" id="ctaLng">
-            <input type="hidden" name="_subject" value="🏠 New Lead: Home Valuation Request">
-            <input type="hidden" name="source" value="CTA Form">
-            <input type="hidden" name="page_url" id="ctaPageUrl">
-            <input type="hidden" name="submitted_at" id="ctaTimestamp">
-          </div>
-
-          <button type="submit" class="btn btn--green btn--full">Get My Free Home Valuation</button>
-        </form>
-
-        <p>Trusted by Southern California homeowners</p>
-        <img class="broker-badge" src="https://www.drozq.com/media/icons/real/real-broker-logo.png" alt="Real Broker" width="160" height="44" loading="lazy">
+  <!-- ========== SECTION 4: CATEGORY 02 ========== -->
+  <section class="faq-category faq-category--alt" id="working-with-joshua">
+    <div class="faq-category__inner">
+      <div class="faq-cat-header cf-reveal">
+        <div class="faq-cat-header__text">
+          <div class="cf-label">Category 02</div>
+          <h2 class="faq-cat-headline">Working With Joshua</h2>
+          <p class="faq-cat-sub">What to expect when you hire me and how we'll work together.</p>
+        </div>
+        <div class="faq-cat-header__image-wrap">
+          <!-- SWAP: Street-level Irvine neighborhood or exterior home shot from /media/images/ -->
+          <img class="faq-cat-header__image" src="/media/images/outside-home-pic3.jpg" alt="Southern California neighborhood street view" loading="lazy">
+        </div>
       </div>
+
+      <div class="faq-list cf-reveal">
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">Why should I hire you specifically?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>I give you three things most agents don't. First, negotiation skill trained in the most adversarial sales environment in the country (I averaged 20 units a month selling cars before I moved into real estate, which means I learned to close hard deals with hostile buyers). Second, responsiveness. I answer texts and calls fast, because deals die in silence. Third, documentation. Every deal I close becomes a case file with real numbers and real outcomes. You can read them at <a href="/testimonials/">/testimonials</a> before we even talk. Most agents ask you to trust them. I show you the receipts first.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">You're relatively new to real estate. Is that a problem?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>Fair question, and I'd rather you ask it than wonder. I'm licensed, I'm closing deals, and I'm backed by a full brokerage with decades of collective experience behind me. What I lack in years I more than make up for in responsiveness, work ethic, and negotiation track record. Newer agents often outperform veterans on communication and hustle because we have to. Read the case files. The work speaks for itself.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">Is your commission negotiable?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>I'll always be transparent about what I charge and what you're getting for it. My commission reflects the quality of the marketing, negotiation, and service I deliver, and I'll walk you through exactly what that includes on our first call. If another agent is quoting you a lower rate, ask them what they're cutting to get there. It's usually the marketing budget, the photography, or the hours they'll actually spend on your listing. You get what you pay for in this business.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">How often will I hear from you?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>More than you expect. My rule is simple: no client of mine ever waits more than a few hours for a response during normal hours. During active listing periods, expect regular updates even if there's nothing dramatic to report. I'd rather over-communicate than leave you wondering. Silence is where trust dies.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">What if I'm not happy with how the listing is going?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>We talk about it immediately. I'd rather have an uncomfortable conversation in week two than discover in week six that you've been unhappy the whole time. Every listing agreement I do includes a clear structure for how we course-correct if things aren't working, whether that means adjusting price, adjusting strategy, or (rarely) parting ways. I don't hold clients hostage to contracts.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">Do you work alone or with a team?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>I work directly with you. You'll never get passed off to an assistant or a junior agent for the important moments. Behind the scenes, I have a brokerage, lending partners, inspectors, photographers, and a transaction coordinator I work with, but you deal with me for everything that matters.</p>
+          </div></div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 5: CATEGORY 03 ========== -->
+  <section class="faq-category" id="pricing-offers">
+    <div class="faq-category__inner">
+      <div class="faq-cat-header cf-reveal">
+        <div class="faq-cat-header__text">
+          <div class="cf-label">Category 03</div>
+          <h2 class="faq-cat-headline">Pricing &amp; Offers</h2>
+          <p class="faq-cat-sub">How pricing actually works and what to do when offers come in.</p>
+        </div>
+        <div class="faq-cat-header__image-wrap">
+          <!-- SWAP: Clean exterior home shot with architectural feature from /media/images/ -->
+          <img class="faq-cat-header__image" src="/media/images/outside-home-pic4.jpg" alt="Exterior view of a Southern California home" loading="lazy">
+        </div>
+      </div>
+
+      <div class="faq-list cf-reveal">
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">How do you determine the listing price?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>I build a comparative market analysis using three inputs: recently sold homes similar to yours (within 90 days, within a tight geographic radius), currently active listings you'd be competing against, and expired listings that failed to sell. Then I factor in your home's specific condition, features, and any unique value drivers. The result is a price range, not a single number, with a recommended strategy for where in that range to list.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">Should I price high and negotiate down, or price right and attract offers?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>Pricing high almost always hurts you. Homes that sit on the market get stale, and buyers start asking "what's wrong with it." The data is clear: homes priced right on day one sell faster and often for more money than homes that are initially overpriced and then reduced. I'll never recommend a listing price designed to make you feel good on day one if it'll cost you on day thirty.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">What happens if I get multiple offers?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>We structure a clear process to evaluate them. Price matters, but so do contingencies, financing type, down payment size, closing timeline, and buyer seriousness. A $5,000 higher offer from a buyer with weak financing can easily be worse than a slightly lower cash offer that closes in two weeks. I walk you through each offer side by side so the decision is clear.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">Can I reject an offer?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>Absolutely. You're in control of your listing at every stage. I'll give you my honest read on every offer (whether I think it's strong, weak, or negotiable), but the final decision is always yours.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">What's a seller credit and why does it matter?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>A seller credit is money the seller contributes toward the buyer's closing costs or rate buy-down at the close of the transaction. It doesn't reduce your proceeds in the same way a price reduction does because it's structured differently in the deal. Smart agents use seller credits as negotiation leverage to keep the headline sale price high while giving the buyer what they actually need. You can see an example of this at <a href="/testimonials/001-long-beach-firefighter/">this case file</a> where we structured a $23,250 seller credit that paid for closing costs and bought down the buyer's rate.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">What if my home doesn't sell?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>First, we don't let it get to that point without course-correcting. If a listing isn't getting showings or offers in the expected window, we adjust (price, photography, marketing strategy, or staging). If after all adjustments the home still doesn't sell, we have an honest conversation about whether the timing is wrong or whether your goals have changed. I don't leave clients stuck.</p>
+          </div></div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 6: CATEGORY 04 ========== -->
+  <section class="faq-category faq-category--alt" id="the-process">
+    <div class="faq-category__inner">
+      <div class="faq-cat-header cf-reveal">
+        <div class="faq-cat-header__text">
+          <div class="cf-label">Category 04</div>
+          <h2 class="faq-cat-headline">The Process</h2>
+          <p class="faq-cat-sub">Timelines, inspections, escrow, and what actually happens between listing and closing.</p>
+        </div>
+        <div class="faq-cat-header__image-wrap">
+          <!-- SWAP: Detail shot (keys, paperwork, handshake) from /media/images/ -->
+          <img class="faq-cat-header__image" src="/media/images/outside-home-pic5.webp" alt="Detail of a home purchase transaction" loading="lazy">
+        </div>
+      </div>
+
+      <div class="faq-list cf-reveal">
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">What does the timeline look like from listing to close?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>A typical Irvine home sale breaks down like this: 1 to 2 weeks of prep and staging, 2 to 4 weeks on market, 30 to 45 days of escrow after accepting an offer. Total: roughly 6 to 10 weeks from first conversation to keys exchanged. I'll build a specific timeline for your situation on our first call.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">What do I need to do before the first showing?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>Three things. Declutter aggressively (most sellers underestimate how much). Deep clean every surface. Handle obvious cosmetic issues like scuffed paint or burnt-out bulbs. I'll send you a detailed prep checklist after our first meeting, including which rooms to prioritize.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">Do I need to leave during showings?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>Yes, every time. Buyers don't open closets or discuss their real reactions when the owner is home. A 30 to 60 minute window is all we usually need, and I coordinate scheduling so it's as painless as possible.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">Will I need a home inspection?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>The buyer will typically order a home inspection as part of their due diligence. You don't pay for it, but you do respond to any issues it uncovers. Some sellers also choose to get a pre-listing inspection so we can address problems before they become negotiation points. I'll recommend whether that's worth it based on your home's age and condition.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">What happens during escrow?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>Escrow is the 30 to 45 day period between the buyer's offer being accepted and the sale closing. During this window: the buyer does their inspections, the buyer's lender orders an appraisal, both parties handle contingency removals, the title is cleared, and the final paperwork is prepared for signing. I manage the day-to-day coordination and keep you informed of every milestone.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">What if the appraisal comes in low?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>It happens, especially in a fast-moving market. If the appraisal comes in below the agreed sale price, there are three paths: the buyer makes up the difference in cash, we renegotiate the price to match the appraisal, or we cancel the deal and relist. Most appraisal issues can be resolved with good negotiation, which is where having an experienced advocate on your side matters.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">What are closing costs for a seller?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>Sellers typically pay the agent commissions, title and escrow fees, any agreed-upon credits to the buyer, and prorated property taxes and HOA fees. On a typical Irvine home, seller closing costs run roughly 7 to 9 percent of the sale price when commissions are included. I'll give you a detailed net sheet showing exactly what you'll walk away with before you sign any listing agreement.</p>
+          </div></div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 7: CATEGORY 05 ========== -->
+  <section class="faq-category" id="after-the-sale">
+    <div class="faq-category__inner">
+      <div class="faq-cat-header cf-reveal">
+        <div class="faq-cat-header__text">
+          <div class="cf-label">Category 05</div>
+          <h2 class="faq-cat-headline">After the Sale</h2>
+          <p class="faq-cat-sub">What happens once the deal is done and how we stay connected.</p>
+        </div>
+        <div class="faq-cat-header__image-wrap">
+          <!-- SWAP: Open, empty interior or morning-light room from /media/images/ -->
+          <img class="faq-cat-header__image" src="/media/images/irvine.jpeg" alt="Open interior with morning light" loading="lazy">
+        </div>
+      </div>
+
+      <div class="faq-list cf-reveal">
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">How long before I get my money?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>In California, sale proceeds are wired to you on the day escrow closes or the following business day, depending on the time of day the closing is recorded. I walk you through the wire process in advance so there are no surprises on closing day.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">Are there tax implications I should know about?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>There can be, especially if your home has appreciated significantly. The IRS allows a capital gains exclusion of up to $250,000 for single filers and $500,000 for married filers on the sale of a primary residence (with conditions). Investment properties and second homes are treated differently and may be eligible for a 1031 exchange. I am not a tax professional, but I'll point you to trusted CPAs I work with who specialize in real estate transactions.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">Can you help me buy my next home?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>Yes, and most of my clients choose to work with me on both sides. If you're selling and buying in the same window, we coordinate the timing carefully, using contingencies, bridge financing, or rent-back agreements to make the transition smooth. Selling and buying at the same time is one of the most complex things you can do in real estate, which is exactly why you want the same person managing both sides.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">What if I'm relocating out of state?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>I work with a trusted network of agents nationally, so if you're moving to Texas, New York, or anywhere else, I can connect you with an agent I've personally vetted in that market. You get a referral I stand behind, and I stay in the loop to make sure your relocation goes smoothly on both ends.</p>
+          </div></div></div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span class="faq-question__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="faq-question__text">Do you stay in touch after the sale?</span>
+          </button>
+          <div class="faq-answer"><div class="faq-answer__inner"><div class="faq-answer__content">
+            <p>Yes. Most of my clients become long-term relationships, not one-time transactions. I check in a few times a year, keep you posted on market conditions, and am always available if you have questions about your home, your next move, or a friend's situation. I'm not going anywhere.</p>
+          </div></div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 8: FINAL CTA ========== -->
+  <section class="cf-cta-strip">
+    <div class="cf-narrow">
+      <div class="cf-label">Still Have Questions?</div>
+      <h2>Didn't see your question?</h2>
+      <p class="cf-cta-strip__sub">That's the whole point of a call. Book 15 minutes and ask me anything. No pressure, no pitch, no wasted time.</p>
+      <a href="/contact/" class="btn btn--green">Book a 15-minute call</a>
     </div>
   </section>
 
@@ -1232,7 +1431,7 @@ p:last-child { margin-bottom: 0; }
       });
     })();
 
-    // 4. FAQ ACCORDION
+    // 4. LEGACY FAQ ACCORDION (kept for compatibility with other pages that use .faq__question)
     document.querySelectorAll('.faq__question').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var item = this.closest('.faq__item');
@@ -1247,6 +1446,35 @@ p:last-child { margin-bottom: 0; }
         }
       });
     });
+
+    // 5. FAQ PAGE ACCORDION (multi-open, keyboard accessible)
+    document.querySelectorAll('.faq-question').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var item = this.closest('.faq-item');
+        var isOpen = item.classList.toggle('is-open');
+        this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+    });
+
+    // 6. SCROLL REVEAL for .cf-reveal on this page
+    (function initFaqReveal() {
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var reveals = document.querySelectorAll('.cf-reveal');
+      if (!reveals.length) return;
+      if (!('IntersectionObserver' in window) || reduceMotion) {
+        reveals.forEach(function (el) { el.classList.add('is-visible'); });
+        return;
+      }
+      var revealObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            revealObs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+      reveals.forEach(function (el) { revealObs.observe(el); });
+    })();
 
   })();
   </script>
