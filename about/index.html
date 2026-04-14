@@ -378,6 +378,190 @@ p:last-child { margin-bottom: 0; }
   .lead-modal { padding: 30px 22px; }
   .lead-modal__row { flex-direction: column; gap: 12px; }
 }
+
+/* ========== CASE FILE SYSTEM (shared with /testimonials/) ========== */
+.cf-hero, .cf-section { color: var(--color-navy); }
+
+.cf-label {
+  display: inline-block; font-size: 0.875rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--color-green); margin-bottom: 28px;
+}
+
+.cf-section { padding: 110px 0; background: var(--color-white); }
+.cf-section--alt { background: var(--color-gray-bg); }
+.cf-narrow { max-width: 720px; margin: 0 auto; padding: 0 30px; text-align: center; }
+.cf-wide { max-width: 1100px; margin: 0 auto; padding: 0 30px; }
+
+.cf-body {
+  font-size: 1.25rem; line-height: 1.6;
+  color: var(--color-navy-light); margin: 0;
+}
+.cf-body + .cf-body { margin-top: 1.2em; }
+
+.cf-reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.cf-reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-reveal { transition: none; opacity: 1; transform: none; }
+}
+
+/* Stats strip (also used on /testimonials/) */
+.cf-stats-strip {
+  padding: 56px 0; background: #f1f4f7;
+  border-top: 1px solid rgba(30, 47, 73, 0.06);
+  border-bottom: 1px solid rgba(30, 47, 73, 0.06);
+}
+.cf-stats-strip__inner { max-width: 1100px; margin: 0 auto; padding: 0 30px; text-align: center; }
+.cf-stats-strip__label { margin-bottom: 32px; }
+.cf-stats-strip__grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 24px; align-items: start;
+}
+.cf-stats-strip__grid.cf-stats-strip__grid--three {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 820px; margin: 0 auto;
+}
+.cf-stats-strip__item { text-align: center; }
+.cf-stats-strip__number {
+  display: block; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800;
+  color: var(--color-green); line-height: 1; letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums; margin-bottom: 12px;
+}
+.cf-stats-strip__sub {
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--color-navy-light);
+  line-height: 1.4;
+}
+
+/* CTA strip */
+.cf-cta-strip { padding: 96px 0; background: var(--color-gray-bg); text-align: center; }
+.cf-cta-strip h2 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 700;
+  line-height: 1.2; letter-spacing: -0.01em; color: var(--color-navy);
+  margin-bottom: 18px;
+}
+.cf-cta-strip__sub {
+  font-size: 1.125rem; line-height: 1.6; color: var(--color-navy-light);
+  max-width: 540px; margin: 0 auto 32px;
+}
+.cf-cta-strip .btn { padding: 20px 42px; font-size: 18px; }
+
+/* ========== ABOUT-SPECIFIC ========== */
+.about-hero {
+  min-height: 72vh; display: flex; align-items: center;
+  padding: 80px 0 100px;
+  background: linear-gradient(180deg, #fafbfa 0%, var(--color-white) 100%);
+  color: var(--color-navy);
+}
+.about-hero__inner {
+  width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 30px;
+  display: grid; grid-template-columns: 3fr 2fr; gap: 60px; align-items: center;
+}
+.about-hero__text h1 {
+  font-size: clamp(3rem, 7vw, 6rem); font-weight: 700;
+  line-height: 1.05; letter-spacing: -0.025em;
+  color: var(--color-navy); margin: 0 0 18px;
+}
+.about-hero__sub {
+  font-size: clamp(1.125rem, 2vw, 1.5rem); font-weight: 400;
+  color: var(--color-navy-light); margin: 0; letter-spacing: 0.005em;
+}
+.about-hero__image-wrap { display: flex; justify-content: flex-end; }
+.about-hero__image {
+  width: 100%; max-width: 480px;
+  border-radius: 8px; display: block;
+  box-shadow: 0 18px 48px rgba(30, 47, 73, 0.12);
+}
+
+.about-headline {
+  font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 700;
+  line-height: 1.18; letter-spacing: -0.015em;
+  color: var(--color-navy); margin: 0 0 28px;
+}
+
+.about-values {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  max-width: 1100px; margin: 0 auto; padding: 0 30px;
+}
+.about-value {
+  background: var(--color-white); border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius-lg); padding: 40px 32px;
+}
+.about-value__num {
+  display: block; font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--color-green); margin-bottom: 22px;
+}
+.about-value__name {
+  font-size: clamp(1.375rem, 2.2vw, 1.625rem); font-weight: 700;
+  color: var(--color-navy); line-height: 1.25; margin: 0 0 14px;
+  letter-spacing: -0.005em;
+}
+.about-value__note {
+  font-size: 1rem; line-height: 1.55;
+  color: var(--color-navy-light); margin: 0;
+}
+
+.about-values-wrap { text-align: center; }
+.about-values-wrap .about-headline { max-width: 18ch; margin-left: auto; margin-right: auto; }
+
+.about-minicards {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
+  max-width: 760px; margin: 44px auto 0; padding: 0 30px;
+}
+.about-minicard {
+  display: flex; flex-direction: column; gap: 10px;
+  background: var(--color-white); border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius); padding: 22px 24px;
+  color: var(--color-navy); text-decoration: none; text-align: left;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+.about-minicard:hover {
+  border-color: var(--color-green);
+  box-shadow: 0 10px 28px rgba(66, 204, 147, 0.14);
+  transform: translateY(-2px); color: var(--color-navy);
+}
+.about-minicard__tab {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--color-green);
+}
+.about-minicard__stat {
+  font-size: clamp(1.5rem, 2.5vw, 1.75rem); font-weight: 800;
+  color: var(--color-green); line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.about-minicard__meta {
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--color-navy-light);
+}
+
+.about-cta-wrap { display: flex; justify-content: center; margin-top: 8px; }
+
+@media (max-width: 768px) {
+  .cf-section { padding: 64px 0; }
+  .cf-narrow, .cf-wide { padding: 0 24px; }
+  .cf-stats-strip { padding: 44px 0; }
+  .cf-stats-strip__grid { grid-template-columns: repeat(2, 1fr); gap: 36px 24px; }
+  .cf-cta-strip { padding: 64px 0; }
+
+  .about-hero { padding: 60px 0 70px; min-height: auto; }
+  .about-hero__inner { grid-template-columns: 1fr; gap: 36px; padding: 0 24px; }
+  .about-hero__image-wrap { justify-content: center; order: -1; }
+  .about-hero__image { max-width: 280px; }
+  .about-hero__text { text-align: center; }
+  .about-hero__text h1 { font-size: clamp(2.75rem, 12vw, 4rem); }
+
+  .about-values { grid-template-columns: 1fr; gap: 18px; max-width: 460px; padding: 0 24px; }
+  .about-value { padding: 32px 26px; }
+
+  .about-minicards { gap: 14px; padding: 0 24px; margin-top: 32px; }
+}
+@media (max-width: 640px) {
+  .cf-stats-strip__grid { grid-template-columns: 1fr; gap: 28px; }
+  .cf-stats-strip__grid.cf-stats-strip__grid--three { grid-template-columns: 1fr; }
+  .about-minicards { grid-template-columns: 1fr; max-width: 420px; }
+}
   </style>
 </head>
 <body>
@@ -526,148 +710,168 @@ p:last-child { margin-bottom: 0; }
     </div>
   </header>
 
-  <!-- ========== MISSION ========== -->
-  <section class="cta-form">
-    <div class="container">
-      <div class="cta-form__inner">
-        <h1>Our Mission</h1>
-        <p>We buy houses as-is, so owners have no additional cost, repairs, work or worry, improving communities one house at a time.</p>
+  <!-- ========== SECTION 1: HERO ========== -->
+  <section class="about-hero">
+    <div class="about-hero__inner">
+      <div class="about-hero__text">
+        <div class="cf-label">About Joshua Guerrero</div>
+        <h1>I'm not from here.</h1>
+        <p class="about-hero__sub">Irvine, California &middot; Licensed since January 2026</p>
+      </div>
+      <div class="about-hero__image-wrap">
+        <img class="about-hero__image" src="/media/images/Waist.png" alt="Joshua Guerrero, Real Estate Agent" width="480" fetchpriority="high">
       </div>
     </div>
   </section>
 
-  <!-- ========== VIDEO ========== -->
-  <section class="section">
-    <div class="container">
-      <div style="max-width:800px;margin:0 auto;">
-        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:var(--radius-lg);">
-          <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" src="https://www.youtube.com/embed/H-P7j3JtWzc" title="About Seller's Advantage" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+  <!-- ========== SECTION 2: THE BACKSTORY ========== -->
+  <section class="cf-section">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">The Backstory</div>
+      <p class="cf-body">I grew up in Vallejo. My family, my parents, my siblings, everyone I love, still lives there. When I tell people I moved to Los Angeles to build a real estate career, they usually nod politely. What they don't understand is what that actually cost.</p>
+      <p class="cf-body">I see my family on weekends I can afford. I miss birthdays. I have dinner alone more nights than I'd like to admit. I made that trade on purpose, and I'd make it again.</p>
+      <p class="cf-body">Because I'm not here to sell a few houses. I'm here to build something.</p>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 3: BY THE NUMBERS ========== -->
+  <section class="cf-stats-strip">
+    <div class="cf-stats-strip__inner cf-reveal">
+      <div class="cf-label cf-stats-strip__label">By the Numbers</div>
+      <div class="cf-stats-strip__grid cf-stats-strip__grid--three">
+
+        <div class="cf-stats-strip__item">
+          <!-- UPDATE AS VOLUME GROWS -->
+          <span class="cf-stats-strip__number cf-count-up" data-count-target="1100000" data-count-prefix="$" data-count-format="compact">$1.1M</span>
+          <!-- END UPDATE -->
+          <div class="cf-stats-strip__sub">Volume closed</div>
         </div>
+
+        <div class="cf-stats-strip__item">
+          <!-- UPDATE AS VOLUME GROWS -->
+          <span class="cf-stats-strip__number cf-count-up" data-count-target="2">2</span>
+          <!-- END UPDATE -->
+          <div class="cf-stats-strip__sub">Homes sold</div>
+        </div>
+
+        <div class="cf-stats-strip__item">
+          <!-- UPDATE AS VOLUME GROWS -->
+          <span class="cf-stats-strip__number cf-count-up" data-count-target="20">20</span>
+          <!-- END UPDATE -->
+          <div class="cf-stats-strip__sub">Units per month (past life)</div>
+        </div>
+
       </div>
     </div>
   </section>
 
-  <!-- ========== ABOUT ========== -->
-  <section class="section">
-    <div class="container">
-      <div class="body-text">
-        <h2 class="text-center" style="margin-bottom:18px;">About Seller&rsquo;s Advantage</h2>
-        <p style="text-align:center;"><em>Selling your home? Look no further than Seller&rsquo;s Advantage for an easy, hassle-free experience.</em></p>
-
-        <p><strong>Selling your home? Look no further than Seller&rsquo;s Advantage for an easy, hassle-free experience.</strong></p>
-
-        <p><strong>Seller&rsquo;s Advantage</strong>, headquartered in Irvine, CA, is a family-owned company focused on eliminating the pain points traditionally associated with <strong>selling your house</strong>. We buy properties from people like you &ndash; people who want to sell their properties fast for the best possible value.</p>
-
-        <p>The Seller&rsquo;s Advantage team is made up of local Southern California residents experienced in buying California houses! We value integrity, communication, and customer service above everything else, which is why our business has been so successful for over 25 years.</p>
-
-        <p>We believe in helping our clients and always strive to solve their problems with a unique solution. We understand the different situations a homeowner may be struggling with.</p>
-
-        <p>Whether you&rsquo;re upside down on your mortgage, inherited a home going through probate, or just don&rsquo;t want to deal with realtors, we can help with your situation. Every month, we work with hundreds of individuals to take the time, stress, and frustrations out of a traditional home sale to sell your house fast.</p>
-
-        <h3 style="margin-top:40px;margin-bottom:14px;">Why Choose Seller&rsquo;s Advantage? We treat you like family.</h3>
-
-        <p>Selling a home can be stressful, time-consuming, and uncertain&mdash;especially when going the traditional route. At <strong>Seller&rsquo;s Advantage</strong>, we make the process <strong>simple, fast, and hassle-free</strong> by offering a direct cash purchase with no hidden surprises. When we make you an offer, we stand by it&mdash;<strong>no last-minute changes, no delays, and no stress.</strong></p>
-
-        <ul class="checklist" style="margin: 24px 0;">
-          <li><span class="checklist__icon checklist__icon--green">&#10003;</span> <span><strong>No Fees or Commissions</strong> &ndash; Keep more of your money; there are no agent commissions or closing costs.</span></li>
-          <li><span class="checklist__icon checklist__icon--green">&#10003;</span> <span><strong>Sell As-Is</strong> &ndash; No repairs, no renovations, no cleaning&mdash;just a straightforward sale.</span></li>
-          <li><span class="checklist__icon checklist__icon--green">&#10003;</span> <span><strong>No Appraisals or Financing Delays</strong> &ndash; We buy homes directly, so there&rsquo;s no waiting on banks, approvals, or buyer financing that could fall through.</span></li>
-          <li><span class="checklist__icon checklist__icon--green">&#10003;</span> <span><strong>Flexible Closing on Your Terms</strong> &ndash; Need to close in a <strong>week</strong>? We can do that. Need <strong>extra time</strong> to move? We work on <strong>your schedule.</strong></span></li>
-        </ul>
-
-        <p>We buy homes across <strong>Los Angeles</strong> in any condition&mdash;whether you&rsquo;re dealing with an <strong>inherited home, foreclosure, divorce, or just want to sell fast without the hassle</strong> of the traditional market.</p>
-
-        <p><strong>With one of the highest customer satisfaction ratings in our industry, it&rsquo;s easy to see why we&rsquo;ve been able to help thousands of homeowners just like you! Give us a call today at <a href="tel:18002083243">1-800-208-3243</a> for your free cash offer on your home.</strong></p>
-
-        <p>It&rsquo;s that simple if you need to &ldquo;<a href="https://www.sellersadvantage.com/ca/sell-my-house-fast-los-angeles/">sell my house fast Los Angeles</a>&rdquo;, we can help. Call us today or find <a href="https://www.linkedin.com/company/sellers-advantage">Seller&rsquo;s Advantage Reviews on Linkedin</a>.</p>
-      </div>
+  <!-- ========== SECTION 4: THE SCHOOL ========== -->
+  <section class="cf-section">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">The School</div>
+      <h2 class="about-headline">What car sales taught me.</h2>
+      <p class="cf-body">Before real estate, I spent two years selling cars. Most people hear that and assume it's a red flag. I think it's the most important thing on my resume.</p>
+      <p class="cf-body">I averaged 20 units a month. I was salesman of the month more times than I can count. My average front-end gross was $1,870 per deal, in an industry where the average salesperson barely clears half of that. I learned how to read a room in the first 90 seconds. I learned how to negotiate when the other side thinks they already won. I learned how to stay calm when a deal falls apart at 9:47pm on a Saturday night and put it back together by Sunday morning.</p>
+      <p class="cf-body">Every one of those skills translates directly to your home sale. When I sit across from a buyer's agent, I already know what they're going to say before they say it. When an inspection comes back with a list of issues, I already know which ones matter, which ones don't, and which ones I can turn into leverage for you.</p>
     </div>
   </section>
 
-  <!-- ========== CTA FORM ========== -->
-  <section class="cta-form" id="contact">
-    <div class="container">
-      <div class="cta-form__inner">
-        <h2>Get My Free,<br>No-Obligation Quote</h2>
-        <p>Call us today at <a href="tel:18002083243" style="text-decoration:underline; font-weight:600;">800-208-3243</a> and get an offer in as little as 24 hours. It&rsquo;s quick and easy!</p>
-
-        <form class="lead-form" id="ctaForm">
-          <div class="lead-form__address-wrap">
-            <input type="text" id="ctaAddress" name="address_display" placeholder="Enter your home address" autocomplete="off" required>
-          </div>
-          <input type="text" class="lead-form__unit" name="unit" placeholder="Unit" maxlength="5">
-
-          <div class="lead-form__hidden">
-            <input type="hidden" name="street_address" id="ctaStreet">
-            <input type="hidden" name="city" id="ctaCity">
-            <input type="hidden" name="state" id="ctaState">
-            <input type="hidden" name="zip" id="ctaZip">
-            <input type="hidden" name="full_address" id="ctaFull">
-            <input type="hidden" name="lat" id="ctaLat">
-            <input type="hidden" name="lng" id="ctaLng">
-            <input type="hidden" name="_subject" value="🏠 New Lead: Home Valuation Request">
-            <input type="hidden" name="source" value="CTA Form">
-            <input type="hidden" name="page_url" id="ctaPageUrl">
-            <input type="hidden" name="submitted_at" id="ctaTimestamp">
-          </div>
-
-          <button type="submit" class="btn btn--green btn--full">Get My Free Quote</button>
-        </form>
-
-        <p>Southern California&rsquo;s Most Trusted Home Buyers</p>
-        <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/02/sellers-advantage-bbb-accredited-a-plus.png -- replace with self-hosted version -->
-        <img class="broker-badge" src="https://www.sellersadvantage.com/wp-content/uploads/2025/02/sellers-advantage-bbb-accredited-a-plus.png" alt="Seller's Advantage BBB Accredited A+ Rating" loading="lazy" style="max-width:200px;">
-      </div>
+  <!-- ========== SECTION 5: THE PATTERN ========== -->
+  <section class="cf-section cf-section--alt">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">The Pattern</div>
+      <h2 class="about-headline">I don't just show up. I rebuild the system.</h2>
+      <p class="cf-body">Look at my track record and you'll see the same thing in every chapter.</p>
+      <p class="cf-body">At a real estate wholesaling startup, I built the auto-dialer system that cut call time by more than half, then wrote the scripts the rest of the team used.</p>
+      <p class="cf-body">At an e-commerce company, I took a product doing $600 a month and built it to $7,500 by rebuilding the logistics from scratch.</p>
+      <p class="cf-body">At a waste management startup, I took revenue from zero to $260,000 in a year by rewriting the deal structures the company had been using for years.</p>
+      <p class="cf-body">At every dealership I worked at, I didn't just hit quota. I was top performer.</p>
+      <p class="cf-body">The pattern isn't "he shows up." The pattern is "he shows up, he figures out what's broken, and he rebuilds it." That's what I do for my clients too.</p>
     </div>
   </section>
 
-  <!-- ========== FAQ ========== -->
-  <section class="section" id="faq">
-    <div class="container">
-      <div class="faq">
-        <h2>Common Questions Sellers Ask About Selling a House As-Is</h2>
+  <!-- ========== SECTION 6: VALUES ========== -->
+  <section class="cf-section">
+    <div class="about-values-wrap cf-reveal">
+      <div class="cf-label">What I Stand On</div>
+      <h2 class="about-headline">Three principles. No exceptions.</h2>
+    </div>
+    <div class="about-values cf-reveal">
 
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>What should I look for from companies that buy houses in any condition or companies that buy houses for cash?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Many businesses claim they&rsquo;ll buy your home in any condition or pay cash, but their efficiency and reliability can vary widely. At Seller&rsquo;s Advantage, we&rsquo;ve purchased thousands of homes throughout Southern California and Los Angeles. Our process is designed to make things easy for you, the homeowner, so you can get cash quickly and with minimal hassle.</p>
-            <p>We only make a cash offer if we&rsquo;re confident we can complete the transaction quickly and smoothly. When considering any company, always check their track record and read online reviews. We&rsquo;re proud to have an A+ rating with the Better Business Bureau because of our experience and customer satisfaction. When it comes to selling your biggest asset, trust a company with proven results.</p>
-          </div></div></div>
-        </div>
+      <article class="about-value">
+        <span class="about-value__num">01</span>
+        <h3 class="about-value__name">Competitive Greatness</h3>
+        <p class="about-value__note">The willingness to do what average agents won't, on the days it matters most.</p>
+      </article>
 
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Where do you purchase homes for cash?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>We are currently purchasing homes in most major metropolitan areas across the country. Our company started in Northern and Southern California&mdash;serving Los Angeles, San Diego, and San Francisco&mdash;and quickly expanded into other markets. We&rsquo;re continually adding new locations, so contact us today if you need to <strong>sell your home, commercial property or land quickly</strong>.</p>
-          </div></div></div>
-        </div>
+      <article class="about-value">
+        <span class="about-value__num">02</span>
+        <h3 class="about-value__name">Unimpeachable Character</h3>
+        <p class="about-value__note">I'd rather lose a commission than lose your trust. Every time.</p>
+      </article>
 
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Do all people who buy houses have the same process as Seller&rsquo;s Advantage?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>No, not all buyers follow the same process, and experience levels and procedures can vary widely. Our process is straightforward: After an initial phone call, we&rsquo;ll send one of our qualified team members to visit your property and assess its cash value. We determine that value with you on the spot, so you can make an informed decision&mdash;without any pressure. While our program isn&rsquo;t right for everyone, most people find that the simplicity and reduced stress compared to traditional home sales make it an excellent option.</p>
-          </div></div></div>
-        </div>
+      <article class="about-value">
+        <span class="about-value__num">03</span>
+        <h3 class="about-value__name">Speed is King</h3>
+        <p class="about-value__note">Deals die in the silence between messages. I don't let that silence happen.</p>
+      </article>
 
+    </div>
+  </section>
+
+  <!-- ========== SECTION 7: THE MISSION ========== -->
+  <section class="cf-section cf-section--alt">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">The Mission</div>
+      <h2 class="about-headline">Why real estate. Why now.</h2>
+      <p class="cf-body">Selling cars was the school. Real estate is the career.</p>
+      <p class="cf-body">Because this is the transaction that matters. A car is a purchase. A home is a financial turning point, for the seller and the buyer. It's the biggest number most people will ever negotiate. And it's the one transaction where, in 2026, most agents are still operating the same way they did in 2006.</p>
+      <p class="cf-body">I'm not interested in being an average agent. I'm interested in building a reputation that makes my clients tell their friends without being asked. That's the whole strategy. Do exceptional work. Document it. Let the work recruit the next client.</p>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 8: THE RECEIPTS ========== -->
+  <section class="cf-section">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">The Receipts</div>
+      <h2 class="about-headline">Every deal gets documented.</h2>
+      <p class="cf-body">I don't just tell you I do the work. I show you. Every transaction becomes a case file, anonymized to protect the client, with the real numbers, the real negotiation, and the real outcome. If you want to know how I think, read the case files.</p>
+      <div class="about-cta-wrap" style="margin-top: 36px;">
+        <a href="/testimonials/" class="btn btn--green">See the case files</a>
       </div>
+    </div>
+
+    <div class="about-minicards cf-reveal">
+      <a class="about-minicard" href="/testimonials/001-long-beach-firefighter/">
+        <span class="about-minicard__tab">Case File 001</span>
+        <span class="about-minicard__stat">$23,250</span>
+        <span class="about-minicard__meta">Long Beach &middot; First-Time Buyer</span>
+      </a>
+      <a class="about-minicard" href="/testimonials/002-corona-analyst/">
+        <span class="about-minicard__tab">Case File 002</span>
+        <span class="about-minicard__stat">$20,000</span>
+        <span class="about-minicard__meta">Corona &middot; Strategic Purchase</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 9: THE CLOSER ========== -->
+  <section class="cf-section cf-section--alt">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">The Closer</div>
+      <p class="cf-body">You get someone who is not waiting for your deal to be comfortable. Someone who has walked away from more deals than most agents have ever closed, because I'd rather lose a commission than lose your trust. Someone who will be responsive to the point of being annoying about it, because I know what it feels like to be on the other side of an agent who disappears for three days.</p>
+      <p class="cf-body">You get someone who took the hardest path available and is not about to waste your time on the easy version.</p>
+      <p class="cf-body">You get me.</p>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 10: FINAL CTA ========== -->
+  <section class="cf-cta-strip">
+    <div class="cf-narrow">
+      <div class="cf-label">Let's Talk</div>
+      <h2>Ready to sell?</h2>
+      <p class="cf-cta-strip__sub">If you've read this far, you already know I'm going to work harder on your listing than any other agent in Irvine. The next step is a 15-minute conversation. No pressure, no pitch. Just a clear look at what your home is worth and what it'll take to sell it well.</p>
+      <a href="/contact/" class="btn btn--green">Book a 15-minute call</a>
     </div>
   </section>
 
@@ -899,6 +1103,70 @@ p:last-child { margin-bottom: 0; }
         }
       });
     });
+
+    // 5. ABOUT / CASE FILE: reveal + count-up (shared pattern with /testimonials/)
+    (function initAboutAnim() {
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var reveals = document.querySelectorAll('.cf-reveal');
+
+      if (!('IntersectionObserver' in window) || reduceMotion) {
+        reveals.forEach(function (el) { el.classList.add('is-visible'); });
+        return;
+      }
+
+      var revealObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            revealObs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+      reveals.forEach(function (el) { revealObs.observe(el); });
+
+      function formatValue(n, prefix, format) {
+        if (format === 'compact' && n >= 1000000) {
+          return prefix + (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+        }
+        if (format === 'compact' && n >= 1000) {
+          return prefix + Math.round(n / 1000) + 'K';
+        }
+        return prefix + Math.round(n).toLocaleString('en-US');
+      }
+
+      function animateCounter(el, target, prefix, format, duration) {
+        var start = performance.now();
+        function step(now) {
+          var progress = Math.min((now - start) / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = formatValue(target * eased, prefix, format);
+          if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
+      var countUps = document.querySelectorAll('.cf-count-up');
+      if (!countUps.length) return;
+
+      countUps.forEach(function (el) {
+        var prefix = el.getAttribute('data-count-prefix') || '';
+        var format = el.getAttribute('data-count-format') || '';
+        el.textContent = formatValue(0, prefix, format);
+      });
+
+      var countObs = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          var el = e.target;
+          var t = parseInt(el.getAttribute('data-count-target'), 10) || 0;
+          var p = el.getAttribute('data-count-prefix') || '';
+          var f = el.getAttribute('data-count-format') || '';
+          animateCounter(el, t, p, f, 1700);
+          obs.unobserve(el);
+        });
+      }, { threshold: 0.35 });
+      countUps.forEach(function (el) { countObs.observe(el); });
+    })();
 
   })();
   </script>
