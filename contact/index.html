@@ -248,6 +248,214 @@ p:last-child { margin-bottom: 0; }
   h1 { font-size: 2.125rem; }
   .contact-form .form-row { grid-template-columns: 1fr; }
 }
+
+/* ========== CASE FILE SYSTEM (shared with /testimonials/, /about/, /faq/) ========== */
+.cf-label {
+  display: inline-block; font-size: 0.875rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--color-green); margin-bottom: 28px;
+}
+.cf-section { padding: 110px 0; background: var(--color-white); color: var(--color-navy); }
+.cf-section--alt { background: var(--color-gray-bg); }
+.cf-narrow { max-width: 720px; margin: 0 auto; padding: 0 30px; text-align: center; }
+.cf-body {
+  font-size: 1.25rem; line-height: 1.6;
+  color: var(--color-navy-light); margin: 0;
+}
+.cf-body + .cf-body { margin-top: 1.2em; }
+.cf-reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.cf-reveal.is-visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .cf-reveal { transition: none; opacity: 1; transform: none; }
+}
+
+/* Autocomplete dropdown consistency with the rest of the site */
+.pac-container {
+  font-family: var(--font) !important;
+  border-radius: 0 0 var(--radius) var(--radius);
+  border: 2px solid var(--color-green); border-top: none;
+  box-shadow: var(--shadow); z-index: 10000 !important;
+}
+.pac-item { padding: 10px 14px; font-size: 15px; cursor: pointer; }
+.pac-item:hover, .pac-item-selected { background: var(--color-mint); }
+
+/* ========== CONTACT HERO (two-column: text + form) ========== */
+.contact-hero {
+  padding: 80px 0 100px; background: var(--color-white);
+  color: var(--color-navy); min-height: 60vh;
+}
+.contact-hero__inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 30px;
+  display: grid; grid-template-columns: 11fr 9fr; gap: 60px;
+  align-items: start;
+}
+.contact-hero__text { max-width: 520px; }
+.contact-hero__text h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700;
+  line-height: 1.05; letter-spacing: -0.02em;
+  color: var(--color-navy); margin: 0 0 22px;
+}
+.contact-hero__sub {
+  font-size: 1.25rem; line-height: 1.6;
+  color: var(--color-navy-light); margin: 0 0 32px;
+}
+.contact-quickfacts {
+  display: flex; flex-direction: column; gap: 14px; margin-top: 24px;
+}
+.contact-quickfact {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 0.95rem; color: var(--color-navy); line-height: 1.4;
+}
+.contact-quickfact__icon {
+  flex: 0 0 22px; width: 22px; height: 22px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--color-green);
+}
+.contact-quickfact__icon svg { width: 20px; height: 20px; display: block; }
+.contact-quickfact strong { font-weight: 700; color: var(--color-navy); }
+
+/* Form card */
+.contact-form-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  box-shadow: 0 14px 40px rgba(30, 47, 73, 0.06);
+}
+.contact-form-card__title {
+  font-size: 1.5rem; font-weight: 700; color: var(--color-navy);
+  margin: 0 0 6px; letter-spacing: -0.01em;
+}
+.contact-form-card__sub {
+  font-size: 0.95rem; color: var(--color-navy-light);
+  margin: 0 0 24px;
+}
+
+.contact-form { display: grid; gap: 16px; }
+.contact-form__field { display: flex; flex-direction: column; gap: 6px; }
+.contact-form__label {
+  font-size: 0.875rem; font-weight: 600;
+  color: var(--color-navy); letter-spacing: 0.01em;
+}
+.contact-form__label .req { color: var(--color-red); margin-left: 3px; }
+.contact-form__consent {
+  font-size: 0.8125rem; line-height: 1.55; color: #666;
+  margin: 4px 0 0;
+}
+.contact-form__consent a { color: var(--color-green); text-decoration: underline; }
+.contact-form__submit {
+  margin-top: 8px; width: 100%;
+  padding: 18px 24px; font-family: var(--font);
+  font-size: 1.0625rem; font-weight: 700; letter-spacing: 0.02em;
+  text-transform: uppercase; line-height: 1;
+  background: var(--color-green); color: var(--color-white);
+  border: 2px solid var(--color-green); border-radius: var(--radius);
+  cursor: pointer; transition: all var(--transition);
+}
+.contact-form__submit:hover { background: var(--color-green-hover); border-color: var(--color-green-hover); }
+.contact-form__response {
+  margin: 6px 0 0; text-align: center;
+  font-size: 0.875rem; color: var(--color-navy-light);
+}
+
+/* ========== WHY THIS MATTERS ========== */
+.contact-why { padding: 110px 0; background: var(--color-gray-bg); color: var(--color-navy); }
+.contact-why__headline {
+  font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 700;
+  line-height: 1.18; letter-spacing: -0.015em;
+  color: var(--color-navy); margin: 0 0 28px;
+}
+
+/* ========== WHAT YOU GET (three-column feature block) ========== */
+.contact-get { padding: 110px 0; background: var(--color-white); color: var(--color-navy); }
+.contact-get__head { max-width: 1100px; margin: 0 auto 56px; padding: 0 30px; text-align: center; }
+.contact-get__headline {
+  font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 700;
+  line-height: 1.18; letter-spacing: -0.015em;
+  color: var(--color-navy); margin: 0;
+}
+.contact-get__grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+  max-width: 1100px; margin: 0 auto; padding: 0 30px;
+}
+.contact-get__item {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius-lg);
+  padding: 36px 30px;
+}
+.contact-get__icon {
+  width: 44px; height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--color-green);
+  margin-bottom: 20px;
+}
+.contact-get__icon svg { width: 40px; height: 40px; }
+.contact-get__title {
+  font-size: clamp(1.25rem, 2vw, 1.5rem); font-weight: 700;
+  color: var(--color-navy); line-height: 1.25;
+  margin: 0 0 12px; letter-spacing: -0.005em;
+}
+.contact-get__note {
+  font-size: 1rem; line-height: 1.6;
+  color: var(--color-navy-light); margin: 0;
+}
+
+/* ========== DIRECT CALL ========== */
+.contact-call { padding: 110px 0; background: var(--color-gray-bg); color: var(--color-navy); text-align: center; }
+.contact-call__headline {
+  font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 700;
+  line-height: 1.18; color: var(--color-navy); margin: 0 0 16px;
+  letter-spacing: -0.015em;
+}
+.contact-call__sub {
+  font-size: 1.125rem; line-height: 1.6; color: var(--color-navy-light);
+  max-width: 540px; margin: 0 auto 32px;
+}
+.contact-call__number {
+  display: inline-block;
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 800;
+  color: var(--color-green); line-height: 1;
+  letter-spacing: -0.015em;
+  transition: color var(--transition);
+}
+.contact-call__number:hover { color: var(--color-green-hover); }
+.contact-call__address {
+  margin: 28px 0 0; font-size: 0.95rem; line-height: 1.55;
+  color: var(--color-navy-light); opacity: 0.85;
+}
+
+/* ========== CROSS-LINK ========== */
+.contact-crosslink { padding: 96px 0; background: var(--color-white); color: var(--color-navy); text-align: center; }
+.contact-crosslink__inner { max-width: 640px; margin: 0 auto; padding: 0 30px; }
+.contact-crosslink__headline {
+  font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 700;
+  line-height: 1.22; color: var(--color-navy); margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+.contact-crosslink__body {
+  font-size: 1.125rem; line-height: 1.6; color: var(--color-navy-light);
+  margin: 0 0 30px;
+}
+.contact-crosslink .btn { padding: 18px 32px; font-size: 17px; }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 960px) {
+  .contact-hero__inner { grid-template-columns: 1fr; gap: 40px; }
+  .contact-hero__text { max-width: 100%; }
+  .contact-get__grid { grid-template-columns: 1fr; max-width: 520px; gap: 18px; }
+}
+@media (max-width: 768px) {
+  .contact-hero { padding: 56px 0 64px; min-height: auto; }
+  .contact-hero__inner { padding: 0 24px; }
+  .contact-form-card { padding: 28px 22px; }
+  .contact-why, .contact-get, .contact-call { padding: 64px 0; }
+  .contact-crosslink { padding: 56px 0; }
+  .cf-narrow { padding: 0 24px; }
+  .contact-get__head { padding: 0 24px; margin-bottom: 36px; }
+  .contact-get__grid { padding: 0 24px; }
+  .contact-get__item { padding: 28px 22px; }
+}
   </style>
 </head>
 <body>
@@ -289,118 +497,188 @@ p:last-child { margin-bottom: 0; }
     </div>
   </header>
 
-  <!-- ========== CONTACT: LEFT INFO/MAP + RIGHT FORM ========== -->
-  <section class="section">
-    <div class="container">
-      <div class="contact-layout">
+  <!-- ========== SECTION 1: HERO + FORM ========== -->
+  <section class="contact-hero">
+    <div class="contact-hero__inner">
 
-        <!-- LEFT: Heading, copy, address, phone, map -->
-        <div class="contact-left">
-          <h1>Contact Us Today</h1>
-          <p>I've helped homeowners across Southern California sell their homes faster and for top dollar. There is no obligation, so contact me today and let's talk about your home selling goals!</p>
+      <div class="contact-hero__text">
+        <div class="cf-label">Contact</div>
+        <h1>What's your home actually worth?</h1>
+        <p class="contact-hero__sub">The Zillow estimate isn't an answer. It's a starting point. I'll run a real comparative market analysis on your home, tell you what it would realistically sell for in today's Irvine market, and give you a clear read on what to do next. No pressure. No pitch. Just the numbers.</p>
 
-          <div class="contact-info-item">
-            <div class="contact-info-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>
-            </div>
-            <span>17875 Von Karman Ave, Suite 150, Irvine, CA 92614</span>
+        <div class="contact-quickfacts">
+          <div class="contact-quickfact">
+            <span class="contact-quickfact__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span><strong>Free.</strong> No cost, no obligation.</span>
           </div>
-
-          <div class="contact-info-item">
-            <div class="contact-info-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1.003 1.003 0 011.01-.24c1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.1.31.03.66-.25.94l-2.2 2.2z"/></svg>
-            </div>
-            <a href="tel:15109355701">1-510-935-5701</a>
+          <div class="contact-quickfact">
+            <span class="contact-quickfact__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span>Detailed CMA delivered within 48 hours.</span>
           </div>
-
-          <div class="contact-map">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000!2d-117.8473843!3d33.6860012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80dcdf8dbfbe3395%3A0xc09c886b39a043c2!2sJoshua%20Guerrero%20-%20Realtor!5e0!3m2!1sen!2sus!4v1"
-              allowfullscreen=""
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              title="Joshua Guerrero - Realtor on Google Maps">
-            </iframe>
+          <div class="contact-quickfact">
+            <span class="contact-quickfact__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span>One 15-minute call. That's it.</span>
           </div>
         </div>
-
-        <!-- RIGHT: Form in gray card -->
-        <div class="contact-right">
-          <div class="form-card">
-            <h2>Get My Free, No-Obligation Quote</h2>
-            <p class="form-subtitle">Call me today at <a href="tel:15109355701">1-510-935-5701</a>. Get expert guidance to sell your home fast and for top dollar. It's quick and easy!</p>
-
-            <form class="contact-form" id="contactForm" novalidate>
-              <div class="honeypot" aria-hidden="true">
-                <input type="text" name="company_website" autocomplete="off" tabindex="-1">
-              </div>
-
-              <div class="form-row">
-                <input type="text" name="first_name" placeholder="First Name *" required>
-                <input type="text" name="last_name" placeholder="Last Name *" required>
-              </div>
-
-              <input type="text" id="contactAddress" name="address_display" placeholder="Enter your home address *" autocomplete="off" required>
-              <input type="hidden" name="street_address" id="contactStreet">
-              <input type="hidden" name="city" id="contactCity">
-              <input type="hidden" name="state" id="contactState">
-              <input type="hidden" name="zip" id="contactZip">
-              <input type="hidden" name="full_address" id="contactFull">
-              <input type="hidden" name="lat" id="contactLat">
-              <input type="hidden" name="lng" id="contactLng">
-
-              <div class="form-row">
-                <input type="tel" name="phone" placeholder="Phone *" autocomplete="tel" required>
-                <input type="email" name="email" placeholder="Email *" autocomplete="email" required>
-              </div>
-
-              <select name="referral_source">
-                <option value="">Where did you hear about us?</option>
-                <option value="Google Search">Google Search</option>
-                <option value="Facebook">Facebook</option>
-                <option value="Instagram">Instagram</option>
-                <option value="YouTube">YouTube</option>
-                <option value="Zillow">Zillow</option>
-                <option value="Referral">Referral / Word of Mouth</option>
-                <option value="Radio">Radio</option>
-                <option value="Direct Mail">Direct Mail</option>
-                <option value="Other">Other</option>
-              </select>
-
-              <textarea name="message" placeholder="Tell us about your home (Interior/exterior, recent upgrades, required maintenance/improvements)"></textarea>
-
-              <p class="consent-text">By submitting your phone number, you agree to receive text messages from Joshua Guerrero regarding the sale of your home. You can opt-out anytime. Message and data rates may apply. <a href="https://drozq.com/privacy">View Privacy Policy</a>.</p>
-
-              <input type="hidden" name="source" value="Contact Page Form">
-              <input type="hidden" name="source_page" value="contact">
-              <input type="hidden" name="consent" value="yes">
-              <input type="hidden" name="intent" value="Home Valuation">
-              <input type="hidden" name="page_url" id="contactPageUrl">
-              <input type="hidden" name="submitted_at" id="contactTimestamp">
-
-              <button type="submit" class="btn--submit">Get My Free Quote</button>
-            </form>
-          </div>
-        </div>
-
       </div>
+
+      <div class="contact-form-card">
+        <h2 class="contact-form-card__title">Get your home valuation</h2>
+        <p class="contact-form-card__sub">Takes under a minute.</p>
+
+        <form class="contact-form" id="contactForm" novalidate>
+          <div class="honeypot" aria-hidden="true">
+            <input type="text" name="company_website" autocomplete="off" tabindex="-1">
+          </div>
+
+          <label class="contact-form__field">
+            <span class="contact-form__label">Full name <span class="req">*</span></span>
+            <input type="text" name="full_name" autocomplete="name" required>
+          </label>
+
+          <label class="contact-form__field">
+            <span class="contact-form__label">Email <span class="req">*</span></span>
+            <input type="email" name="email" autocomplete="email" required>
+          </label>
+
+          <label class="contact-form__field">
+            <span class="contact-form__label">Phone <span class="req">*</span></span>
+            <input type="tel" name="phone" autocomplete="tel" required>
+          </label>
+
+          <label class="contact-form__field">
+            <span class="contact-form__label">Property address <span class="req">*</span></span>
+            <input type="text" id="contactAddress" name="address_display" placeholder="Start typing your address" autocomplete="off" required>
+          </label>
+          <input type="hidden" name="street_address" id="contactStreet">
+          <input type="hidden" name="city" id="contactCity">
+          <input type="hidden" name="state" id="contactState">
+          <input type="hidden" name="zip" id="contactZip">
+          <input type="hidden" name="full_address" id="contactFull">
+          <input type="hidden" name="lat" id="contactLat">
+          <input type="hidden" name="lng" id="contactLng">
+
+          <label class="contact-form__field">
+            <span class="contact-form__label">When are you thinking of selling? <span class="req">*</span></span>
+            <select name="selling_timeline" required>
+              <option value="">Select a timeline</option>
+              <option value="Within 30 days">Within 30 days</option>
+              <option value="1 to 3 months">1 to 3 months</option>
+              <option value="3 to 6 months">3 to 6 months</option>
+              <option value="Just exploring">Just exploring</option>
+            </select>
+          </label>
+
+          <label class="contact-form__field">
+            <span class="contact-form__label">How did you hear about me?</span>
+            <select name="referral_source">
+              <option value="">Select one</option>
+              <option value="Google Search">Google Search</option>
+              <option value="Facebook">Facebook</option>
+              <option value="Instagram">Instagram</option>
+              <option value="YouTube">YouTube</option>
+              <option value="Zillow">Zillow</option>
+              <option value="Referral">Referral / Word of Mouth</option>
+              <option value="Radio">Radio</option>
+              <option value="Direct Mail">Direct Mail</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+
+          <label class="contact-form__field">
+            <span class="contact-form__label">Anything specific you'd like me to know?</span>
+            <textarea name="message" rows="4" placeholder="Optional: recent upgrades, condition notes, timing constraints, etc."></textarea>
+          </label>
+
+          <p class="contact-form__consent">By submitting your phone number, you agree to receive text messages from Joshua Guerrero regarding the sale of your home. You can opt out anytime. Message and data rates may apply. See our <a href="/privacy/">Privacy Policy</a>.</p>
+
+          <input type="hidden" name="source" value="Contact Page Form">
+          <input type="hidden" name="source_page" value="contact">
+          <input type="hidden" name="consent" value="yes">
+          <input type="hidden" name="intent" value="Home Valuation">
+          <input type="hidden" name="page_url" id="contactPageUrl">
+          <input type="hidden" name="submitted_at" id="contactTimestamp">
+
+          <button type="submit" class="btn--submit contact-form__submit">Get my free valuation</button>
+          <p class="contact-form__response">I respond within a few hours during normal business hours.</p>
+        </form>
+      </div>
+
     </div>
   </section>
 
-  <!-- ========== WHY CHOOSE ========== -->
-  <section class="why-choose">
-    <div class="container">
-      <h2>Why Choose Joshua Guerrero</h2>
-      <div class="why-choose-layout">
-        <div class="why-choose-text">
-          <p>Are you looking to sell your home and wondering where to start? Whether you've been searching for "how to sell my house fast in Southern California" or thinking about listing your home for sale by owner, I can help you navigate the process and get the best possible result.</p>
-          <p>There are many companies and websites that promise quick home sales, but it's important to work with someone who has a proven track record of delivering results. With a strategic marketing system, hands-on transaction management, and deep local market expertise, my sellers consistently achieve above-market results with minimal stress.</p>
-          <p>When choosing who to work with to sell your home, make sure to review their history and online testimonials. I'm proud to be 5-star rated on Google because of the care, expertise, and results I bring to every transaction. Don't take a chance with your largest asset — <strong><a href="#contactForm">contact me today</a></strong> and let's get started.</p>
-        </div>
-        <div class="why-choose-image">
-          <img src="https://www.drozq.com/media/images/Joshua Guerrero - Transparent Headshot.png" alt="Joshua Guerrero" loading="lazy">
-        </div>
-      </div>
+  <!-- ========== SECTION 2: WHY THIS MATTERS ========== -->
+  <section class="contact-why">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">Why This Matters</div>
+      <h2 class="contact-why__headline">Pricing wrong costs more than you think.</h2>
+      <p class="cf-body">Most sellers overprice on day one because an agent told them what they wanted to hear. That home sits. After 30 days, the "what's wrong with it?" questions start. After 60 days, the price cuts start. After 90 days, the home sells for less than it would have if priced correctly from the beginning.</p>
+      <p class="cf-body">The difference between a home priced right and a home priced wrong isn't a few thousand dollars. It's often tens of thousands. That's the conversation I want to have with you before you list, not after.</p>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 3: WHAT YOU GET ========== -->
+  <section class="contact-get">
+    <div class="contact-get__head cf-reveal">
+      <div class="cf-label">What You Get</div>
+      <h2 class="contact-get__headline">After one 15-minute call.</h2>
+    </div>
+    <div class="contact-get__grid cf-reveal">
+
+      <article class="contact-get__item">
+        <span class="contact-get__icon" aria-hidden="true">
+          <!-- SWAP: Document/chart icon from /media/icons/ (e.g., request_quote.svg) -->
+          <svg viewBox="0 0 48 48" fill="none"><rect x="9" y="6" width="30" height="36" rx="3" stroke="currentColor" stroke-width="2.4"/><path d="M15 16h18M15 23h18M15 30h12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </span>
+        <h3 class="contact-get__title">A real CMA</h3>
+        <p class="contact-get__note">A full comparative market analysis of your home, built from recent sales, active listings, and expired listings within your specific radius. Not a Zestimate.</p>
+      </article>
+
+      <article class="contact-get__item">
+        <span class="contact-get__icon" aria-hidden="true">
+          <!-- SWAP: Strategy/target icon from /media/icons/ -->
+          <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="2.4"/><circle cx="24" cy="24" r="10" stroke="currentColor" stroke-width="2.4"/><circle cx="24" cy="24" r="3" fill="currentColor"/></svg>
+        </span>
+        <h3 class="contact-get__title">A pricing strategy</h3>
+        <p class="contact-get__note">A clear recommendation on listing price, timing, and approach. Based on your home, your goals, and current market conditions.</p>
+      </article>
+
+      <article class="contact-get__item">
+        <span class="contact-get__icon" aria-hidden="true">
+          <!-- SWAP: Checklist/roadmap icon from /media/icons/ -->
+          <svg viewBox="0 0 48 48" fill="none"><path d="M10 12h28M10 24h28M10 36h18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="38" cy="36" r="4" stroke="currentColor" stroke-width="2.4"/></svg>
+        </span>
+        <h3 class="contact-get__title">A no-pressure path forward</h3>
+        <p class="contact-get__note">If it makes sense to list, we list. If it doesn't, you walk away with better information than you came in with. That's it.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ========== SECTION 4: DIRECT CALL ========== -->
+  <section class="contact-call">
+    <div class="cf-narrow">
+      <div class="cf-label">Prefer To Talk?</div>
+      <h2 class="contact-call__headline">Call or text me directly.</h2>
+      <p class="contact-call__sub">Some people want to fill out a form. Some people want to talk. Either works. If you'd rather skip the form, my direct line is below.</p>
+      <a class="contact-call__number" href="tel:15109355701">1-510-935-5701</a>
+      <p class="contact-call__address">17875 Von Karman Ave, Suite 150<br>Irvine, CA 92614</p>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 5: CROSS-LINK TO CASE FILES ========== -->
+  <section class="contact-crosslink">
+    <div class="contact-crosslink__inner cf-reveal">
+      <div class="cf-label">Want Proof First?</div>
+      <h2 class="contact-crosslink__headline">Read the case files.</h2>
+      <p class="contact-crosslink__body">Every transaction I close becomes a documented case file with the real numbers, the real negotiation, and the real outcome. If you want to know how I work before you reach out, start there.</p>
+      <a href="/testimonials/" class="btn btn--green">See the case files</a>
     </div>
   </section>
 
@@ -534,6 +812,26 @@ p:last-child { margin-bottom: 0; }
     document.getElementById('navToggle').addEventListener('click', function () {
       document.getElementById('mainNav').classList.toggle('open');
     });
+
+    // SCROLL REVEAL
+    (function initContactReveal() {
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var reveals = document.querySelectorAll('.cf-reveal');
+      if (!reveals.length) return;
+      if (!('IntersectionObserver' in window) || reduceMotion) {
+        reveals.forEach(function (el) { el.classList.add('is-visible'); });
+        return;
+      }
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+      reveals.forEach(function (el) { obs.observe(el); });
+    })();
 
     // ACTIVE NAV HIGHLIGHT
     (function(){
