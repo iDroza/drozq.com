@@ -448,6 +448,7 @@ p:last-child { margin-bottom: 0; }
   display: grid; grid-template-columns: repeat(4, 1fr);
   gap: 18px; max-width: 520px; margin: 0 auto 50px;
 }
+.cf-houses.cf-houses--three { grid-template-columns: repeat(3, 1fr); max-width: 420px; }
 .cf-house { aspect-ratio: 1/1; display: block; }
 .cf-house svg { width: 100%; height: 100%; display: block; }
 .cf-house path { fill: #c4cdd8; transition: fill 0.3s ease; }
@@ -516,6 +517,7 @@ p:last-child { margin-bottom: 0; }
   font-size: 1.05rem; border-top: 2px solid var(--color-navy);
   border-bottom: none;
 }
+.cf-receipt__row--accent { color: var(--color-green); border-top-color: var(--color-green); }
 .cf-receipt__label { flex: 0 1 auto; }
 .cf-receipt__amount { flex: 0 0 auto; font-variant-numeric: tabular-nums; }
 
@@ -617,6 +619,7 @@ p:last-child { margin-bottom: 0; }
   .cf-narrow, .cf-wide { padding: 0 24px; }
   .cf-grid { grid-template-columns: 1fr; max-width: 360px; }
   .cf-houses { grid-template-columns: repeat(2, 1fr); max-width: 260px; gap: 14px; }
+  .cf-houses.cf-houses--three { grid-template-columns: repeat(3, 1fr); max-width: 300px; gap: 12px; }
   .cf-compare { grid-template-columns: 1fr; gap: 16px; }
   .cf-compare__arrow { transform: rotate(90deg); }
   .cf-compare__arrow svg { width: 32px; height: 32px; }
@@ -887,54 +890,163 @@ p:last-child { margin-bottom: 0; }
     </div>
   </header>
 
-  <!-- ========== INDEX: HERO ========== -->
-  <section class="cf-hero cf-index-hero">
-    <div class="cf-hero__inner" style="text-align:center;">
-      <div class="cf-label">Case Files</div>
-      <h1>Real deals. Real numbers. Real leverage.</h1>
-      <p class="cf-index-hero__sub">Every client comes in with a different goal. Here's how we execute on them. Each case file is a real transaction, anonymized to protect our clients, with the actual numbers, the actual negotiation, and the actual outcome.</p>
+  <!-- ========== CASE FILE: HERO ========== -->
+  <section class="cf-hero">
+    <div class="cf-hero__inner">
+      <div class="cf-label">Case File 002 &middot; Corona &middot; Strategic Purchase</div>
+      <h1>He analyzes numbers for the State of California. Then he ran the numbers on us.</h1>
+    </div>
+    <div class="cf-hero__scroll" aria-hidden="true">Scroll</div>
+  </section>
+
+  <!-- ========== CASE FILE: THE CLIENT ========== -->
+  <section class="cf-section">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">The Client</div>
+      <p class="cf-body">He's a financial analyst for the State of California. He doesn't make decisions emotionally. He makes them on spreadsheets. He wasn't looking for a forever home, he was looking for a strategic first position: a condo that would keep his monthly payment low, build equity quietly in the background, and set him up to trade into something larger down the road. The brief was clean. The execution had to match.</p>
+      <div class="cf-badges">
+        <span class="cf-badge">Strategic Buyer</span>
+        <span class="cf-badge">Financial Analyst</span>
+        <span class="cf-badge">Step-Up Strategy</span>
+        <span class="cf-badge">Corona, CA</span>
+      </div>
     </div>
   </section>
 
-  <!-- ========== INDEX: CASE FILE GRID ========== -->
+  <!-- ========== CASE FILE: THE MISSION ========== -->
+  <section class="cf-section cf-section--alt">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">The Mission</div>
+      <p class="cf-body">The mandate was simple and unsentimental: lowest viable monthly payment, cleanest possible condo, smallest possible drama. No vanity square footage. No "stretch" pricing. Find the asset, win the negotiation, close on time, and position him to make the next move from a stronger seat.</p>
+    </div>
+  </section>
+
+  <!-- ========== CASE FILE: THE SEARCH ========== -->
   <section class="cf-section">
-    <div class="cf-index-grid cf-reveal">
+    <div class="cf-wide cf-reveal" style="text-align:center;">
+      <div class="cf-label">The Search</div>
+      <h2 class="cf-headline-stat">9 condos. One worth fighting for.</h2>
 
-      <a class="cf-card" href="/testimonials/001-long-beach-firefighter/" aria-label="Read Case File 001: Long Beach firefighter, first-time buyer">
-        <span class="cf-card__tab">Case File 001</span>
-        <p class="cf-card__meta">Long Beach &middot; First-Time Buyer</p>
-        <h2 class="cf-card__headline">He spends his career protecting other people's homes. We helped him acquire his first.</h2>
-        <div class="cf-card__stat">
-          <span class="cf-card__stat-value">$23,250</span>
-          <span class="cf-card__stat-label">Seller credit negotiated</span>
-        </div>
-      </a>
-
-      <a class="cf-card" href="/testimonials/002-corona-analyst/" aria-label="Read Case File 002: Corona financial analyst, strategic purchase">
-        <span class="cf-card__tab">Case File 002</span>
-        <p class="cf-card__meta">Corona &middot; Strategic Purchase</p>
-        <h2 class="cf-card__headline">He analyzes numbers for the State of California. Then he ran the numbers on us.</h2>
-        <div class="cf-card__stat">
-          <span class="cf-card__stat-value">$20,000</span>
-          <span class="cf-card__stat-label">Saved off asking price</span>
-        </div>
-      </a>
-
-      <div class="cf-card cf-card--soon" aria-hidden="true">
-        <span class="cf-card__tab">Case File 003</span>
-        <h2 class="cf-card__headline">Coming soon</h2>
+      <div class="cf-houses cf-houses--three" role="img" aria-label="Eight condos reviewed, one condo selected">
+        <span class="cf-house" aria-hidden="true"><svg viewBox="0 0 100 100"><path fill-rule="evenodd" d="M12 14 L88 14 L88 92 L12 92 Z M28 26 L42 26 L42 40 L28 40 Z M58 26 L72 26 L72 40 L58 40 Z M28 48 L42 48 L42 62 L28 62 Z M58 48 L72 48 L72 62 L58 62 Z M28 70 L42 70 L42 84 L28 84 Z M58 70 L72 70 L72 84 L58 84 Z"/></svg></span>
+        <span class="cf-house" aria-hidden="true"><svg viewBox="0 0 100 100"><path fill-rule="evenodd" d="M12 14 L88 14 L88 92 L12 92 Z M28 26 L42 26 L42 40 L28 40 Z M58 26 L72 26 L72 40 L58 40 Z M28 48 L42 48 L42 62 L28 62 Z M58 48 L72 48 L72 62 L58 62 Z M28 70 L42 70 L42 84 L28 84 Z M58 70 L72 70 L72 84 L58 84 Z"/></svg></span>
+        <span class="cf-house" aria-hidden="true"><svg viewBox="0 0 100 100"><path fill-rule="evenodd" d="M12 14 L88 14 L88 92 L12 92 Z M28 26 L42 26 L42 40 L28 40 Z M58 26 L72 26 L72 40 L58 40 Z M28 48 L42 48 L42 62 L28 62 Z M58 48 L72 48 L72 62 L58 62 Z M28 70 L42 70 L42 84 L28 84 Z M58 70 L72 70 L72 84 L58 84 Z"/></svg></span>
+        <span class="cf-house" aria-hidden="true"><svg viewBox="0 0 100 100"><path fill-rule="evenodd" d="M12 14 L88 14 L88 92 L12 92 Z M28 26 L42 26 L42 40 L28 40 Z M58 26 L72 26 L72 40 L58 40 Z M28 48 L42 48 L42 62 L28 62 Z M58 48 L72 48 L72 62 L58 62 Z M28 70 L42 70 L42 84 L28 84 Z M58 70 L72 70 L72 84 L58 84 Z"/></svg></span>
+        <span class="cf-house" aria-hidden="true"><svg viewBox="0 0 100 100"><path fill-rule="evenodd" d="M12 14 L88 14 L88 92 L12 92 Z M28 26 L42 26 L42 40 L28 40 Z M58 26 L72 26 L72 40 L58 40 Z M28 48 L42 48 L42 62 L28 62 Z M58 48 L72 48 L72 62 L58 62 Z M28 70 L42 70 L42 84 L28 84 Z M58 70 L72 70 L72 84 L58 84 Z"/></svg></span>
+        <span class="cf-house" aria-hidden="true"><svg viewBox="0 0 100 100"><path fill-rule="evenodd" d="M12 14 L88 14 L88 92 L12 92 Z M28 26 L42 26 L42 40 L28 40 Z M58 26 L72 26 L72 40 L58 40 Z M28 48 L42 48 L42 62 L28 62 Z M58 48 L72 48 L72 62 L58 62 Z M28 70 L42 70 L42 84 L28 84 Z M58 70 L72 70 L72 84 L58 84 Z"/></svg></span>
+        <span class="cf-house" aria-hidden="true"><svg viewBox="0 0 100 100"><path fill-rule="evenodd" d="M12 14 L88 14 L88 92 L12 92 Z M28 26 L42 26 L42 40 L28 40 Z M58 26 L72 26 L72 40 L58 40 Z M28 48 L42 48 L42 62 L28 62 Z M58 48 L72 48 L72 62 L58 62 Z M28 70 L42 70 L42 84 L28 84 Z M58 70 L72 70 L72 84 L58 84 Z"/></svg></span>
+        <span class="cf-house" aria-hidden="true"><svg viewBox="0 0 100 100"><path fill-rule="evenodd" d="M12 14 L88 14 L88 92 L12 92 Z M28 26 L42 26 L42 40 L28 40 Z M58 26 L72 26 L72 40 L58 40 Z M28 48 L42 48 L42 62 L28 62 Z M58 48 L72 48 L72 62 L58 62 Z M28 70 L42 70 L42 84 L28 84 Z M58 70 L72 70 L72 84 L58 84 Z"/></svg></span>
+        <span class="cf-house cf-house--match" aria-hidden="true"><svg viewBox="0 0 100 100"><path fill-rule="evenodd" d="M12 14 L88 14 L88 92 L12 92 Z M28 26 L42 26 L42 40 L28 40 Z M58 26 L72 26 L72 40 L58 40 Z M28 48 L42 48 L42 62 L28 62 Z M58 48 L72 48 L72 62 L58 62 Z M28 70 L42 70 L42 84 L28 84 Z M58 70 L72 70 L72 84 L58 84 Z"/></svg></span>
       </div>
 
+      <div style="max-width:680px; margin:0 auto;">
+        <p class="cf-body">We toured 9 condos across Corona. Most were priced for the listing agent's optimism, not the market's reality. We weren't there to fall in love. We were there to find the one unit where the math worked, the building was sound, and the seller had a reason to move. The 9th checked every box.</p>
+      </div>
     </div>
   </section>
 
-  <!-- ========== INDEX: CTA STRIP ========== -->
-  <section class="cf-cta-strip">
-    <div class="cf-narrow">
-      <h2>Want your deal to be the next case file?</h2>
-      <a href="/contact/" class="btn btn--green">Book a 15-minute call</a>
+  <!-- ========== CASE FILE: THE DEAL ========== -->
+  <section class="cf-section cf-section--alt">
+    <div class="cf-wide cf-reveal">
+      <div style="text-align:center;">
+        <div class="cf-label">The Deal</div>
+      </div>
+
+      <div class="cf-hero-stat">
+        <div class="cf-hero-stat__number" id="cfHeroStat" data-target="20000" data-prefix="$">$20,000</div>
+        <div class="cf-hero-stat__label">Saved off asking price</div>
+      </div>
+
+      <div class="cf-grid">
+        <div class="cf-grid__card">
+          <div class="cf-grid__value">$370,000</div>
+          <div class="cf-grid__label">Original list price</div>
+        </div>
+        <div class="cf-grid__card">
+          <div class="cf-grid__value">$350,000</div>
+          <div class="cf-grid__label">Final purchase price</div>
+        </div>
+        <div class="cf-grid__card">
+          <div class="cf-grid__value">$75,000</div>
+          <div class="cf-grid__label">Down payment</div>
+        </div>
+        <div class="cf-grid__card">
+          <div class="cf-grid__value cf-grid__value--accent" aria-label="Yes">&#10003;</div>
+          <div class="cf-grid__label">All requested repairs secured</div>
+        </div>
+        <div class="cf-grid__card">
+          <div class="cf-grid__value">Early</div>
+          <div class="cf-grid__label">Closing timeline</div>
+        </div>
+        <div class="cf-grid__card">
+          <div class="cf-grid__value">9</div>
+          <div class="cf-grid__label">Condos evaluated</div>
+        </div>
+      </div>
+
+      <div class="cf-receipt" role="group" aria-label="Price negotiation breakdown">
+        <div class="cf-receipt__title">Price Negotiation</div>
+        <div class="cf-receipt__row">
+          <span class="cf-receipt__label">Asking price</span>
+          <span class="cf-receipt__amount">$370,000.00</span>
+        </div>
+        <div class="cf-receipt__row">
+          <span class="cf-receipt__label">Final price</span>
+          <span class="cf-receipt__amount">$350,000.00</span>
+        </div>
+        <div class="cf-receipt__row cf-receipt__row--total cf-receipt__row--accent">
+          <span class="cf-receipt__label">Delta</span>
+          <span class="cf-receipt__amount">&minus;$20,000.00</span>
+        </div>
+      </div>
     </div>
   </section>
+
+  <!-- ========== CASE FILE: THE NEGOTIATION ========== -->
+  <section class="cf-section">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">The Negotiation</div>
+      <p class="cf-body">The seller didn't want to budge. We didn't blink. We had inspection findings in hand, a buyer who had already walked from 8 other units, and a lender moving fast enough that we could credibly close in days, not weeks. That combination, real leverage plus real urgency, is what moves sellers off their number.</p>
+      <p class="cf-body">They came down $20,000. Then they agreed to the repairs. Then we closed early.</p>
+    </div>
+
+    <div class="cf-wide cf-reveal">
+      <div class="cf-compare">
+        <div class="cf-compare__card cf-compare__card--muted">
+          <div class="cf-compare__cap">Standard outcome</div>
+          <div class="cf-compare__value">$5,000</div>
+        </div>
+        <div class="cf-compare__arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 12h16m0 0l-6-6m6 6l-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="cf-compare__card cf-compare__card--hero">
+          <div class="cf-compare__cap">With Josh</div>
+          <div class="cf-compare__value">$20,000</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CASE FILE: TAKEAWAY + CTA ========== -->
+  <section class="cf-section cf-section--alt">
+    <div class="cf-narrow cf-reveal cf-takeaway">
+      <div class="cf-label">The Takeaway</div>
+      <h2 class="cf-takeaway__headline">Lower price. Repairs handled. Early close. Position secured. No emotion. Just execution.</h2>
+      <p class="cf-takeaway__sub">If you're approaching your first purchase as a strategic move rather than a milestone, you're our kind of client.</p>
+      <a href="/contact/" class="btn btn--green">Book a 15-minute call</a>
+      <div class="cf-takeaway__next">Case File 003 coming soon.</div>
+    </div>
+  </section>
+
+  <!-- ========== MORE CASE FILES ========== -->
+  <aside class="cf-crosslink">
+    <span class="cf-crosslink__label">More Case Files</span>
+    <nav class="cf-crosslink__nav" aria-label="More case files">
+      <a href="/testimonials/">All case files</a>
+      <span class="cf-crosslink__sep" aria-hidden="true">&middot;</span>
+      <a href="/testimonials/001-long-beach-firefighter/">Case File 001 &middot; Long Beach</a>
+    </nav>
+  </aside>
 
   <!-- ========== FOOTER ========== -->
   <footer class="footer">
