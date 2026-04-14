@@ -659,8 +659,9 @@ p:last-child { margin-bottom: 0; }
 
 /* Case file index (gallery) */
 .cf-index-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr);
-  gap: 32px; max-width: 1100px; margin: 0 auto; padding: 0 30px;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 32px; max-width: 1200px; margin: 0 auto; padding: 0 30px;
+  align-items: stretch;
 }
 .cf-card {
   display: flex; flex-direction: column; gap: 14px;
@@ -702,16 +703,24 @@ p:last-child { margin-bottom: 0; }
 .cf-card--soon {
   cursor: default; background: var(--color-gray-bg);
   border-style: dashed; border-color: #d3d8df;
-  opacity: 0.85; justify-content: center; align-items: center; text-align: center;
+  opacity: 0.6; align-items: center; text-align: center;
+  gap: 8px;
 }
+.cf-card--soon .cf-card__tab { align-self: flex-start; }
+.cf-card--soon .cf-card__headline { margin-top: auto; }
+.cf-card__escrow-sub { margin-bottom: auto; }
 .cf-card--soon:hover { transform: none; box-shadow: none; border-color: #d3d8df; }
 .cf-card--soon .cf-card__tab {
   color: var(--color-navy-light); border-color: #d3d8df;
   background: var(--color-white);
 }
 .cf-card--soon .cf-card__headline {
-  color: var(--color-navy-light); font-weight: 600;
-  font-size: 1.125rem; letter-spacing: 0.02em;
+  color: var(--color-navy); font-weight: 600;
+  font-size: 1.25rem; letter-spacing: 0.01em; margin-top: 10px;
+}
+.cf-card__escrow-sub {
+  font-size: 0.9rem; color: var(--color-navy-light);
+  opacity: 0.85; margin: 0;
 }
 
 .cf-index-hero { min-height: 55vh; padding: 80px 0 60px; }
@@ -724,20 +733,62 @@ p:last-child { margin-bottom: 0; }
   font-size: 1.125rem; line-height: 1.6; color: var(--color-navy-light);
   max-width: 640px; margin: 0 auto;
 }
-.cf-cta-strip { padding: 100px 0; background: var(--color-gray-bg); text-align: center; }
+.cf-cta-strip { padding: 96px 0; background: var(--color-gray-bg); text-align: center; }
 .cf-cta-strip h2 {
   font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 700;
   line-height: 1.2; letter-spacing: -0.01em; color: var(--color-navy);
-  margin-bottom: 32px;
+  margin-bottom: 18px;
+}
+.cf-cta-strip__sub {
+  font-size: 1.125rem; line-height: 1.6; color: var(--color-navy-light);
+  max-width: 540px; margin: 0 auto 32px;
 }
 .cf-cta-strip .btn { padding: 20px 42px; font-size: 18px; }
 
+/* Index page aggregate stats strip */
+.cf-stats-strip {
+  padding: 56px 0; background: #f1f4f7;
+  border-top: 1px solid rgba(30, 47, 73, 0.06);
+  border-bottom: 1px solid rgba(30, 47, 73, 0.06);
+}
+.cf-stats-strip__inner { max-width: 1100px; margin: 0 auto; padding: 0 30px; text-align: center; }
+.cf-stats-strip__label { margin-bottom: 32px; }
+.cf-stats-strip__grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 24px; align-items: start;
+}
+.cf-stats-strip__item { text-align: center; }
+.cf-stats-strip__number {
+  display: block; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800;
+  color: var(--color-green); line-height: 1; letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums; margin-bottom: 12px;
+}
+.cf-stats-strip__sub {
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--color-navy-light);
+  line-height: 1.4;
+}
+
+/* Index-page section padding (tighter than case-file pages) */
+.cf-index-section { padding: 96px 0; text-align: center; }
+.cf-index-section__label { margin-bottom: 44px; }
+
+@media (max-width: 960px) {
+  .cf-index-grid { grid-template-columns: repeat(2, 1fr); max-width: 760px; gap: 24px; }
+  .cf-stats-strip__grid { grid-template-columns: repeat(2, 1fr); gap: 36px 24px; }
+}
 @media (max-width: 768px) {
-  .cf-index-grid { grid-template-columns: 1fr; gap: 22px; padding: 0 24px; }
-  .cf-card { padding: 32px 26px; min-height: 260px; }
+  .cf-card { padding: 32px 26px; min-height: 240px; }
   .cf-crosslink { padding: 36px 0; }
   .cf-index-hero { padding: 60px 0 40px; }
+  .cf-index-section { padding: 64px 0; }
+  .cf-index-section__label { margin-bottom: 32px; }
+  .cf-stats-strip { padding: 44px 0; }
   .cf-cta-strip { padding: 64px 0; }
+}
+@media (max-width: 640px) {
+  .cf-index-grid { grid-template-columns: 1fr; gap: 22px; padding: 0 24px; max-width: 460px; }
+  .cf-stats-strip__grid { grid-template-columns: 1fr; gap: 28px; }
 }
   </style>
 </head>
@@ -892,12 +943,51 @@ p:last-child { margin-bottom: 0; }
     <div class="cf-hero__inner" style="text-align:center;">
       <div class="cf-label">Case Files</div>
       <h1>Real deals. Real numbers. Real leverage.</h1>
-      <p class="cf-index-hero__sub">Every client comes in with a different goal. Here's how we execute on them. Each case file is a real transaction, anonymized to protect our clients, with the actual numbers, the actual negotiation, and the actual outcome.</p>
+      <p class="cf-index-hero__sub">Every client comes in with a different goal. A first home, an investment, a strategic entry, a move up. Here's how we execute on those goals, one deal at a time. Every case file is a real transaction with real numbers. We anonymize the clients because discretion is part of the service.</p>
+    </div>
+  </section>
+
+  <!-- ========== INDEX: AGGREGATE STATS STRIP ========== -->
+  <section class="cf-stats-strip">
+    <div class="cf-stats-strip__inner cf-reveal">
+      <div class="cf-label cf-stats-strip__label">The Numbers, So Far</div>
+      <div class="cf-stats-strip__grid">
+
+        <div class="cf-stats-strip__item">
+          <!-- UPDATE AS NEW CASE FILES ARE ADDED -->
+          <span class="cf-stats-strip__number cf-count-up" data-count-target="43250" data-count-prefix="$">$43,250</span>
+          <!-- END UPDATE -->
+          <div class="cf-stats-strip__sub">Total client savings</div>
+        </div>
+
+        <div class="cf-stats-strip__item">
+          <!-- UPDATE AS NEW CASE FILES ARE ADDED -->
+          <span class="cf-stats-strip__number cf-count-up" data-count-target="2">2</span>
+          <!-- END UPDATE -->
+          <div class="cf-stats-strip__sub">Homes closed</div>
+        </div>
+
+        <div class="cf-stats-strip__item">
+          <!-- UPDATE AS NEW CASE FILES ARE ADDED -->
+          <span class="cf-stats-strip__number cf-count-up" data-count-target="2">2</span>
+          <!-- END UPDATE -->
+          <div class="cf-stats-strip__sub">Closed ahead of schedule</div>
+        </div>
+
+        <div class="cf-stats-strip__item">
+          <!-- UPDATE AS NEW CASE FILES ARE ADDED -->
+          <span class="cf-stats-strip__number cf-count-up" data-count-target="23">23</span>
+          <!-- END UPDATE -->
+          <div class="cf-stats-strip__sub">Properties toured</div>
+        </div>
+
+      </div>
     </div>
   </section>
 
   <!-- ========== INDEX: CASE FILE GRID ========== -->
-  <section class="cf-section">
+  <section class="cf-index-section">
+    <div class="cf-label cf-index-section__label">The Case Files</div>
     <div class="cf-index-grid cf-reveal">
 
       <a class="cf-card" href="/testimonials/001-long-beach-firefighter/" aria-label="Read Case File 001: Long Beach firefighter, first-time buyer">
@@ -922,7 +1012,8 @@ p:last-child { margin-bottom: 0; }
 
       <div class="cf-card cf-card--soon" aria-hidden="true">
         <span class="cf-card__tab">Case File 003</span>
-        <h2 class="cf-card__headline">Coming soon</h2>
+        <h2 class="cf-card__headline">Currently in escrow</h2>
+        <p class="cf-card__escrow-sub">Details coming soon</p>
       </div>
 
     </div>
@@ -931,7 +1022,9 @@ p:last-child { margin-bottom: 0; }
   <!-- ========== INDEX: CTA STRIP ========== -->
   <section class="cf-cta-strip">
     <div class="cf-narrow">
+      <div class="cf-label">What's Next</div>
       <h2>Want your deal to be the next case file?</h2>
+      <p class="cf-cta-strip__sub">Most of our clients find us right here. They read a case file, see themselves in it, and book a call. If that's you, let's talk.</p>
       <a href="/contact/" class="btn btn--green">Book a 15-minute call</a>
     </div>
   </section>
@@ -1186,6 +1279,17 @@ p:last-child { margin-bottom: 0; }
       }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
       reveals.forEach(function (el) { revealObs.observe(el); });
 
+      function animateCounter(el, target, prefix, duration) {
+        var start = performance.now();
+        function step(now) {
+          var progress = Math.min((now - start) / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = prefix + Math.round(target * eased).toLocaleString('en-US');
+          if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
       if (counter) {
         var target = parseInt(counter.getAttribute('data-target'), 10) || 0;
         var prefix = counter.getAttribute('data-prefix') || '';
@@ -1194,19 +1298,29 @@ p:last-child { margin-bottom: 0; }
         var countObs = new IntersectionObserver(function (entries, obs) {
           entries.forEach(function (e) {
             if (!e.isIntersecting) return;
-            var start = performance.now();
-            var duration = 1800;
-            function step(now) {
-              var progress = Math.min((now - start) / duration, 1);
-              var eased = 1 - Math.pow(1 - progress, 3);
-              counter.textContent = prefix + Math.round(target * eased).toLocaleString('en-US');
-              if (progress < 1) requestAnimationFrame(step);
-            }
-            requestAnimationFrame(step);
+            animateCounter(counter, target, prefix, 1800);
             obs.unobserve(e.target);
           });
         }, { threshold: 0.45 });
         countObs.observe(counter);
+      }
+
+      var countUps = document.querySelectorAll('.cf-count-up');
+      if (countUps.length) {
+        countUps.forEach(function (el) {
+          el.textContent = (el.getAttribute('data-count-prefix') || '') + '0';
+        });
+        var stripObs = new IntersectionObserver(function (entries, obs) {
+          entries.forEach(function (e) {
+            if (!e.isIntersecting) return;
+            var el = e.target;
+            var t = parseInt(el.getAttribute('data-count-target'), 10) || 0;
+            var p = el.getAttribute('data-count-prefix') || '';
+            animateCounter(el, t, p, 1600);
+            obs.unobserve(el);
+          });
+        }, { threshold: 0.35 });
+        countUps.forEach(function (el) { stripObs.observe(el); });
       }
     })();
 
