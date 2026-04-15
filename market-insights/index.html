@@ -1,4 +1,18 @@
 <!doctype html>
+<!--
+=================================================================
+MARKET INSIGHTS UPDATE GUIDE
+=================================================================
+To update market data:
+1. Find the county section you want to update (search for "UPDATE: [COUNTY NAME]")
+2. Update the "Last updated" date
+3. Update the four stat values (delta, label, detail)
+4. Optionally rewrite the interpretation paragraph
+5. Save and deploy
+
+All updateable values are wrapped in <!-- UPDATE --> and <!-- END UPDATE --> comments.
+=================================================================
+-->
 <html lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
@@ -378,6 +392,207 @@ p:last-child { margin-bottom: 0; }
   .lead-modal { padding: 30px 22px; }
   .lead-modal__row { flex-direction: column; gap: 12px; }
 }
+
+/* ========== CASE FILE SYSTEM (shared with /testimonials/, /about/, /faq/, /contact/, /field-notes/) ========== */
+.cf-label {
+  display: inline-block; font-size: 0.875rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--color-green); margin-bottom: 28px;
+}
+.cf-section { padding: 110px 0; background: var(--color-white); color: var(--color-navy); }
+.cf-section--alt { background: var(--color-gray-bg); }
+.cf-narrow { max-width: 720px; margin: 0 auto; padding: 0 30px; text-align: center; }
+.cf-body { font-size: 1.25rem; line-height: 1.6; color: var(--color-navy-light); margin: 0; }
+.cf-body + .cf-body { margin-top: 1.2em; }
+.cf-reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.cf-reveal.is-visible { opacity: 1; transform: translateY(0); }
+.cf-cta-strip { padding: 96px 0; background: var(--color-gray-bg); text-align: center; color: var(--color-navy); }
+.cf-cta-strip h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700;
+  line-height: 1.15; letter-spacing: -0.015em; color: var(--color-navy);
+  margin-bottom: 18px;
+}
+.cf-cta-strip__sub {
+  font-size: 1.125rem; line-height: 1.6; color: var(--color-navy-light);
+  max-width: 540px; margin: 0 auto 32px;
+}
+.cf-cta-strip .btn { padding: 20px 42px; font-size: 18px; }
+@media (prefers-reduced-motion: reduce) {
+  .cf-reveal { transition: none; opacity: 1; transform: none; }
+}
+
+/* ========== MARKET INSIGHTS ========== */
+:root {
+  --color-delta-down: #b5553f;
+  --color-delta-neutral: #7a8598;
+}
+
+.mi-hero {
+  min-height: 56vh; display: flex; align-items: center;
+  padding: 90px 0 90px;
+  background: linear-gradient(180deg, #fafbfa 0%, var(--color-white) 100%);
+  color: var(--color-navy); text-align: center;
+}
+.mi-hero__inner { max-width: 880px; margin: 0 auto; padding: 0 30px; }
+.mi-hero h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700;
+  line-height: 1.05; letter-spacing: -0.02em;
+  color: var(--color-navy); max-width: 22ch; margin: 0 auto 22px;
+}
+.mi-hero__sub {
+  font-size: 1.25rem; line-height: 1.6; color: var(--color-navy-light);
+  max-width: 680px; margin: 0 auto;
+}
+
+/* Jump nav */
+.mi-jump {
+  background: #f1f4f7;
+  border-top: 1px solid rgba(30, 47, 73, 0.06);
+  border-bottom: 1px solid rgba(30, 47, 73, 0.06);
+  padding: 36px 0; text-align: center;
+}
+.mi-jump__inner { max-width: 1100px; margin: 0 auto; padding: 0 30px; }
+.mi-jump__label { margin-bottom: 18px; }
+.mi-jump__list {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+}
+.mi-pill {
+  display: inline-flex; align-items: center;
+  padding: 10px 18px; border-radius: 999px;
+  border: 1px solid var(--color-gray-light);
+  background: var(--color-white);
+  font-size: 0.875rem; font-weight: 600;
+  color: var(--color-navy); letter-spacing: 0.01em;
+  transition: border-color var(--transition), color var(--transition), transform var(--transition);
+}
+.mi-pill:hover {
+  border-color: var(--color-green); color: var(--color-green);
+  transform: translateY(-1px);
+}
+.mi-pill__num {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em;
+  color: var(--color-green); margin-right: 8px; opacity: 0.85;
+}
+
+/* County sections */
+.mi-county { padding: 110px 0; background: var(--color-white); color: var(--color-navy); scroll-margin-top: 110px; }
+.mi-county--alt { background: var(--color-gray-bg); }
+.mi-county__inner { max-width: 1100px; margin: 0 auto; padding: 0 30px; }
+.mi-county__head { text-align: center; max-width: 720px; margin: 0 auto 52px; }
+.mi-county h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700;
+  line-height: 1.1; letter-spacing: -0.02em;
+  color: var(--color-navy); margin: 0 0 10px;
+}
+.mi-county__updated {
+  font-size: 0.85rem; color: var(--color-navy-light);
+  letter-spacing: 0.02em; opacity: 0.8; margin: 0;
+}
+
+/* Stat grid */
+.mi-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+  margin-bottom: 60px;
+}
+.mi-stat {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius-lg);
+  padding: 32px 26px; display: flex; flex-direction: column; gap: 12px;
+}
+.mi-county--alt .mi-stat { background: var(--color-white); }
+.mi-stat__top {
+  display: inline-flex; align-items: baseline; gap: 10px;
+}
+.mi-stat__delta {
+  font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800;
+  line-height: 1; letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.mi-stat__delta--up { color: var(--color-green); }
+.mi-stat__delta--down { color: var(--color-delta-down); }
+.mi-stat__delta--flat { color: var(--color-delta-neutral); }
+.mi-stat__delta--days { color: var(--color-navy); }
+.mi-stat__arrow {
+  width: 24px; height: 24px; display: inline-flex;
+  align-items: center; justify-content: center;
+}
+.mi-stat__arrow svg { width: 22px; height: 22px; display: block; }
+.mi-stat__arrow--up { color: var(--color-green); }
+.mi-stat__arrow--down { color: var(--color-delta-down); }
+.mi-stat__arrow--flat { color: var(--color-delta-neutral); }
+.mi-stat__label {
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--color-navy-light);
+  line-height: 1.35; margin: 0;
+}
+.mi-stat__detail {
+  font-size: 0.95rem; line-height: 1.5;
+  color: var(--color-navy-light); margin: 0;
+}
+.mi-stat__sub {
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--color-navy-light); opacity: 0.8;
+}
+
+/* Interpretation block */
+.mi-interp {
+  max-width: 680px; margin: 0 auto;
+  text-align: center;
+}
+.mi-interp__label {
+  display: inline-block; font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--color-green); margin-bottom: 16px;
+}
+.mi-interp__body {
+  font-size: 1.125rem; line-height: 1.65;
+  color: var(--color-navy-light); margin: 0;
+}
+.mi-interp__body + .mi-interp__body { margin-top: 1em; }
+
+/* Source / crosslink / CTA blocks */
+.mi-source { padding: 96px 0; background: var(--color-white); color: var(--color-navy); text-align: center; }
+.mi-source__inner { max-width: 680px; margin: 0 auto; padding: 0 30px; }
+.mi-source h2 {
+  font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 700;
+  line-height: 1.22; color: var(--color-navy); margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+
+.mi-crosslink { padding: 96px 0; background: var(--color-gray-bg); color: var(--color-navy); text-align: center; }
+.mi-crosslink__inner { max-width: 640px; margin: 0 auto; padding: 0 30px; }
+.mi-crosslink h2 {
+  font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 700;
+  line-height: 1.22; color: var(--color-navy); margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+.mi-crosslink__body {
+  font-size: 1.125rem; line-height: 1.6; color: var(--color-navy-light);
+  margin: 0 0 30px;
+}
+
+@media (max-width: 960px) {
+  .mi-stats { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+}
+@media (max-width: 768px) {
+  .cf-section, .mi-county { padding: 64px 0; }
+  .cf-narrow { padding: 0 24px; }
+  .mi-hero { min-height: auto; padding: 60px 0 70px; }
+  .mi-hero__inner { padding: 0 24px; }
+  .mi-county__inner { padding: 0 24px; }
+  .mi-county__head { margin-bottom: 36px; }
+  .mi-source, .mi-crosslink { padding: 64px 0; }
+  .cf-cta-strip { padding: 64px 0; }
+  .mi-jump { padding: 22px 0; }
+  .mi-jump__inner { padding: 0 16px; }
+  .mi-pill { padding: 9px 14px; font-size: 0.82rem; }
+  .mi-stat { padding: 24px 20px; }
+  .mi-stats { margin-bottom: 44px; }
+}
+@media (max-width: 540px) {
+  .mi-stats { grid-template-columns: 1fr; }
+}
   </style>
 </head>
 <body>
@@ -526,521 +741,360 @@ p:last-child { margin-bottom: 0; }
     </div>
   </header>
 
-  <!-- ========== HERO / INTRO ========== -->
-  <section class="section" style="background:var(--color-mint);">
-    <div class="container text-center">
-      <h1>Your Real Estate Advantage</h1>
-      <p class="hero__subtitle">Expert insights, market analysis, and professional guidance for Southern California real estate.</p>
+  <!-- ========== SECTION 1: HERO ========== -->
+  <section class="mi-hero">
+    <div class="mi-hero__inner cf-reveal">
+      <div class="cf-label">Market Insights</div>
+      <h1>Where the Southern California market actually is right now.</h1>
+      <p class="mi-hero__sub">Updated regularly with the latest data from Los Angeles, Orange, Riverside, and San Bernardino counties. Inventory, demand, closed sales, and expected market time. The same numbers I use to advise my clients on pricing, timing, and strategy.</p>
     </div>
   </section>
 
-  <!-- ========== LOS ANGELES COUNTY MARKET DATA ========== -->
-  <section class="section" id="los-angeles">
-    <div class="container">
-      <div class="advantage">
-        <p class="advantage__subtitle">Last updated: 3/30/2026</p>
-        <h2>Current Los Angeles County Market Data</h2>
-        <p>Real-time insights into the Los Angeles County real estate market.</p>
-        <div class="advantage__features">
-          <div class="advantage__feature">
-            <h3>+7%</h3>
-            <p><strong>New Listing Inventory YOY</strong></p>
-            <p>12,937 homes, up 7% vs. 12,119 last year. Increasing inventory.</p>
-          </div>
-          <div class="advantage__feature">
-            <h3>&asymp;0%</h3>
-            <p><strong>Demand Year Over Year</strong></p>
-            <p>3,869 pending sales, about flat vs. 3,854 last year.</p>
-          </div>
-          <div class="advantage__feature">
-            <h3>&minus;7%</h3>
-            <p><strong>Closed Sales YOY</strong></p>
-            <p>3,023 in February, down 7% vs. February 2025 (3,237).</p>
-          </div>
-          <div class="advantage__feature">
-            <h3>100 Days</h3>
-            <p><strong>Expected Market Time</strong></p>
-            <p>Slower than 94 days last year (+6 days).</p>
-          </div>
-        </div>
+  <!-- ========== SECTION 2: COUNTY JUMP NAV ========== -->
+  <nav class="mi-jump" aria-label="Jump to county">
+    <div class="mi-jump__inner">
+      <div class="cf-label mi-jump__label">Jump to Your County</div>
+      <div class="mi-jump__list">
+        <a class="mi-pill" href="#los-angeles-county"><span class="mi-pill__num">01</span>Los Angeles County</a>
+        <a class="mi-pill" href="#orange-county"><span class="mi-pill__num">02</span>Orange County</a>
+        <a class="mi-pill" href="#riverside-county"><span class="mi-pill__num">03</span>Riverside County</a>
+        <a class="mi-pill" href="#san-bernardino-county"><span class="mi-pill__num">04</span>San Bernardino County</a>
       </div>
     </div>
-  </section>
+  </nav>
 
-  <!-- ========== ORANGE COUNTY MARKET DATA ========== -->
-  <section class="section" id="orange-county">
-    <div class="container">
-      <div class="advantage">
-        <p class="advantage__subtitle">Last updated: 3/30/2026</p>
-        <h2>Current Orange County Market Data</h2>
-        <p>Real-time insights into the Orange County real estate market.</p>
-        <div class="advantage__features">
-          <div class="advantage__feature">
-            <h3>+5%</h3>
-            <p><strong>New Listing Inventory YOY</strong></p>
-            <p>3,866 homes, up 5% vs. 3,681 last year. Increasing inventory.</p>
-          </div>
-          <div class="advantage__feature">
-            <h3>&asymp;0%</h3>
-            <p><strong>Demand Year Over Year</strong></p>
-            <p>1,654 pending sales, about flat vs. 1,649 last year.</p>
-          </div>
-          <div class="advantage__feature">
-            <h3>&minus;7%</h3>
-            <p><strong>Closed Sales YOY</strong></p>
-            <p>1,364 in February, down 7% vs. February 2025 (1,465).</p>
-          </div>
-          <div class="advantage__feature">
-            <h3>70 Days</h3>
-            <p><strong>Expected Market Time</strong></p>
-            <p>Slower than 67 days last year (+3 days).</p>
-          </div>
-        </div>
-      </div>
+  <!-- ========== SECTION 3: HOW TO READ THIS ========== -->
+  <section class="cf-section">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">How to Read This</div>
+      <h2 style="font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 700; line-height: 1.18; letter-spacing: -0.015em; color: var(--color-navy); margin: 0 0 28px;">Numbers without context are noise.</h2>
+      <p class="cf-body">Every county snapshot below shows four metrics: how much inventory is on the market compared to a year ago, how much buyer demand exists, how many homes actually closed, and how long the average home sits before going under contract. These four numbers, read together, tell you whether your county is a seller's market, a buyer's market, or somewhere in between.</p>
+      <p class="cf-body">If you want to know what these numbers mean for your specific home, that's the conversation worth having on a call.</p>
     </div>
   </section>
 
-  <!-- ========== RIVERSIDE COUNTY MARKET DATA ========== -->
-  <section class="section" id="riverside">
-    <div class="container">
-      <div class="advantage">
-        <p class="advantage__subtitle">Last updated: 4/6/2026</p>
-        <h2>Current Riverside County Market Data</h2>
-        <p>Real-time insights into the Riverside County real estate market.</p>
-        <div class="advantage__features">
-          <div class="advantage__feature">
-            <h3>&minus;3%</h3>
-            <p><strong>Active Listing Inventory YOY</strong></p>
-            <p>7,816 homes, down 3% vs. 8,075 last year. Decreasing inventory.</p>
-          </div>
-          <div class="advantage__feature">
-            <h3>&minus;4%</h3>
-            <p><strong>Pending Sales (Demand) YOY</strong></p>
-            <p>2,409 pending sales, down 4% vs. 2,518 last year.</p>
-          </div>
-          <div class="advantage__feature">
-            <h3>&minus;2%</h3>
-            <p><strong>Closed Sales YOY</strong></p>
-            <p>1,912 in February, down 2% vs. February 2025 (1,943).</p>
-          </div>
-          <div class="advantage__feature">
-            <h3>97 Days</h3>
-            <p><strong>Expected Market Time</strong></p>
-            <p>Slower than 96 days last year (+1 day).</p>
-          </div>
-        </div>
+  <!-- ========== SECTION 4A: LOS ANGELES COUNTY ========== -->
+  <section class="mi-county mi-county--alt" id="los-angeles-county">
+    <div class="mi-county__inner">
+      <div class="mi-county__head cf-reveal">
+        <div class="cf-label">County 01</div>
+        <h2>Los Angeles County</h2>
+        <!-- UPDATE: LA County last updated date -->
+        <p class="mi-county__updated">Last updated: March 30, 2026</p>
+        <!-- END UPDATE -->
       </div>
-    </div>
-  </section>
 
-  <!-- ========== SAN BERNARDINO COUNTY MARKET DATA ========== -->
-  <section class="section" id="san-bernardino">
-    <div class="container">
-      <div class="advantage">
-        <p class="advantage__subtitle">Last updated: 4/6/2026</p>
-        <h2>Current San Bernardino County Market Data</h2>
-        <p>Real-time insights into the San Bernardino County real estate market.</p>
-        <div class="advantage__features">
-          <div class="advantage__feature">
-            <h3>&asymp;0%</h3>
-            <p><strong>Active Listing Inventory YOY</strong></p>
-            <p>5,312 homes, about flat vs. 5,312 last year.</p>
+      <div class="mi-stats cf-reveal">
+
+        <div class="mi-stat">
+          <!-- UPDATE: LA County, Stat 1 (Inventory) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__arrow mi-stat__arrow--up" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 19V5m0 0l-6 6m6-6l6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="mi-stat__delta mi-stat__delta--up">+7%</span>
           </div>
-          <div class="advantage__feature">
-            <h3>&minus;3%</h3>
-            <p><strong>Pending Sales (Demand) YOY</strong></p>
-            <p>1,480 pending sales, down 3% vs. 1,525 last year.</p>
-          </div>
-          <div class="advantage__feature">
-            <h3>&minus;3%</h3>
-            <p><strong>Closed Sales YOY</strong></p>
-            <p>1,125 in February, down 3% vs. February 2025 (1,156).</p>
-          </div>
-          <div class="advantage__feature">
-            <h3>105 Days</h3>
-            <p><strong>Expected Market Time</strong></p>
-            <p>Same as 105 days last year (0 day change).</p>
-          </div>
+          <p class="mi-stat__label">New Listing Inventory YOY</p>
+          <p class="mi-stat__detail">12,937 homes, up 7% vs. 12,119 last year. Increasing inventory.</p>
+          <!-- END UPDATE -->
         </div>
+
+        <div class="mi-stat">
+          <!-- UPDATE: LA County, Stat 2 (Demand) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__arrow mi-stat__arrow--flat" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            </span>
+            <span class="mi-stat__delta mi-stat__delta--flat">&asymp;0%</span>
+          </div>
+          <p class="mi-stat__label">Demand Year Over Year</p>
+          <p class="mi-stat__detail">3,869 pending sales, about flat vs. 3,854 last year.</p>
+          <!-- END UPDATE -->
+        </div>
+
+        <div class="mi-stat">
+          <!-- UPDATE: LA County, Stat 3 (Closed Sales) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__arrow mi-stat__arrow--down" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="mi-stat__delta mi-stat__delta--down">&minus;7%</span>
+          </div>
+          <p class="mi-stat__label">Closed Sales YOY</p>
+          <p class="mi-stat__detail">3,023 in February, down 7% vs. February 2025 (3,237).</p>
+          <!-- END UPDATE -->
+        </div>
+
+        <div class="mi-stat">
+          <!-- UPDATE: LA County, Stat 4 (Expected Market Time) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__delta mi-stat__delta--days">100 days</span>
+          </div>
+          <p class="mi-stat__label">Expected Market Time</p>
+          <p class="mi-stat__detail">Slower than 94 days last year.</p>
+          <p class="mi-stat__sub">+6 days</p>
+          <!-- END UPDATE -->
+        </div>
+
+      </div>
+
+      <div class="mi-interp cf-reveal">
+        <div class="mi-interp__label">What This Means for Sellers</div>
+        <!-- UPDATE: LA County interpretation -->
+        <p class="mi-interp__body">Inventory is up but demand is flat, which means more sellers competing for the same pool of buyers. Closed sales are down 7%, and homes are taking nearly a week longer to go under contract than they were a year ago. For a seller in LA County, this is the moment where pricing strategy matters most. List too high and you'll join the homes sitting past 100 days. Price right and you'll still find the buyer faster than your competition.</p>
+        <!-- END UPDATE -->
       </div>
     </div>
   </section>
 
-  <!-- ========== DATA SOURCE ATTRIBUTION ========== -->
-  <section class="section">
-    <div class="container">
-      <div class="body-text text-center">
-        <p><strong>Source: Reports on Housing slide dated 4/6/2026.</strong></p>
+  <!-- ========== SECTION 4B: ORANGE COUNTY ========== -->
+  <section class="mi-county" id="orange-county">
+    <div class="mi-county__inner">
+      <div class="mi-county__head cf-reveal">
+        <div class="cf-label">County 02</div>
+        <h2>Orange County</h2>
+        <!-- UPDATE: Orange County last updated date -->
+        <p class="mi-county__updated">Last updated: March 30, 2026</p>
+        <!-- END UPDATE -->
+      </div>
+
+      <div class="mi-stats cf-reveal">
+
+        <div class="mi-stat">
+          <!-- UPDATE: Orange County, Stat 1 (Inventory) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__arrow mi-stat__arrow--up" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 19V5m0 0l-6 6m6-6l6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="mi-stat__delta mi-stat__delta--up">+5%</span>
+          </div>
+          <p class="mi-stat__label">New Listing Inventory YOY</p>
+          <p class="mi-stat__detail">3,866 homes, up 5% vs. 3,681 last year. Increasing inventory.</p>
+          <!-- END UPDATE -->
+        </div>
+
+        <div class="mi-stat">
+          <!-- UPDATE: Orange County, Stat 2 (Demand) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__arrow mi-stat__arrow--flat" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            </span>
+            <span class="mi-stat__delta mi-stat__delta--flat">&asymp;0%</span>
+          </div>
+          <p class="mi-stat__label">Demand Year Over Year</p>
+          <p class="mi-stat__detail">1,654 pending sales, about flat vs. 1,649 last year.</p>
+          <!-- END UPDATE -->
+        </div>
+
+        <div class="mi-stat">
+          <!-- UPDATE: Orange County, Stat 3 (Closed Sales) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__arrow mi-stat__arrow--down" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="mi-stat__delta mi-stat__delta--down">&minus;7%</span>
+          </div>
+          <p class="mi-stat__label">Closed Sales YOY</p>
+          <p class="mi-stat__detail">1,364 in February, down 7% vs. February 2025 (1,465).</p>
+          <!-- END UPDATE -->
+        </div>
+
+        <div class="mi-stat">
+          <!-- UPDATE: Orange County, Stat 4 (Expected Market Time) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__delta mi-stat__delta--days">70 days</span>
+          </div>
+          <p class="mi-stat__label">Expected Market Time</p>
+          <p class="mi-stat__detail">Slower than 67 days last year.</p>
+          <p class="mi-stat__sub">+3 days</p>
+          <!-- END UPDATE -->
+        </div>
+
+      </div>
+
+      <div class="mi-interp cf-reveal">
+        <div class="mi-interp__label">What This Means for Sellers</div>
+        <!-- UPDATE: Orange County interpretation -->
+        <p class="mi-interp__body">Orange County remains the tightest market of the four, with a 70-day expected market time well below LA, Riverside, and San Bernardino. Inventory is climbing slightly and closed sales are softening, but demand is holding steady. For sellers, this is still a healthy market, but the days of homes flying off the shelf in two weeks are behind us. Strategic pricing and strong presentation matter more now than they did a year ago.</p>
+        <!-- END UPDATE -->
       </div>
     </div>
   </section>
 
-  <!-- ========== TV MARKET SEGMENTS ========== -->
-  <section class="section" id="tv-segments">
-    <div class="container">
-      <div class="comparison__title">
-        <h2>TV Market Segments</h2>
-        <p>Stay up to date with our latest television appearances and featured expert market analysis and real estate insights.</p>
+  <!-- ========== SECTION 4C: RIVERSIDE COUNTY ========== -->
+  <section class="mi-county mi-county--alt" id="riverside-county">
+    <div class="mi-county__inner">
+      <div class="mi-county__head cf-reveal">
+        <div class="cf-label">County 03</div>
+        <h2>Riverside County</h2>
+        <!-- UPDATE: Riverside County last updated date -->
+        <p class="mi-county__updated">Last updated: April 6, 2026</p>
+        <!-- END UPDATE -->
       </div>
-      <div class="comparison__grid">
 
-        <div class="comparison__card">
-          <iframe width="100%" height="280" src="https://www.youtube.com/embed/-TFvCc-8LjY" title="ESPN LA 710 AM - Why The LA Housing Market Is Like A Rattlesnake" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          <h3>ESPN LA 710 AM</h3>
-          <h5>Why The LA Housing Market Is Like A Rattlesnake</h5>
-          <p>April 6, 2026</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/08/espn.png -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/espn.png" alt="ESPN LA 710 AM logo" width="100">
+      <div class="mi-stats cf-reveal">
+
+        <div class="mi-stat">
+          <!-- UPDATE: Riverside County, Stat 1 (Inventory) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__arrow mi-stat__arrow--down" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="mi-stat__delta mi-stat__delta--down">&minus;3%</span>
+          </div>
+          <p class="mi-stat__label">Active Listing Inventory YOY</p>
+          <p class="mi-stat__detail">7,816 homes, down 3% vs. 8,075 last year. Decreasing inventory.</p>
+          <!-- END UPDATE -->
         </div>
 
-        <div class="comparison__card">
-          <iframe width="100%" height="280" src="https://www.youtube.com/embed/Em3RyBF0haI" title="ESPN LA 710 AM - Damon Talks Home Selling Made Simple" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          <h3>ESPN LA 710 AM</h3>
-          <h5>Damon Talks Home Selling Made Simple</h5>
-          <p>October 10, 2025</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/08/espn.png -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/espn.png" alt="ESPN LA 710 AM logo" width="100">
+        <div class="mi-stat">
+          <!-- UPDATE: Riverside County, Stat 2 (Pending Sales / Demand) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__arrow mi-stat__arrow--down" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="mi-stat__delta mi-stat__delta--down">&minus;4%</span>
+          </div>
+          <p class="mi-stat__label">Pending Sales (Demand) YOY</p>
+          <p class="mi-stat__detail">2,409 pending sales, down 4% vs. 2,518 last year.</p>
+          <!-- END UPDATE -->
         </div>
 
-        <div class="comparison__card">
-          <iframe width="100%" height="280" src="https://www.youtube.com/embed/r9yHBM1_jQo" title="KTLA 5 LA Unscripted - Selling Without Stress" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          <h3>KTLA 5: LA Unscripted</h3>
-          <h5>Selling Without Stress</h5>
-          <p>July 22, 2025</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/08/KTLA-logo-1024x287-1.jpg -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/KTLA-logo-1024x287-1.jpg" alt="KTLA 5 logo" width="100">
+        <div class="mi-stat">
+          <!-- UPDATE: Riverside County, Stat 3 (Closed Sales) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__arrow mi-stat__arrow--down" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="mi-stat__delta mi-stat__delta--down">&minus;2%</span>
+          </div>
+          <p class="mi-stat__label">Closed Sales YOY</p>
+          <p class="mi-stat__detail">1,912 in February, down 2% vs. February 2025 (1,943).</p>
+          <!-- END UPDATE -->
         </div>
 
-        <div class="comparison__card">
-          <iframe width="100%" height="280" src="https://www.youtube.com/embed/PpDsckmUBJM" title="CBS KCAL News Morning Mix - Navigating Home Sales" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          <h3>CBS KCAL News: Morning Mix</h3>
-          <h5>Navigating Home Sales</h5>
-          <p>July 9, 2025</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/08/kcal.png -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/kcal.png" alt="CBS KCAL News logo" width="100">
+        <div class="mi-stat">
+          <!-- UPDATE: Riverside County, Stat 4 (Expected Market Time) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__delta mi-stat__delta--days">97 days</span>
+          </div>
+          <p class="mi-stat__label">Expected Market Time</p>
+          <p class="mi-stat__detail">Slower than 96 days last year.</p>
+          <p class="mi-stat__sub">+1 day</p>
+          <!-- END UPDATE -->
         </div>
 
-        <div class="comparison__card">
-          <iframe width="100%" height="280" src="https://www.youtube.com/embed/-N6lCJtJ6P8" title="NBC California Live - LA Housing Affordability" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          <h3>NBC: California Live</h3>
-          <h5>LA Housing Affordability</h5>
-          <p>July 1, 2025</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/08/NBC.svg -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/NBC.svg" alt="NBC logo" width="80">
-        </div>
+      </div>
 
-        <div class="comparison__card">
-          <video width="100%" height="280" controls preload="metadata">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/Fox11-Seller_s-Advantage-LovingSoCal-Posts-1.mp4" type="video/mp4">
-            Sorry, your browser doesn't support embedded video.
-          </video>
-          <h3>FOX 11 Good Day LA: Loving SoCal</h3>
-          <h5>LA Housing Inventory</h5>
-          <p>July 1, 2025</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/08/fox11.svg -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/fox11.svg" alt="FOX 11 Good Day LA logo" width="80">
-        </div>
-
-        <div class="comparison__card">
-          <iframe width="100%" height="280" src="https://www.youtube.com/embed/X6pcDOGsMvk" title="ABC 7 Local Spotlight - Shift to Buyer's Market" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          <h3>ABC 7: Local Spotlight</h3>
-          <h5>Shift to Buyer's Market</h5>
-          <p>May 31, 2025</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/08/KVII-TV_ABC_7_logo.svg -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/KVII-TV_ABC_7_logo.svg" alt="ABC 7 logo" width="80">
-        </div>
-
+      <div class="mi-interp cf-reveal">
+        <div class="mi-interp__label">What This Means for Sellers</div>
+        <!-- UPDATE: Riverside County interpretation -->
+        <p class="mi-interp__body">Riverside County is the only one of the four where inventory is shrinking. Demand is also down slightly, which keeps the market roughly balanced. Expected market time is essentially unchanged from last year. For sellers, this is a stable, predictable market. The opportunity here is positioning your home as the cleaner option in a smaller pool of inventory. Less competition means less reason to compete on price if your home is well-prepared.</p>
+        <!-- END UPDATE -->
       </div>
     </div>
   </section>
 
-  <!-- ========== RADIO SHOW SEGMENTS ========== -->
-  <section class="section" id="radio-segments" style="background:var(--color-mint);">
-    <div class="container">
-      <div class="comparison__title">
-        <h2>Radio Show Segments</h2>
-        <p>Stay up to date with our latest radio segments for real estate insights and current information.</p>
+  <!-- ========== SECTION 4D: SAN BERNARDINO COUNTY ========== -->
+  <section class="mi-county" id="san-bernardino-county">
+    <div class="mi-county__inner">
+      <div class="mi-county__head cf-reveal">
+        <div class="cf-label">County 04</div>
+        <h2>San Bernardino County</h2>
+        <!-- UPDATE: San Bernardino County last updated date -->
+        <p class="mi-county__updated">Last updated: April 6, 2026</p>
+        <!-- END UPDATE -->
       </div>
 
-      <!-- KLOS 95.5 FM -->
-      <h2 id="klos">KLOS 95.5 FM</h2>
-      <div class="comparison__grid">
+      <div class="mi-stats cf-reveal">
 
-        <div class="comparison__card">
-          <p><em>KLOS segment from 4/3/2026</em></p>
-          <h3>Crypto Mortgages, Market Slowdown, and the Biggest Lies in Real Estate</h3>
-          <p>Damon covers a landmark shift as crypto is now accepted as mortgage collateral, plus why home sales hit their worst numbers since 2018. He also tackles common seller misconceptions about what their home is really worth.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp" alt="KLOS 95.5 logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/KLOS-April-3.m4a" type="audio/mp4">
-            Your browser does not support the audio element.
-          </audio>
+        <div class="mi-stat">
+          <!-- UPDATE: San Bernardino County, Stat 1 (Inventory) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__arrow mi-stat__arrow--flat" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            </span>
+            <span class="mi-stat__delta mi-stat__delta--flat">&asymp;0%</span>
+          </div>
+          <p class="mi-stat__label">Active Listing Inventory YOY</p>
+          <p class="mi-stat__detail">5,312 homes, about flat vs. 5,312 last year.</p>
+          <!-- END UPDATE -->
         </div>
 
-        <div class="comparison__card">
-          <p><em>KLOS segment from 3/27/2026</em></p>
-          <h3>Staging Secrets: Small Fixes That Make a Big Difference</h3>
-          <p>A fresh coat of paint and a little decluttering go a long way. Damon shares low-cost staging tips and why bold color choices might be costing you offers.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp" alt="KLOS 95.5 logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/KLOS-March-27.m4a" type="audio/mp4">
-            Your browser does not support the audio element.
-          </audio>
+        <div class="mi-stat">
+          <!-- UPDATE: San Bernardino County, Stat 2 (Pending Sales / Demand) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__arrow mi-stat__arrow--down" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="mi-stat__delta mi-stat__delta--down">&minus;3%</span>
+          </div>
+          <p class="mi-stat__label">Pending Sales (Demand) YOY</p>
+          <p class="mi-stat__detail">1,480 pending sales, down 3% vs. 1,525 last year.</p>
+          <!-- END UPDATE -->
         </div>
 
-        <div class="comparison__card">
-          <p><em>KLOS segment from 3/20/2026</em></p>
-          <h3>Buyer Confidence Is Down and New Disclosure Laws Are Changing the Game</h3>
-          <p>Homebuyer optimism has dipped as the Fed holds rates steady. Damon walks through new property disclosure requirements, including deaths, pests, and what sellers must now reveal.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp" alt="KLOS 95.5 logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/KLOS-March-20.m4a" type="audio/mp4">
-            Your browser does not support the audio element.
-          </audio>
+        <div class="mi-stat">
+          <!-- UPDATE: San Bernardino County, Stat 3 (Closed Sales) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__arrow mi-stat__arrow--down" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="mi-stat__delta mi-stat__delta--down">&minus;3%</span>
+          </div>
+          <p class="mi-stat__label">Closed Sales YOY</p>
+          <p class="mi-stat__detail">1,125 in February, down 3% vs. February 2025 (1,156).</p>
+          <!-- END UPDATE -->
         </div>
 
-        <div class="comparison__card">
-          <p><em>KLOS segment from 3/13/2026</em></p>
-          <h3>Curb Appeal, Corporate Buyers, and Why Your Neighbor's Yard Matters</h3>
-          <p>Half of homeowners would pay a neighbor to clean up their lot. Damon covers curb appeal and new legislation restricting corporate investors from buying single-family homes.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp" alt="KLOS 95.5 logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/KLOS-March-13.m4a" type="audio/mp4">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <p><em>KLOS segment from 2/27/2026</em></p>
-          <h3>Rates Drop Below 6% Plus the Emotional Side of Selling</h3>
-          <p>Mortgage rates fell below 6% for the first time since 2022, sparking refinancing interest. Damon also explores why some sellers struggle to let go of homes filled with memories.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp" alt="KLOS 95.5 logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/KLOS-Feb-27.m4a" type="audio/mp4">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <p><em>KLOS segment from 2/20/2026</em></p>
-          <h3>The Market Is Cooling: Here's What the Numbers Say</h3>
-          <p>Home sales have slowed and days on market are climbing across Southern California. Damon breaks down median prices, time-on-market trends, and whether relief is coming.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp" alt="KLOS 95.5 logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/KLOS-Feb-20.m4a" type="audio/mp4">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <p><em>KLOS segment from 2/13/2026</em></p>
-          <h3>Homeowners Are Staying Put Longer Than Ever</h3>
-          <p>Americans are staying in their homes over 11 years on average, the longest on record. Damon discusses how that's squeezing inventory in LA County.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp" alt="KLOS 95.5 logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/KLOS-Feb-13.m4a" type="audio/mp4">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <p><em>KLOS segment from 2/6/2026</em></p>
-          <h3>Overpriced and Sitting: When Sellers Miss the Mark</h3>
-          <p>Some sellers are still listing at peak-era prices and paying for it. Damon talks dramatic price reductions and why pricing right from the start matters more than ever.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp" alt="KLOS 95.5 logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/KLOS-Feb-6.m4a" type="audio/mp4">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <p><em>KLOS segment from 1/30/2026</em></p>
-          <h3>Home Prices Are Slipping, But Is It Enough?</h3>
-          <p>National listing prices fell year-over-year for the first time in nearly four years. Damon explains what's behind the dip and why affordability remains the biggest hurdle.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp" alt="KLOS 95.5 logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/KLOS-January-30.m4a" type="audio/mp4">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <p><em>KLOS segment from 1/27/2026</em></p>
-          <h3>Divorce, Downsizing, and As-Is Deals</h3>
-          <p>Damon shares the personal stories behind real estate transactions and explains why "as-is" properties can be hidden opportunities for buyers.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp" alt="KLOS 95.5 logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/KLOS-Jan-27.m4a" type="audio/mp4">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <p><em>KLOS segment from 1/16/2026</em></p>
-          <h3>Mortgage Rates Hit a Three-Year Low</h3>
-          <p>With the 30-year fixed rate near 6%, Damon breaks down whether lower rates will get buyers and sellers moving or if the lock-in effect still has the market stuck.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp" alt="KLOS 95.5 logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/KLOS-January-16.m4a" type="audio/mp4">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <p><em>KLOS segment from 1/9/2026</em></p>
-          <h3>New Year, New Market: What SoCal Homebuyers Need to Know in 2026</h3>
-          <p>Damon kicks off the year with a look at price cuts, shifting inventory, and the impact of corporate buyers like BlackRock on first-time homebuyers.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/95-5-klos.webp" alt="KLOS 95.5 logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/04/KLOS-January-9.m4a" type="audio/mp4">
-            Your browser does not support the audio element.
-          </audio>
+        <div class="mi-stat">
+          <!-- UPDATE: San Bernardino County, Stat 4 (Expected Market Time) -->
+          <div class="mi-stat__top">
+            <span class="mi-stat__delta mi-stat__delta--days">105 days</span>
+          </div>
+          <p class="mi-stat__label">Expected Market Time</p>
+          <p class="mi-stat__detail">Same as 105 days last year.</p>
+          <p class="mi-stat__sub">0 day change</p>
+          <!-- END UPDATE -->
         </div>
 
       </div>
 
-      <!-- ESPN 710 AM -->
-      <h2 id="espn-radio" style="margin-top:60px;">ESPN 710 AM</h2>
-      <div class="comparison__grid">
-
-        <div class="comparison__card">
-          <h3>Did You Lose a Home in the Palisades or Altadena Areas?</h3>
-          <p>Damon explains how Seller's Advantage helps homeowners weigh their options after the recent LA fires.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/espn.png -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/espn.png" alt="ESPN 710 AM logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/ESPN-SELLERS-ADVANTAGE-KAP-AND-LINES-10000-DOLLARS-60.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <h3>$10,000 Advance for Moving Costs</h3>
-          <p>Damon talks about why Seller's Advantage offers the $10,000 advance to help homeowners move.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/espn.png -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/espn.png" alt="ESPN 710 AM logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/ESPN-SELLERS-ADVANTAGE-KAP-AND-LINES-10000-DOLLARS-60.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <h3>Easy vs. Complicated Ways to Sell Your House</h3>
-          <p>Damon talks about how Seller's Advantage makes the entire process easy and simple.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/espn.png -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/espn.png" alt="ESPN 710 AM logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/ESPN-SELLERS-ADVANTAGE-KAP-AND-LINES-EASY-VS-COMPLICATED-60.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <h3>Damon Lines on the Development of Homes on Top of Costco</h3>
-          <p>Damon speaks about the types of houses Seller's Advantage buys.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/espn.png -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/espn.png" alt="ESPN 710 AM logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/ESPN-SELLERS-ADVANTAGE-1-ON-TOP-OF-COSTCO-60.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <h3>Sell Your House Quickly to Seller's Advantage</h3>
-          <p>Listen to our president explain how to sell your house fast.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/espn.png -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/espn.png" alt="ESPN 710 AM logo" width="120">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/ESPN-SELLERS-ADVANTAGE-2-SELL-QUICKLY-60.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
+      <div class="mi-interp cf-reveal">
+        <div class="mi-interp__label">What This Means for Sellers</div>
+        <!-- UPDATE: San Bernardino County interpretation -->
+        <p class="mi-interp__body">San Bernardino County is the most stable of the four, with inventory and market time both essentially unchanged from a year ago. Demand and closed sales are down slightly. For sellers, the playbook here is patience and pricing discipline. With a 105-day expected market time, the homes that sell quickly are the ones that come to market priced correctly on day one and presented in the top 25% of their price band.</p>
+        <!-- END UPDATE -->
       </div>
+    </div>
+  </section>
 
-      <!-- KOST 103.5 FM -->
-      <h2 id="kost" style="margin-top:60px;">KOST 103.5 FM</h2>
-      <div class="comparison__grid">
+  <!-- ========== SECTION 5: SOURCE ========== -->
+  <section class="mi-source">
+    <div class="mi-source__inner cf-reveal">
+      <div class="cf-label">The Source</div>
+      <h2>Where this data comes from.</h2>
+      <p class="cf-body" style="font-size: 1.125rem;">The numbers above are pulled directly from the local Multiple Listing Service (MLS) and Reports On Housing, the same sources used by professional real estate analysts and economists tracking the Southern California market. I update this page regularly so the data you see reflects the market as it is, not as it was.</p>
+    </div>
+  </section>
 
-        <div class="comparison__card">
-          <h3>The Rise of Multi-Generational Living</h3>
-          <p>Multi-generational living is gaining traction, especially among younger buyers planning for extended family. Damon explores why the trend is growing and how builders are designing homes to accommodate it.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/kost.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/kost.webp" alt="KOST 103.5 FM logo" width="160">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/01/KOST-with-Ellen-K-Tariffs-and-Their-Impact-on-Home-Repairs.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
+  <!-- ========== SECTION 6: CROSS-LINK TO FIELD NOTES ========== -->
+  <section class="mi-crosslink">
+    <div class="mi-crosslink__inner cf-reveal">
+      <div class="cf-label">Want the Deeper Read?</div>
+      <h2>The notes behind the numbers.</h2>
+      <p class="mi-crosslink__body">Stats give you the snapshot. Field Notes give you the commentary. Short, observational posts on what's actually happening in Southern California real estate, written when there's something worth saying.</p>
+      <a href="/field-notes/" class="btn btn--green">Read Field Notes</a>
+    </div>
+  </section>
 
-        <div class="comparison__card">
-          <h3>Tariffs and Their Impact on Home Repairs</h3>
-          <p>Rising tariffs on building materials are adding uncertainty to the housing market. Damon breaks down how higher repair costs are affecting sellers and why a no-repairs cash offer can be a smart alternative.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/kost.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/kost.webp" alt="KOST 103.5 FM logo" width="160">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/01/KOST-with-Ellen-K-Tariffs-and-Their-Impact-on-Home-Repairs.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <h3>Buying All Types of Mobile Homes</h3>
-          <p>Damon explains the different types of mobile homes, from foundation-set units that qualify for conventional financing to those on leased land, and why Seller's Advantage buys them all.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/kost.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/kost.webp" alt="KOST 103.5 FM logo" width="160">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2026/01/KOST-with-Ellen-K-Buying-All-Types-of-Mobile-Homes.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-        <div class="comparison__card">
-          <h3>Damon Lines on Climate Change</h3>
-          <p>With extreme heat events expected to surge over the next two decades, Damon discusses how climate change is influencing where people buy and sell, and what it means for homeowners looking to move.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/kost.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/kost.webp" alt="KOST 103.5 FM logo" width="160">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/KOST-Ellen-SellersAdv-Damon-Climate.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-      </div>
-
-      <!-- The Real Deal -->
-      <h2 id="real-deal" style="margin-top:60px;">The Real Deal</h2>
-      <div class="comparison__grid">
-
-        <div class="comparison__card">
-          <p><em>The Real Deal segment from 2022-2023</em></p>
-          <h3>What's Going On With Home Insurance?</h3>
-          <p>Damon chats about the fires in LA and how it has affected home insurance.</p>
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/therealdeal.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/therealdeal.webp" alt="The Real Deal logo" width="140">
-          <audio controls preload="none" style="width:100%;margin-top:14px;">
-            <source src="https://www.sellersadvantage.com/wp-content/uploads/2025/08/MERUELO-MEDIA-SALES-ASSISTANTSs-Video-Feb-3-2025-VEED.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-
-      </div>
-
+  <!-- ========== SECTION 7: FINAL CTA ========== -->
+  <section class="cf-cta-strip">
+    <div class="cf-narrow">
+      <div class="cf-label">What Does This Mean For Your Home?</div>
+      <h2>The data is one thing. Your home is another.</h2>
+      <p class="cf-cta-strip__sub">County-level data is useful, but it doesn't tell you what your specific home, in your specific neighborhood, will actually sell for. That's what a real comparative market analysis is for. Free, no pressure, delivered within 48 hours.</p>
+      <a href="/contact/" class="btn btn--green">Get my free home valuation</a>
     </div>
   </section>
 
@@ -1272,6 +1326,26 @@ p:last-child { margin-bottom: 0; }
         }
       });
     });
+
+    // MARKET INSIGHTS: scroll reveal for .cf-reveal
+    (function initMiReveal() {
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var reveals = document.querySelectorAll('.cf-reveal');
+      if (!reveals.length) return;
+      if (!('IntersectionObserver' in window) || reduceMotion) {
+        reveals.forEach(function (el) { el.classList.add('is-visible'); });
+        return;
+      }
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+      reveals.forEach(function (el) { obs.observe(el); });
+    })();
 
   })();
   </script>
