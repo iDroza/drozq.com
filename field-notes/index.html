@@ -1,4 +1,10 @@
 <!doctype html>
+<!--
+  NOTE: Configure a 301 redirect from /blog/ (and any /blog/* paths) to
+  /field-notes/ at the hosting layer (Cloudflare Pages _redirects, Netlify
+  _redirects, Vercel vercel.json, or equivalent). This page is the new
+  canonical URL. Leaving the legacy /blog/ directory in place for now.
+-->
 <html lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
@@ -31,7 +37,8 @@
   <meta name="twitter:image" content="https://www.drozq.com/media/images/preview.png" />
   <meta name="robots" content="index,follow" />
   <link rel="icon" href="https://www.drozq.com/media/icons/Joshua Guerrero Favicon.png" type="image/png" />
-  <link rel="preload" as="image" href="https://www.drozq.com/media/images/Waist.png" fetchpriority="high">
+  <link rel="preload" as="image" href="https://www.drozq.com/media/images/preview.png" fetchpriority="high">
+  <link rel="preload" as="image" href="https://www.drozq.com/media/images/Waist.png" fetchpriority="auto">
 
   <style>
 
@@ -136,11 +143,12 @@ p:last-child { margin-bottom: 0; }
   opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
 }
 
-.hero { padding: 60px 0 0; background: var(--color-mint); }
-.hero .container { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 40px; }
-.hero__content { flex: 1 1 55%; min-width: 300px; padding-bottom: 50px; order: 1; }
-.hero__image { flex: 1 1 40%; min-width: 300px; order: 2; display: flex; justify-content: center; align-self: flex-end; }
-.hero__image img { display: block; margin-bottom: 0; max-height: 640px; width: auto; }
+.hero { padding: 50px 0 0; background: linear-gradient(114deg, var(--color-white) 67%, var(--color-navy) 62%); }
+.hero .container { display: flex; flex-wrap: wrap; align-items: flex-end; }
+.hero__content { flex: 1 1 45%; min-width: 300px; padding-bottom: 25px; }
+.hero__image { flex: 1 1 25%; min-width: 200px; }
+.hero__badge { flex: 1 1 25%; min-width: 200px; display: flex; justify-content: center; }
+.hero__badge img { max-width: 300px; }
 .hero h1 { color: var(--color-navy); margin-bottom: 14px; }
 .hero__subtitle { font-size: 20px; margin-bottom: 24px; }
 .hero__trust { font-weight: 500; margin-top: 12px; font-size: 17px; }
@@ -184,33 +192,12 @@ p:last-child { margin-bottom: 0; }
 .two-col { display: flex; flex-wrap: wrap; align-items: center; gap: 50px; }
 .two-col__text { flex: 1 1 45%; min-width: 300px; }
 .two-col__image { flex: 1 1 45%; min-width: 300px; }
-.two-col__image img { border-radius: var(--radius-lg); width: 100%; height: auto; object-fit: cover; }
+.two-col__image img { border-radius: var(--radius-lg); width: 100%; aspect-ratio: 1/1; object-fit: cover; }
 .two-col__text p { font-size: 18px; }
 .pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
 .pain-item img { width: 30px; margin-bottom: 8px; }
 .pain-item h5 { margin-bottom: 4px; }
 .pain-item p { font-size: 15px; margin: 0; line-height: 1.6; }
-
-.reasons { background: var(--color-white); }
-.reasons__intro { max-width: 900px; margin: 0 auto 40px; text-align: center; }
-.reasons__intro h2 { color: var(--color-navy); margin-bottom: 12px; }
-.reasons__intro p { font-size: 18px; color: var(--color-navy-light); }
-.reasons__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; max-width: 1200px; margin: 0 auto; }
-.reasons__col h3 { color: var(--color-navy); font-size: 1.4rem; margin-top: 28px; margin-bottom: 8px; }
-.reasons__col h3:first-child { margin-top: 0; }
-.reasons__col h4 { font-size: 1.05rem; color: var(--color-green); margin-top: 18px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-.reasons__col p { font-size: 16px; line-height: 1.7; color: var(--color-black); margin-bottom: 12px; }
-.reasons__col p em { color: var(--color-navy-light); }
-.reasons__col ul { margin: 10px 0 14px; }
-.reasons__col li { display: flex; gap: 12px; align-items: flex-start; padding: 6px 0; font-size: 15px; line-height: 1.5; }
-.reasons__col .checklist__icon { margin-top: 3px; flex-shrink: 0; }
-.reasons__divider { border: none; border-top: 1px solid var(--color-gray-light); margin: 22px 0; }
-.reasons__faq h3 { margin-top: 28px; color: var(--color-navy); }
-.reasons__faq-q { font-weight: 700; color: var(--color-navy); margin-bottom: 4px; margin-top: 16px; font-size: 16px; }
-.reasons__faq-a { font-size: 15px; line-height: 1.65; color: var(--color-black); }
-@media (max-width: 768px) {
-  .reasons__grid { grid-template-columns: 1fr; gap: 10px; }
-}
 
 .comparison__title { text-align: center; margin-bottom: 45px; }
 .comparison__grid { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; }
@@ -224,43 +211,24 @@ p:last-child { margin-bottom: 0; }
 
 .advantage { background: var(--color-navy); border-radius: var(--radius-lg); padding: 55px; color: var(--color-white); text-align: center; }
 .advantage h2, .advantage p { color: var(--color-white); }
-.advantage__subtitle { font-weight: 600; margin-bottom: 5px; font-size: 18px; color: var(--color-green); text-transform: uppercase; letter-spacing: 1px; }
-.advantage__list { display: grid; grid-template-columns: repeat(2, max-content); justify-content: center; gap: 14px 50px; margin: 32px auto 24px; text-align: left; }
-.advantage__list li { display: flex; align-items: center; gap: 14px; font-size: 19px; font-weight: 600; letter-spacing: 0.4px; color: var(--color-white); white-space: nowrap; }
-.advantage__list .checklist__icon { width: 28px; height: 28px; flex-shrink: 0; }
-.advantage__dre { font-size: 15px; opacity: 0.85; margin-top: 28px; max-width: 640px; margin-left: auto; margin-right: auto; }
-@media (max-width: 540px) {
-  .advantage__list { grid-template-columns: max-content; gap: 12px; }
-  .advantage__list li { font-size: 17px; }
-}
+.advantage__subtitle { font-weight: 600; margin-bottom: 5px; font-size: 18px; }
+.advantage__features { display: flex; flex-wrap: wrap; justify-content: center; gap: 45px; margin: 35px 0; }
+.advantage__feature { flex: 1 1 200px; max-width: 280px; }
+.advantage__feature img { width: 64px; margin: 0 auto 12px; }
+.advantage__feature h3 { font-size: 1.3rem; color: var(--color-white); margin-bottom: 10px; }
+.advantage__feature p { font-size: 15px; line-height: 1.5; opacity: 0.9; }
+.advantage__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 35px; }
 
 .body-text { max-width: 850px; margin: 0 auto; }
 .body-text p { font-size: 18px; line-height: 1.8; }
 .body-text a { color: var(--color-green); text-decoration: underline; }
 .body-text a:hover { color: var(--color-green-hover); }
 
-.market-stats { background: #ecf9f1; }
-.market-stats h2 { text-align: left; color: var(--color-navy); margin-bottom: 36px; max-width: 950px; margin-left: auto; margin-right: auto; }
-.market-stats__list { max-width: 950px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 12px; }
-.market-stats__list li { display: flex; align-items: flex-start; gap: 14px; padding: 10px 0; font-size: 17px; line-height: 1.65; color: var(--color-navy); }
-.market-stats__list .checklist__icon { margin-top: 4px; }
-
-.key-facts { background: #ecf9f1; padding-top: 0; }
-.key-facts h2 { text-align: center; color: var(--color-navy); margin-bottom: 30px; }
-.key-facts__wrap { max-width: 950px; margin: 0 auto; }
-.key-facts__wrap p { font-size: 17px; line-height: 1.75; color: var(--color-navy); margin-bottom: 18px; }
-.key-facts__seal { float: right; width: 180px; margin: 0 0 20px 24px; border-radius: var(--radius); }
-.key-facts__seal-caption { font-size: 13px; text-align: center; color: var(--color-navy-light); margin-top: -14px; }
-@media (max-width: 540px) {
-  .key-facts__seal { float: none; display: block; margin: 12px auto 8px; width: 150px; }
-}
-
-.cta-form { background: var(--color-mint); padding: 35px 0; }
+.cta-form { background: var(--color-mint); padding: 60px 0; }
 .cta-form__inner { max-width: 720px; margin: 0 auto; text-align: center; }
-.cta-form h2 { color: var(--color-navy); margin-bottom: 10px; }
-.cta-form__inner > p { font-size: 17px; margin-bottom: 18px; }
-.cta-form .broker-badge { max-width: 160px; margin: 14px auto 0; }
-.cta-form .trust-line { font-weight: 600; font-size: 16px; margin-top: 14px; margin-bottom: 0; }
+.cta-form h2 { color: var(--color-navy); }
+.cta-form__inner > p { font-size: 18px; }
+.cta-form .broker-badge { max-width: 160px; margin: 18px auto 0; }
 
 .faq { max-width: 850px; margin: 0 auto; }
 .faq h2 { text-align: center; margin-bottom: 35px; }
@@ -327,8 +295,8 @@ p:last-child { margin-bottom: 0; }
 @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
 @media (max-width: 1024px) {
-  .hero { background: var(--color-mint); padding: 50px 0 0; }
-  .hero__content { padding-bottom: 40px; }
+  .hero { background: linear-gradient(112deg, var(--color-white) 80%, var(--color-navy) 62%); }
+  .hero__badge { display: none; }
   .nav { display: none; }
   .nav__toggle { display: block; }
   .nav.open { display: flex; flex-direction: column; align-items: flex-start; position: absolute; top: 100%; left: 0; right: 0; background: var(--color-white); padding: 20px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 999; }
@@ -347,9 +315,9 @@ p:last-child { margin-bottom: 0; }
 @media (max-width: 768px) {
   .container { padding: 0 20px; }
   .section { padding: 45px 0; }
-  .hero { background: var(--color-mint); padding: 40px 0 0; }
+  .hero { background: linear-gradient(154deg, var(--color-white) 67%, var(--color-navy) 15%); padding-top: 30px; }
   .hero__image { display: none; }
-  .hero__content { flex: 1 1 100%; padding-bottom: 40px; }
+  .hero__content { flex: 1 1 100%; }
   .two-col { gap: 30px; }
   .two-col__text, .two-col__image { flex: 1 1 100%; }
   .pain-grid { grid-template-columns: 1fr; }
@@ -415,6 +383,363 @@ p:last-child { margin-bottom: 0; }
 @media (max-width: 540px) {
   .lead-modal { padding: 30px 22px; }
   .lead-modal__row { flex-direction: column; gap: 12px; }
+}
+
+/* ========== CASE FILE SYSTEM (shared with /testimonials/) ========== */
+.cf-hero, .cf-section { color: var(--color-navy); }
+
+.cf-label {
+  display: inline-block; font-size: 0.875rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--color-green); margin-bottom: 28px;
+}
+
+.cf-section { padding: 110px 0; background: var(--color-white); }
+.cf-section--alt { background: var(--color-gray-bg); }
+.cf-narrow { max-width: 720px; margin: 0 auto; padding: 0 30px; text-align: center; }
+.cf-wide { max-width: 1100px; margin: 0 auto; padding: 0 30px; }
+
+.cf-body {
+  font-size: 1.25rem; line-height: 1.6;
+  color: var(--color-navy-light); margin: 0;
+}
+.cf-body + .cf-body { margin-top: 1.2em; }
+
+.cf-reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.cf-reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-reveal { transition: none; opacity: 1; transform: none; }
+}
+
+/* Stats strip (also used on /testimonials/) */
+.cf-stats-strip {
+  padding: 56px 0; background: #f1f4f7;
+  border-top: 1px solid rgba(30, 47, 73, 0.06);
+  border-bottom: 1px solid rgba(30, 47, 73, 0.06);
+}
+.cf-stats-strip__inner { max-width: 1100px; margin: 0 auto; padding: 0 30px; text-align: center; }
+.cf-stats-strip__label { margin-bottom: 32px; }
+.cf-stats-strip__grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 24px; align-items: start;
+}
+.cf-stats-strip__grid.cf-stats-strip__grid--three {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 820px; margin: 0 auto;
+}
+.cf-stats-strip__item { text-align: center; }
+.cf-stats-strip__number {
+  display: block; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800;
+  color: var(--color-green); line-height: 1; letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums; margin-bottom: 12px;
+}
+.cf-stats-strip__sub {
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--color-navy-light);
+  line-height: 1.4;
+}
+
+/* CTA strip */
+.cf-cta-strip { padding: 96px 0; background: var(--color-gray-bg); text-align: center; }
+.cf-cta-strip h2 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 700;
+  line-height: 1.2; letter-spacing: -0.01em; color: var(--color-navy);
+  margin-bottom: 18px;
+}
+.cf-cta-strip__sub {
+  font-size: 1.125rem; line-height: 1.6; color: var(--color-navy-light);
+  max-width: 540px; margin: 0 auto 32px;
+}
+.cf-cta-strip .btn { padding: 20px 42px; font-size: 18px; }
+
+/* ========== ABOUT-SPECIFIC ========== */
+.about-hero {
+  min-height: 72vh; display: flex; align-items: center;
+  padding: 80px 0 100px;
+  background: linear-gradient(180deg, #fafbfa 0%, var(--color-white) 100%);
+  color: var(--color-navy);
+}
+.about-hero__inner {
+  width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 30px;
+  display: grid; grid-template-columns: 3fr 2fr; gap: 60px; align-items: center;
+}
+.about-hero__text h1 {
+  font-size: clamp(3rem, 7vw, 6rem); font-weight: 700;
+  line-height: 1.05; letter-spacing: -0.025em;
+  color: var(--color-navy); margin: 0 0 18px;
+}
+.about-hero__sub {
+  font-size: clamp(1.125rem, 2vw, 1.5rem); font-weight: 400;
+  color: var(--color-navy-light); margin: 0; letter-spacing: 0.005em;
+}
+.about-hero__image-wrap { display: flex; justify-content: flex-end; }
+.about-hero__image {
+  width: 100%; max-width: 480px;
+  border-radius: 8px; display: block;
+  box-shadow: 0 18px 48px rgba(30, 47, 73, 0.12);
+}
+
+.about-headline {
+  font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 700;
+  line-height: 1.18; letter-spacing: -0.015em;
+  color: var(--color-navy); margin: 0 0 28px;
+}
+
+.about-values {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  max-width: 1100px; margin: 0 auto; padding: 0 30px;
+}
+.about-value {
+  background: var(--color-white); border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius-lg); padding: 40px 32px;
+}
+.about-value__num {
+  display: block; font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--color-green); margin-bottom: 22px;
+}
+.about-value__name {
+  font-size: clamp(1.375rem, 2.2vw, 1.625rem); font-weight: 700;
+  color: var(--color-navy); line-height: 1.25; margin: 0 0 14px;
+  letter-spacing: -0.005em;
+}
+.about-value__note {
+  font-size: 1rem; line-height: 1.55;
+  color: var(--color-navy-light); margin: 0;
+}
+
+.about-values-wrap { text-align: center; }
+.about-values-wrap .about-headline { max-width: 18ch; margin-left: auto; margin-right: auto; }
+
+.about-minicards {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
+  max-width: 760px; margin: 44px auto 0; padding: 0 30px;
+}
+.about-minicard {
+  display: flex; flex-direction: column; gap: 10px;
+  background: var(--color-white); border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius); padding: 22px 24px;
+  color: var(--color-navy); text-decoration: none; text-align: left;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+.about-minicard:hover {
+  border-color: var(--color-green);
+  box-shadow: 0 10px 28px rgba(66, 204, 147, 0.14);
+  transform: translateY(-2px); color: var(--color-navy);
+}
+.about-minicard__tab {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--color-green);
+}
+.about-minicard__stat {
+  font-size: clamp(1.5rem, 2.5vw, 1.75rem); font-weight: 800;
+  color: var(--color-green); line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.about-minicard__meta {
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--color-navy-light);
+}
+
+.about-cta-wrap { display: flex; justify-content: center; margin-top: 8px; }
+
+@media (max-width: 768px) {
+  .cf-section { padding: 64px 0; }
+  .cf-narrow, .cf-wide { padding: 0 24px; }
+  .cf-stats-strip { padding: 44px 0; }
+  .cf-stats-strip__grid { grid-template-columns: repeat(2, 1fr); gap: 36px 24px; }
+  .cf-cta-strip { padding: 64px 0; }
+
+  .about-hero { padding: 60px 0 70px; min-height: auto; }
+  .about-hero__inner { grid-template-columns: 1fr; gap: 36px; padding: 0 24px; }
+  .about-hero__image-wrap { justify-content: center; order: -1; }
+  .about-hero__image { max-width: 280px; }
+  .about-hero__text { text-align: center; }
+  .about-hero__text h1 { font-size: clamp(2.75rem, 12vw, 4rem); }
+
+  .about-values { grid-template-columns: 1fr; gap: 18px; max-width: 460px; padding: 0 24px; }
+  .about-value { padding: 32px 26px; }
+
+  .about-minicards { gap: 14px; padding: 0 24px; margin-top: 32px; }
+}
+@media (max-width: 640px) {
+  .cf-stats-strip__grid { grid-template-columns: 1fr; gap: 28px; }
+  .cf-stats-strip__grid.cf-stats-strip__grid--three { grid-template-columns: 1fr; }
+  .about-minicards { grid-template-columns: 1fr; max-width: 420px; }
+}
+
+/* ========== FIELD NOTES ========== */
+.fn-hero {
+  min-height: 58vh; display: flex; align-items: center;
+  padding: 80px 0 96px;
+  background: linear-gradient(180deg, #fafbfa 0%, var(--color-white) 100%);
+  color: var(--color-navy); text-align: center;
+}
+.fn-hero__inner { max-width: 880px; margin: 0 auto; padding: 0 30px; }
+.fn-hero h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700;
+  line-height: 1.05; letter-spacing: -0.02em;
+  color: var(--color-navy); max-width: 20ch; margin: 0 auto 24px;
+}
+.fn-hero__sub {
+  font-size: 1.25rem; line-height: 1.6;
+  color: var(--color-navy-light); max-width: 680px; margin: 0 auto;
+}
+
+.fn-queue-head { text-align: center; max-width: 720px; margin: 0 auto 56px; padding: 0 30px; }
+.fn-queue-head h2 {
+  font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 700;
+  line-height: 1.18; letter-spacing: -0.015em;
+  color: var(--color-navy); margin: 0;
+}
+
+/* Note cards: .note-card is the future live treatment; .note-card--upcoming is the dashed/muted queue state. */
+.fn-queue {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  max-width: 1200px; margin: 0 auto; padding: 0 30px;
+  align-items: stretch;
+}
+.note-card {
+  display: flex; flex-direction: column; gap: 12px;
+  background: var(--color-white); border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius-lg); padding: 36px 32px;
+  color: var(--color-navy); text-decoration: none;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+.note-card:hover {
+  transform: translateY(-4px); border-color: var(--color-green);
+  box-shadow: 0 16px 40px rgba(66, 204, 147, 0.14);
+  color: var(--color-navy);
+}
+.note-card--upcoming {
+  cursor: default; opacity: 0.68;
+  border-style: dashed; border-color: #d3d8df;
+  background: var(--color-gray-bg);
+}
+.note-card--upcoming:hover {
+  transform: none; box-shadow: none; border-color: #d3d8df;
+}
+.note-card__tab {
+  align-self: flex-start;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--color-green);
+  padding: 6px 12px; border: 1px solid var(--color-green);
+  border-radius: 4px; background: var(--color-mint);
+}
+.note-card--upcoming .note-card__tab {
+  color: var(--color-navy-light); border-color: #d3d8df;
+  background: var(--color-white);
+}
+.note-card__category {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--color-navy-light);
+  margin: 8px 0 0;
+}
+.note-card__title {
+  font-size: clamp(1.25rem, 2vw, 1.5rem); font-weight: 700;
+  line-height: 1.3; letter-spacing: -0.005em;
+  color: var(--color-navy); margin: 4px 0 0;
+}
+.note-card__teaser {
+  font-size: 0.98rem; line-height: 1.55;
+  color: var(--color-navy-light); margin: 0;
+}
+.note-card__footer {
+  margin-top: auto; padding-top: 16px;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--color-navy-light);
+  opacity: 0.85;
+}
+
+/* Subscribe band */
+.fn-subscribe {
+  padding: 96px 0; background: #f1f4f7; color: var(--color-navy);
+  border-top: 1px solid rgba(30, 47, 73, 0.06);
+  border-bottom: 1px solid rgba(30, 47, 73, 0.06);
+  text-align: center;
+}
+.fn-subscribe__inner { max-width: 640px; margin: 0 auto; padding: 0 30px; }
+.fn-subscribe h2 {
+  font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 700;
+  line-height: 1.18; letter-spacing: -0.015em;
+  color: var(--color-navy); margin: 0 0 16px;
+}
+.fn-subscribe__sub {
+  font-size: 1.125rem; line-height: 1.6; color: var(--color-navy-light);
+  max-width: 540px; margin: 0 auto 28px;
+}
+.fn-subscribe__form {
+  display: grid; grid-template-columns: 1fr auto; gap: 10px;
+  max-width: 520px; margin: 0 auto;
+}
+.fn-subscribe__form input[type="email"] {
+  padding: 16px 18px; font-size: 16px; font-family: var(--font);
+  border: 2px solid var(--color-gray-light); border-radius: var(--radius);
+  outline: none; background: var(--color-white); color: var(--color-navy);
+  transition: border-color var(--transition);
+}
+.fn-subscribe__form input[type="email"]:focus { border-color: var(--color-green); }
+.fn-subscribe__form button {
+  padding: 16px 26px; font-family: var(--font);
+  font-size: 1rem; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; line-height: 1;
+  background: var(--color-green); color: var(--color-white);
+  border: 2px solid var(--color-green); border-radius: var(--radius);
+  cursor: pointer; transition: all var(--transition);
+  white-space: nowrap;
+}
+.fn-subscribe__form button:hover { background: var(--color-green-hover); border-color: var(--color-green-hover); }
+.fn-subscribe__note {
+  font-size: 0.8125rem; color: var(--color-navy-light); opacity: 0.75;
+  margin: 16px 0 0;
+}
+.fn-subscribe__success {
+  display: none; margin: 0 auto; max-width: 520px;
+  background: var(--color-white); border: 1px solid var(--color-green);
+  border-radius: var(--radius); padding: 24px 28px;
+  color: var(--color-navy);
+}
+.fn-subscribe__success strong { color: var(--color-green); }
+.fn-subscribe.is-success .fn-subscribe__form,
+.fn-subscribe.is-success .fn-subscribe__note { display: none; }
+.fn-subscribe.is-success .fn-subscribe__success { display: block; }
+.fn-subscribe__error {
+  display: none; color: var(--color-red); font-size: 0.9rem;
+  margin: 10px 0 0;
+}
+.fn-subscribe.is-error .fn-subscribe__error { display: block; }
+
+/* Cross-link + final CTA reuse testimonials patterns */
+.fn-crosslink {
+  padding: 96px 0; background: var(--color-white);
+  color: var(--color-navy); text-align: center;
+}
+.fn-crosslink__inner { max-width: 640px; margin: 0 auto; padding: 0 30px; }
+.fn-crosslink h2 {
+  font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 700;
+  line-height: 1.22; color: var(--color-navy); margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+.fn-crosslink__body {
+  font-size: 1.125rem; line-height: 1.6; color: var(--color-navy-light);
+  margin: 0 0 28px;
+}
+
+@media (max-width: 960px) {
+  .fn-queue { grid-template-columns: repeat(2, 1fr); max-width: 760px; gap: 20px; }
+}
+@media (max-width: 768px) {
+  .fn-hero { min-height: auto; padding: 60px 0 64px; }
+  .fn-queue-head { margin-bottom: 36px; padding: 0 24px; }
+  .fn-queue { padding: 0 24px; }
+  .note-card { padding: 28px 24px; }
+  .fn-subscribe, .fn-crosslink { padding: 64px 0; }
+  .fn-subscribe__form { grid-template-columns: 1fr; }
+  .fn-subscribe__form button { padding: 18px 26px; }
+}
+@media (max-width: 640px) {
+  .fn-queue { grid-template-columns: 1fr; max-width: 460px; gap: 18px; }
 }
   </style>
 </head>
@@ -517,7 +842,7 @@ p:last-child { margin-bottom: 0; }
         <input type="hidden" name="page_url" id="modalPageUrl">
         <input type="hidden" name="submitted_at" id="modalTimestamp">
         <input type="hidden" name="consent" value="yes">
-        <input type="hidden" name="intent" value="Cash Offer">
+        <input type="hidden" name="intent" value="Home Valuation">
         <input type="hidden" name="source_page" id="modalSourcePage">
 
         <button type="submit" class="btn--submit">Next</button>
@@ -527,7 +852,7 @@ p:last-child { margin-bottom: 0; }
 
   <!-- ========== TOP BAR ========== -->
   <div class="topbar">
-    <div class="container">Trusted by Southern California homeowners</div>
+    <div class="container">Southern California's Top-Rated Listing Agent</div>
   </div>
 
   <!-- ========== HEADER ========== -->
@@ -564,363 +889,115 @@ p:last-child { margin-bottom: 0; }
     </div>
   </header>
 
-  <!-- ========== HERO ========== -->
-  <section class="hero">
-    <div class="container">
+  <!-- ========== SECTION 1: HERO ========== -->
+  <section class="fn-hero">
+    <div class="fn-hero__inner cf-reveal">
+      <div class="cf-label">Field Notes</div>
+      <h1>What I'm seeing in the market this week.</h1>
+      <p class="fn-hero__sub">Short notes from the field. Real observations from real transactions, real market data from Irvine and the South Bay, and the occasional unfiltered opinion about how this industry actually works. Not SEO content. Not tips. Just what's actually happening, written for the people who want to know.</p>
+    </div>
+  </section>
 
-      <div class="hero__image">
-        <img src="https://www.drozq.com/media/images/Waist.png" alt="Joshua Guerrero - Los Angeles Listing Agent" width="540" height="640" fetchpriority="high">
-      </div>
+  <!-- ========== SECTION 2: WHAT THIS IS ========== -->
+  <section class="cf-section">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">What This Is</div>
+      <h2 class="about-headline">Not a blog. A field log.</h2>
+      <p class="cf-body">Most real estate blogs exist to game search engines. They're written by agents who don't write, for readers who don't read. This isn't that.</p>
+      <p class="cf-body">Field Notes is where I share what I'm actually seeing on the ground. The deal that almost fell apart and why. The market shift nobody is talking about yet. The opinion I'd share at the bar but that most agents are too cautious to put in writing.</p>
+      <p class="cf-body">Posts go up when there's something worth saying. Not on a schedule. Not for SEO. If you want to think about real estate the way I think about it, this is where to read.</p>
+    </div>
+  </section>
 
-      <div class="hero__content">
-        <h1>Sell Your Los Angeles Home For Top Dollar</h1>
-        <p class="hero__subtitle">Expert local listing agent helping LA homeowners price, market, and close faster for more money.</p>
+  <!-- ========== SECTION 3: IN THE QUEUE ========== -->
+  <section class="cf-section cf-section--alt">
+    <div class="fn-queue-head cf-reveal">
+      <div class="cf-label">In the Queue</div>
+      <h2>The first three notes are being written.</h2>
+    </div>
 
-        <form class="lead-form" id="heroForm">
-          <div class="lead-form__address-wrap">
-            <input type="text" id="heroAddress" name="address_display" placeholder="Enter your home address" autocomplete="off" required>
-          </div>
-          <input type="text" class="lead-form__unit" name="unit" placeholder="Unit" maxlength="5">
+    <div class="fn-queue cf-reveal">
 
-          <div class="lead-form__hidden">
-            <input type="hidden" name="street_address" id="heroStreet">
-            <input type="hidden" name="city" id="heroCity">
-            <input type="hidden" name="state" id="heroState">
-            <input type="hidden" name="zip" id="heroZip">
-            <input type="hidden" name="full_address" id="heroFull">
-            <input type="hidden" name="lat" id="heroLat">
-            <input type="hidden" name="lng" id="heroLng">
-            <input type="hidden" name="_subject" value="🏠 New Lead: Home Valuation Request">
-            <input type="hidden" name="source" value="Hero Form">
-            <input type="hidden" name="page_url" id="heroPageUrl">
-            <input type="hidden" name="submitted_at" id="heroTimestamp">
-          </div>
+      <article class="note-card note-card--upcoming" aria-hidden="true">
+        <span class="note-card__tab">Note 001</span>
+        <p class="note-card__category">Market Intel</p>
+        <h3 class="note-card__title">What 14 days on market actually means in Irvine right now.</h3>
+        <p class="note-card__teaser">A look at the real time-to-sell data for Irvine homes in the past 90 days, broken down by price band. The headline numbers everyone quotes are misleading.</p>
+        <div class="note-card__footer">Coming soon</div>
+      </article>
 
-          <button type="submit" class="btn btn--green btn--full">Get My Free Home Valuation</button>
-        </form>
+      <article class="note-card note-card--upcoming" aria-hidden="true">
+        <span class="note-card__tab">Note 002</span>
+        <p class="note-card__category">Operator Log</p>
+        <h3 class="note-card__title">The inspection report that saved my client $11,000.</h3>
+        <p class="note-card__teaser">A breakdown of how I read inspection reports differently than most agents, with an example from a recent transaction. The line item that everyone misses.</p>
+        <div class="note-card__footer">Coming soon</div>
+      </article>
 
-        <p class="hero__trust">Licensed California listing agent, DRE# 02267255</p>
-      </div>
+      <article class="note-card note-card--upcoming" aria-hidden="true">
+        <span class="note-card__tab">Note 003</span>
+        <p class="note-card__category">Opinion</p>
+        <h3 class="note-card__title">The Zestimate is the worst thing that ever happened to home valuation.</h3>
+        <p class="note-card__teaser">An honest argument about why algorithmic home valuation tools have made sellers worse at pricing their homes, not better. And what to use instead.</p>
+        <div class="note-card__footer">Coming soon</div>
+      </article>
 
     </div>
   </section>
 
-  <!-- ========== STATS BAR ========== -->
-  <section class="stats-bar">
-    <div class="container">
-      <div class="stat">
-        <div class="stat__icon"><img src="https://www.drozq.com/media/icons/kid_star.svg" alt="" width="50" height="48" loading="lazy"></div>
-        <div>
-          <h4>5-Star Rated on Google</h4>
-          <p>Committed to exceptional client service</p>
-        </div>
-      </div>
-      <div class="stat">
-        <div class="stat__icon"><img src="https://www.drozq.com/media/icons/money_bag.svg" alt="" width="50" height="50" loading="lazy"></div>
-        <div>
-          <h4>$1.1M+ in Sales</h4>
-          <p>Proven track record in Southern California</p>
-        </div>
-      </div>
-      <div class="stat">
-        <div class="stat__icon"><img src="https://www.drozq.com/media/icons/fastclock.svg" alt="" width="50" height="50" loading="lazy"></div>
-        <div>
-          <h4>Fast Closings</h4>
-          <p>Homes sell faster with expert pricing &amp; marketing</p>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- ========== SECTION 4: SUBSCRIBE ========== -->
+  <section class="fn-subscribe" id="fnSubscribe">
+    <div class="fn-subscribe__inner">
+      <div class="cf-label">Stay in the Loop</div>
+      <h2>Get notes when they drop.</h2>
+      <p class="fn-subscribe__sub">One email when a new note goes up. No newsletter. No marketing sequences. No "10 ways to sell your home in 2026" garbage. Just the post, the moment it's live.</p>
 
-  <!-- ========== HOW WE HELP ========== -->
-  <section class="section" id="process">
-    <div class="container">
-      <div class="two-col">
-        <div class="two-col__text">
-          <h2>Selling Your Home in Los Angeles, Simplified</h2>
-          <p>I help LA homeowners sell for top dollar without the usual stress. No rushed cash offers, no confusing paperwork, no guessing on price. Here's what you get when you list with me:</p>
-          <ul style="margin-top:18px;">
-            <li style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;font-size:16px;line-height:1.6;"><span class="checklist__icon checklist__icon--green" style="margin-top:4px;">&#10003;</span> A local LA listing agent who understands the submarket</li>
-            <li style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;font-size:16px;line-height:1.6;"><span class="checklist__icon checklist__icon--green" style="margin-top:4px;">&#10003;</span> Accurate pricing built on current comps and real buyer demand</li>
-            <li style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;font-size:16px;line-height:1.6;"><span class="checklist__icon checklist__icon--green" style="margin-top:4px;">&#10003;</span> Showings scheduled around your life, not around strangers</li>
-            <li style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;font-size:16px;line-height:1.6;"><span class="checklist__icon checklist__icon--green" style="margin-top:4px;">&#10003;</span> Clear guidance on which repairs move the needle, and which to skip</li>
-            <li style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;font-size:16px;line-height:1.6;"><span class="checklist__icon checklist__icon--green" style="margin-top:4px;">&#10003;</span> A trusted network of vendors so you avoid predatory contractors</li>
-            <li style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;font-size:16px;line-height:1.6;"><span class="checklist__icon checklist__icon--green" style="margin-top:4px;">&#10003;</span> Pre-qualified buyers so you avoid last-minute back-outs</li>
-            <li style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;font-size:16px;line-height:1.6;"><span class="checklist__icon checklist__icon--green" style="margin-top:4px;">&#10003;</span> A closing date that actually fits your timeline</li>
-          </ul>
+      <form class="fn-subscribe__form" id="fnSubscribeForm" novalidate>
+        <!-- Honeypot -->
+        <div style="position:absolute; left:-9999px;" aria-hidden="true">
+          <input type="text" name="company_website" autocomplete="off" tabindex="-1">
         </div>
-        <div class="two-col__image">
-          <img src="https://www.drozq.com/media/icons/we-buy-houses-los-angeles.webp" alt="Selling your Los Angeles home quickly" width="1280" height="720" loading="lazy">
-        </div>
+
+        <input type="email" name="email" placeholder="your@email.com" autocomplete="email" required>
+        <button type="submit">Notify me</button>
+
+        <!-- Hidden fields to satisfy the shared /api/lead contract -->
+        <input type="hidden" name="name" value="Field Notes Subscriber">
+        <input type="hidden" name="phone" value="Not provided">
+        <input type="hidden" name="intent" value="Field Notes Subscribe">
+        <input type="hidden" name="consent" value="yes">
+        <input type="hidden" name="source" value="field-notes-subscribe">
+        <input type="hidden" name="source_page" value="field-notes-subscribe">
+        <input type="hidden" name="page_url" id="fnPageUrl">
+        <input type="hidden" name="submitted_at" id="fnTimestamp">
+      </form>
+
+      <p class="fn-subscribe__error" id="fnSubscribeError">Something went wrong. Please try again, or email Josh@Drozq.com directly.</p>
+      <p class="fn-subscribe__note">Unsubscribe anytime. I will never share your email.</p>
+
+      <div class="fn-subscribe__success" id="fnSubscribeSuccess">
+        <strong>Thanks, you're on the list.</strong> I'll email you the moment the first note goes live.
       </div>
     </div>
   </section>
 
-  <!-- ========== CTA FORM ========== -->
-  <section class="cta-form" id="contact">
-    <div class="container">
-      <div class="cta-form__inner">
-        <h2>Get Your Free<br>Home Valuation</h2>
-        <p>Call me at <a href="tel:15109355701" style="text-decoration:underline; font-weight:600;">1-510-935-5701</a> or enter your address below. You'll hear back within the hour.</p>
-
-        <form class="lead-form" id="ctaForm">
-          <div class="lead-form__address-wrap">
-            <input type="text" id="ctaAddress" name="address_display" placeholder="Enter your home address" autocomplete="off" required>
-          </div>
-          <input type="text" class="lead-form__unit" name="unit" placeholder="Unit" maxlength="5">
-
-          <div class="lead-form__hidden">
-            <input type="hidden" name="street_address" id="ctaStreet">
-            <input type="hidden" name="city" id="ctaCity">
-            <input type="hidden" name="state" id="ctaState">
-            <input type="hidden" name="zip" id="ctaZip">
-            <input type="hidden" name="full_address" id="ctaFull">
-            <input type="hidden" name="lat" id="ctaLat">
-            <input type="hidden" name="lng" id="ctaLng">
-            <input type="hidden" name="_subject" value="🏠 New Lead: Home Valuation Request">
-            <input type="hidden" name="source" value="CTA Form">
-            <input type="hidden" name="page_url" id="ctaPageUrl">
-            <input type="hidden" name="submitted_at" id="ctaTimestamp">
-          </div>
-
-          <button type="submit" class="btn btn--green btn--full">Get My Free Home Valuation</button>
-        </form>
-
-        <p class="trust-line">Trusted by Southern California homeowners</p>
-        <img class="broker-badge" src="https://www.drozq.com/media/icons/real/real-broker-logo.png" alt="Real Broker" width="200" height="56" loading="lazy" style="max-width:200px;">
-      </div>
+  <!-- ========== SECTION 5: CROSS-LINK TO CASE FILES ========== -->
+  <section class="fn-crosslink">
+    <div class="fn-crosslink__inner cf-reveal">
+      <div class="cf-label">Want the Long-Form Version?</div>
+      <h2>The case files.</h2>
+      <p class="fn-crosslink__body">Field Notes are the short, frequent version. The case files are the in-depth version, every transaction documented with the real numbers and the real outcome. If you want to see how the work actually gets done, start there.</p>
+      <a href="/testimonials/" class="btn btn--green">See the case files</a>
     </div>
   </section>
 
-  <!-- ========== FAQ ========== -->
-  <section class="section" id="faq">
-    <div class="container">
-      <div class="faq">
-        <h2>Common Questions From Los Angeles Homeowners</h2>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>What should I look for when choosing a Los Angeles listing agent?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Look for a local agent with real Los Angeles submarket knowledge, a transparent pricing strategy, and a full-service marketing plan, not just a sign in the yard and an MLS entry. Always check recent reviews, closed sales in your area, and how responsive the agent is before signing a listing agreement.</p>
-            <p>I serve homeowners across Los Angeles and Southern California with sharp pricing, modern marketing, and straight-forward communication. When it comes to selling your biggest asset, work with someone who will actually pick up the phone.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Which Los Angeles neighborhoods do you list in?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>I list homes throughout Los Angeles County and the surrounding Southern California markets. If you're outside LA, reach out anyway. I can either help directly or refer you to a trusted agent in my network.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Do all listing agents follow the same process?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>No. Experience, marketing, and negotiation skill vary widely. My process starts with a no-pressure consultation, a real walk-through of your home, and a clear pricing strategy. You get straight numbers and a written plan before you sign anything, so you can make an informed decision without pressure.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>How long do Los Angeles home sales take right now?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Most well-priced, well-marketed LA listings go under contract in 1 to 3 weeks and close within 30 to 45 days. I can also run faster private-sale timelines when your situation calls for it.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Do I have to pay anything upfront to list my home?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>No. There are no upfront fees to list. Commissions are only paid at closing, directly from the sale proceeds, and they're always discussed transparently before you sign a listing agreement.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Will you list my home if it's in rough condition?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Yes. I list homes in every condition across Los Angeles and the surrounding cities. You don't need to clean, stage, or renovate before we talk. We'll walk through it together and build a plan that makes sense for your situation.</p>
-          </div></div></div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== ADVANTAGE / LIST WITH ME ========== -->
-  <section class="section">
-    <div class="container">
-      <div class="advantage">
-        <h2>Let's Sell Your House for Top Dollar</h2>
-        <ul class="advantage__list">
-          <li><span class="checklist__icon checklist__icon--green">&#10003;</span> NO UPFRONT FEES</li>
-          <li><span class="checklist__icon checklist__icon--green">&#10003;</span> NO DOUBLE COMMISSIONS</li>
-          <li><span class="checklist__icon checklist__icon--green">&#10003;</span> NO LOWBALL OFFERS</li>
-          <li><span class="checklist__icon checklist__icon--green">&#10003;</span> NO REPAIRS REQUIRED</li>
-          <li><span class="checklist__icon checklist__icon--green">&#10003;</span> NO SURPRISES</li>
-          <li><span class="checklist__icon checklist__icon--green">&#10003;</span> NO HASSLES</li>
-        </ul>
-        <p class="advantage__dre">Joshua Guerrero is a licensed real estate agent in the state of California DRE# 02267255.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== EXTERNAL LINK ========== -->
-  <section class="section" style="padding:20px 0;">
-    <div class="container">
-      <div class="body-text" style="text-align:center;">
-        <p>Learn more about <a href="https://housing2.lacity.org/housing">Los Angeles housing</a> and real estate.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== MARKET STATS ========== -->
-  <section class="section market-stats">
-    <div class="container">
-      <h2>Los Angeles Real Estate Market Trends and Statistics for 2025-2026</h2>
-      <ul class="market-stats__list">
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Home prices in Los Angeles rose roughly 4-6% year-over-year through 2025, continuing a long upward trend of nearly 90% over the last decade.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Los Angeles remains the second largest city in the United States.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> The current median home price in Los Angeles is approximately $975,000 as of early 2026.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> High interest rates and tightened lender standards continue to shape buyer demand across Southern California in 2025-2026.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Most California cities continue to receive C-minus ratings for efforts to deliver affordable housing.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> The median household income in Los Angeles is around $76,000, still outpaced by housing and rent prices.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Home prices cooled from 2022 peaks, with some LA submarkets seeing price corrections of 10-15% before stabilizing.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Los Angeles remains one of the most expensive housing markets in the country, with record highs still recent memory.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Single-family home prices across California have softened slightly year-over-year but remain historically elevated.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Despite its high cost of living, Los Angeles has met more of California's state-mandated housing goals than most neighboring cities.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Rental prices in Los Angeles have risen roughly 8-11% over the past two years, with average monthly rent near $2,800.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Los Angeles earned high marks from the Southern California News Group for its affordable housing efforts relative to peer cities.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Overinflated housing prices that began climbing in 2020 continue to push many buyers out of the market.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> California home sales volume remains below pre-pandemic norms due to low inventory and elevated mortgage rates.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Cities across the United States, including Los Angeles, continue to face challenges delivering affordable housing.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Mortgage rates edged lower heading into 2026 but remain meaningfully above the lows of 2020-2021.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Forecasts for 2025-2026 point to continued price growth in LA, driven by strong demand and a persistent shortage of homes for sale.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> The population of Los Angeles is approximately 3.82 million as of 2025.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> California is still experiencing a structural housing shortage, keeping pressure on prices.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> The LA housing market continues to shift, making it a critical time for current and prospective homeowners to watch.</li>
-        <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Los Angeles continues to see a growing homeless population tied to the ongoing affordability crisis.</li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ========== KEY LA STATS ========== -->
-  <section class="section key-facts">
-    <div class="container">
-      <h2>Key Los Angeles Real Estate Stats and Facts</h2>
-      <div class="key-facts__wrap">
-        <img class="key-facts__seal" src="https://www.drozq.com/media/icons/county-seal-for-los-angeles-california-768x768.webp" alt="Los Angeles County Seal" width="180" height="180" loading="lazy">
-        <p>As of 2025, Los Angeles, the second-largest city in the U.S., hosts a population of approximately 3.82 million. Despite its high cost of living, the city has outperformed many other Californian cities in its efforts to provide affordable housing, earning strong marks from the Southern California News Group while many peer cities lag with C-minus ratings. While property prices in Los Angeles have nearly doubled over the last decade, recent years have brought modest corrections in certain submarkets, with some areas seeing price drops of 10-15% before stabilizing.</p>
-        <p>Even so, the median home price sits near $975,000, well ahead of the city's roughly $76,000 median household income. Rents have climbed too, with average monthly rent for an apartment near $2,800. The housing market continues to navigate higher mortgage rates, tighter lending standards, and ongoing inventory shortages heading into 2026.</p>
-        <p>California remains in a structural housing shortage, which keeps upward pressure on prices of available properties. With limited new construction and steady demand from buyers waiting on the sidelines, supply has stayed tight across most LA submarkets.</p>
-        <p>Even with some moderation in single-family home prices and slightly easing mortgage rates, the gap between local incomes and housing costs remains significant. Forecasts for 2025-2026 point to continued price growth and elevated interest rates driven by high demand and a shortage of homes for sale. The ripple effects of these issues remain visible in the city's growing homeless population, a reminder of just how severe the affordability crisis in Los Angeles has become.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== WHY LIST WITH ME ========== -->
-  <section class="section reasons">
-    <div class="container">
-      <div class="reasons__intro">
-        <h2>Why List Your Los Angeles Home With Joshua Guerrero?</h2>
-        <p><em>Life can be uncertain, and it can interfere with selling your home easily. There are real advantages to listing with a local expert who can help your family through whatever situation you're facing.</em></p>
-      </div>
-
-      <div class="reasons__grid">
-        <!-- LEFT COLUMN -->
-        <div class="reasons__col">
-          <h3>Sell Faster and for More</h3>
-          <p>A traditional FSBO or rushed cash sale often leaves money on the table. <em>The average listing sits weeks longer than it should</em> because of poor pricing, weak marketing, or unprepared sellers. That's too long when you need to move on with your life.</p>
-          <p>The best way to sell your property fast <strong>and</strong> for top dollar is to work with a local listing agent who prices, prepares, and markets your home correctly from day one. Most of my Los Angeles listings go under contract in <strong>days, not months</strong>.</p>
-
-          <hr class="reasons__divider">
-
-          <h3>I Help You List As-Is, Without the Guesswork</h3>
-          <p>Life happens. A property can bring plenty of issues that feel overwhelming at listing time. You don't need to tackle them alone or dump the home to a lowball cash buyer. <em>I help you decide exactly which repairs move the needle, and which to skip entirely.</em></p>
-
-          <h4>Homes I Help Sell</h4>
-          <ul>
-            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Outdated or dated homes</li>
-            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Storm or fire damaged properties</li>
-            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Homes with pest issues</li>
-            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Homes with junk or heavy clutter</li>
-            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Homes that need repairs</li>
-            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Rentals with tenant challenges</li>
-            <li><span class="checklist__icon checklist__icon--green">&#10003;</span> Incomplete construction or renovations</li>
-          </ul>
-          <p><em>Most sellers don't want to deal with these headaches alone. I walk you through it and handle the heavy lifting so you net more at closing.</em></p>
-
-          <hr class="reasons__divider">
-
-          <h3>Your Privacy Stays Protected</h3>
-          <p>If discretion matters, a giant sign in the yard and an open MLS listing can broadcast that your home is vacant or that you may be in distress. That can make your property a target and make conversations with neighbors awkward.</p>
-          <p><em>When you list with me, we can run a private or off-market strategy</em>, including pocket listings, invite-only showings, and vetted buyer networks, to keep the process quiet, quick, and in your control.</p>
-        </div>
-
-        <!-- RIGHT COLUMN -->
-        <div class="reasons__col">
-          <h3>Get Top Dollar With No Surprise Fees</h3>
-          <p>My job is to net you the most money possible, not to push a discount offer. Every listing starts with a real pricing strategy that considers condition, location, needed repairs, and current market comparables. <em>No closing cost games. No hidden fees. Clear numbers from day one.</em></p>
-          <p>Accept an offer, move on your timeframe, and start your next chapter with cash in hand.</p>
-
-          <hr class="reasons__divider">
-
-          <h3>Backed by 5-Star Local Reviews</h3>
-          <p>You don't have to take my word for it. My clients across Los Angeles and Southern California have shared their experiences in dozens of 5-star Google reviews. <em>Real clients. Real closings. Real results.</em></p>
-
-          <hr class="reasons__divider">
-
-          <div class="reasons__faq">
-            <h3>Home Selling FAQs</h3>
-
-            <p class="reasons__faq-q">What are the benefits of listing with a local Los Angeles agent?</p>
-            <p class="reasons__faq-a">Accurate pricing, full-service marketing, maximum exposure to qualified buyers, sharper negotiation, and typically a faster close than FSBO or lowball cash offers. You also avoid costly mistakes during inspections and escrow.</p>
-
-            <p class="reasons__faq-q">How do you figure out the value of my Los Angeles property?</p>
-            <p class="reasons__faq-a">I assess condition, location, recent comparable sales, current inventory, and buyer demand in your specific LA submarket, then deliver a clear valuation strategy. Request a free, no-obligation home valuation today.</p>
-
-            <p class="reasons__faq-q">How do you market my home to LA buyers?</p>
-            <p class="reasons__faq-a">Professional photography, video, accurate MLS copy, targeted social ads, and outreach to my local buyer network. Your home doesn't just get listed, it gets seen by the right buyers fast.</p>
-
-            <p class="reasons__faq-q">Can I avoid showings if I want to keep things discreet?</p>
-            <p class="reasons__faq-a">Yes. I can run private or off-market strategies, including pocket listings and invite-only showings, so the process stays quiet and on your terms.</p>
-          </div>
-        </div>
-      </div>
+  <!-- ========== SECTION 6: FINAL CTA ========== -->
+  <section class="cf-cta-strip">
+    <div class="cf-narrow">
+      <div class="cf-label">Why Read Any of This?</div>
+      <h2>Because eventually you'll sell a home.</h2>
+      <p class="cf-cta-strip__sub">And when that day comes, you'll want someone in your corner who reads the market this carefully every week. That's the whole point. If you're closer than you thought, let's talk.</p>
+      <a href="/contact/" class="btn btn--green">Book a 15-minute call</a>
     </div>
   </section>
 
@@ -1153,6 +1230,114 @@ p:last-child { margin-bottom: 0; }
       });
     });
 
+    // 5. ABOUT / CASE FILE: reveal + count-up (shared pattern with /testimonials/)
+    (function initAboutAnim() {
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var reveals = document.querySelectorAll('.cf-reveal');
+
+      if (!('IntersectionObserver' in window) || reduceMotion) {
+        reveals.forEach(function (el) { el.classList.add('is-visible'); });
+        return;
+      }
+
+      var revealObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            revealObs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+      reveals.forEach(function (el) { revealObs.observe(el); });
+
+      function formatValue(n, prefix, format) {
+        if (format === 'compact' && n >= 1000000) {
+          return prefix + (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+        }
+        if (format === 'compact' && n >= 1000) {
+          return prefix + Math.round(n / 1000) + 'K';
+        }
+        return prefix + Math.round(n).toLocaleString('en-US');
+      }
+
+      function animateCounter(el, target, prefix, format, duration) {
+        var start = performance.now();
+        function step(now) {
+          var progress = Math.min((now - start) / duration, 1);
+          var eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = formatValue(target * eased, prefix, format);
+          if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
+      var countUps = document.querySelectorAll('.cf-count-up');
+      if (!countUps.length) return;
+
+      countUps.forEach(function (el) {
+        var prefix = el.getAttribute('data-count-prefix') || '';
+        var format = el.getAttribute('data-count-format') || '';
+        el.textContent = formatValue(0, prefix, format);
+      });
+
+      var countObs = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          var el = e.target;
+          var t = parseInt(el.getAttribute('data-count-target'), 10) || 0;
+          var p = el.getAttribute('data-count-prefix') || '';
+          var f = el.getAttribute('data-count-format') || '';
+          animateCounter(el, t, p, f, 1700);
+          obs.unobserve(el);
+        });
+      }, { threshold: 0.35 });
+      countUps.forEach(function (el) { countObs.observe(el); });
+    })();
+
+    // 6. FIELD NOTES: subscribe form -> /api/lead (shared MailChannels handler)
+    (function initFnSubscribe() {
+      var section = document.getElementById('fnSubscribe');
+      var form = document.getElementById('fnSubscribeForm');
+      if (!form || !section) return;
+      var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        section.classList.remove('is-error');
+
+        var emailInput = form.querySelector('input[name="email"]');
+        var email = (emailInput.value || '').trim();
+        if (!emailRe.test(email)) {
+          emailInput.focus();
+          section.classList.add('is-error');
+          return;
+        }
+
+        document.getElementById('fnPageUrl').value = window.location.href;
+        document.getElementById('fnTimestamp').value = new Date().toISOString();
+
+        var btn = form.querySelector('button[type="submit"]');
+        var origText = btn.textContent;
+        btn.textContent = 'Sending...';
+        btn.disabled = true;
+
+        fetch('/api/lead', { method: 'POST', body: new FormData(form) })
+          .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, data: j }; }); })
+          .then(function (res) {
+            if (res.ok && res.data && res.data.ok) {
+              section.classList.add('is-success');
+            } else {
+              section.classList.add('is-error');
+            }
+          })
+          .catch(function () { section.classList.add('is-error'); })
+          .finally(function () {
+            btn.textContent = origText;
+            btn.disabled = false;
+          });
+      });
+    })();
+
   })();
   </script>
 
@@ -1160,16 +1345,7 @@ p:last-child { margin-bottom: 0; }
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAO__0suXD6CDECevon18renbKLmCF-0ks&libraries=places&callback=initGooglePlaces"></script>
 </body>
 </html>
-
 <!-- IMAGE MANIFEST -->
 <!--
-https://www.drozq.com/media/images/Waist.png
-https://www.drozq.com/media/icons/kid_star.svg
-https://www.drozq.com/media/icons/money_bag.svg
-https://www.drozq.com/media/icons/fastclock.svg
-https://www.drozq.com/media/icons/we-buy-houses-los-angeles.webp
-https://www.drozq.com/media/icons/county-seal-for-los-angeles-california-768x768.webp
-https://www.drozq.com/media/icons/real/real-broker-logo.png
-https://www.drozq.com/media/icons/Joshua Guerrero Rectangle in line.png
-https://www.drozq.com/media/icons/Joshua Guerrero Logo Rectangle Stacked.png
+https://www.sellersadvantage.com/wp-content/uploads/2025/02/sellers-advantage-bbb-accredited-a-plus.png
 -->
