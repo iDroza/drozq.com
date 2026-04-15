@@ -34,7 +34,8 @@
   <meta name="twitter:image" content="https://drozq.com/media/images/Waist.png">
 
   <link rel="icon" href="https://www.drozq.com/media/icons/Joshua Guerrero Favicon.png" type="image/png" />
-  <link rel="preload" as="image" href="https://www.drozq.com/media/images/Waist.png" fetchpriority="high">
+  <!-- Only preload the headshot on viewports that actually display it (desktop). -->
+  <link rel="preload" as="image" href="https://www.drozq.com/media/images/Waist.png" media="(min-width: 1025px)" fetchpriority="high">
 
   <!-- Structured data: RealEstateAgent + LocalBusiness.
        SWAP: add a "sameAs" array once Facebook, Instagram, LinkedIn, and Google
@@ -1137,18 +1138,9 @@ p:last-child { margin-bottom: 0; }
   .home-hero__text { max-width: 100%; text-align: center; }
   .home-hero__text h1 { margin-bottom: 12px; line-height: 1.06; font-size: clamp(2rem, 9vw, 2.75rem); }
   .home-hero__sub { margin-bottom: 18px; font-size: 1rem; line-height: 1.5; }
-  .home-hero__image-wrap {
-    order: -1; align-items: center; gap: 10px;
-    padding: 18px 18px 12px;
-    max-width: 208px;
-    margin: 0 auto;
-  }
-  .home-hero__image-wrap::before {
-    top: -10px; right: -10px;
-    width: 52px; height: 52px;
-  }
-  .home-hero__image { max-width: 120px; margin: 0 auto; }
-  .home-hero__dre { text-align: center; margin-top: 0; font-size: 0.6rem; letter-spacing: 0.18em; }
+  /* Mobile: hide the entire headshot card so the form lands above the fold.
+     The <picture> source above also prevents the headshot from being fetched here. */
+  .home-hero__image-wrap { display: none; }
   .home-hero .cf-label { margin-bottom: 12px; }
 }
 @media (max-width: 960px) {
@@ -1393,7 +1385,11 @@ p:last-child { margin-bottom: 0; }
       </div>
 
       <div class="home-hero__image-wrap">
-        <img class="home-hero__image" src="/media/images/Waist.png" alt="Joshua Guerrero, Irvine Real Estate Agent" width="480" fetchpriority="high" loading="eager">
+        <picture>
+          <!-- Skip the headshot fetch on mobile; desktop falls through to the <img> below. -->
+          <source media="(max-width: 1024px)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=">
+          <img class="home-hero__image" src="/media/images/Waist.png" alt="Joshua Guerrero, Irvine Real Estate Agent" width="480" fetchpriority="high" loading="eager">
+        </picture>
         <span class="home-hero__dre">Licensed California Real Estate Agent &middot; DRE# 02267255</span>
       </div>
 
