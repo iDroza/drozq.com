@@ -49,6 +49,74 @@ All updateable values are wrapped in <!-- UPDATE -->
   <link rel="preload" as="image" href="https://www.drozq.com/media/images/preview.png" fetchpriority="high">
   <link rel="preload" as="image" href="https://www.drozq.com/media/images/Waist.png" fetchpriority="auto">
 
+  <!-- Structured data: WebPage with four Dataset entities. Orange County Dataset includes Irvine in spatialCoverage. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Southern California Real Estate Market Insights",
+    "description": "Real-time real estate market data for Los Angeles, Orange, Riverside, and San Bernardino counties. Inventory, demand, closed sales, and expected market time, updated regularly.",
+    "url": "https://drozq.com/market-insights/",
+    "author": {
+      "@type": "Person",
+      "name": "Joshua Guerrero"
+    },
+    "mainEntity": [
+      {
+        "@type": "Dataset",
+        "name": "Los Angeles County Real Estate Market Data",
+        "description": "Monthly real estate market metrics for Los Angeles County including new listing inventory, demand, closed sales, and expected market time.",
+        "url": "https://drozq.com/market-insights/#los-angeles-county",
+        "spatialCoverage": {"@type": "Place", "name": "Los Angeles County, California"},
+        "creator": {"@type": "Person", "name": "Joshua Guerrero"},
+        "license": "https://drozq.com/privacy/"
+      },
+      {
+        "@type": "Dataset",
+        "name": "Orange County Real Estate Market Data (Includes Irvine)",
+        "description": "Monthly real estate market metrics for Orange County including Irvine, with new listing inventory, demand, closed sales, and expected market time.",
+        "url": "https://drozq.com/market-insights/#orange-county",
+        "spatialCoverage": [
+          {"@type": "Place", "name": "Orange County, California"},
+          {"@type": "Place", "name": "Irvine, California"}
+        ],
+        "creator": {"@type": "Person", "name": "Joshua Guerrero"},
+        "license": "https://drozq.com/privacy/"
+      },
+      {
+        "@type": "Dataset",
+        "name": "Riverside County Real Estate Market Data",
+        "description": "Monthly real estate market metrics for Riverside County including active listing inventory, pending sales demand, closed sales, and expected market time.",
+        "url": "https://drozq.com/market-insights/#riverside-county",
+        "spatialCoverage": {"@type": "Place", "name": "Riverside County, California"},
+        "creator": {"@type": "Person", "name": "Joshua Guerrero"},
+        "license": "https://drozq.com/privacy/"
+      },
+      {
+        "@type": "Dataset",
+        "name": "San Bernardino County Real Estate Market Data",
+        "description": "Monthly real estate market metrics for San Bernardino County including active listing inventory, pending sales demand, closed sales, and expected market time.",
+        "url": "https://drozq.com/market-insights/#san-bernardino-county",
+        "spatialCoverage": {"@type": "Place", "name": "San Bernardino County, California"},
+        "creator": {"@type": "Person", "name": "Joshua Guerrero"},
+        "license": "https://drozq.com/privacy/"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Structured data: BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://drozq.com/"},
+      {"@type": "ListItem", "position": 2, "name": "Market Insights", "item": "https://drozq.com/market-insights/"}
+    ]
+  }
+  </script>
+
   <style>
 
 :root {

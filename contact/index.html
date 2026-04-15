@@ -27,6 +27,49 @@
   <meta name="robots" content="index,follow" />
   <link rel="icon" href="https://www.drozq.com/media/icons/Joshua Guerrero Favicon.png" type="image/png" />
 
+  <!-- Structured data: ContactPage + RealEstateAgent -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact Joshua Guerrero",
+    "url": "https://drozq.com/contact/",
+    "description": "Get a free home valuation from a licensed Irvine real estate agent. Real comparative market analysis delivered within 48 hours.",
+    "mainEntity": {
+      "@type": "RealEstateAgent",
+      "name": "Joshua Guerrero",
+      "telephone": "+1-510-935-5701",
+      "email": "Josh@Drozq.com",
+      "image": "https://drozq.com/media/images/Waist.png",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "17875 Von Karman Ave, Suite 150",
+        "addressLocality": "Irvine",
+        "addressRegion": "CA",
+        "postalCode": "92614",
+        "addressCountry": "US"
+      },
+      "hasCredential": {
+        "@type": "EducationalOccupationalCredential",
+        "credentialCategory": "California Real Estate License",
+        "identifier": "DRE# 02267255"
+      }
+    }
+  }
+  </script>
+
+  <!-- Structured data: BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://drozq.com/"},
+      {"@type": "ListItem", "position": 2, "name": "Contact", "item": "https://drozq.com/contact/"}
+    ]
+  }
+  </script>
+
   <style>
 :root {
   --color-white: #ffffff;

@@ -37,6 +37,51 @@
   <link rel="preload" as="image" href="https://www.drozq.com/media/images/preview.png" fetchpriority="high">
   <link rel="preload" as="image" href="https://www.drozq.com/media/images/Waist.png" fetchpriority="auto">
 
+  <!-- Structured data: Person.
+       SWAP: populate "sameAs" with Facebook, Instagram, and LinkedIn URLs when confirmed. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Joshua Guerrero",
+    "jobTitle": "Real Estate Agent",
+    "description": "Licensed California real estate agent based in Irvine. From Vallejo to Irvine, from selling 20 cars a month to closing real estate deals.",
+    "url": "https://drozq.com/about/",
+    "image": "https://drozq.com/media/images/Waist.png",
+    "telephone": "+1-510-935-5701",
+    "email": "Josh@Drozq.com",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "Active Realty, Inc"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "17875 Von Karman Ave, Suite 150",
+      "addressLocality": "Irvine",
+      "addressRegion": "CA",
+      "postalCode": "92614",
+      "addressCountry": "US"
+    },
+    "hasCredential": {
+      "@type": "EducationalOccupationalCredential",
+      "credentialCategory": "California Real Estate License",
+      "identifier": "DRE# 02267255"
+    }
+  }
+  </script>
+
+  <!-- Structured data: BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://drozq.com/"},
+      {"@type": "ListItem", "position": 2, "name": "About", "item": "https://drozq.com/about/"}
+    ]
+  }
+  </script>
+
   <style>
 
 :root {
