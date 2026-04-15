@@ -378,6 +378,314 @@ p:last-child { margin-bottom: 0; }
   .lead-modal { padding: 30px 22px; }
   .lead-modal__row { flex-direction: column; gap: 12px; }
 }
+
+/* ========== CASE FILE SYSTEM (shared with rest of the site) ========== */
+.cf-label {
+  display: inline-block; font-size: 0.875rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--color-green); margin-bottom: 28px;
+}
+.cf-section { padding: 110px 0; background: var(--color-white); color: var(--color-navy); }
+.cf-section--alt { background: var(--color-gray-bg); }
+.cf-narrow { max-width: 720px; margin: 0 auto; padding: 0 30px; text-align: center; }
+.cf-wide { max-width: 1100px; margin: 0 auto; padding: 0 30px; }
+.cf-body { font-size: 1.25rem; line-height: 1.6; color: var(--color-navy-light); margin: 0; }
+.cf-body + .cf-body { margin-top: 1.2em; }
+.cf-headline {
+  font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 700;
+  line-height: 1.18; letter-spacing: -0.015em;
+  color: var(--color-navy); margin: 0 0 28px;
+}
+.cf-reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.cf-reveal.is-visible { opacity: 1; transform: translateY(0); }
+.cf-cta-strip { padding: 96px 0; background: var(--color-gray-bg); text-align: center; color: var(--color-navy); }
+.cf-cta-strip h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700;
+  line-height: 1.15; letter-spacing: -0.015em; color: var(--color-navy);
+  margin-bottom: 18px;
+}
+.cf-cta-strip__sub {
+  font-size: 1.125rem; line-height: 1.6; color: var(--color-navy-light);
+  max-width: 540px; margin: 0 auto 32px;
+}
+.cf-cta-strip .btn { padding: 20px 42px; font-size: 18px; }
+@media (prefers-reduced-motion: reduce) {
+  .cf-reveal { transition: none; opacity: 1; transform: none; }
+}
+
+/* ========== MEET THE TEAM (THE OPERATION) ========== */
+.mt-hero {
+  min-height: 72vh; display: flex; align-items: center;
+  padding: 80px 0 100px;
+  background: linear-gradient(180deg, #fafbfa 0%, var(--color-white) 100%);
+  color: var(--color-navy);
+}
+.mt-hero__inner {
+  width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 30px;
+  display: grid; grid-template-columns: 3fr 2fr; gap: 60px; align-items: center;
+}
+.mt-hero__text h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700;
+  line-height: 1.05; letter-spacing: -0.025em;
+  color: var(--color-navy); margin: 0 0 22px;
+}
+.mt-hero__sub {
+  font-size: 1.25rem; line-height: 1.6;
+  color: var(--color-navy-light); margin: 0; max-width: 520px;
+}
+.mt-hero__image-wrap { display: flex; justify-content: flex-end; }
+.mt-hero__image {
+  width: 100%; max-width: 480px;
+  border-radius: 8px; display: block;
+  box-shadow: 0 18px 48px rgba(30, 47, 73, 0.12);
+}
+
+/* Operation diagram */
+.mt-diagram-band {
+  padding: 100px 0; background: #f1f4f7;
+  border-top: 1px solid rgba(30, 47, 73, 0.06);
+  border-bottom: 1px solid rgba(30, 47, 73, 0.06);
+  text-align: center; color: var(--color-navy);
+}
+.mt-diagram-band__inner { max-width: 1100px; margin: 0 auto; padding: 0 30px; }
+.mt-diagram-band__head { margin-bottom: 56px; }
+.mt-diagram-band__head h2 {
+  font-size: clamp(1.75rem, 4vw, 3rem); font-weight: 700;
+  line-height: 1.18; letter-spacing: -0.015em;
+  color: var(--color-navy); margin: 0;
+}
+.mt-diagram-band__caption {
+  margin: 48px auto 0; max-width: 540px;
+  font-size: 1rem; line-height: 1.6; color: var(--color-navy-light);
+  opacity: 0.9;
+}
+
+/* Desktop concentric layout */
+.op-diagram {
+  position: relative; width: min(700px, 100%);
+  aspect-ratio: 1 / 1; margin: 0 auto;
+  font-family: var(--font);
+}
+.op-ring {
+  position: absolute; left: 50%; top: 50%;
+  border-radius: 50%; pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+.op-ring--mid {
+  width: 64%; height: 64%;
+  border: 1px solid rgba(30, 47, 73, 0.18);
+}
+.op-ring--outer {
+  width: 92%; height: 92%;
+  border: 1px dashed rgba(30, 47, 73, 0.18);
+}
+.op-center {
+  position: absolute; left: 50%; top: 50%;
+  width: 22%; aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
+  background: var(--color-green); color: var(--color-white);
+  border-radius: 50%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  box-shadow: 0 16px 44px rgba(66, 204, 147, 0.35);
+  padding: 14px;
+}
+.op-center__name {
+  font-size: clamp(0.95rem, 1.6vw, 1.25rem); font-weight: 700;
+  letter-spacing: -0.005em; line-height: 1.15; margin: 0;
+}
+.op-center__role {
+  font-size: clamp(0.65rem, 1.1vw, 0.8rem); font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  margin: 6px 0 0; opacity: 0.92;
+}
+
+.op-node {
+  position: absolute; top: 50%; left: 50%;
+  width: var(--diameter); height: var(--diameter);
+  margin-left: calc(-0.5 * var(--diameter));
+  margin-top: calc(-0.5 * var(--diameter));
+  transform: rotate(var(--angle));
+  pointer-events: none;
+}
+.op-node__inner {
+  position: absolute; top: 0; left: 50%;
+  transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle)));
+  display: inline-flex; flex-direction: column; align-items: center;
+  gap: 8px; width: 130px;
+  pointer-events: auto;
+}
+.op-node__dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--color-white);
+  border: 1.5px solid var(--color-navy);
+  flex: 0 0 auto;
+}
+.op-node--system .op-node__dot {
+  width: 22px; height: 22px;
+  border: 1.5px dashed var(--color-navy-light);
+  background: var(--color-white);
+}
+.op-node__label {
+  font-size: clamp(0.7rem, 1vw, 0.82rem);
+  font-weight: 600; line-height: 1.25;
+  color: var(--color-navy); text-align: center;
+  letter-spacing: 0.01em;
+  background: rgba(241, 244, 247, 0.95);
+  padding: 3px 8px; border-radius: 4px;
+}
+.op-node--system .op-node__label {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* Mobile fallback diagram */
+.op-diagram-mobile { display: none; }
+
+@media (max-width: 768px) {
+  .op-diagram { display: none; }
+  .op-diagram-mobile {
+    display: flex; flex-direction: column; gap: 18px;
+    max-width: 420px; margin: 0 auto; text-align: center;
+  }
+  .op-layer {
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-light);
+    border-radius: var(--radius-lg);
+    padding: 22px 18px;
+  }
+  .op-layer--center { background: var(--color-green); color: var(--color-white); border-color: var(--color-green); }
+  .op-layer__cap {
+    display: block; font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--color-navy-light); margin-bottom: 12px;
+  }
+  .op-layer--center .op-layer__cap { color: rgba(255, 255, 255, 0.85); }
+  .op-layer__title {
+    font-size: 1.125rem; font-weight: 700;
+    letter-spacing: -0.005em; margin: 0 0 4px;
+  }
+  .op-layer--center .op-layer__title { color: var(--color-white); }
+  .op-layer__role {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+  }
+  .op-layer__list {
+    display: flex; flex-direction: column; gap: 8px;
+    margin: 0; padding: 0; list-style: none;
+  }
+  .op-layer__list li {
+    font-size: 0.95rem; font-weight: 600;
+    color: var(--color-navy); letter-spacing: -0.005em;
+  }
+  .op-layer--systems .op-layer__list li { font-weight: 700; }
+}
+
+/* Layer 02: partner cards */
+.mt-partners {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  max-width: 1100px; margin: 56px auto 0; padding: 0 30px;
+}
+.mt-partner {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.mt-partner__icon {
+  width: 44px; height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--color-green); margin-bottom: 8px;
+}
+.mt-partner__icon svg { width: 36px; height: 36px; }
+.mt-partner__sub {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--color-navy-light); margin: 0;
+}
+.mt-partner__title {
+  font-size: 1.25rem; font-weight: 700; line-height: 1.25;
+  color: var(--color-navy); margin: 0; letter-spacing: -0.005em;
+}
+.mt-partner__body {
+  font-size: 0.98rem; line-height: 1.55;
+  color: var(--color-navy-light); margin: 0;
+}
+
+/* Layer 03: system cards */
+.mt-systems {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  max-width: 1100px; margin: 56px auto 0; padding: 0 30px;
+}
+.mt-system {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius-lg);
+  padding: 36px 30px;
+}
+.mt-system__num {
+  display: block; font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--color-green); margin-bottom: 18px;
+}
+.mt-system__title {
+  font-size: clamp(1.25rem, 2vw, 1.5rem); font-weight: 700;
+  line-height: 1.25; color: var(--color-navy);
+  margin: 0 0 14px; letter-spacing: -0.005em;
+}
+.mt-system__body {
+  font-size: 1rem; line-height: 1.6;
+  color: var(--color-navy-light); margin: 0;
+}
+
+/* Cross-link block */
+.mt-crosslink { padding: 96px 0; background: var(--color-white); color: var(--color-navy); text-align: center; }
+.mt-crosslink__inner { max-width: 640px; margin: 0 auto; padding: 0 30px; }
+.mt-crosslink h2 {
+  font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 700;
+  line-height: 1.22; color: var(--color-navy); margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+.mt-crosslink__body {
+  font-size: 1.125rem; line-height: 1.6;
+  color: var(--color-navy-light); margin: 0 0 30px;
+}
+
+/* Centered intro block above grids */
+.mt-intro { max-width: 1100px; margin: 0 auto; padding: 0 30px; text-align: center; }
+.mt-intro__head { max-width: 720px; margin: 0 auto; }
+.mt-intro__head .cf-headline { margin-bottom: 24px; }
+.mt-intro__body {
+  font-size: 1.125rem; line-height: 1.6;
+  color: var(--color-navy-light); max-width: 680px;
+  margin: 0 auto;
+}
+
+@media (max-width: 960px) {
+  .mt-partners, .mt-systems { grid-template-columns: repeat(2, 1fr); max-width: 760px; }
+}
+@media (max-width: 768px) {
+  .mt-hero { padding: 60px 0 70px; min-height: auto; }
+  .mt-hero__inner { grid-template-columns: 1fr; gap: 36px; padding: 0 24px; }
+  .mt-hero__image-wrap { justify-content: center; order: -1; }
+  .mt-hero__image { max-width: 280px; }
+  .mt-hero__text { text-align: center; }
+  .mt-hero__text h1 { font-size: clamp(2.5rem, 11vw, 3.5rem); }
+
+  .cf-section { padding: 64px 0; }
+  .cf-narrow, .cf-wide { padding: 0 24px; }
+  .mt-diagram-band { padding: 64px 0; }
+  .mt-diagram-band__head { margin-bottom: 36px; }
+  .mt-diagram-band__caption { margin-top: 32px; }
+  .mt-partners, .mt-systems {
+    grid-template-columns: 1fr; max-width: 460px;
+    padding: 0 24px; margin-top: 36px; gap: 18px;
+  }
+  .mt-partner { padding: 26px 22px; }
+  .mt-system { padding: 28px 24px; }
+  .mt-crosslink, .cf-cta-strip { padding: 64px 0; }
+}
   </style>
 </head>
 <body>
@@ -526,283 +834,275 @@ p:last-child { margin-bottom: 0; }
     </div>
   </header>
 
-  <!-- ========== PAGE INTRO ========== -->
-  <section class="section">
-    <div class="container">
-      <div class="body-text text-center">
-        <h1>Meet The Team</h1>
-        <p>Joshua Guerrero Real Estate, headquartered in Irvine, CA, is a family-owned operation focused on eliminating the pain points traditionally associated with selling your house. Meet the people helping you <a href="/">sell your house</a>.</p>
+  <!-- ========== SECTION 1: HERO ========== -->
+  <section class="mt-hero">
+    <div class="mt-hero__inner">
+      <div class="mt-hero__text">
+        <div class="cf-label">The Operation</div>
+        <h1>You hire one agent. You get an entire operation.</h1>
+        <p class="mt-hero__sub">Most real estate brands oversell their teams. I'd rather show you exactly how the work actually gets done. One point of contact. A network of trusted partners. A system designed to make sure nothing falls through the cracks. Here's how it works.</p>
+      </div>
+      <div class="mt-hero__image-wrap">
+        <img class="mt-hero__image" src="/media/images/Waist.png" alt="Joshua Guerrero, Real Estate Agent" width="480" fetchpriority="high">
       </div>
     </div>
   </section>
 
-  <!-- ========== CLIENT EXPERIENCE TEAM ========== -->
-  <section class="section">
-    <div class="container">
-      <h2 class="text-center">Client Experience Team</h2>
-      <div class="pain-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:40px;gap:40px;">
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/tyson-b.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/tyson-b.webp" alt="Tyson, Client Experience Manager" loading="lazy">
-          <h3>Tyson</h3>
-          <p>Client Experience Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/06/lebs-h.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/06/lebs-h.webp" alt="Lebs, Client Experience Coordinator" loading="lazy">
-          <h3>Lebs</h3>
-          <p>Client Experience Coordinator</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/holden-t.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/holden-t.webp" alt="Holden, Client Experience Coordinator" loading="lazy">
-          <h3>Holden</h3>
-          <p>Client Experience Coordinator</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/rider-l.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/rider-l.webp" alt="Rider, Client Experience Coordinator" loading="lazy">
-          <h3>Rider</h3>
-          <p>Client Experience Coordinator</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/ajani-w.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/ajani-w.webp" alt="Ajani, Client Experience Coordinator" loading="lazy">
-          <h3>Ajani</h3>
-          <p>Client Experience Coordinator</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/logan-h.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/logan-h.webp" alt="Logan, Client Experience Coordinator" loading="lazy">
-          <h3>Logan</h3>
-          <p>Client Experience Coordinator</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/05/christina.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/05/christina.webp" alt="Christina, Client Experience Coordinator" loading="lazy">
-          <h3>Christina</h3>
-          <p>Client Experience Coordinator</p>
-        </div>
-
+  <!-- ========== SECTION 2: THE STRUCTURE / DIAGRAM ========== -->
+  <section class="mt-diagram-band">
+    <div class="mt-diagram-band__inner cf-reveal">
+      <div class="mt-diagram-band__head">
+        <div class="cf-label">The Structure</div>
+        <h2>Three layers. One operation.</h2>
       </div>
-    </div>
-  </section>
 
-  <!-- ========== ACQUISITION TEAM ========== -->
-  <section class="section">
-    <div class="container">
-      <h2 class="text-center">Acquisition Team</h2>
-      <div class="pain-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:40px;gap:40px;">
+      <!-- Desktop: concentric layout -->
+      <div class="op-diagram" role="img" aria-label="Three-layer operation: Joshua at the center, six partners in the middle ring, three operating systems in the outer ring">
+        <span class="op-ring op-ring--outer" aria-hidden="true"></span>
+        <span class="op-ring op-ring--mid" aria-hidden="true"></span>
 
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/james-r.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/james-r.webp" alt="James, Acquisition Team Manager" loading="lazy">
-          <h3>James</h3>
-          <p>Acquisition Team Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/andre-j.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/andre-j.webp" alt="Andre, Acquisition Manager" loading="lazy">
-          <h3>Andre</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/alvin-c.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/alvin-c.webp" alt="Alvin, Acquisition Manager" loading="lazy">
-          <h3>Alvin</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/russ-n.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/russ-n.webp" alt="Russell, Acquisition Manager" loading="lazy">
-          <h3>Russell</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/matt-sloan.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/matt-sloan.webp" alt="Matt, Acquisition Manager" loading="lazy">
-          <h3>Matt</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/andrew-n.jpg -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/andrew-n.jpg" alt="Andrew, Acquisition Manager" loading="lazy">
-          <h3>Andrew</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/10/jose-s.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/10/jose-s.webp" alt="Jose, Acquisition Manager" loading="lazy">
-          <h3>Jose</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/steve-e.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/steve-e.webp" alt="Steve, Acquisition Manager" loading="lazy">
-          <h3>Steve</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2026/03/shanon-b.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2026/03/shanon-b.webp" alt="Shanon, Acquisition Manager" loading="lazy">
-          <h3>Shanon</h3>
-          <p>Acquisition Manager</p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== DISPOSITION TEAM ========== -->
-  <section class="section">
-    <div class="container">
-      <h2 class="text-center">Disposition Team</h2>
-      <div class="pain-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:40px;gap:40px;">
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/troy-l.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/troy-l.webp" alt="Troy, Disposition Manager" loading="lazy">
-          <h3>Troy</h3>
-          <p>Disposition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/sutton-e.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/sutton-e.webp" alt="Sutton, Disposition Manager" loading="lazy">
-          <h3>Sutton</h3>
-          <p>Disposition Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/melissa-e.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/melissa-e.webp" alt="Melissa, Transaction Manager" loading="lazy">
-          <h3>Melissa</h3>
-          <p>Transaction Manager</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/michelle-l.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/michelle-l.webp" alt="Michelle, Transaction Coordinator" loading="lazy">
-          <h3>Michelle</h3>
-          <p>Transaction Coordinator</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/05/tara.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/05/tara.webp" alt="Tara, Transaction Coordinator" loading="lazy">
-          <h3>Tara</h3>
-          <p>Transaction Coordinator</p>
-        </div>
-
-        <div class="text-center">
-          <!-- TODO:IMAGE -- hotlinked from: https://www.sellersadvantage.com/wp-content/uploads/2025/04/meggan-n.webp -- replace with self-hosted version -->
-          <img src="https://www.sellersadvantage.com/wp-content/uploads/2025/04/meggan-n.webp" alt="Meggan, Transaction Assistant" loading="lazy">
-          <h3>Meggan</h3>
-          <p>Transaction Assistant</p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== CTA FORM ========== -->
-  <section class="cta-form" id="contact">
-    <div class="container">
-      <div class="cta-form__inner">
-        <h2>Get My Free,<br>No-Obligation Quote</h2>
-        <p>Call me at <a href="tel:15109355701" style="text-decoration:underline; font-weight:600;">1-510-935-5701</a> or enter your address below. You'll hear back within the hour.</p>
-
-        <form class="lead-form" id="ctaForm">
-          <div class="lead-form__address-wrap">
-            <input type="text" id="ctaAddress" name="address_display" placeholder="Enter your home address" autocomplete="off" required>
+        <!-- Outer ring: systems (positions 12, 4, 8) -->
+        <div class="op-node op-node--system" style="--angle: 0deg; --diameter: 92%;">
+          <div class="op-node__inner">
+            <span class="op-node__dot"></span>
+            <span class="op-node__label">Communication Cadence</span>
           </div>
-          <input type="text" class="lead-form__unit" name="unit" placeholder="Unit" maxlength="5">
-
-          <div class="lead-form__hidden">
-            <input type="hidden" name="street_address" id="ctaStreet">
-            <input type="hidden" name="city" id="ctaCity">
-            <input type="hidden" name="state" id="ctaState">
-            <input type="hidden" name="zip" id="ctaZip">
-            <input type="hidden" name="full_address" id="ctaFull">
-            <input type="hidden" name="lat" id="ctaLat">
-            <input type="hidden" name="lng" id="ctaLng">
-            <input type="hidden" name="_subject" value="🏠 New Lead: Home Valuation Request">
-            <input type="hidden" name="source" value="CTA Form">
-            <input type="hidden" name="page_url" id="ctaPageUrl">
-            <input type="hidden" name="submitted_at" id="ctaTimestamp">
+        </div>
+        <div class="op-node op-node--system" style="--angle: 120deg; --diameter: 92%;">
+          <div class="op-node__inner">
+            <span class="op-node__dot"></span>
+            <span class="op-node__label">48-Hour Launch Playbook</span>
           </div>
+        </div>
+        <div class="op-node op-node--system" style="--angle: 240deg; --diameter: 92%;">
+          <div class="op-node__inner">
+            <span class="op-node__dot"></span>
+            <span class="op-node__label">Deal Management Protocol</span>
+          </div>
+        </div>
 
-          <button type="submit" class="btn btn--green btn--full">Get My Free Quote</button>
-        </form>
+        <!-- Middle ring: partners (positions 12, 2, 4, 6, 8, 10) -->
+        <div class="op-node" style="--angle: 30deg; --diameter: 64%;">
+          <div class="op-node__inner">
+            <span class="op-node__dot"></span>
+            <span class="op-node__label">Transaction Coordinator</span>
+          </div>
+        </div>
+        <div class="op-node" style="--angle: 90deg; --diameter: 64%;">
+          <div class="op-node__inner">
+            <span class="op-node__dot"></span>
+            <span class="op-node__label">Listing Photographer</span>
+          </div>
+        </div>
+        <div class="op-node" style="--angle: 150deg; --diameter: 64%;">
+          <div class="op-node__inner">
+            <span class="op-node__dot"></span>
+            <span class="op-node__label">Lending Network</span>
+          </div>
+        </div>
+        <div class="op-node" style="--angle: 210deg; --diameter: 64%;">
+          <div class="op-node__inner">
+            <span class="op-node__dot"></span>
+            <span class="op-node__label">Inspectors</span>
+          </div>
+        </div>
+        <div class="op-node" style="--angle: 270deg; --diameter: 64%;">
+          <div class="op-node__inner">
+            <span class="op-node__dot"></span>
+            <span class="op-node__label">Title and Escrow</span>
+          </div>
+        </div>
+        <div class="op-node" style="--angle: 330deg; --diameter: 64%;">
+          <div class="op-node__inner">
+            <span class="op-node__dot"></span>
+            <span class="op-node__label">Active Realty</span>
+          </div>
+        </div>
 
-        <p>Trusted by Southern California homeowners</p>
-        <img class="broker-badge" src="https://www.drozq.com/media/icons/real/real-broker-logo.png" alt="Real Broker" width="160" height="44" loading="lazy">
+        <!-- Center: Joshua -->
+        <div class="op-center">
+          <p class="op-center__name">Joshua Guerrero</p>
+          <p class="op-center__role">Point of contact</p>
+        </div>
       </div>
+
+      <!-- Mobile fallback -->
+      <div class="op-diagram-mobile">
+        <div class="op-layer op-layer--center">
+          <span class="op-layer__cap">Layer 01</span>
+          <h3 class="op-layer__title">Joshua Guerrero</h3>
+          <p class="op-layer__role">Point of contact</p>
+        </div>
+        <div class="op-layer">
+          <span class="op-layer__cap">Layer 02 &middot; Partners</span>
+          <ul class="op-layer__list">
+            <li>Active Realty</li>
+            <li>Transaction Coordinator</li>
+            <li>Listing Photographer</li>
+            <li>Lending Network</li>
+            <li>Inspectors</li>
+            <li>Title and Escrow</li>
+          </ul>
+        </div>
+        <div class="op-layer op-layer--systems">
+          <span class="op-layer__cap">Layer 03 &middot; Systems</span>
+          <ul class="op-layer__list">
+            <li>Communication Cadence</li>
+            <li>48-Hour Launch Playbook</li>
+            <li>Deal Management Protocol</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="mt-diagram-band__caption">Every layer is real. Every partner is someone I work with on every transaction. Every system runs whether you're watching or not.</p>
     </div>
   </section>
 
-  <!-- ========== FAQ ========== -->
-  <section class="section" id="faq">
-    <div class="container">
-      <div class="faq">
-        <h2>Common Questions Homeowners Ask</h2>
+  <!-- ========== SECTION 3: LAYER 01 ========== -->
+  <section class="cf-section">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">Layer 01</div>
+      <h2 class="cf-headline">Joshua Guerrero. The one you call.</h2>
+      <p class="cf-body">Every text, every call, every negotiation, every difficult decision: that's me. You'll never get passed off to an assistant for the moments that matter. You'll never wonder which person on a "team" is actually responsible for your listing. The buck stops with one person, and that person is the one you hired.</p>
+      <p class="cf-body">What that means practically: I'm the one who walks your home, builds your pricing strategy, presents your listing to buyers' agents, negotiates every offer, manages every contingency, and coordinates every milestone through close. The execution is leveraged. The accountability is not.</p>
+    </div>
+  </section>
 
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>What should I look for from companies that buy houses in any condition or companies that buy houses for cash?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>Many businesses claim they'll buy your home in any condition or pay cash, but their efficiency and reliability can vary widely. We've helped homeowners throughout Southern California and Los Angeles navigate the sale process. Our approach is designed to make things easy for you, the homeowner, so you can get results quickly and with minimal hassle.</p>
-            <p>We only move forward when we're confident we can complete the transaction smoothly. When considering any company, always check their track record and read online reviews. When it comes to selling your biggest asset, trust someone with proven results.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Where do you purchase homes for cash?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>We work with homeowners throughout most major metropolitan areas of Southern California — serving Los Angeles, San Diego, and the surrounding communities. We're continually expanding, so contact us today if you need to sell your home, commercial property, or land quickly.</p>
-          </div></div></div>
-        </div>
-
-        <div class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span>Do all companies follow the same process as yours?</span>
-            <span class="faq__icon">
-              <svg class="icon-chevron" viewBox="0 0 22 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2l9 8 9-8" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <svg class="icon-bar" viewBox="0 0 22 4" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h18" stroke="#42cc93" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </span>
-          </button>
-          <div class="faq__answer"><div class="faq__answer-inner"><div>
-            <p>No — experience levels and procedures vary widely. Our process is straightforward: after an initial phone call, one of our qualified team members will visit your property and walk you through your options on the spot, so you can make an informed decision without any pressure. While our approach isn't right for everyone, most people find the simplicity and reduced stress compared to traditional home sales makes it an excellent option.</p>
-          </div></div></div>
-        </div>
-
+  <!-- ========== SECTION 4: LAYER 02 / PARTNERS ========== -->
+  <section class="cf-section cf-section--alt">
+    <div class="mt-intro cf-reveal">
+      <div class="mt-intro__head">
+        <div class="cf-label">Layer 02</div>
+        <h2 class="cf-headline">The partners working behind every listing.</h2>
+        <p class="mt-intro__body">One agent can't do everything alone. Anyone who tells you they can is either lying or doing it badly. What I've built instead is a network of specialists who handle the work that requires their expertise, while I stay focused on the work that requires mine.</p>
       </div>
+    </div>
+
+    <div class="mt-partners cf-reveal">
+
+      <article class="mt-partner">
+        <span class="mt-partner__icon" aria-hidden="true">
+          <!-- SWAP: Building/institution icon from /media/icons/ (e.g., home-modern.svg) -->
+          <svg viewBox="0 0 48 48" fill="none"><path d="M8 42V20l16-12 16 12v22" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M18 42V28h12v14" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>
+        </span>
+        <p class="mt-partner__sub">The Brokerage</p>
+        <h3 class="mt-partner__title">Active Realty, Inc.</h3>
+        <p class="mt-partner__body">The licensed brokerage backing every transaction. Decades of collective experience, a deep network of California agents, and the institutional infrastructure that makes large transactions move smoothly. I'm an agent. They're the platform.</p>
+      </article>
+
+      <article class="mt-partner">
+        <span class="mt-partner__icon" aria-hidden="true">
+          <!-- SWAP: Document/checklist icon from /media/icons/ (e.g., request_quote.svg) -->
+          <svg viewBox="0 0 48 48" fill="none"><rect x="11" y="6" width="26" height="36" rx="3" stroke="currentColor" stroke-width="2.4"/><path d="M17 17h14M17 24h14M17 31h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </span>
+        <p class="mt-partner__sub">Behind-the-Scenes Operations</p>
+        <h3 class="mt-partner__title">Transaction Coordinator</h3>
+        <p class="mt-partner__body">A dedicated coordinator manages the paperwork, the deadlines, the disclosures, and the document trail of every escrow. While I'm negotiating your deal, she's making sure every form is signed, filed, and on time. You'd never know she existed unless something went wrong, which is exactly the point.</p>
+      </article>
+
+      <article class="mt-partner">
+        <span class="mt-partner__icon" aria-hidden="true">
+          <!-- SWAP: Camera icon from /media/icons/ (e.g., photo.svg) -->
+          <svg viewBox="0 0 48 48" fill="none"><rect x="6" y="13" width="36" height="26" rx="3" stroke="currentColor" stroke-width="2.4"/><circle cx="24" cy="26" r="7" stroke="currentColor" stroke-width="2.4"/><path d="M16 13l3-5h10l3 5" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>
+        </span>
+        <p class="mt-partner__sub">First Impressions</p>
+        <h3 class="mt-partner__title">Listing Photographer</h3>
+        <p class="mt-partner__body">A professional real estate photographer shoots every listing I take. Twilight shots, drone aerials, interior coverage that actually shows the space the way a buyer will experience it. The first 48 hours of a listing are decided by the photos. I don't take chances with that.</p>
+      </article>
+
+      <article class="mt-partner">
+        <span class="mt-partner__icon" aria-hidden="true">
+          <!-- SWAP: Dollar/finance icon from /media/icons/ (e.g., dollar.svg) -->
+          <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="2.4"/><path d="M24 13v22M30 18c-1-2.5-3.5-3-6-3s-5 1.2-5 4 3 3.5 6 4.2 6 1.5 6 4.3-2 4.5-5 4.5-5.5-1-6-3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <p class="mt-partner__sub">Buyer Financing</p>
+        <h3 class="mt-partner__title">Lending Network</h3>
+        <p class="mt-partner__body">A trusted network of lenders I've worked with on real deals. When buyer financing is shaky, I know which lender to call. When a buyer needs a creative solution (rate buy-down, second-loan structure, bridge financing), I have a direct line to someone who can actually execute, not just promise.</p>
+      </article>
+
+      <article class="mt-partner">
+        <span class="mt-partner__icon" aria-hidden="true">
+          <!-- SWAP: Inspection/wrench icon from /media/icons/ (e.g., wrench.svg) -->
+          <svg viewBox="0 0 48 48" fill="none"><circle cx="20" cy="20" r="11" stroke="currentColor" stroke-width="2.4"/><path d="M28 28l12 12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M16 20h8M20 16v8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </span>
+        <p class="mt-partner__sub">Due Diligence</p>
+        <h3 class="mt-partner__title">Inspectors and Specialists</h3>
+        <p class="mt-partner__body">Home inspectors, sewer line specialists, termite inspectors, structural engineers when needed. I've worked with all of them on real transactions. When an inspection finding is ambiguous, I know exactly who to call to get a clean second opinion fast.</p>
+      </article>
+
+      <article class="mt-partner">
+        <span class="mt-partner__icon" aria-hidden="true">
+          <!-- SWAP: Key/handshake icon from /media/icons/ (e.g., handshake.svg) -->
+          <svg viewBox="0 0 48 48" fill="none"><path d="M6 28l8-8 6 6 8-8 6 6 8-8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 36l4 4 6-6 6 6 4-4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <p class="mt-partner__sub">The Close</p>
+        <h3 class="mt-partner__title">Title and Escrow</h3>
+        <p class="mt-partner__body">Trusted title and escrow partners who close transactions cleanly and on time. The last 30 days of any deal is a coordination problem. The right title and escrow team makes that problem invisible to you.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ========== SECTION 5: LAYER 03 / SYSTEMS ========== -->
+  <section class="cf-section">
+    <div class="mt-intro cf-reveal">
+      <div class="mt-intro__head">
+        <div class="cf-label">Layer 03</div>
+        <h2 class="cf-headline">The systems that make sure nothing slips.</h2>
+        <p class="mt-intro__body">The reason I can deliver responsiveness most agents can't is that nothing about how I work is improvised. Every step of every transaction follows a system I've built, refined, and use on every client. The systems aren't visible to you. The results are.</p>
+      </div>
+    </div>
+
+    <div class="mt-systems cf-reveal">
+
+      <article class="mt-system">
+        <span class="mt-system__num">System 01</span>
+        <h3 class="mt-system__title">The communication cadence.</h3>
+        <p class="mt-system__body">You will never wonder what's happening with your listing. From day one, you receive scheduled updates: weekly during the listing period, every 48 hours during escrow, and immediately when anything changes. No "I'll get back to you tomorrow" voicemails. No silence between milestones.</p>
+      </article>
+
+      <article class="mt-system">
+        <span class="mt-system__num">System 02</span>
+        <h3 class="mt-system__title">The 48-hour launch playbook.</h3>
+        <p class="mt-system__body">When you sign with me, your home is on the market within 48 to 72 hours. Photos, copy, syndication across the major platforms, social media campaigns, and a dedicated property landing page all launch on a fixed timeline. Every listing follows the same playbook so nothing gets missed and nothing happens late.</p>
+      </article>
+
+      <article class="mt-system">
+        <span class="mt-system__num">System 03</span>
+        <h3 class="mt-system__title">The deal management protocol.</h3>
+        <p class="mt-system__body">Every active transaction is tracked through a clear set of milestones with assigned deadlines: contingency removals, inspection responses, appraisal coordination, document signing, and closing logistics. Nothing happens last-minute. Nothing falls through the cracks. The protocol is the reason.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ========== SECTION 6: THE OUTCOME ========== -->
+  <section class="cf-section cf-section--alt">
+    <div class="cf-narrow cf-reveal">
+      <div class="cf-label">The Result</div>
+      <h2 class="cf-headline">One agent, working with a real network, running a real system.</h2>
+      <p class="cf-body">When you list your home with me, you get the personal accountability of working directly with one agent, plus the operational depth of a brand that's been built deliberately. That combination is rare in real estate. Most agents are either solo and overwhelmed, or large teams where you get passed around. What I've built is the third option.</p>
+      <p class="cf-body">If that's the kind of operation you want behind your home sale, let's talk.</p>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 7: CROSS-LINK TO CASE FILES ========== -->
+  <section class="mt-crosslink">
+    <div class="mt-crosslink__inner cf-reveal">
+      <div class="cf-label">Want to See It in Action?</div>
+      <h2>Read the case files.</h2>
+      <p class="mt-crosslink__body">Every transaction I close becomes a documented case file with the real numbers, the real negotiation, and the real outcome. The operation in action.</p>
+      <a href="/testimonials/" class="btn btn--green">See the case files</a>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 8: FINAL CTA ========== -->
+  <section class="cf-cta-strip">
+    <div class="cf-narrow">
+      <div class="cf-label">Ready to See It First-Hand?</div>
+      <h2>Book a 15-minute call.</h2>
+      <p class="cf-cta-strip__sub">The fastest way to understand how I work is to talk to me directly. No pressure, no pitch. Just a clear conversation about your home, your goals, and what working together would actually look like.</p>
+      <a href="/contact/" class="btn btn--green">Book a 15-minute call</a>
     </div>
   </section>
 
@@ -1034,6 +1334,26 @@ p:last-child { margin-bottom: 0; }
         }
       });
     });
+
+    // MEET THE TEAM: scroll reveal
+    (function initMtReveal() {
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var reveals = document.querySelectorAll('.cf-reveal');
+      if (!reveals.length) return;
+      if (!('IntersectionObserver' in window) || reduceMotion) {
+        reveals.forEach(function (el) { el.classList.add('is-visible'); });
+        return;
+      }
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+      reveals.forEach(function (el) { obs.observe(el); });
+    })();
 
   })();
   </script>
