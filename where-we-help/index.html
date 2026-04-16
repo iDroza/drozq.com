@@ -139,7 +139,10 @@ p:last-child { margin-bottom: 0; }
 }
 
 .hero { padding: 40px 0 0; background: var(--color-mint); }
-.hero .container { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 30px; }
+.hero .container { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 30px; width: 100%; }
+@media (min-width: 1025px) {
+  .hero { min-height: calc(100vh - 126px); display: flex; align-items: stretch; }
+}
 .hero__content { flex: 1 1 55%; min-width: 300px; padding-bottom: 30px; }
 .hero__image { flex: 0 1 360px; min-width: 240px; display: flex; justify-content: flex-end; align-items: flex-end; }
 .hero__image img { width: 100%; height: auto; display: block; }
