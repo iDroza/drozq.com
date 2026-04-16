@@ -57,8 +57,11 @@ p:last-child{margin-bottom:0;}
 .nav__dropdown a:hover{background:var(--color-mint);color:var(--color-green);}
 .nav__item:hover .nav__dropdown,.nav__item:focus-within .nav__dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);}
 .mint-block{background:var(--color-mint);padding:90px 0;text-align:center;}
+.mint-block--hero{min-height:calc(100vh - 120px);display:flex;flex-direction:column;justify-content:center;padding:80px 0;}
 .mint-block h1,.mint-block h2{margin-bottom:20px;}
+.mint-block--hero h1{font-size:clamp(2.5rem,6vw,5rem);line-height:1.05;letter-spacing:-0.02em;}
 .mint-block .lead{max-width:780px;margin:0 auto 36px;font-size:18px;color:var(--color-navy);line-height:1.7;}
+.mint-block--hero .lead{font-size:clamp(1.125rem,1.6vw,1.375rem);max-width:640px;}
 .mint-block .lead a{color:var(--color-navy);text-decoration:underline;font-weight:600;}
 .inline-form{max-width:900px;margin:0 auto;}
 .inline-form .row{display:grid;grid-template-columns:1fr 140px;gap:14px;margin-bottom:14px;}
@@ -122,7 +125,7 @@ p:last-child{margin-bottom:0;}
 .footer__legal{font-size:14px;opacity:.7;margin-bottom:10px;}
 .footer__copyright{font-size:14px;opacity:.6;}
 @media (max-width:1024px){.nav{display:none;}.nav__toggle{display:block;}.nav.open{display:flex;flex-direction:column;align-items:flex-start;position:absolute;top:100%;left:0;right:0;background:#fff;padding:20px 30px;box-shadow:0 10px 30px rgba(0,0,0,.1);z-index:999;}.nav.open .nav__item{width:100%;}.nav.open .nav__item > a .nav__caret{display:none;}.nav.open .nav__dropdown{position:static;transform:none;opacity:1;visibility:visible;box-shadow:none;border:none;padding:0 0 10px 20px;min-width:0;background:transparent;}.nav.open .nav__dropdown a{padding:8px 0;font-size:16px;}.btn--phone-desktop{display:none;}.process-layout{grid-template-columns:1fr;gap:50px;}.process-left{position:static;}}
-@media (max-width:768px){.container{padding:0 20px;}.mint-block,.process,.faq{padding:60px 0;}.inline-form .row{grid-template-columns:1fr;}.step{grid-template-columns:70px 1fr;gap:16px;}.step-icon{width:58px;height:58px;}.step-icon svg{width:28px;height:28px;}.footer__right{text-align:left;}.footer__right img{margin-left:0;}.footer__social{justify-content:flex-start;}}
+@media (max-width:768px){.container{padding:0 20px;}.mint-block,.process,.faq{padding:60px 0;}.mint-block--hero{min-height:auto;padding:60px 0;}.inline-form .row{grid-template-columns:1fr;}.step{grid-template-columns:70px 1fr;gap:16px;}.step-icon{width:58px;height:58px;}.step-icon svg{width:28px;height:28px;}.footer__right{text-align:left;}.footer__right img{margin-left:0;}.footer__social{justify-content:flex-start;}}
 @media (max-width:480px){h1{font-size:2.125rem;}}
 </style>
 </head>
@@ -155,7 +158,7 @@ p:last-child{margin-bottom:0;}
 <button class="nav__toggle" id="navToggle" aria-label="Toggle Navigation">&#9776;</button>
 </div></header>
 
-<section class="mint-block"><div class="container">
+<section class="mint-block mint-block--hero"><div class="container">
 <h1>How I sell your home.</h1>
 <p class="lead">Five steps. Six to ten weeks. The full path from your first call to the keys in the buyer's hand.</p>
 <form class="inline-form" id="contactForm" novalidate>
