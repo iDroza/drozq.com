@@ -137,10 +137,7 @@ p:last-child { margin-bottom: 0; }
 }
 
 .hero { padding: 60px 0 0; background: var(--color-mint); }
-.hero .container { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 40px; width: 100%; }
-@media (min-width: 1025px) {
-  .hero { min-height: calc(100vh - 126px); display: flex; align-items: stretch; }
-}
+.hero .container { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 40px; }
 .hero__content { flex: 1 1 55%; min-width: 300px; padding-bottom: 50px; order: 1; }
 .hero__image { flex: 1 1 40%; min-width: 300px; order: 2; display: flex; justify-content: center; align-self: flex-end; }
 .hero__image img { display: block; margin-bottom: 0; max-height: 640px; width: auto; }
@@ -429,7 +426,7 @@ p:last-child { margin-bottom: 0; }
   <div class="lead-modal-overlay" id="leadModalOverlay">
     <div class="lead-modal">
       <button class="lead-modal__close" id="leadModalClose" aria-label="Close">&times;</button>
-      <h2>Get Your Free Home Valuation Now</h2>
+      <h2>Get Your Free Home Valuation</h2>
       <p class="lead-modal__privacy">We respect your privacy. We will not share, rent or sell the information you provide.</p>
 
       <div class="lead-modal__address-confirm" id="modalAddressPreview"></div>
