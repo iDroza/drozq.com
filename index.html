@@ -1426,6 +1426,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <input type="hidden" name="source_page" value="home">
           <input type="hidden" name="page_url" id="heroPageUrl">
           <input type="hidden" name="submitted_at" id="heroTimestamp">
+          <input type="hidden" name="gclid" id="gclid" value="">
 
           <button type="submit" class="home-form__submit">Get My FREE Valuation</button>
           <p class="home-form__reassure">100% Free. No obligation. Delivered within 24 hours.</p>
@@ -1811,6 +1812,43 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   (function () {
     'use strict';
 
+    // 0. GCLID CAPTURE — read ?gclid from URL, persist to sessionStorage
+    // and a 90-day cookie, then stamp into the hidden form field. Enables
+    // click-to-conversion attribution in Google Ads.
+    (function initGclid() {
+      function getUrlParam(name) {
+        try {
+          var params = new URLSearchParams(window.location.search);
+          return params.get(name) || '';
+        } catch (e) { return ''; }
+      }
+      function setCookie(name, value, days) {
+        var d = new Date();
+        d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = name + '=' + encodeURIComponent(value) +
+          ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+      }
+      function getCookie(name) {
+        var parts = ('; ' + document.cookie).split('; ' + name + '=');
+        if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+        return '';
+      }
+      var fromUrl = getUrlParam('gclid');
+      if (fromUrl) {
+        try { sessionStorage.setItem('gclid', fromUrl); } catch (e) {}
+        setCookie('gclid', fromUrl, 90);
+      }
+      function resolveGclid() {
+        var v = '';
+        try { v = sessionStorage.getItem('gclid') || ''; } catch (e) {}
+        if (!v) v = getCookie('gclid');
+        return v;
+      }
+      window.__drozq_resolveGclid = resolveGclid;
+      var field = document.getElementById('gclid');
+      if (field) field.value = resolveGclid();
+    })();
+
     // 1. GOOGLE PLACES AUTOCOMPLETE
     function initAutocomplete(inputId, prefix) {
       var input = document.getElementById(inputId);
@@ -1865,6 +1903,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         document.getElementById('heroPageUrl').value = window.location.href;
         document.getElementById('heroTimestamp').value = new Date().toISOString();
+        var gclidField = document.getElementById('gclid');
+        if (gclidField && window.__drozq_resolveGclid) gclidField.value = window.__drozq_resolveGclid();
 
         var btn = heroForm.querySelector('.home-form__submit');
         var origText = btn.textContent;
