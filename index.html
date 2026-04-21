@@ -1135,6 +1135,32 @@ p:last-child { margin-bottom: 0; }
 /* Delta colors shared with /market-insights/ */
 :root { --color-delta-down: #b5553f; }
 
+/* Sticky mobile CTA bar — only rendered on mobile; hidden by default,
+   JS toggles .is-visible when user scrolls past the hero form. */
+.sticky-cta {
+  display: none;
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 9999;
+  padding: 12px 16px;
+  background: var(--color-green);
+  box-shadow: 0 -6px 20px rgba(30, 47, 73, 0.18);
+  text-align: center;
+  opacity: 0; pointer-events: none;
+  transform: translateY(100%);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.sticky-cta.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.sticky-cta__btn {
+  display: block; width: 100%;
+  padding: 18px 20px;
+  background: transparent; color: var(--color-white);
+  border: none; cursor: pointer;
+  font-family: var(--font); font-size: 1.0625rem; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  line-height: 1;
+}
+@media (max-width: 767px) { .sticky-cta { display: block; } }
+
 /* ========== HOME PAGE RESPONSIVE ========== */
 @media (max-width: 1024px) {
   .home-hero { padding: 16px 0 40px; }
@@ -1719,6 +1745,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </section>
 
+  <!-- ========== STICKY MOBILE CTA (< 768px only) ========== -->
+  <div class="sticky-cta" id="stickyCta" aria-hidden="true">
+    <button type="button" class="sticky-cta__btn" id="stickyCtaBtn">Get My Free Valuation</button>
+  </div>
+
   <!-- ========== FOOTER ========== -->
   <footer class="footer">
     <div class="container">
@@ -1863,6 +1894,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.getElementById('navToggle').addEventListener('click', function () {
       document.getElementById('mainNav').classList.toggle('open');
     });
+
+    // 3a. STICKY MOBILE CTA — show after scrolling past hero, hide when in hero.
+    (function initStickyCta() {
+      var cta = document.getElementById('stickyCta');
+      var btn = document.getElementById('stickyCtaBtn');
+      var hero = document.getElementById('hero-form');
+      if (!cta || !btn || !hero) return;
+
+      var THRESHOLD = 600;
+      var ticking = false;
+      function updateVisibility() {
+        var scrolled = window.pageYOffset || document.documentElement.scrollTop;
+        var heroBottom = hero.offsetTop + hero.offsetHeight - 120;
+        var shouldShow = scrolled > THRESHOLD && scrolled > heroBottom;
+        if (shouldShow) {
+          cta.classList.add('is-visible');
+          cta.setAttribute('aria-hidden', 'false');
+        } else {
+          cta.classList.remove('is-visible');
+          cta.setAttribute('aria-hidden', 'true');
+        }
+      }
+      window.addEventListener('scroll', function () {
+        if (!ticking) {
+          window.requestAnimationFrame(function () { updateVisibility(); ticking = false; });
+          ticking = true;
+        }
+      }, { passive: true });
+      btn.addEventListener('click', function () {
+        hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      updateVisibility();
+    })();
 
     // 3b. ACTIVE NAV HIGHLIGHT
     (function(){
