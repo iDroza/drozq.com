@@ -32,8 +32,6 @@
   <meta name="twitter:image" content="https://drozq.com/media/images/preview.png">
 
   <link rel="icon" href="https://www.drozq.com/media/icons/Joshua Guerrero Favicon.png" type="image/png" />
-  <!-- Only preload the headshot on viewports that actually display it (desktop). -->
-  <link rel="preload" as="image" href="https://www.drozq.com/media/images/Waist.png" media="(min-width: 1025px)" fetchpriority="high">
 
   <!-- Structured data: RealEstateAgent + LocalBusiness.
        SWAP: add a "sameAs" array once Facebook, Instagram, LinkedIn, and Google
@@ -830,7 +828,8 @@ p:last-child { margin-bottom: 0; }
 .home-hero__inner {
   position: relative; z-index: 1;
   max-width: 1200px; margin: 0 auto; padding: 0 30px;
-  display: grid; grid-template-columns: 3fr 2fr; gap: 60px; align-items: start;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+  align-items: center;
 }
 .home-hero__text { max-width: 560px; }
 .home-hero__text h1 {
@@ -840,20 +839,9 @@ p:last-child { margin-bottom: 0; }
 }
 .home-hero__sub {
   font-size: 1.25rem; line-height: 1.6;
-  color: var(--color-navy-light); margin: 0 0 28px;
+  color: var(--color-navy-light); margin: 0 0 0;
 }
-/* Clean headshot — no card chrome; the form is the visual priority. */
-.home-hero__image-wrap {
-  display: flex; justify-content: center; align-items: flex-start;
-  margin: 0 0 0 auto;
-  max-width: 240px;
-}
-.home-hero__image {
-  width: 100%; max-width: 200px;
-  border-radius: 12px; display: block;
-  margin: 0 auto;
-  box-shadow: 0 16px 40px rgba(30, 47, 73, 0.12);
-}
+.home-hero__form-col { min-width: 0; }
 
 /* Hero form */
 .home-form {
@@ -1163,17 +1151,20 @@ p:last-child { margin-bottom: 0; }
 
 /* ========== HOME PAGE RESPONSIVE ========== */
 @media (max-width: 1024px) {
-  .home-hero { padding: 16px 0 40px; }
+  .home-hero { padding: 60px 0 48px; }
   .home-hero__inner {
-    grid-template-columns: 1fr; gap: 14px;
+    grid-template-columns: 1fr 1.22fr; gap: 40px;
   }
-  .home-hero__text { max-width: 100%; text-align: center; }
-  .home-hero__text h1 { margin-bottom: 12px; line-height: 1.06; font-size: clamp(2rem, 9vw, 2.75rem); }
-  .home-hero__sub { margin-bottom: 18px; font-size: 1rem; line-height: 1.5; }
-  /* Mobile: hide the entire headshot card so the form lands above the fold.
-     The <picture> source above also prevents the headshot from being fetched here. */
-  .home-hero__image-wrap { display: none; }
+  .home-hero__text { max-width: 100%; }
+  .home-hero__text h1 { margin-bottom: 12px; line-height: 1.06; font-size: clamp(2rem, 6vw, 2.75rem); }
+  .home-hero__sub { font-size: 1rem; line-height: 1.5; }
   .home-hero .cf-label { margin-bottom: 12px; }
+}
+@media (max-width: 767px) {
+  .home-hero__inner {
+    grid-template-columns: 1fr; gap: 28px;
+  }
+  .home-hero__text { text-align: center; }
 }
 @media (max-width: 960px) {
   .home-proof__grid { grid-template-columns: 1fr; max-width: 520px; gap: 18px; }
@@ -1371,7 +1362,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="cf-label">Irvine Listing Agent</div>
         <h1>What's your Irvine home actually worth?</h1>
         <p class="home-hero__sub">More than Zillow thinks. Less than you hope. Get a real valuation from a local agent, in your inbox within 24 hours. Free.</p>
+      </div>
 
+      <div class="home-hero__form-col">
         <form class="home-form" id="heroForm" novalidate>
           <!-- Honeypot -->
           <div class="honeypot" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;pointer-events:none;height:0;width:0;">
@@ -1448,14 +1441,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <p class="home-form__license">Licensed CA REALTOR&reg; &middot; CA DRE #02267255 &middot; Real Brokerage Technologies</p>
         </form>
-      </div>
-
-      <div class="home-hero__image-wrap">
-        <picture>
-          <!-- Skip the headshot fetch on mobile; desktop falls through to the <img> below. -->
-          <source media="(max-width: 1024px)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=">
-          <img class="home-hero__image" src="/media/images/Waist.png" alt="Joshua Guerrero, Irvine Real Estate Agent" width="480" fetchpriority="high" loading="eager">
-        </picture>
       </div>
 
     </div>
