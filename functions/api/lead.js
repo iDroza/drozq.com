@@ -49,6 +49,8 @@ export async function onRequestPost(context) {
     const referralSource = String(formData.get("referral_source") || "").trim();
     const sourcePage = String(formData.get("source_page") || formData.get("source") || "").trim();
     const consent = String(formData.get("consent") || "").trim();
+    const timeline = String(formData.get("timeline") || "").trim();
+    const gclid = String(formData.get("gclid") || "").trim();
 
     // 4) Server-side validation
     if (!name || !email || !phone) {
@@ -124,6 +126,7 @@ Lat/Lng: ${lat || "—"}, ${lng || "—"}
 
 INQUIRY
 Type: ${intent}
+Timeline: ${timeline || "—"}
 Referral Source: ${referralSource || "—"}
 
 NOTES
@@ -133,6 +136,7 @@ META
 Source: ${sourcePage || "—"}
 Page URL: ${String(formData.get("page_url") || "—")}
 Submitted: ${String(formData.get("submitted_at") || "—")}
+GCLID: ${gclid || "—"}
 Endpoint: ${url.pathname}
 IP: ${ip || "—"}
 User-Agent: ${ua || "—"}
@@ -180,6 +184,8 @@ Consent: ${consent}
             lat,
             lng,
             referral_source: referralSource,
+            timeline,
+            gclid,
             message,
             source_page: sourcePage,
             consent,
