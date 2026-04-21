@@ -842,40 +842,17 @@ p:last-child { margin-bottom: 0; }
   font-size: 1.25rem; line-height: 1.6;
   color: var(--color-navy-light); margin: 0 0 28px;
 }
-/* Headshot sits inside a navy card with an offset green accent block peeking out behind. */
+/* Clean headshot — no card chrome; the form is the visual priority. */
 .home-hero__image-wrap {
-  position: relative;
-  display: flex; flex-direction: column; align-items: center; gap: 18px;
-  background: var(--color-navy);
-  border-radius: var(--radius-lg);
-  padding: 34px 30px 24px;
-  max-width: 380px;
+  display: flex; justify-content: center; align-items: flex-start;
   margin: 0 0 0 auto;
-  box-shadow: 0 24px 60px rgba(30, 47, 73, 0.22);
-}
-.home-hero__image-wrap::before {
-  content: '';
-  position: absolute;
-  top: -16px; right: -16px;
-  width: 84px; height: 84px;
-  background: var(--color-green);
-  border-radius: var(--radius);
-  z-index: -1;
+  max-width: 240px;
 }
 .home-hero__image {
-  width: 100%; max-width: 300px;
-  border-radius: 8px; display: block;
+  width: 100%; max-width: 200px;
+  border-radius: 12px; display: block;
   margin: 0 auto;
-  position: relative; z-index: 1;
-  box-shadow: none;
-}
-.home-hero__dre {
-  display: block; margin: 2px 0 0; text-align: center;
-  font-size: 0.7rem; font-weight: 700;
-  letter-spacing: 0.22em; text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.82);
-  opacity: 1;
-  line-height: 1.4;
+  box-shadow: 0 16px 40px rgba(30, 47, 73, 0.12);
 }
 
 /* Hero form */
@@ -928,6 +905,11 @@ p:last-child { margin-bottom: 0; }
 .home-form__reassure {
   text-align: center; font-size: 0.85rem; color: var(--color-navy-light);
   opacity: 0.85; margin: 0;
+}
+.home-form__license {
+  text-align: center; font-size: 0.75rem; color: var(--color-navy-light);
+  opacity: 0.7; margin: 4px 0 0; line-height: 1.5;
+  letter-spacing: 0.01em;
 }
 
 /* Autocomplete dropdown style */
@@ -1405,6 +1387,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <button type="submit" class="home-form__submit">Get my free valuation</button>
           <p class="home-form__reassure">Free, no obligation. Most valuations delivered within 24 hours.</p>
+          <p class="home-form__license">Licensed CA REALTOR&reg; &middot; CA DRE #02267255 &middot; Real Brokerage Technologies</p>
         </form>
       </div>
 
@@ -1414,7 +1397,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <source media="(max-width: 1024px)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=">
           <img class="home-hero__image" src="/media/images/Waist.png" alt="Joshua Guerrero, Irvine Real Estate Agent" width="480" fetchpriority="high" loading="eager">
         </picture>
-        <span class="home-hero__dre">Licensed California Real Estate Agent &middot; DRE# 02267255</span>
       </div>
 
     </div>
