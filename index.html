@@ -2831,26 +2831,26 @@
 /* Google Places autocomplete dropdown styling to match sell.realtor.com. */
 .pac-container {
   border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border-radius: 0 0 24px 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+  border-radius: 0 0 16px 16px;
   margin-top: 0 !important;
   font-family: inherit;
+  background: #ffffff;
+  padding: 4px 0;
 }
-.pac-container:after {
-  /* Google "powered by Google" footer, lighter padding. */
-  padding: 8px 12px;
-}
+.pac-icon,
+.pac-icon-marker { display: none; }
 .pac-item {
-  padding: 12px 16px;
+  padding: 10px 20px;
   border-top: 1px solid #f0f0f0;
   font-size: 14px;
   line-height: 1.4;
   cursor: pointer;
+  color: #666;
+  font-weight: 400;
 }
 .pac-item:first-child { border-top: none; }
 .pac-item:hover { background-color: #f7f7f7; }
-.pac-icon,
-.pac-icon-marker { display: none; }
 .pac-item-query {
   font-size: 14px;
   font-weight: 600;
@@ -2861,6 +2861,16 @@
 .pac-item span:not(.pac-item-query):not(.pac-matched) {
   color: #666;
   font-size: 13px;
+  font-weight: 400;
+}
+.pac-container:after {
+  /* Google "powered by Google" footer. */
+  padding: 8px 16px;
+  background-position: right 16px center;
+}
+/* Reduce typed-text size in the landing-page address input to match Realtor's sizing. */
+form.pos_relative input[name="location"] {
+  font-size: 16px;
 }
 </style>
 <div id="funnel-progress"><div id="funnel-progress-bar"></div></div>
@@ -3203,15 +3213,27 @@
 
       // Only landing-page inputs sit inside a styled pill that needs override. The
       // funnel step-4 input has no pill wrapper, so default Google positioning is fine.
+      // Align to the input's own bounding rect (not the pill) so the dropdown's width
+      // matches the input portion only and stops before the Compare Agents button.
       if (input.closest("form.pos_relative")) {
-        var pill = input.parentElement;
+        var rafId = null;
+        function scheduleAlign() {
+          if (rafId) return;
+          rafId = requestAnimationFrame(function() {
+            rafId = null;
+            alignVisiblePac();
+          });
+        }
         input.addEventListener("focus", function() {
-          pacAlignTo = pill;
+          pacAlignTo = input;
           setTimeout(function() {
             ensurePacObserver();
             alignVisiblePac();
           }, 0);
         });
+        // Re-align if the user scrolls or resizes while the dropdown is open.
+        window.addEventListener("resize", scheduleAlign);
+        window.addEventListener("scroll", scheduleAlign, true);
       }
     }
 
