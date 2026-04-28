@@ -2841,7 +2841,7 @@
 .pac-icon,
 .pac-icon-marker { display: none; }
 .pac-item {
-  padding: 10px 20px;
+  padding: 6px 20px;
   border-top: 1px solid #f0f0f0;
   font-size: 14px;
   line-height: 1.4;
@@ -3255,7 +3255,9 @@ form.pos_relative input[name="location"] {
       if (!pacs.length) return;
       var rect = pacAlignTo.getBoundingClientRect();
       var leftPx = (rect.left + window.scrollX) + "px";
-      var topPx = (rect.bottom + window.scrollY) + "px";
+      // Overlap the input pill's bottom curve by 5px so the seam is invisible.
+      // Without this, the pill's rounded bottom and the dropdown's flat top create a visible gap.
+      var topPx = (rect.bottom + window.scrollY - 5) + "px";
       var widthPx = rect.width + "px";
       for (var i = 0; i < pacs.length; i++) {
         var pac = pacs[i];
