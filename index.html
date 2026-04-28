@@ -2832,8 +2832,8 @@
 .pac-container {
   border: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border-radius: 0 0 8px 8px;
-  margin-top: 0;
+  border-radius: 0 0 24px 24px;
+  margin-top: 0 !important;
   font-family: inherit;
 }
 .pac-container:after {
@@ -3131,6 +3131,42 @@
   window.initFunnelPlaces = function() {
     if (typeof google === "undefined" || !google.maps || !google.maps.places) return;
 
+    // Each landing-page input sits inside a styled pill wrapper (input.parentElement)
+    // that is wider than the input itself (it also contains the Compare Agents button).
+    // Google's Autocomplete positions .pac-container against the inner input, which
+    // produces a visible gap below the pill and a leftward horizontal inset. The hook
+    // below overrides Google's inline left/top/width so the dropdown snaps to the pill.
+    var pacAlignTo = null;
+    var pacObserverInit = false;
+
+    function alignVisiblePac() {
+      if (!pacAlignTo) return;
+      var pacs = document.querySelectorAll(".pac-container");
+      if (!pacs.length) return;
+      var rect = pacAlignTo.getBoundingClientRect();
+      var leftPx = (rect.left + window.scrollX) + "px";
+      var topPx = (rect.bottom + window.scrollY) + "px";
+      var widthPx = rect.width + "px";
+      for (var i = 0; i < pacs.length; i++) {
+        var pac = pacs[i];
+        if (pac.style.display === "none") continue;
+        if (pac.style.left !== leftPx) pac.style.left = leftPx;
+        if (pac.style.top !== topPx) pac.style.top = topPx;
+        if (pac.style.width !== widthPx) pac.style.width = widthPx;
+      }
+    }
+
+    function ensurePacObserver() {
+      if (pacObserverInit) return;
+      var pacs = document.querySelectorAll(".pac-container");
+      if (!pacs.length) return;
+      pacObserverInit = true;
+      var observer = new MutationObserver(alignVisiblePac);
+      for (var i = 0; i < pacs.length; i++) {
+        observer.observe(pacs[i], { attributes: true, attributeFilter: ["style"] });
+      }
+    }
+
     function attachAutocomplete(input, onPick) {
       if (!input || input.dataset.funnelAcAttached === "1") return;
       var ac = new google.maps.places.Autocomplete(input, {
@@ -3164,6 +3200,19 @@
         for (var j = 0; j < cityEls.length; j++) cityEls[j].textContent = city;
         if (typeof onPick === "function") onPick();
       });
+
+      // Only landing-page inputs sit inside a styled pill that needs override. The
+      // funnel step-4 input has no pill wrapper, so default Google positioning is fine.
+      if (input.closest("form.pos_relative")) {
+        var pill = input.parentElement;
+        input.addEventListener("focus", function() {
+          pacAlignTo = pill;
+          setTimeout(function() {
+            ensurePacObserver();
+            alignVisiblePac();
+          }, 0);
+        });
+      }
     }
 
     var landingInputs = document.querySelectorAll('form.pos_relative input[name="location"]');
