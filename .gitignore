@@ -1,0 +1,16 @@
+# Local tooling / IDE state
+.claude/
+.playwright-mcp/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Editor backup files
+*.swp
+*.swo
+*~
+
+# Local audit screenshots (drop here when capturing comps)
+drozq-la-*.png
+sellersadvantage-la-*.png
