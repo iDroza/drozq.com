@@ -2872,6 +2872,22 @@
 form.pos_relative input[name="location"] {
   font-size: 16px;
 }
+/* Validation error pill rendered below a landing-page address input when the user
+   tries to advance without picking a full street address from the Places dropdown. */
+.funnel-address-error {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px 20px;
+  background: #fdecec;
+  color: #d92228;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  text-align: left;
+  box-sizing: border-box;
+}
 </style>
 <div id="funnel-progress"><div id="funnel-progress-bar"></div></div>
 <div id="funnel-step-container">
@@ -2935,6 +2951,36 @@ form.pos_relative input[name="location"] {
 <script>
 (function() {
   var FUNNEL_ENDPOINT = "REPLACE_WITH_CLOUDFLARE_WORKER_URL"; // TODO
+
+  // Tracks whether each address input has a valid Places selection (full street address).
+  // Key: input element. Value: true if last place_changed yielded street_number + route.
+  var validAddressMap = new WeakMap();
+
+  function showAddressError(input, message) {
+    if (!input) return;
+    var form = input.closest("form.pos_relative");
+    if (!form) return;
+    var existing = form.querySelector(".funnel-address-error");
+    if (existing) {
+      existing.textContent = message;
+      return;
+    }
+    var err = document.createElement("div");
+    err.className = "funnel-address-error";
+    err.setAttribute("role", "alert");
+    err.textContent = message;
+    form.appendChild(err);
+  }
+
+  function clearAddressError(input) {
+    if (!input) return;
+    var form = input.closest("form.pos_relative");
+    if (!form) return;
+    var existing = form.querySelector(".funnel-address-error");
+    if (existing) existing.remove();
+  }
+
+  var ADDRESS_ERROR_MSG = "Please enter the full address of the property you are looking to sell.";
 
   window.funnelState = {
     address: { street: "", city: "", state: "", zip: "", lat: null, lng: null, formatted: "" },
@@ -3017,6 +3063,13 @@ form.pos_relative input[name="location"] {
     if (btn.closest("#funnel-overlay")) return;
     e.preventDefault();
     var form = btn.closest("form.pos_relative");
+    if (!form) return;
+    var addrInput = form.querySelector('input[name="location"]');
+    if (!addrInput || !validAddressMap.get(addrInput)) {
+      showAddressError(addrInput, ADDRESS_ERROR_MSG);
+      if (addrInput) addrInput.focus();
+      return;
+    }
     openFunnel(readPrefillFromForm(form));
   });
 
@@ -3028,6 +3081,12 @@ form.pos_relative input[name="location"] {
     if (!form) return;
     if (form.closest("#funnel-overlay")) return;
     e.preventDefault();
+    var addrInput = form.querySelector('input[name="location"]');
+    if (!addrInput || !validAddressMap.get(addrInput)) {
+      showAddressError(addrInput, ADDRESS_ERROR_MSG);
+      if (addrInput) addrInput.focus();
+      return;
+    }
     openFunnel(readPrefillFromForm(form));
   });
 
@@ -3067,8 +3126,12 @@ form.pos_relative input[name="location"] {
       nameErr.textContent = "Please enter your first and last name.";
       ok = false;
     } else { nameErr.textContent = ""; }
+    var addrInput = document.getElementById("funnel-step5-address");
     if (!addr) {
       addrErr.textContent = "Please enter your property address.";
+      ok = false;
+    } else if (!validAddressMap.get(addrInput)) {
+      addrErr.textContent = ADDRESS_ERROR_MSG;
       ok = false;
     } else { addrErr.textContent = ""; }
     if (!ok) return;
@@ -3208,7 +3271,26 @@ form.pos_relative input[name="location"] {
         var city = a.city || "Southern California";
         var cityEls = overlay.querySelectorAll(".funnel-city");
         for (var j = 0; j < cityEls.length; j++) cityEls[j].textContent = city;
+
+        // Mark this input as having a valid full-address selection only if both
+        // a street number and a route (street name) are present. City-only or
+        // region-level picks are rejected.
+        if (streetNumber && route) {
+          validAddressMap.set(input, true);
+          clearAddressError(input);
+        } else {
+          validAddressMap.set(input, false);
+        }
+
         if (typeof onPick === "function") onPick();
+      });
+
+      // Any keystroke after a Place was picked invalidates the selection.
+      // User must re-pick from the dropdown to set the flag again. Also clears
+      // any visible error so it doesn't linger while the user is correcting.
+      input.addEventListener("input", function() {
+        validAddressMap.set(input, false);
+        clearAddressError(input);
       });
 
       // Only landing-page inputs sit inside a styled pill that needs override. The
