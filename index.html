@@ -2836,7 +2836,22 @@
   margin-top: 0 !important;
   font-family: inherit;
   background: #ffffff !important;
-  padding: 40px 0 4px 0;
+  padding: 0;
+}
+/* When the autocomplete dropdown is open, the input pill flattens its bottom corners
+   so it merges flush with the dropdown below. Together they form a single container:
+   pill provides the rounded top, dropdown provides the rounded bottom. */
+form.pos_relative.is-pac-open > div {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+form.pos_relative.is-pac-open input[name="location"] {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+form.pos_relative.is-pac-open button[type="submit"] {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
 }
 .pac-icon,
 .pac-icon-marker { display: none; }
@@ -3353,21 +3368,35 @@ form.pos_relative input[name="location"] {
 
     function alignVisiblePac() {
       if (!pacAlignTo) return;
+      // Clear is-pac-open from any previously-active form. Only one input can host
+      // the visible dropdown at a time, so any stale class from a different form
+      // should be removed before re-applying based on current visibility.
+      var openForms = document.querySelectorAll("form.pos_relative.is-pac-open");
+      for (var k = 0; k < openForms.length; k++) {
+        openForms[k].classList.remove("is-pac-open");
+      }
+
       var pacs = document.querySelectorAll(".pac-container");
       if (!pacs.length) return;
       var rect = pacAlignTo.getBoundingClientRect();
       var leftPx = (rect.left + window.scrollX) + "px";
-      // Overlap the input pill's bottom curve by 30px so the seam is invisible.
-      // The pill visually sits on top of that overlap region, hiding the dropdown's top edge.
-      // .pac-container's top padding is widened to 40px so suggestions still breathe below the pill.
-      var topPx = (rect.bottom + window.scrollY - 30) + "px";
+      var topPx = (rect.bottom + window.scrollY) + "px";
       var widthPx = rect.width + "px";
+      var anyOpen = false;
       for (var i = 0; i < pacs.length; i++) {
         var pac = pacs[i];
         if (pac.style.display === "none") continue;
+        anyOpen = true;
         if (pac.style.left !== leftPx) pac.style.left = leftPx;
         if (pac.style.top !== topPx) pac.style.top = topPx;
         if (pac.style.width !== widthPx) pac.style.width = widthPx;
+      }
+
+      // Toggle the is-pac-open class on the active form so its pill flattens the
+      // bottom corners. Funnel inputs (no form.pos_relative parent) are skipped.
+      if (anyOpen) {
+        var form = pacAlignTo.closest("form.pos_relative");
+        if (form) form.classList.add("is-pac-open");
       }
     }
 
@@ -3456,6 +3485,14 @@ form.pos_relative input[name="location"] {
             ensurePacObserver();
             alignVisiblePac();
           }, 0);
+        });
+        // Defensive cleanup: when the input loses focus, drop the is-pac-open class
+        // after a short delay (so a click on a suggestion still registers first).
+        input.addEventListener("blur", function() {
+          setTimeout(function() {
+            var form = input.closest("form.pos_relative");
+            if (form) form.classList.remove("is-pac-open");
+          }, 150);
         });
         // Re-align if the user scrolls or resizes while the dropdown is open.
         window.addEventListener("resize", scheduleAlign);
