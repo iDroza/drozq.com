@@ -2836,7 +2836,7 @@
   margin-top: 0 !important;
   font-family: inherit;
   background: #ffffff !important;
-  padding: 34px 0 4px 0;
+  padding: 40px 0 4px 0;
 }
 .pac-icon,
 .pac-icon-marker { display: none; }
@@ -3357,10 +3357,10 @@ form.pos_relative input[name="location"] {
       if (!pacs.length) return;
       var rect = pacAlignTo.getBoundingClientRect();
       var leftPx = (rect.left + window.scrollX) + "px";
-      // Overlap the input pill's bottom curve by 24px so the seam is invisible.
+      // Overlap the input pill's bottom curve by 30px so the seam is invisible.
       // The pill visually sits on top of that overlap region, hiding the dropdown's top edge.
-      // .pac-container's top padding is widened to 34px so suggestions still breathe below the pill.
-      var topPx = (rect.bottom + window.scrollY - 24) + "px";
+      // .pac-container's top padding is widened to 40px so suggestions still breathe below the pill.
+      var topPx = (rect.bottom + window.scrollY - 30) + "px";
       var widthPx = rect.width + "px";
       for (var i = 0; i < pacs.length; i++) {
         var pac = pacs[i];
