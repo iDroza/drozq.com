@@ -2828,6 +2828,40 @@
 #funnel-overlay .funnel-back:hover { color: #2b2b2b; }
 /* Google Places dropdown must paint above the funnel overlay (z-index 9999). */
 .pac-container { z-index: 100000 !important; }
+/* Google Places autocomplete dropdown styling to match sell.realtor.com. */
+.pac-container {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 0 0 8px 8px;
+  margin-top: 0;
+  font-family: inherit;
+}
+.pac-container:after {
+  /* Google "powered by Google" footer, lighter padding. */
+  padding: 8px 12px;
+}
+.pac-item {
+  padding: 12px 16px;
+  border-top: 1px solid #f0f0f0;
+  font-size: 14px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+.pac-item:first-child { border-top: none; }
+.pac-item:hover { background-color: #f7f7f7; }
+.pac-icon,
+.pac-icon-marker { display: none; }
+.pac-item-query {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+  padding-right: 4px;
+}
+.pac-matched { font-weight: 700; }
+.pac-item span:not(.pac-item-query):not(.pac-matched) {
+  color: #666;
+  font-size: 13px;
+}
 </style>
 <div id="funnel-progress"><div id="funnel-progress-bar"></div></div>
 <div id="funnel-step-container">
