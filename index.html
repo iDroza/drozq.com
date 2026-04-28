@@ -2841,17 +2841,18 @@
 /* When the autocomplete dropdown is open, the input pill flattens its bottom corners
    so it merges flush with the dropdown below. Together they form a single container:
    pill provides the rounded top, dropdown provides the rounded bottom. */
+/* Pill wrapper: flatten only the bottom-LEFT corner so it merges with the dropdown.
+   The bottom-RIGHT stays rounded to match the Compare Agents button below. */
 form.pos_relative.is-pac-open > div {
   border-bottom-left-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
 }
 form.pos_relative.is-pac-open input[name="location"] {
   border-bottom-left-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
 }
+/* Button retains its full pill roundness regardless of dropdown state. */
 form.pos_relative.is-pac-open button[type="submit"] {
-  border-bottom-left-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
+  border-radius: 9999px !important;
 }
 .pac-icon,
 .pac-icon-marker { display: none; }
