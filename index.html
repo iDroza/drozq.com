@@ -2694,28 +2694,6 @@
   width: 16.66%;
   transition: width 250ms ease-out;
 }
-#funnel-overlay #funnel-close {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 1px solid #e6e3df;
-  cursor: pointer;
-  font-size: 24px;
-  line-height: 1;
-  color: #2b2b2b;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-#funnel-overlay #funnel-close:hover { background: #f7f5f2; }
 #funnel-overlay #funnel-step-container {
   flex: 1;
   width: 100%;
@@ -2834,18 +2812,26 @@
   #funnel-overlay h1 { font-size: 36px; }
   #funnel-overlay #funnel-step-container { padding-top: 96px; }
 }
+#funnel-overlay .funnel-back {
+  display: inline-block;
+  color: #6b6864;
+  font-size: 14px;
+  text-decoration: none;
+  margin-bottom: 16px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 4px 0;
+  transition: color 150ms;
+  font-family: inherit;
+}
+#funnel-overlay .funnel-back:hover { color: #2b2b2b; }
 /* Google Places dropdown must paint above the funnel overlay (z-index 9999). */
 .pac-container { z-index: 100000 !important; }
 </style>
 <div id="funnel-progress"><div id="funnel-progress-bar"></div></div>
-<button type="button" id="funnel-close" aria-label="Close">&times;</button>
 <div id="funnel-step-container">
   <div class="funnel-step active" data-step="1">
-    <h1>What is your home worth?</h1>
-    <input type="text" id="funnel-address-input" class="funnel-input" placeholder="Enter your home address" autocomplete="off">
-    <button type="button" id="funnel-step1-continue" class="funnel-cta">Continue</button>
-  </div>
-  <div class="funnel-step" data-step="2">
     <h1>When are you looking to sell?</h1>
     <div class="funnel-options funnel-options-1col">
       <button type="button" class="funnel-option" data-value="Right away">Right away</button>
@@ -2854,7 +2840,8 @@
       <button type="button" class="funnel-option" data-value="Already listed">Already listed</button>
     </div>
   </div>
-  <div class="funnel-step" data-step="3">
+  <div class="funnel-step" data-step="2">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h1>What do you think your home will sell for?</h1>
     <div class="funnel-options funnel-options-2col">
       <button type="button" class="funnel-option" data-value="$2M or more">$2M or more</button>
@@ -2865,7 +2852,8 @@
       <button type="button" class="funnel-option" data-value="Under $500K">Under $500K</button>
     </div>
   </div>
-  <div class="funnel-step" data-step="4">
+  <div class="funnel-step" data-step="3">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <div class="funnel-subtitle">Get matched with top listing agents in <span class="funnel-city">Southern California</span>.</div>
     <h1>What type of home are you selling in <span class="funnel-city">Southern California</span>?</h1>
     <div class="funnel-options funnel-options-2col">
@@ -2877,7 +2865,8 @@
       <button type="button" class="funnel-option" data-value="Commercial">Commercial</button>
     </div>
   </div>
-  <div class="funnel-step" data-step="5">
+  <div class="funnel-step" data-step="4">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h1>Let's finalize your report.</h1>
     <input type="text" id="funnel-step5-name" class="funnel-input" placeholder="First and last name" autocomplete="name">
     <div class="funnel-error" id="funnel-step5-name-error"></div>
@@ -2885,7 +2874,8 @@
     <div class="funnel-error" id="funnel-step5-address-error"></div>
     <button type="button" id="funnel-step5-continue" class="funnel-cta">Continue</button>
   </div>
-  <div class="funnel-step" data-step="6">
+  <div class="funnel-step" data-step="5">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h1>Where should I send your free CMA?</h1>
     <input type="email" id="funnel-step6-email" class="funnel-input" placeholder="Email" autocomplete="email">
     <div class="funnel-error" id="funnel-step6-email-error"></div>
@@ -2914,14 +2904,23 @@
   var progressBar = document.getElementById("funnel-progress-bar");
 
   function showStep(n) {
-    if (n < 1 || n > 6) return;
+    if (n < 1 || n > 5) return;
     currentStep = n;
     var steps = overlay.querySelectorAll(".funnel-step");
     for (var i = 0; i < steps.length; i++) {
       steps[i].classList.toggle("active", steps[i].getAttribute("data-step") === String(n));
     }
-    if (progressBar) progressBar.style.width = ((n / 6) * 100) + "%";
+    if (progressBar) progressBar.style.width = ((n / 5) * 100) + "%";
     overlay.scrollTop = 0;
+
+    // On entry to step 4 (name + address confirm), pre-fill the address input from state.
+    // Covers first arrival from step 3 and Back-navigation returns from step 5.
+    if (n === 4) {
+      var addrInput = document.getElementById("funnel-step5-address");
+      if (addrInput && window.funnelState.address.formatted) {
+        addrInput.value = window.funnelState.address.formatted;
+      }
+    }
   }
 
   function captureGclid() {
@@ -2941,22 +2940,19 @@
     window.funnelState.pageUrl = window.location.href;
     window.funnelState.timestamp = new Date().toISOString();
 
+    // If the user has not yet picked from Places autocomplete (no geometry on state),
+    // fall back to whatever they typed into the landing form's location input.
+    // Leave .city empty so step 3's {city} placeholder uses the "Southern California" fallback.
+    if (window.funnelState.address.lat === null && prefill) {
+      window.funnelState.address.formatted = prefill;
+    }
+
     overlay.classList.add("is-open");
     overlay.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
 
-    if (prefill) {
-      var input = document.getElementById("funnel-address-input");
-      if (input && !input.value) input.value = prefill;
-    }
     showStep(currentStep);
     window.scrollTo(0, 0);
-  }
-
-  function closeFunnel() {
-    overlay.classList.remove("is-open");
-    overlay.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
   }
 
   function readPrefillFromForm(form) {
@@ -2991,39 +2987,29 @@
     openFunnel(readPrefillFromForm(form));
   });
 
-  var closeBtn = document.getElementById("funnel-close");
-  if (closeBtn) closeBtn.addEventListener("click", closeFunnel);
-
-  // Auto-advance option clicks for steps 2, 3, 4.
+  // Delegated click handler: Back links + auto-advance option cards (steps 1, 2, 3).
   overlay.addEventListener("click", function(e) {
     if (!e.target.closest) return;
+    var back = e.target.closest(".funnel-back");
+    if (back) {
+      e.preventDefault();
+      showStep(currentStep - 1);
+      return;
+    }
     var opt = e.target.closest(".funnel-option");
     if (!opt) return;
     var stepEl = opt.closest(".funnel-step");
     if (!stepEl) return;
     var step = stepEl.getAttribute("data-step");
     var value = opt.getAttribute("data-value");
-    if (step === "2") window.funnelState.timeline = value;
-    else if (step === "3") window.funnelState.priceRange = value;
-    else if (step === "4") window.funnelState.propertyType = value;
+    if (step === "1") window.funnelState.timeline = value;
+    else if (step === "2") window.funnelState.priceRange = value;
+    else if (step === "3") window.funnelState.propertyType = value;
     opt.classList.add("is-selected");
     setTimeout(function() {
       opt.classList.remove("is-selected");
       showStep(parseInt(step, 10) + 1);
     }, 150);
-  });
-
-  var s1 = document.getElementById("funnel-step1-continue");
-  if (s1) s1.addEventListener("click", function() {
-    var input = document.getElementById("funnel-address-input");
-    var v = input.value.trim();
-    if (!v) { input.focus(); return; }
-    if (!window.funnelState.address.formatted) {
-      window.funnelState.address.formatted = v;
-    }
-    var s5addr = document.getElementById("funnel-step5-address");
-    if (s5addr && !s5addr.value) s5addr.value = v;
-    showStep(2);
   });
 
   var s5 = document.getElementById("funnel-step5-continue");
@@ -3044,7 +3030,7 @@
     if (!ok) return;
     window.funnelState.fullName = name;
     window.funnelState.address.formatted = addr;
-    showStep(6);
+    showStep(5);
   });
 
   var phoneEl = document.getElementById("funnel-step6-phone");
@@ -3106,40 +3092,52 @@
   });
 
   // Google Places initializer, called by the Maps script via callback=initFunnelPlaces.
+  // Attaches Autocomplete to (a) every landing-page form.pos_relative input[name="location"]
+  // and (b) the in-funnel address-confirm input on step 4 (id="funnel-step5-address").
   window.initFunnelPlaces = function() {
-    var input = document.getElementById("funnel-address-input");
-    if (!input || typeof google === "undefined" || !google.maps || !google.maps.places) return;
-    var ac = new google.maps.places.Autocomplete(input, {
-      types: ["address"],
-      componentRestrictions: { country: "us" },
-      fields: ["address_components", "formatted_address", "geometry"]
-    });
-    ac.addListener("place_changed", function() {
-      var place = ac.getPlace();
-      if (!place || !place.address_components) return;
-      var a = window.funnelState.address;
-      var streetNumber = "", route = "";
-      for (var i = 0; i < place.address_components.length; i++) {
-        var comp = place.address_components[i];
-        if (comp.types.indexOf("street_number") >= 0) streetNumber = comp.long_name;
-        else if (comp.types.indexOf("route") >= 0) route = comp.long_name;
-        else if (comp.types.indexOf("locality") >= 0) a.city = comp.long_name;
-        else if (comp.types.indexOf("administrative_area_level_1") >= 0) a.state = comp.short_name;
-        else if (comp.types.indexOf("postal_code") >= 0) a.zip = comp.long_name;
-      }
-      a.street = (streetNumber + " " + route).trim();
-      a.formatted = place.formatted_address || "";
-      if (place.geometry && place.geometry.location) {
-        a.lat = place.geometry.location.lat();
-        a.lng = place.geometry.location.lng();
-      }
-      var city = a.city || "Southern California";
-      var cityEls = overlay.querySelectorAll(".funnel-city");
-      for (var j = 0; j < cityEls.length; j++) cityEls[j].textContent = city;
-      var s5addr = document.getElementById("funnel-step5-address");
-      if (s5addr) s5addr.value = a.formatted;
-      setTimeout(function() { showStep(2); }, 150);
-    });
+    if (typeof google === "undefined" || !google.maps || !google.maps.places) return;
+
+    function attachAutocomplete(input, onPick) {
+      if (!input || input.dataset.funnelAcAttached === "1") return;
+      var ac = new google.maps.places.Autocomplete(input, {
+        types: ["address"],
+        componentRestrictions: { country: "us" },
+        fields: ["address_components", "formatted_address", "geometry"]
+      });
+      input.dataset.funnelAcAttached = "1";
+      ac.addListener("place_changed", function() {
+        var place = ac.getPlace();
+        if (!place || !place.address_components) return;
+        var a = window.funnelState.address;
+        var streetNumber = "", route = "";
+        a.city = ""; a.state = ""; a.zip = "";
+        for (var i = 0; i < place.address_components.length; i++) {
+          var comp = place.address_components[i];
+          if (comp.types.indexOf("street_number") >= 0) streetNumber = comp.long_name;
+          else if (comp.types.indexOf("route") >= 0) route = comp.long_name;
+          else if (comp.types.indexOf("locality") >= 0) a.city = comp.long_name;
+          else if (comp.types.indexOf("administrative_area_level_1") >= 0) a.state = comp.short_name;
+          else if (comp.types.indexOf("postal_code") >= 0) a.zip = comp.long_name;
+        }
+        a.street = (streetNumber + " " + route).trim();
+        a.formatted = place.formatted_address || "";
+        if (place.geometry && place.geometry.location) {
+          a.lat = place.geometry.location.lat();
+          a.lng = place.geometry.location.lng();
+        }
+        var city = a.city || "Southern California";
+        var cityEls = overlay.querySelectorAll(".funnel-city");
+        for (var j = 0; j < cityEls.length; j++) cityEls[j].textContent = city;
+        if (typeof onPick === "function") onPick();
+      });
+    }
+
+    var landingInputs = document.querySelectorAll('form.pos_relative input[name="location"]');
+    for (var i = 0; i < landingInputs.length; i++) {
+      attachAutocomplete(landingInputs[i], function() { openFunnel(""); });
+    }
+
+    attachAutocomplete(document.getElementById("funnel-step5-address"), null);
   };
 })();
 </script>
