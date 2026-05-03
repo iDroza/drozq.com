@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"><!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KVV3R96P');</script><!-- End Google Tag Manager --><title>Compare Real Estate Agents | Agents Compete For You!</title><meta name="Description" content="Compare Agents. Find a Trusted Expert. RealChoice™ Selling analyzes thousands of local agents and finds the best to compete for you!"><meta property="og:url" content="https://sell.realtor.com/re/"><meta property="og:title" content="Compare Real Estate Agents | Agents Compete For You!"><meta property="og:description" content="Compare Agents. Find a Trusted Expert. RealChoice™ Selling analyzes thousands of local agents and finds the best to compete for you!"><meta property="og:image" content="https://www.lt6p.com/re/img/whitelabel-assets/realtordotcom/img/buysell/bg-home-new.webp"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:type" content="website"><meta property="og:site_name" content="RealChoice™ Selling"><meta name="twitter:title" content="Compare Real Estate Agents | Agents Compete For You!"><meta name="twitter:description" content="Compare Agents. Find a Trusted Expert. RealChoice™ Selling analyzes thousands of local agents and finds the best to compete for you!"><meta name="twitter:creator" content="@realtordotcom"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://www.lt6p.com/re/img/whitelabel-assets/realtordotcom/img/buysell/bg-home-new.webp"><meta name="twitter:site" content="@REALTORdotcom"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="canonical" href="https://sell.realtor.com/re/"><meta name="rcs-consumer:version" content="0.0.264"><link rel="image_src" type="image/jpeg" href="https://www.lt6p.com/re/img/whitelabel-assets/realtordotcom/img/buysell/bg-home-new.webp"><meta name="next-head-count" content="30"><link rel="touch-icon" href="https://static.rdc.moveaws.com/touch-icon.png"><link rel="apple-touch-icon" href="https://static.rdc.moveaws.com/touch-icon.png"><link rel="icon" href="https://static.rdc.moveaws.com/favicon.ico"><style data-inlined="desktop">/* Source: inline#0 */
+<html lang="en"><head><meta charset="utf-8"><!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KVV3R96P');</script><!-- End Google Tag Manager --><title>Buy or Sell in Southern California | Joshua Guerrero</title><meta name="description" content="Free home valuation and buyer's strategy in Southern California. I'm Joshua Guerrero, a solo agent based in Irvine. No spam, no autodialer."><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="canonical" href="https://drozq.com/"><meta property="og:url" content="https://drozq.com/"><meta property="og:title" content="Buy or Sell in Southern California | Joshua Guerrero"><meta property="og:description" content="Free home valuation and buyer's strategy in Southern California. I'm Joshua Guerrero, a solo agent based in Irvine. No spam, no autodialer."><meta property="og:image" content="https://drozq.com/media/images/preview.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:type" content="website"><meta property="og:site_name" content="Drozq"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Buy or Sell in Southern California | Joshua Guerrero"><meta name="twitter:description" content="Free home valuation and buyer's strategy in Southern California. I'm Joshua Guerrero, a solo agent based in Irvine. No spam, no autodialer."><meta name="twitter:image" content="https://drozq.com/media/images/preview.png"><link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="shortcut icon" href="/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><meta name="apple-mobile-web-app-title" content="Drozq"><link rel="manifest" href="/site.webmanifest"><style data-inlined="desktop">/* Source: inline#0 */
 @font-face { font-family: Roboto; font-style: normal; font-weight: 400; font-display: swap; src: url("https://static.rdc.moveaws.com/fonts/roboto-400.woff2") format("woff2"), url("https://static.rdc.moveaws.com/fonts/roboto-400.woff") format("woff"); }
 @font-face { font-family: Roboto; font-style: normal; font-weight: 700; font-display: swap; src: url("https://static.rdc.moveaws.com/fonts/roboto-700.woff2") format("woff2"), url("https://static.rdc.moveaws.com/fonts/roboto-700.woff") format("woff"); }
 
@@ -3351,13 +3351,37 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     try {
       var params = new URLSearchParams(window.location.search);
       var g = params.get("gclid");
+      var fromUrl = !!g;
       if (!g) {
         var m = document.cookie.match(/(?:^|;\s*)gclid=([^;]+)/);
         if (m) g = decodeURIComponent(m[1]);
       }
-      if (g) window.funnelState.gclid = g;
+      if (!g) {
+        try { g = sessionStorage.getItem("drozq_gclid") || ""; } catch (e) {}
+      }
+      if (g) {
+        window.funnelState.gclid = g;
+        // If we just pulled it from the URL, persist for 90 days so subsequent
+        // pageviews and re-opens still attribute to this click.
+        if (fromUrl) {
+          try {
+            var maxAge = 60 * 60 * 24 * 90; // 90 days
+            document.cookie = "gclid=" + encodeURIComponent(g) + "; path=/; max-age=" + maxAge + "; SameSite=Lax";
+            sessionStorage.setItem("drozq_gclid", g);
+          } catch (e) {}
+        }
+        // Mirror the gclid into dataLayer so any GA4 Custom Definition (or
+        // PostHog ingestion) can pick it up on every event for this session,
+        // not only at lead-submit time. Idempotent: dataLayer push is fine
+        // even if GTM hasn't booted yet.
+        try { (window.dataLayer = window.dataLayer || []).push({ event: "gclid_captured", gclid: g }); } catch (e) {}
+      }
     } catch (err) { /* no-op */ }
   }
+  // Run once on page load so the gclid is known before any user interaction
+  // (e.g., before the funnel opens, before submit). Subsequent calls inside
+  // openFunnel + submit refresh in case a cookie warmed mid-session.
+  captureGclid();
 
   // Detect which funnel a landing-page form opens based on its surrounding tabpanel.
   // Hero tabpanels: tabpanel-sell / tabpanel-buy / tabpanel-sell-buy.
@@ -3868,7 +3892,16 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
         return res.json().then(function(json) {
           if (res.ok && json && json.ok) {
             track("funnel_submit_success", { mode: mode });
-            window.location.href = "/thank-you/";
+            // Mark the redirect so /thank-you/ can fire the GA4 generate_lead
+            // event ONLY for real funnel conversions, not for direct visits or
+            // bookmarks. sessionStorage is tab-scoped so a closed-and-reopened
+            // tab won't re-trigger; ?ref=funnel is a backup signal we strip
+            // from the URL on the receiving page.
+            try {
+              sessionStorage.setItem("drozq_lead_just_submitted", "1");
+              sessionStorage.setItem("drozq_lead_mode", mode);
+            } catch (e) {}
+            window.location.href = "/thank-you/?ref=funnel";
           } else {
             showFunnelError("server");
           }

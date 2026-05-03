@@ -369,6 +369,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         a.classList.add('active');
       });
     })();
+
+    // Conversion gate: only push lead_confirmed (and the GA4 generate_lead it
+    // backs) when this thank-you view is the result of a real funnel submit.
+    // The funnel sets sessionStorage.drozq_lead_just_submitted = "1" right
+    // before the redirect; we read + clear it here so refreshes, direct
+    // visits, and bookmarks DON'T inflate Google Ads conversions.
+    // GTM action item: change the generate_lead trigger from "Page View on
+    // /thank-you/" to "Custom Event = lead_confirmed".
+    (function(){
+      var flag = null;
+      try { flag = sessionStorage.getItem("drozq_lead_just_submitted"); } catch (e) {}
+      if (flag !== "1") return;
+      var mode = "";
+      try { mode = sessionStorage.getItem("drozq_lead_mode") || ""; } catch (e) {}
+      try {
+        sessionStorage.removeItem("drozq_lead_just_submitted");
+        sessionStorage.removeItem("drozq_lead_mode");
+      } catch (e) {}
+      // Strip ?ref=funnel from the URL so a refresh or bookmark of the
+      // resulting page doesn't carry a misleading attribution param.
+      try {
+        var url = new URL(location.href);
+        if (url.searchParams.get("ref") === "funnel") {
+          url.searchParams.delete("ref");
+          history.replaceState({}, "", url.pathname + (url.search ? url.search : "") + url.hash);
+        }
+      } catch (e) {}
+      (window.dataLayer = window.dataLayer || []).push({
+        event: "lead_confirmed",
+        funnel_mode: mode || "unknown"
+      });
+    })();
   </script>
 </body>
 </html>
