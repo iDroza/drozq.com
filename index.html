@@ -2911,7 +2911,8 @@ form.pos_relative input[name="location"] {
 </style>
 <div id="funnel-progress"><div id="funnel-progress-bar"></div></div>
 <div id="funnel-step-container">
-  <div class="funnel-step active" data-step="1">
+  <!-- ============ SELL FUNNEL ============ -->
+  <div class="funnel-step active" data-funnel="sell" data-step="1">
     <h1>When are you looking to sell?</h1>
     <div class="funnel-options funnel-options-1col">
       <button type="button" class="funnel-option" data-value="Right away">Right away</button>
@@ -2920,7 +2921,7 @@ form.pos_relative input[name="location"] {
       <button type="button" class="funnel-option" data-value="Already listed">Already listed</button>
     </div>
   </div>
-  <div class="funnel-step" data-step="2">
+  <div class="funnel-step" data-funnel="sell" data-step="2">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h1>What do you think your home will sell for?</h1>
     <div class="funnel-options funnel-options-2col">
@@ -2932,7 +2933,7 @@ form.pos_relative input[name="location"] {
       <button type="button" class="funnel-option" data-value="Under $500K">Under $500K</button>
     </div>
   </div>
-  <div class="funnel-step" data-step="3">
+  <div class="funnel-step" data-funnel="sell" data-step="3">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <div class="funnel-subtitle">Get matched with top listing agents in <span class="funnel-city">Southern California</span>.</div>
     <h1>What type of home are you selling in <span class="funnel-city">Southern California</span>?</h1>
@@ -2945,7 +2946,7 @@ form.pos_relative input[name="location"] {
       <button type="button" class="funnel-option" data-value="Commercial">Commercial</button>
     </div>
   </div>
-  <div class="funnel-step" data-step="4">
+  <div class="funnel-step" data-funnel="sell" data-step="4">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h1>Let's finalize your report.</h1>
     <input type="text" id="funnel-step5-name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text">
@@ -2954,7 +2955,7 @@ form.pos_relative input[name="location"] {
     <div class="funnel-error" id="funnel-step5-address-error"></div>
     <button type="button" id="funnel-step5-continue" class="funnel-cta">Continue</button>
   </div>
-  <div class="funnel-step" data-step="5">
+  <div class="funnel-step" data-funnel="sell" data-step="5">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h1>Where should I send your free CMA?</h1>
     <input type="email" id="funnel-step6-email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false">
@@ -2964,6 +2965,128 @@ form.pos_relative input[name="location"] {
     <button type="button" id="funnel-step6-submit" class="funnel-cta">Send My CMA</button>
     <div class="funnel-error" id="funnel-step6-submit-error"></div>
     <div class="funnel-fineprint">By submitting you agree that Joshua Guerrero may contact you about your home value. No spam. No autodialer.</div>
+  </div>
+
+  <!-- ============ BUY FUNNEL ============ -->
+  <div class="funnel-step" data-funnel="buy" data-step="1">
+    <h1>When are you looking to buy?</h1>
+    <div class="funnel-options funnel-options-1col">
+      <button type="button" class="funnel-option" data-value="Right away">Right away</button>
+      <button type="button" class="funnel-option" data-value="1 to 3 months">1 to 3 months</button>
+      <button type="button" class="funnel-option" data-value="4 or more months">4 or more months</button>
+      <button type="button" class="funnel-option" data-value="Just looking">Just looking</button>
+    </div>
+  </div>
+  <div class="funnel-step" data-funnel="buy" data-step="2">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h1>What's your buying budget?</h1>
+    <div class="funnel-options funnel-options-2col">
+      <button type="button" class="funnel-option" data-value="$2M or more">$2M or more</button>
+      <button type="button" class="funnel-option" data-value="$1.4M to $2M">$1.4M to $2M</button>
+      <button type="button" class="funnel-option" data-value="$1M to $1.4M">$1M to $1.4M</button>
+      <button type="button" class="funnel-option" data-value="$700K to $1M">$700K to $1M</button>
+      <button type="button" class="funnel-option" data-value="$500K to $700K">$500K to $700K</button>
+      <button type="button" class="funnel-option" data-value="Under $500K">Under $500K</button>
+    </div>
+  </div>
+  <div class="funnel-step" data-funnel="buy" data-step="3">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <div class="funnel-subtitle">I'll match you with the right buyer's strategy in <span class="funnel-buy-city">Southern California</span>.</div>
+    <h1>What type of home are you buying in <span class="funnel-buy-city">Southern California</span>?</h1>
+    <div class="funnel-options funnel-options-2col">
+      <button type="button" class="funnel-option" data-value="Single family">Single family</button>
+      <button type="button" class="funnel-option" data-value="Condominium">Condominium</button>
+      <button type="button" class="funnel-option" data-value="Townhouse">Townhouse</button>
+      <button type="button" class="funnel-option" data-value="Multi-family">Multi-family</button>
+      <button type="button" class="funnel-option" data-value="Investment property">Investment property</button>
+      <button type="button" class="funnel-option" data-value="Not sure yet">Not sure yet</button>
+    </div>
+  </div>
+  <div class="funnel-step" data-funnel="buy" data-step="4">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h1>Where are you in the buying process?</h1>
+    <div class="funnel-options funnel-options-1col">
+      <button type="button" class="funnel-option" data-value="Just started">Just started</button>
+      <button type="button" class="funnel-option" data-value="Pre-approved, ready to tour">Pre-approved, ready to tour</button>
+      <button type="button" class="funnel-option" data-value="Already making offers">Already making offers</button>
+    </div>
+  </div>
+  <div class="funnel-step" data-funnel="buy" data-step="5">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h1>Where should I send your buyer's strategy?</h1>
+    <input type="text" id="buy-step5-name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text">
+    <div class="funnel-error" id="buy-step5-name-error"></div>
+    <input type="email" id="buy-step5-email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <div class="funnel-error" id="buy-step5-email-error"></div>
+    <input type="tel" id="buy-step5-phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off">
+    <div class="funnel-error" id="buy-step5-phone-error"></div>
+    <button type="button" id="buy-step5-submit" class="funnel-cta">Send My Buyer's Strategy</button>
+    <div class="funnel-error" id="buy-step5-submit-error"></div>
+    <div class="funnel-fineprint">By submitting you agree that Joshua Guerrero may contact you about your home search. No spam. No autodialer.</div>
+  </div>
+
+  <!-- ============ SELL & BUY FUNNEL ============ -->
+  <div class="funnel-step" data-funnel="sellandbuy" data-step="1">
+    <div class="funnel-subtitle">With the right address I can match you with a listing agent who knows the neighborhood.</div>
+    <h1>Confirm the address you're selling.</h1>
+    <input type="text" id="sellandbuy-step1-address" class="funnel-input" placeholder="Property address" autocomplete="street-address" inputmode="text">
+    <div class="funnel-error" id="sellandbuy-step1-address-error"></div>
+    <button type="button" id="sellandbuy-step1-continue" class="funnel-cta">Continue</button>
+  </div>
+  <div class="funnel-step" data-funnel="sellandbuy" data-step="2">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h1>Where do you want to buy?</h1>
+    <input type="text" id="sellandbuy-step2-buylocation" class="funnel-input" placeholder="City, neighborhood, or ZIP" autocomplete="address-level2" inputmode="text">
+    <div class="funnel-error" id="sellandbuy-step2-buylocation-error"></div>
+    <button type="button" id="sellandbuy-step2-continue" class="funnel-cta">Continue</button>
+  </div>
+  <div class="funnel-step" data-funnel="sellandbuy" data-step="3">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h1>When are you looking to sell?</h1>
+    <div class="funnel-options funnel-options-1col">
+      <button type="button" class="funnel-option" data-value="Right away">Right away</button>
+      <button type="button" class="funnel-option" data-value="1 to 3 months">1 to 3 months</button>
+      <button type="button" class="funnel-option" data-value="4 or more months">4 or more months</button>
+      <button type="button" class="funnel-option" data-value="Already listed">Already listed</button>
+    </div>
+  </div>
+  <div class="funnel-step" data-funnel="sellandbuy" data-step="4">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h1>What do you think your home will sell for?</h1>
+    <div class="funnel-options funnel-options-2col">
+      <button type="button" class="funnel-option" data-value="$2M or more">$2M or more</button>
+      <button type="button" class="funnel-option" data-value="$1.4M to $2M">$1.4M to $2M</button>
+      <button type="button" class="funnel-option" data-value="$1M to $1.4M">$1M to $1.4M</button>
+      <button type="button" class="funnel-option" data-value="$700K to $1M">$700K to $1M</button>
+      <button type="button" class="funnel-option" data-value="$500K to $700K">$500K to $700K</button>
+      <button type="button" class="funnel-option" data-value="Under $500K">Under $500K</button>
+    </div>
+  </div>
+  <div class="funnel-step" data-funnel="sellandbuy" data-step="5">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <div class="funnel-subtitle">I'll line up a listing strategy in <span class="funnel-city">Southern California</span> and a buyer's strategy in <span class="funnel-buy-city">your next neighborhood</span>.</div>
+    <h1>What type of home are you selling in <span class="funnel-city">Southern California</span>?</h1>
+    <div class="funnel-options funnel-options-2col">
+      <button type="button" class="funnel-option" data-value="Single family">Single family</button>
+      <button type="button" class="funnel-option" data-value="Condominium">Condominium</button>
+      <button type="button" class="funnel-option" data-value="Townhouse">Townhouse</button>
+      <button type="button" class="funnel-option" data-value="Multi-family">Multi-family</button>
+      <button type="button" class="funnel-option" data-value="Vacant lot">Vacant lot</button>
+      <button type="button" class="funnel-option" data-value="Commercial">Commercial</button>
+    </div>
+  </div>
+  <div class="funnel-step" data-funnel="sellandbuy" data-step="6">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h1>Where should I send your move plan?</h1>
+    <input type="text" id="sellandbuy-step6-name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text">
+    <div class="funnel-error" id="sellandbuy-step6-name-error"></div>
+    <input type="email" id="sellandbuy-step6-email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <div class="funnel-error" id="sellandbuy-step6-email-error"></div>
+    <input type="tel" id="sellandbuy-step6-phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off">
+    <div class="funnel-error" id="sellandbuy-step6-phone-error"></div>
+    <button type="button" id="sellandbuy-step6-submit" class="funnel-cta">Send My Move Plan</button>
+    <div class="funnel-error" id="sellandbuy-step6-submit-error"></div>
+    <div class="funnel-fineprint">By submitting you agree that Joshua Guerrero may contact you about your sale and search. No spam. No autodialer.</div>
   </div>
 </div>
 </section>
@@ -3046,9 +3169,15 @@ form.pos_relative input[name="location"] {
   window.funnelState = {
     address: { street: "", city: "", state: "", zip: "", lat: null, lng: null, formatted: "" },
     timeline: "", priceRange: "", propertyType: "",
+    buyLocation: "", buyTimeline: "", buyBudget: "", buyHomeType: "", buyProcess: "",
     fullName: "", email: "", phone: "",
     gclid: "", pageUrl: "", timestamp: ""
   };
+
+  // Active funnel mode: "sell" (default), "buy", or "sellandbuy".
+  // Set by hero/mid-page tab clicks and by openFunnel().
+  window.activeFunnel = "sell";
+  var FUNNEL_TOTAL_STEPS = { sell: 5, buy: 5, sellandbuy: 6 };
 
   // Hydrate identity fields from localStorage if a returning visitor is recognized.
   var returningData = loadReturningData();
@@ -3071,6 +3200,10 @@ form.pos_relative input[name="location"] {
       var inputs = document.querySelectorAll('form.pos_relative input[name="location"]');
       for (var i = 0; i < inputs.length; i++) {
         var inp = inputs[i];
+        // Skip the Buy tab's city/area input - hydrating a full street address there
+        // would mismatch the "City and State or ZIP" placeholder semantics.
+        var form = inp.closest("form.pos_relative");
+        if (detectFunnelMode(form) === "buy") continue;
         var current = (inp.value || "").trim().toLowerCase();
         if (!current || current === "columbus, oh") {
           inp.value = returningData.address.formatted;
@@ -3090,41 +3223,67 @@ form.pos_relative input[name="location"] {
   var progressBar = document.getElementById("funnel-progress-bar");
 
   function showStep(n) {
-    if (n < 1 || n > 5) return;
+    var mode = window.activeFunnel || "sell";
+    var totalSteps = FUNNEL_TOTAL_STEPS[mode] || 5;
+    if (n < 1 || n > totalSteps) return;
     currentStep = n;
     var steps = overlay.querySelectorAll(".funnel-step");
     for (var i = 0; i < steps.length; i++) {
-      steps[i].classList.toggle("active", steps[i].getAttribute("data-step") === String(n));
+      var stepFunnel = steps[i].getAttribute("data-funnel") || "sell";
+      var stepN = steps[i].getAttribute("data-step");
+      var match = stepFunnel === mode && stepN === String(n);
+      steps[i].classList.toggle("active", match);
     }
-    if (progressBar) progressBar.style.width = ((n / 5) * 100) + "%";
+    if (progressBar) progressBar.style.width = ((n / totalSteps) * 100) + "%";
     overlay.scrollTop = 0;
 
-    // On entry to step 4 (name + address confirm), pre-fill the name and address
-    // inputs from state. Covers first arrival from step 3, Back-navigation returns
-    // from step 5, and returning-visitor hydration from localStorage.
-    if (n === 4) {
-      var nameInput = document.getElementById("funnel-step5-name");
-      var addrInput = document.getElementById("funnel-step5-address");
-      if (nameInput && window.funnelState.fullName) {
-        nameInput.value = window.funnelState.fullName;
+    // SELL: step 4 = name + address confirm; step 5 = email + phone.
+    if (mode === "sell") {
+      if (n === 4) {
+        var nameInput = document.getElementById("funnel-step5-name");
+        var addrInput = document.getElementById("funnel-step5-address");
+        if (nameInput && window.funnelState.fullName) nameInput.value = window.funnelState.fullName;
+        if (addrInput && window.funnelState.address.formatted) {
+          addrInput.value = window.funnelState.address.formatted;
+          validAddressMap.set(addrInput, true);
+        }
       }
-      if (addrInput && window.funnelState.address.formatted) {
-        addrInput.value = window.funnelState.address.formatted;
-        // The hydrated address was previously confirmed via Places dropdown, so mark
-        // the in-funnel input valid too. The validAddressMap is per-input, so this
-        // covers the funnel input specifically.
-        validAddressMap.set(addrInput, true);
+      if (n === 5) {
+        var emailInput = document.getElementById("funnel-step6-email");
+        var phoneInput = document.getElementById("funnel-step6-phone");
+        if (emailInput && window.funnelState.email) emailInput.value = window.funnelState.email;
+        if (phoneInput && window.funnelState.phone) phoneInput.value = window.funnelState.phone;
       }
     }
-    // On entry to step 5 (email + phone), pre-fill from state for returning visitors.
-    if (n === 5) {
-      var emailInput = document.getElementById("funnel-step6-email");
-      var phoneInput = document.getElementById("funnel-step6-phone");
-      if (emailInput && window.funnelState.email) {
-        emailInput.value = window.funnelState.email;
+    // BUY: step 5 = name + email + phone.
+    if (mode === "buy" && n === 5) {
+      var bn = document.getElementById("buy-step5-name");
+      var be = document.getElementById("buy-step5-email");
+      var bp = document.getElementById("buy-step5-phone");
+      if (bn && window.funnelState.fullName) bn.value = window.funnelState.fullName;
+      if (be && window.funnelState.email) be.value = window.funnelState.email;
+      if (bp && window.funnelState.phone) bp.value = window.funnelState.phone;
+    }
+    // SELL & BUY: step 1 = sell address; step 2 = buy location; step 6 = name + email + phone.
+    if (mode === "sellandbuy") {
+      if (n === 1) {
+        var sba = document.getElementById("sellandbuy-step1-address");
+        if (sba && window.funnelState.address.formatted) {
+          sba.value = window.funnelState.address.formatted;
+          validAddressMap.set(sba, true);
+        }
       }
-      if (phoneInput && window.funnelState.phone) {
-        phoneInput.value = window.funnelState.phone;
+      if (n === 2) {
+        var sbl = document.getElementById("sellandbuy-step2-buylocation");
+        if (sbl && window.funnelState.buyLocation) sbl.value = window.funnelState.buyLocation;
+      }
+      if (n === 6) {
+        var sbn = document.getElementById("sellandbuy-step6-name");
+        var sbe = document.getElementById("sellandbuy-step6-email");
+        var sbp = document.getElementById("sellandbuy-step6-phone");
+        if (sbn && window.funnelState.fullName) sbn.value = window.funnelState.fullName;
+        if (sbe && window.funnelState.email) sbe.value = window.funnelState.email;
+        if (sbp && window.funnelState.phone) sbp.value = window.funnelState.phone;
       }
     }
   }
@@ -3141,17 +3300,42 @@ form.pos_relative input[name="location"] {
     } catch (err) { /* no-op */ }
   }
 
-  function openFunnel(prefill) {
+  // Detect which funnel a landing-page form opens based on its surrounding tabpanel.
+  // Hero tabpanels: tabpanel-sell / tabpanel-buy / tabpanel-sell-buy.
+  // Mid-page "I'm selling/buying" tabs use sellUpnestTab / buyUpnestTab as labelledby.
+  // Forms outside any tabpanel default to "sell".
+  function detectFunnelMode(formEl) {
+    if (!formEl) return "sell";
+    var panel = formEl.closest('[role="tabpanel"]');
+    if (!panel) return "sell";
+    var combined = ((panel.id || "") + " " + (panel.getAttribute("aria-labelledby") || "")).toLowerCase();
+    if (combined.indexOf("sell-buy") >= 0 || combined.indexOf("sellandbuy") >= 0 || combined.indexOf("sellbuy") >= 0) return "sellandbuy";
+    if (combined.indexOf("buy") >= 0) return "buy";
+    return "sell";
+  }
+
+  function openFunnel(prefill, mode) {
     captureGclid();
     window.funnelState.pageUrl = window.location.href;
     window.funnelState.timestamp = new Date().toISOString();
 
-    // If the user has not yet picked from Places autocomplete (no geometry on state),
-    // fall back to whatever they typed into the landing form's location input.
-    // Leave .city empty so step 3's {city} placeholder uses the "Southern California" fallback.
-    if (window.funnelState.address.lat === null && prefill) {
-      window.funnelState.address.formatted = prefill;
+    mode = mode || "sell";
+    window.activeFunnel = mode;
+
+    if (mode === "buy") {
+      // Buy uses a city/area string captured from the landing form's location input.
+      if (prefill) window.funnelState.buyLocation = prefill;
+    } else {
+      // Sell and Sell&Buy use a full street address. If the user has not yet picked
+      // from Places autocomplete (no geometry on state), fall back to whatever they
+      // typed. Leaves .city empty so the {city} placeholder uses "Southern California".
+      if (window.funnelState.address.lat === null && prefill) {
+        window.funnelState.address.formatted = prefill;
+      }
     }
+
+    // Always start at step 1 of the active funnel.
+    currentStep = 1;
 
     overlay.classList.add("is-open");
     overlay.setAttribute("aria-hidden", "false");
@@ -3171,22 +3355,38 @@ form.pos_relative input[name="location"] {
     return v;
   }
 
-  // Wire all 7 existing red CTAs by intercepting clicks on their submit buttons.
+  // Run the landing-form gate (address validation + open funnel) for a given form
+  // element. Used by both click and submit listeners.
+  function tryOpenFunnelFromForm(form) {
+    if (!form) return;
+    var mode = detectFunnelMode(form);
+    var addrInput = form.querySelector('input[name="location"]');
+    if (mode === "buy") {
+      // Buy mode accepts city-level input (no street_number required).
+      if (!addrInput || !addrInput.value.trim()) {
+        showAddressError(addrInput, "Please enter the city or area you're looking to buy in.");
+        if (addrInput) addrInput.focus();
+        return;
+      }
+    } else {
+      // Sell + Sell&Buy require a Places-confirmed street + route.
+      if (!addrInput || !validAddressMap.get(addrInput)) {
+        showAddressError(addrInput, ADDRESS_ERROR_MSG);
+        if (addrInput) addrInput.focus();
+        return;
+      }
+    }
+    openFunnel(readPrefillFromForm(form), mode);
+  }
+
+  // Wire all landing-page red CTAs by intercepting clicks on their submit buttons.
   document.addEventListener("click", function(e) {
     if (!e.target.closest) return;
     var btn = e.target.closest('form.pos_relative button[type="submit"]');
     if (!btn) return;
     if (btn.closest("#funnel-overlay")) return;
     e.preventDefault();
-    var form = btn.closest("form.pos_relative");
-    if (!form) return;
-    var addrInput = form.querySelector('input[name="location"]');
-    if (!addrInput || !validAddressMap.get(addrInput)) {
-      showAddressError(addrInput, ADDRESS_ERROR_MSG);
-      if (addrInput) addrInput.focus();
-      return;
-    }
-    openFunnel(readPrefillFromForm(form));
+    tryOpenFunnelFromForm(btn.closest("form.pos_relative"));
   });
 
   // Safety net: pressing Enter inside any of those forms also opens the funnel
@@ -3197,16 +3397,52 @@ form.pos_relative input[name="location"] {
     if (!form) return;
     if (form.closest("#funnel-overlay")) return;
     e.preventDefault();
-    var addrInput = form.querySelector('input[name="location"]');
-    if (!addrInput || !validAddressMap.get(addrInput)) {
-      showAddressError(addrInput, ADDRESS_ERROR_MSG);
-      if (addrInput) addrInput.focus();
-      return;
-    }
-    openFunnel(readPrefillFromForm(form));
+    tryOpenFunnelFromForm(form);
   });
 
-  // Delegated click handler: Back links + auto-advance option cards (steps 1, 2, 3).
+  // Wire hero (and mid-page) [role="tab"] elements to swap which tabpanel is visible.
+  // The realtor.com clone shipped tab DOM with aria-selected and class="d_none" hidden
+  // on the inactive panels, but no JS to actually switch them. This is that JS.
+  function wireTabs() {
+    var tabs = document.querySelectorAll('[role="tab"]');
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].addEventListener("click", function(e) {
+        var clicked = this;
+        var clickedCtrl = clicked.getAttribute("aria-controls");
+        var clickedPanel = clickedCtrl ? document.getElementById(clickedCtrl) : null;
+        // If the clicked tab's target panel doesn't exist (mid-page "I'm buying"
+        // ships without a buyTab panel), no-op gracefully rather than blanking
+        // the surrounding section.
+        if (!clickedPanel) return;
+        var tablist = clicked.closest('[role="tablist"]');
+        if (!tablist) return;
+        e.preventDefault();
+        var siblings = tablist.querySelectorAll('[role="tab"]');
+        for (var j = 0; j < siblings.length; j++) {
+          var sib = siblings[j];
+          var isActive = sib === clicked;
+          sib.setAttribute("aria-selected", isActive ? "true" : "false");
+          var ctrl = sib.getAttribute("aria-controls");
+          var panel = ctrl ? document.getElementById(ctrl) : null;
+          if (!panel) continue;
+          if (isActive) {
+            panel.classList.remove("d_none");
+            panel.removeAttribute("hidden");
+          } else {
+            panel.classList.add("d_none");
+            panel.setAttribute("hidden", "");
+          }
+        }
+      });
+    }
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", wireTabs);
+  } else {
+    wireTabs();
+  }
+
+  // Delegated click handler: Back links + auto-advance option cards.
   overlay.addEventListener("click", function(e) {
     if (!e.target.closest) return;
     var back = e.target.closest(".funnel-back");
@@ -3219,11 +3455,25 @@ form.pos_relative input[name="location"] {
     if (!opt) return;
     var stepEl = opt.closest(".funnel-step");
     if (!stepEl) return;
+    var stepFunnel = stepEl.getAttribute("data-funnel") || "sell";
     var step = stepEl.getAttribute("data-step");
     var value = opt.getAttribute("data-value");
-    if (step === "1") window.funnelState.timeline = value;
-    else if (step === "2") window.funnelState.priceRange = value;
-    else if (step === "3") window.funnelState.propertyType = value;
+    if (stepFunnel === "sell") {
+      if (step === "1") window.funnelState.timeline = value;
+      else if (step === "2") window.funnelState.priceRange = value;
+      else if (step === "3") window.funnelState.propertyType = value;
+    } else if (stepFunnel === "buy") {
+      if (step === "1") window.funnelState.buyTimeline = value;
+      else if (step === "2") window.funnelState.buyBudget = value;
+      else if (step === "3") window.funnelState.buyHomeType = value;
+      else if (step === "4") window.funnelState.buyProcess = value;
+    } else if (stepFunnel === "sellandbuy") {
+      // Sell&Buy reuses Sell's timeline/priceRange/propertyType state for the
+      // sell-side data, since the questions are identical to the Sell funnel.
+      if (step === "3") window.funnelState.timeline = value;
+      else if (step === "4") window.funnelState.priceRange = value;
+      else if (step === "5") window.funnelState.propertyType = value;
+    }
     opt.classList.add("is-selected");
     setTimeout(function() {
       opt.classList.remove("is-selected");
@@ -3231,6 +3481,7 @@ form.pos_relative input[name="location"] {
     }, 150);
   });
 
+  // ----- SELL: step 4 = name + address, then advance to step 5 -----
   var s5 = document.getElementById("funnel-step5-continue");
   if (s5) s5.addEventListener("click", function() {
     var name = document.getElementById("funnel-step5-name").value.trim();
@@ -3257,100 +3508,228 @@ form.pos_relative input[name="location"] {
     showStep(5);
   });
 
-  var phoneEl = document.getElementById("funnel-step6-phone");
-  if (phoneEl) phoneEl.addEventListener("input", function() {
+  // ----- SELL & BUY: step 1 = sell address (Places-validated), advance to step 2 -----
+  var sba1 = document.getElementById("sellandbuy-step1-continue");
+  if (sba1) sba1.addEventListener("click", function() {
+    var addrInput = document.getElementById("sellandbuy-step1-address");
+    var addrErr = document.getElementById("sellandbuy-step1-address-error");
+    var addr = addrInput.value.trim();
+    if (!addr) {
+      addrErr.textContent = "Please enter your property address.";
+      return;
+    }
+    if (!validAddressMap.get(addrInput)) {
+      addrErr.textContent = ADDRESS_ERROR_MSG;
+      return;
+    }
+    addrErr.textContent = "";
+    window.funnelState.address.formatted = addr;
+    saveReturningData();
+    showStep(2);
+  });
+
+  // ----- SELL & BUY: step 2 = buy location (city / area), advance to step 3 -----
+  var sba2 = document.getElementById("sellandbuy-step2-continue");
+  if (sba2) sba2.addEventListener("click", function() {
+    var locInput = document.getElementById("sellandbuy-step2-buylocation");
+    var locErr = document.getElementById("sellandbuy-step2-buylocation-error");
+    var loc = locInput.value.trim();
+    if (!loc) {
+      locErr.textContent = "Please enter the city or area you're looking to buy in.";
+      return;
+    }
+    locErr.textContent = "";
+    window.funnelState.buyLocation = loc;
+    // Update the buy-city display so subsequent step copy reads correctly.
+    var buyCityEls = overlay.querySelectorAll(".funnel-buy-city");
+    for (var i = 0; i < buyCityEls.length; i++) buyCityEls[i].textContent = loc;
+    showStep(3);
+  });
+
+  // ----- Phone formatter shared across all three contact-step phone inputs -----
+  function formatPhone() {
     var d = this.value.replace(/\D/g, "").slice(0, 10);
     var out = "";
     if (d.length > 0) out = "(" + d.slice(0, 3);
     if (d.length >= 4) out += ") " + d.slice(3, 6);
     if (d.length >= 7) out += "-" + d.slice(6, 10);
     this.value = out;
+  }
+  ["funnel-step6-phone", "buy-step5-phone", "sellandbuy-step6-phone"].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("input", formatPhone);
   });
 
-  var s6 = document.getElementById("funnel-step6-submit");
-  if (s6) s6.addEventListener("click", function() {
-    var emailEl = document.getElementById("funnel-step6-email");
-    var phoneInputEl = document.getElementById("funnel-step6-phone");
-    var emailErr = document.getElementById("funnel-step6-email-error");
-    var phoneErr = document.getElementById("funnel-step6-phone-error");
-    var submitErr = document.getElementById("funnel-step6-submit-error");
-    submitErr.textContent = "";
-    var email = emailEl.value.trim();
-    var phone = phoneInputEl.value.trim();
-    var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    var ok = true;
-    if (!emailRe.test(email)) { emailErr.textContent = "Please enter a valid email."; ok = false; }
-    else { emailErr.textContent = ""; }
-    var phoneDigits = phone.replace(/\D/g, "");
-    if (phoneDigits.length !== 10) { phoneErr.textContent = "Please enter a 10-digit US phone number."; ok = false; }
-    else { phoneErr.textContent = ""; }
-    if (!ok) return;
-    window.funnelState.email = email;
-    window.funnelState.phone = phone;
-    saveReturningData();
+  // ----- Generic submit handler used by all three funnels' final contact step -----
+  // Validates email + phone (+ name on Buy/Sell&Buy where name lives on the same step),
+  // builds a mode-specific FormData payload, posts to /api/lead, redirects to /thank-you/.
+  function attachSubmitHandler(buttonId, mode, ids) {
+    var btn = document.getElementById(buttonId);
+    if (!btn) return;
+    btn.addEventListener("click", function() {
+      var emailEl = document.getElementById(ids.email);
+      var phoneEl = document.getElementById(ids.phone);
+      var emailErr = document.getElementById(ids.emailErr);
+      var phoneErr = document.getElementById(ids.phoneErr);
+      var submitErr = document.getElementById(ids.submitErr);
+      submitErr.textContent = "";
+      var email = emailEl.value.trim();
+      var phone = phoneEl.value.trim();
+      var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      var ok = true;
+      if (!emailRe.test(email)) { emailErr.textContent = "Please enter a valid email."; ok = false; }
+      else { emailErr.textContent = ""; }
+      var phoneDigits = phone.replace(/\D/g, "");
+      if (phoneDigits.length !== 10) { phoneErr.textContent = "Please enter a 10-digit US phone number."; ok = false; }
+      else { phoneErr.textContent = ""; }
 
-    s6.disabled = true;
-    var origLabel = s6.textContent;
-    s6.textContent = "Sending...";
+      // Buy and Sell&Buy collect name on the contact step too. Sell collected it
+      // on step 4 and stored it in funnelState.fullName.
+      if (ids.name) {
+        var nameEl = document.getElementById(ids.name);
+        var nameErr = document.getElementById(ids.nameErr);
+        var nameVal = nameEl.value.trim();
+        if (nameVal.split(/\s+/).filter(Boolean).length < 2) {
+          nameErr.textContent = "Please enter your first and last name.";
+          ok = false;
+        } else { nameErr.textContent = ""; window.funnelState.fullName = nameVal; }
+      }
 
-    // Refresh attribution + timing fields right before submit so a gclid cookie
-    // that warmed after the funnel opened still gets captured.
-    captureGclid();
-    window.funnelState.pageUrl = window.location.href;
-    window.funnelState.timestamp = new Date().toISOString();
+      if (!ok) return;
+      window.funnelState.email = email;
+      window.funnelState.phone = phone;
+      saveReturningData();
 
-    var s = window.funnelState;
-    var fd = new FormData();
-    fd.append("name", s.fullName || "");
-    fd.append("email", s.email || "");
-    fd.append("phone", s.phone || "");
-    fd.append("intent", "Home Valuation");
-    fd.append("consent", "yes");
-    fd.append("street_address", s.address.street || "");
-    fd.append("city", s.address.city || "");
-    fd.append("state", s.address.state || "");
-    fd.append("zip", s.address.zip || "");
-    fd.append("full_address", s.address.formatted || "");
-    fd.append("lat", s.address.lat == null ? "" : String(s.address.lat));
-    fd.append("lng", s.address.lng == null ? "" : String(s.address.lng));
-    fd.append("timeline", s.timeline || "");
-    fd.append("source_page", "homepage funnel");
-    fd.append("gclid", s.gclid || "");
-    fd.append("page_url", s.pageUrl || "");
-    fd.append("submitted_at", s.timestamp || "");
-    fd.append("message", [
-      "Price expectation: " + (s.priceRange || "(not provided)"),
-      "Property type: " + (s.propertyType || "(not provided)")
-    ].join("\n"));
+      btn.disabled = true;
+      var origLabel = btn.textContent;
+      btn.textContent = "Sending...";
 
-    var ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
-    var timeoutId = setTimeout(function() { if (ctrl) ctrl.abort(); }, 10000);
+      // Refresh attribution + timing fields right before submit so a gclid cookie
+      // that warmed after the funnel opened still gets captured.
+      captureGclid();
+      window.funnelState.pageUrl = window.location.href;
+      window.funnelState.timestamp = new Date().toISOString();
 
-    function showFunnelError() {
-      submitErr.textContent = "Something went wrong. Text Joshua at (949) 438-5948.";
-      s6.disabled = false;
-      s6.textContent = origLabel;
-    }
+      var s = window.funnelState;
+      var fd = new FormData();
+      fd.append("name", s.fullName || "");
+      fd.append("email", s.email || "");
+      fd.append("phone", s.phone || "");
+      fd.append("consent", "yes");
+      fd.append("gclid", s.gclid || "");
+      fd.append("page_url", s.pageUrl || "");
+      fd.append("submitted_at", s.timestamp || "");
 
-    fetch(FUNNEL_ENDPOINT, {
-      method: "POST",
-      body: fd,
-      signal: ctrl ? ctrl.signal : undefined
-    }).then(function(res) {
-      clearTimeout(timeoutId);
-      return res.json().then(function(json) {
-        if (res.ok && json && json.ok) {
-          window.location.href = "/thank-you/";
-        } else {
+      var intent, source, message;
+      if (mode === "buy") {
+        intent = "Home Purchase";
+        source = "homepage funnel - Buy";
+        fd.append("buy_location", s.buyLocation || "");
+        fd.append("buy_timeline", s.buyTimeline || "");
+        fd.append("buy_budget", s.buyBudget || "");
+        fd.append("buy_home_type", s.buyHomeType || "");
+        fd.append("buy_process", s.buyProcess || "");
+        message = [
+          "Buy timeline: " + (s.buyTimeline || "(not provided)"),
+          "Budget: " + (s.buyBudget || "(not provided)"),
+          "Home type: " + (s.buyHomeType || "(not provided)"),
+          "Buying process: " + (s.buyProcess || "(not provided)"),
+          "Target area: " + (s.buyLocation || "(not provided)")
+        ].join("\n");
+      } else if (mode === "sellandbuy") {
+        intent = "Home Sale + Purchase";
+        source = "homepage funnel - Sell & Buy";
+        fd.append("street_address", s.address.street || "");
+        fd.append("city", s.address.city || "");
+        fd.append("state", s.address.state || "");
+        fd.append("zip", s.address.zip || "");
+        fd.append("full_address", s.address.formatted || "");
+        fd.append("lat", s.address.lat == null ? "" : String(s.address.lat));
+        fd.append("lng", s.address.lng == null ? "" : String(s.address.lng));
+        fd.append("timeline", s.timeline || "");
+        fd.append("buy_location", s.buyLocation || "");
+        message = [
+          "Sell timeline: " + (s.timeline || "(not provided)"),
+          "Sell price expectation: " + (s.priceRange || "(not provided)"),
+          "Sell home type: " + (s.propertyType || "(not provided)"),
+          "Buy location: " + (s.buyLocation || "(not provided)")
+        ].join("\n");
+      } else {
+        // sell (default)
+        intent = "Home Valuation";
+        source = "homepage funnel";
+        fd.append("street_address", s.address.street || "");
+        fd.append("city", s.address.city || "");
+        fd.append("state", s.address.state || "");
+        fd.append("zip", s.address.zip || "");
+        fd.append("full_address", s.address.formatted || "");
+        fd.append("lat", s.address.lat == null ? "" : String(s.address.lat));
+        fd.append("lng", s.address.lng == null ? "" : String(s.address.lng));
+        fd.append("timeline", s.timeline || "");
+        message = [
+          "Price expectation: " + (s.priceRange || "(not provided)"),
+          "Property type: " + (s.propertyType || "(not provided)")
+        ].join("\n");
+      }
+      fd.append("intent", intent);
+      fd.append("source_page", source);
+      fd.append("message", message);
+
+      var ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+      var timeoutId = setTimeout(function() { if (ctrl) ctrl.abort(); }, 10000);
+
+      function showFunnelError() {
+        submitErr.textContent = "Something went wrong. Text Joshua at (949) 438-5948.";
+        btn.disabled = false;
+        btn.textContent = origLabel;
+      }
+
+      fetch(FUNNEL_ENDPOINT, {
+        method: "POST",
+        body: fd,
+        signal: ctrl ? ctrl.signal : undefined
+      }).then(function(res) {
+        clearTimeout(timeoutId);
+        return res.json().then(function(json) {
+          if (res.ok && json && json.ok) {
+            window.location.href = "/thank-you/";
+          } else {
+            showFunnelError();
+          }
+        }, function() {
           showFunnelError();
-        }
-      }, function() {
+        });
+      }).catch(function() {
+        clearTimeout(timeoutId);
         showFunnelError();
       });
-    }).catch(function() {
-      clearTimeout(timeoutId);
-      showFunnelError();
     });
+  }
+
+  attachSubmitHandler("funnel-step6-submit", "sell", {
+    email: "funnel-step6-email",
+    emailErr: "funnel-step6-email-error",
+    phone: "funnel-step6-phone",
+    phoneErr: "funnel-step6-phone-error",
+    submitErr: "funnel-step6-submit-error"
+  });
+  attachSubmitHandler("buy-step5-submit", "buy", {
+    name: "buy-step5-name",
+    nameErr: "buy-step5-name-error",
+    email: "buy-step5-email",
+    emailErr: "buy-step5-email-error",
+    phone: "buy-step5-phone",
+    phoneErr: "buy-step5-phone-error",
+    submitErr: "buy-step5-submit-error"
+  });
+  attachSubmitHandler("sellandbuy-step6-submit", "sellandbuy", {
+    name: "sellandbuy-step6-name",
+    nameErr: "sellandbuy-step6-name-error",
+    email: "sellandbuy-step6-email",
+    emailErr: "sellandbuy-step6-email-error",
+    phone: "sellandbuy-step6-phone",
+    phoneErr: "sellandbuy-step6-phone-error",
+    submitErr: "sellandbuy-step6-submit-error"
   });
 
   // Google Places initializer, called by the Maps script via callback=initFunnelPlaces.
@@ -3503,10 +3882,18 @@ form.pos_relative input[name="location"] {
 
     var landingInputs = document.querySelectorAll('form.pos_relative input[name="location"]');
     for (var i = 0; i < landingInputs.length; i++) {
-      attachAutocomplete(landingInputs[i], function() { openFunnel(""); });
+      (function(input) {
+        attachAutocomplete(input, function() {
+          var form = input.closest("form.pos_relative");
+          var mode = detectFunnelMode(form);
+          openFunnel("", mode);
+        });
+      })(landingInputs[i]);
     }
 
+    // In-funnel address inputs: sell step 4 + sellandbuy step 1.
     attachAutocomplete(document.getElementById("funnel-step5-address"), null);
+    attachAutocomplete(document.getElementById("sellandbuy-step1-address"), null);
   };
 })();
 </script>
