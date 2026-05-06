@@ -3633,6 +3633,23 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     var panel = document.getElementById(ctrlId);
     if (!panel || panel.getAttribute("role") !== "region") return;
     var isOpen = btn.getAttribute("aria-expanded") === "true";
+
+    // Exclusive accordion: close every other open FAQ panel (same role="region"
+    // gate as the toggle below). Both close + open use the same CSS transition
+    // so the animations stay in sync and run at the same speed.
+    var allBtns = document.querySelectorAll('button[aria-controls][aria-expanded]');
+    for (var i = 0; i < allBtns.length; i++) {
+      var otherBtn = allBtns[i];
+      if (otherBtn === btn) continue;
+      if (otherBtn.getAttribute("aria-expanded") !== "true") continue;
+      var otherId = otherBtn.getAttribute("aria-controls");
+      var otherPanel = otherId ? document.getElementById(otherId) : null;
+      if (!otherPanel || otherPanel.getAttribute("role") !== "region") continue;
+      otherBtn.setAttribute("aria-expanded", "false");
+      otherBtn.setAttribute("data-expanded", "false");
+      otherPanel.style.maxHeight = "0px";
+    }
+
     if (isOpen) {
       btn.setAttribute("aria-expanded", "false");
       btn.setAttribute("data-expanded", "false");
