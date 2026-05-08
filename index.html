@@ -3007,7 +3007,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <div class="funnel-error" id="funnel-step6-email-error"></div>
     <input type="tel" id="funnel-step6-phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
     <div class="funnel-error" id="funnel-step6-phone-error"></div>
-    <button type="button" id="funnel-step6-submit" class="funnel-cta">Send My CMA</button>
+    <button type="button" id="funnel-step6-submit" class="funnel-cta">Finish</button>
     <div class="funnel-error" id="funnel-step6-submit-error"></div>
     <div class="funnel-fineprint">By submitting you agree that Joshua Guerrero may contact you about your home value. No spam. No autodialer.</div>
   </div>
@@ -3065,7 +3065,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <div class="funnel-error" id="buy-step5-email-error"></div>
     <input type="tel" id="buy-step5-phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
     <div class="funnel-error" id="buy-step5-phone-error"></div>
-    <button type="button" id="buy-step5-submit" class="funnel-cta">Send My Buyer's Strategy</button>
+    <button type="button" id="buy-step5-submit" class="funnel-cta">Finish</button>
     <div class="funnel-error" id="buy-step5-submit-error"></div>
     <div class="funnel-fineprint">By submitting you agree that Joshua Guerrero may contact you about your home search. No spam. No autodialer.</div>
   </div>
@@ -3129,7 +3129,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <div class="funnel-error" id="sellandbuy-step6-email-error"></div>
     <input type="tel" id="sellandbuy-step6-phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
     <div class="funnel-error" id="sellandbuy-step6-phone-error"></div>
-    <button type="button" id="sellandbuy-step6-submit" class="funnel-cta">Send My Move Plan</button>
+    <button type="button" id="sellandbuy-step6-submit" class="funnel-cta">Finish</button>
     <div class="funnel-error" id="sellandbuy-step6-submit-error"></div>
     <div class="funnel-fineprint">By submitting you agree that Joshua Guerrero may contact you about your sale and search. No spam. No autodialer.</div>
   </div>
@@ -4132,6 +4132,63 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     attachAutocomplete(document.getElementById("funnel-step5-address"), null);
     attachAutocomplete(document.getElementById("sellandbuy-step1-address"), null);
   };
+
+  // Open the funnel when a hero address input is populated by autofill, paste,
+  // or a programmatic value drop (iPhone autofill, Chrome/Safari/Firefox autofill,
+  // password-manager-style address fillers). The Google Places place_changed
+  // listener handles user-clicked dropdown suggestions; this covers every other
+  // path. The deferred check skips opening if place_changed already opened the
+  // funnel in the same tick, so dropdown selection never double-fires.
+  function wireLandingFunnelOpenOnAutofill() {
+    var inputs = document.querySelectorAll('form.pos_relative input[name="location"]');
+    for (var i = 0; i < inputs.length; i++) {
+      (function(input) {
+        if (input.dataset.funnelAutofillWired === "1") return;
+        input.dataset.funnelAutofillWired = "1";
+
+        function deferredOpen() {
+          setTimeout(function() {
+            if (overlay.classList.contains("is-open")) return;
+            var v = (input.value || "").trim();
+            if (!v) return;
+            // Skip the realtor.com clone's "Irvine, CA" placeholder default
+            // unless the user actually edited it. readPrefillFromForm()
+            // applies the same filter for click/submit paths.
+            if (v.toLowerCase() === "irvine, ca") return;
+            var form = input.closest("form.pos_relative");
+            var mode = detectFunnelMode(form);
+            openFunnel(v, mode);
+          }, 60);
+        }
+
+        // change: fires on blur after autofill / programmatic value set on
+        // most browsers (Chrome, Safari desktop).
+        input.addEventListener("change", deferredOpen);
+
+        // paste: catches the explicit paste path even before the input event.
+        input.addEventListener("paste", deferredOpen);
+
+        // input event: detect "empty -> substantial in one tick" pattern that
+        // characterises iPhone autofill and password-manager address drops.
+        // Track the previous length so single keystrokes (delta == 1) don't
+        // trigger; only sudden jumps from <3 chars to >=10 do.
+        var lastLen = (input.value || "").length;
+        input.addEventListener("input", function() {
+          var newLen = (input.value || "").length;
+          var prev = lastLen;
+          lastLen = newLen;
+          if (prev < 3 && newLen >= 10 && (newLen - prev) >= 7) {
+            deferredOpen();
+          }
+        });
+      })(inputs[i]);
+    }
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", wireLandingFunnelOpenOnAutofill);
+  } else {
+    wireLandingFunnelOpenOnAutofill();
+  }
 })();
 </script>
 </body></html>
