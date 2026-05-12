@@ -566,6 +566,8 @@ A few explicit anti-patterns to avoid:
 ## Reference docs
 
 - `REALTOR_CLEANUP_AUDIT.md` (untracked, repo root) — the comprehensive list of remaining realtor.com clone leftovers on the homepage. Source of truth when "clean up the homepage" lands as a task.
+- `notes/posthog/`: running log of funnel observations from PostHog. Read `lessons.md` first, then the most recent entries in `funnel-log.md`, before touching anything that could move funnel drop-off (hero copy, tab structure, step ordering, validation, mobile layout). Append a new dated entry after any session that queried PostHog. See `notes/posthog/README.md` for the convention.
+- `.mcp.json` (repo root): wires up the PostHog remote MCP server. Activation requires a `POSTHOG_API_KEY` env var (personal API key from https://app.posthog.com/settings/user-api-keys?preset=mcp_server). The key never lives in the repo. Run `/mcp` inside Claude Code to confirm the server is connected.
 - `C:\Users\guerr\.claude\projects\C--Users-guerr-Documents-drozq-com\memory\` — auto-memory directory for cross-session context (preferences, project state, references). Read on every session start; updated when stable patterns emerge.
 
 ## When in doubt
