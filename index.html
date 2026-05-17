@@ -3019,21 +3019,19 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   </div>
 
   <!-- ============ SELL & BUY FUNNEL ============ -->
+  <!-- NOTE: element IDs keep their original step numbers (step2-buylocation,
+       step6-name/email/phone/submit) for cross-reference stability across the
+       JS. data-step is the source of truth for ordering, not the id text.
+       The sell address is captured by the landing-form Places autocomplete
+       before this funnel opens (tryOpenFunnelFromForm gates Sell&Buy on a
+       Places-validated address), so there is no in-funnel address step. -->
   <div class="funnel-step" data-funnel="sellandbuy" data-step="1">
-    <div class="funnel-subtitle">With the right address I can match you with a listing agent who knows the neighborhood.</div>
-    <h2>Confirm the address you're selling.</h2>
-    <input type="text" id="sellandbuy-step1-address" class="funnel-input" placeholder="Property address" autocomplete="street-address" inputmode="text" aria-label="Property address">
-    <div class="funnel-error" id="sellandbuy-step1-address-error"></div>
-    <button type="button" id="sellandbuy-step1-continue" class="funnel-cta">Continue</button>
-  </div>
-  <div class="funnel-step" data-funnel="sellandbuy" data-step="2">
-    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h2>Where do you want to buy?</h2>
     <input type="text" id="sellandbuy-step2-buylocation" class="funnel-input" placeholder="City, neighborhood, or ZIP" autocomplete="address-level2" inputmode="text" aria-label="City, neighborhood, or ZIP">
     <div class="funnel-error" id="sellandbuy-step2-buylocation-error"></div>
     <button type="button" id="sellandbuy-step2-continue" class="funnel-cta">Continue</button>
   </div>
-  <div class="funnel-step" data-funnel="sellandbuy" data-step="3">
+  <div class="funnel-step" data-funnel="sellandbuy" data-step="2">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h2>When are you looking to sell?</h2>
     <div class="funnel-options funnel-options-1col">
@@ -3043,31 +3041,23 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       <button type="button" class="funnel-option" data-value="Already listed">Already listed</button>
     </div>
   </div>
-  <div class="funnel-step" data-funnel="sellandbuy" data-step="4">
+  <div class="funnel-step" data-funnel="sellandbuy" data-step="3">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <div class="funnel-subtitle">I'll line up a listing strategy in <span class="funnel-city">Irvine</span> and a buyer's strategy in <span class="funnel-buy-city">your next neighborhood</span>.</div>
-    <h2>What type of home are you selling in <span class="funnel-city">Irvine</span>?</h2>
-    <div class="funnel-options funnel-options-2col">
-      <button type="button" class="funnel-option" data-value="Single family">Single family</button>
-      <button type="button" class="funnel-option" data-value="Condominium">Condominium</button>
-      <button type="button" class="funnel-option" data-value="Townhouse">Townhouse</button>
-      <button type="button" class="funnel-option" data-value="Multi-family">Multi-family</button>
-      <button type="button" class="funnel-option" data-value="Vacant lot">Vacant lot</button>
-      <button type="button" class="funnel-option" data-value="Commercial">Commercial</button>
-    </div>
-  </div>
-  <div class="funnel-step" data-funnel="sellandbuy" data-step="5">
-    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <h2>Where should I send your move plan?</h2>
+    <h2>What's your name?</h2>
     <input type="text" id="sellandbuy-step6-name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
     <div class="funnel-error" id="sellandbuy-step6-name-error"></div>
+    <button type="button" id="sellandbuy-name-continue" class="funnel-cta">Continue</button>
+  </div>
+  <div class="funnel-step" data-funnel="sellandbuy" data-step="4">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h2>Where should I send your move plan?</h2>
     <input type="email" id="sellandbuy-step6-email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
     <div class="funnel-error" id="sellandbuy-step6-email-error"></div>
     <input type="tel" id="sellandbuy-step6-phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
     <div class="funnel-error" id="sellandbuy-step6-phone-error"></div>
     <button type="button" id="sellandbuy-step6-submit" class="funnel-cta">Send My Move Plan</button>
     <div class="funnel-error" id="sellandbuy-step6-submit-error"></div>
-    <div class="funnel-fineprint">By submitting you agree that Joshua Guerrero may contact you about your sale and search. No spam. No autodialer.</div>
+    <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your sale and search.</div>
   </div>
 </div>
 </section>
@@ -3166,7 +3156,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   // Active funnel mode: "sell" (default), "buy", or "sellandbuy".
   // Set by hero/mid-page tab clicks and by openFunnel().
   window.activeFunnel = "sell";
-  var FUNNEL_TOTAL_STEPS = { sell: 3, buy: 3, sellandbuy: 5 };
+  var FUNNEL_TOTAL_STEPS = { sell: 3, buy: 3, sellandbuy: 4 };
 
   // Hydrate identity fields from localStorage if a returning visitor is recognized.
   var returningData = loadReturningData();
@@ -3257,24 +3247,22 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       if (be && window.funnelState.email) be.value = window.funnelState.email;
       if (bp && window.funnelState.phone) bp.value = window.funnelState.phone;
     }
-    // SELL & BUY: step 1 = sell address; step 2 = buy location; step 5 = name + email + phone.
+    // SELL & BUY: step 1 = buy location; step 2 = sell timeline (options);
+    // step 3 = name; step 4 = email + phone. The sell address is captured by
+    // the landing-form Places autocomplete before this funnel opens (no
+    // in-funnel address step).
     if (mode === "sellandbuy") {
       if (n === 1) {
-        var sba = document.getElementById("sellandbuy-step1-address");
-        if (sba && window.funnelState.address.formatted) {
-          sba.value = window.funnelState.address.formatted;
-          validAddressMap.set(sba, true);
-        }
-      }
-      if (n === 2) {
         var sbl = document.getElementById("sellandbuy-step2-buylocation");
         if (sbl && window.funnelState.buyLocation) sbl.value = window.funnelState.buyLocation;
       }
-      if (n === 5) {
+      if (n === 3) {
         var sbn = document.getElementById("sellandbuy-step6-name");
+        if (sbn && window.funnelState.fullName) sbn.value = window.funnelState.fullName;
+      }
+      if (n === 4) {
         var sbe = document.getElementById("sellandbuy-step6-email");
         var sbp = document.getElementById("sellandbuy-step6-phone");
-        if (sbn && window.funnelState.fullName) sbn.value = window.funnelState.fullName;
         if (sbe && window.funnelState.email) sbe.value = window.funnelState.email;
         if (sbp && window.funnelState.phone) sbp.value = window.funnelState.phone;
       }
@@ -3626,9 +3614,8 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       if (step === "1") window.funnelState.buyTimeline = value;
       else if (step === "2") window.funnelState.buyProcess = value;
     } else if (stepFunnel === "sellandbuy") {
-      // Sell&Buy reuses Sell's timeline/propertyType state for sell-side data.
-      if (step === "3") window.funnelState.timeline = value;
-      else if (step === "4") window.funnelState.propertyType = value;
+      // Sell&Buy step 2 captures the sell-side timeline (reuses Sell's timeline state).
+      if (step === "2") window.funnelState.timeline = value;
     }
     track("funnel_option_selected", { mode: stepFunnel, step: parseInt(step, 10), value: value });
     opt.classList.add("is-selected");
@@ -3657,27 +3644,10 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     showStep(3);
   });
 
-  // ----- SELL & BUY: step 1 = sell address (Places-validated), advance to step 2 -----
-  var sba1 = document.getElementById("sellandbuy-step1-continue");
-  if (sba1) sba1.addEventListener("click", function() {
-    var addrInput = document.getElementById("sellandbuy-step1-address");
-    var addrErr = document.getElementById("sellandbuy-step1-address-error");
-    var addr = addrInput.value.trim();
-    if (!addr) {
-      addrErr.textContent = "Please enter your property address.";
-      return;
-    }
-    if (!validAddressMap.get(addrInput)) {
-      addrErr.textContent = ADDRESS_ERROR_MSG;
-      return;
-    }
-    addrErr.textContent = "";
-    window.funnelState.address.formatted = addr;
-    saveReturningData();
-    showStep(2);
-  });
-
-  // ----- SELL & BUY: step 2 = buy location (city / area), advance to step 3 -----
+  // ----- SELL & BUY: step 1 = buy location (city / area), advance to step 2.
+  // There is no in-funnel sell-address step; the sell address is captured by
+  // the landing-form Places autocomplete before this funnel opens
+  // (tryOpenFunnelFromForm gates Sell&Buy on a Places-validated address). -----
   var sba2 = document.getElementById("sellandbuy-step2-continue");
   if (sba2) sba2.addEventListener("click", function() {
     var locInput = document.getElementById("sellandbuy-step2-buylocation");
@@ -3692,7 +3662,24 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     // Update the buy-city display so subsequent step copy reads correctly.
     var buyCityEls = overlay.querySelectorAll(".funnel-buy-city");
     for (var i = 0; i < buyCityEls.length; i++) buyCityEls[i].textContent = loc;
-    showStep(3);
+    showStep(2);
+  });
+
+  // ----- SELL & BUY: step 3 = name only, advance to step 4 (contact).
+  // Mirrors the Sell funnel's name step; name is no longer asked on the
+  // final contact step. -----
+  var sbn1 = document.getElementById("sellandbuy-name-continue");
+  if (sbn1) sbn1.addEventListener("click", function() {
+    var name = document.getElementById("sellandbuy-step6-name").value.trim();
+    var nameErr = document.getElementById("sellandbuy-step6-name-error");
+    if (name.split(/\s+/).filter(Boolean).length < 2) {
+      nameErr.textContent = "Please enter your first and last name.";
+      return;
+    }
+    nameErr.textContent = "";
+    window.funnelState.fullName = name;
+    saveReturningData();
+    showStep(4);
   });
 
   // ----- Phone formatter shared across all three contact-step phone inputs -----
@@ -3799,7 +3786,6 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
         fd.append("buy_location", s.buyLocation || "");
         message = [
           "Sell timeline: " + (s.timeline || "(not provided)"),
-          "Sell home type: " + (s.propertyType || "(not provided)"),
           "Buy location: " + (s.buyLocation || "(not provided)")
         ].join("\n");
       } else {
@@ -3880,9 +3866,9 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     phoneErr: "buy-step5-phone-error",
     submitErr: "buy-step5-submit-error"
   });
+  // Name is collected on Sell&Buy step 3 (-> funnelState.fullName), not on the
+  // final contact step, so no name/nameErr keys here (same as the Sell funnel).
   attachSubmitHandler("sellandbuy-step6-submit", "sellandbuy", {
-    name: "sellandbuy-step6-name",
-    nameErr: "sellandbuy-step6-name-error",
     email: "sellandbuy-step6-email",
     emailErr: "sellandbuy-step6-email-error",
     phone: "sellandbuy-step6-phone",
@@ -3892,7 +3878,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
 
   // Google Places initializer, called by the Maps script via callback=initFunnelPlaces.
   // Attaches Autocomplete to (a) every landing-page form.pos_relative input[name="location"]
-  // and (b) the Sell&Buy in-funnel address input (id="sellandbuy-step1-address").
+  // and (b) the Sell&Buy in-funnel buy-location input (id="sellandbuy-step2-buylocation").
   window.initFunnelPlaces = function() {
     if (typeof google === "undefined" || !google.maps || !google.maps.places) return;
 
@@ -4051,9 +4037,31 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       })(landingInputs[i]);
     }
 
-    // In-funnel address input: Sell&Buy step 1. (Sell now reuses the landing-form
-    // Places selection; its old step-2 address-confirm field was removed.)
-    attachAutocomplete(document.getElementById("sellandbuy-step1-address"), null);
+    // Dedicated autocomplete for the Sell&Buy buy-location input (step 1).
+    // Region-level suggestions (cities / ZIPs / neighborhoods). It writes ONLY
+    // funnelState.buyLocation and the .funnel-buy-city display spans. It must
+    // NOT touch funnelState.address: that holds the SELL address captured by
+    // the landing-form autocomplete, and the Sell&Buy lead is built from it.
+    function attachBuyLocationAutocomplete(input) {
+      if (!input || input.dataset.funnelAcAttached === "1") return;
+      var ac = new google.maps.places.Autocomplete(input, {
+        types: ["(regions)"],
+        componentRestrictions: { country: "us" },
+        fields: ["formatted_address", "name"]
+      });
+      input.dataset.funnelAcAttached = "1";
+      ac.addListener("place_changed", function() {
+        var place = ac.getPlace();
+        var val = ((place && (place.formatted_address || place.name)) || input.value || "").trim();
+        if (!val) return;
+        window.funnelState.buyLocation = val;
+        var buyCityEls = overlay.querySelectorAll(".funnel-buy-city");
+        for (var i = 0; i < buyCityEls.length; i++) buyCityEls[i].textContent = val;
+        var err = document.getElementById("sellandbuy-step2-buylocation-error");
+        if (err) err.textContent = "";
+      });
+    }
+    attachBuyLocationAutocomplete(document.getElementById("sellandbuy-step2-buylocation"));
   };
 
   // Open the funnel when a hero address input is populated by autofill, paste,
