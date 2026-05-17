@@ -3004,18 +3004,26 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       <button type="button" class="funnel-option" data-value="Already making offers">Already making offers</button>
     </div>
   </div>
+  <!-- buy-step5-* element IDs keep their legacy step number for JS cross-ref
+       stability; data-step drives ordering. Name is collected on step 3 and
+       removed from the final contact step (step 4). -->
   <div class="funnel-step" data-funnel="buy" data-step="3">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <h2>Where should I send your buyer's strategy?</h2>
+    <h2>What's your name?</h2>
     <input type="text" id="buy-step5-name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
     <div class="funnel-error" id="buy-step5-name-error"></div>
+    <button type="button" id="buy-name-continue" class="funnel-cta">Continue</button>
+  </div>
+  <div class="funnel-step" data-funnel="buy" data-step="4">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h2>Where should I send your buyer's strategy?</h2>
     <input type="email" id="buy-step5-email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
     <div class="funnel-error" id="buy-step5-email-error"></div>
     <input type="tel" id="buy-step5-phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
     <div class="funnel-error" id="buy-step5-phone-error"></div>
     <button type="button" id="buy-step5-submit" class="funnel-cta">Send My Buyer's Strategy</button>
     <div class="funnel-error" id="buy-step5-submit-error"></div>
-    <div class="funnel-fineprint">By submitting you agree that Joshua Guerrero may contact you about your home search. No spam. No autodialer.</div>
+    <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your home search.</div>
   </div>
 
   <!-- ============ SELL & BUY FUNNEL ============ -->
@@ -3156,7 +3164,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   // Active funnel mode: "sell" (default), "buy", or "sellandbuy".
   // Set by hero/mid-page tab clicks and by openFunnel().
   window.activeFunnel = "sell";
-  var FUNNEL_TOTAL_STEPS = { sell: 3, buy: 3, sellandbuy: 4 };
+  var FUNNEL_TOTAL_STEPS = { sell: 3, buy: 4, sellandbuy: 4 };
 
   // Hydrate identity fields from localStorage if a returning visitor is recognized.
   var returningData = loadReturningData();
@@ -3238,14 +3246,18 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
         if (phoneInput && window.funnelState.phone) phoneInput.value = window.funnelState.phone;
       }
     }
-    // BUY: step 3 = name + email + phone.
-    if (mode === "buy" && n === 3) {
-      var bn = document.getElementById("buy-step5-name");
-      var be = document.getElementById("buy-step5-email");
-      var bp = document.getElementById("buy-step5-phone");
-      if (bn && window.funnelState.fullName) bn.value = window.funnelState.fullName;
-      if (be && window.funnelState.email) be.value = window.funnelState.email;
-      if (bp && window.funnelState.phone) bp.value = window.funnelState.phone;
+    // BUY: step 3 = name; step 4 = email + phone.
+    if (mode === "buy") {
+      if (n === 3) {
+        var bn = document.getElementById("buy-step5-name");
+        if (bn && window.funnelState.fullName) bn.value = window.funnelState.fullName;
+      }
+      if (n === 4) {
+        var be = document.getElementById("buy-step5-email");
+        var bp = document.getElementById("buy-step5-phone");
+        if (be && window.funnelState.email) be.value = window.funnelState.email;
+        if (bp && window.funnelState.phone) bp.value = window.funnelState.phone;
+      }
     }
     // SELL & BUY: step 1 = buy location; step 2 = sell timeline (options);
     // step 3 = name; step 4 = email + phone. The sell address is captured by
@@ -3682,6 +3694,23 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     showStep(4);
   });
 
+  // ----- BUY: step 3 = name only, advance to step 4 (contact).
+  // Mirrors the Sell funnel's name step; name is no longer asked on the
+  // final contact step. -----
+  var bn1 = document.getElementById("buy-name-continue");
+  if (bn1) bn1.addEventListener("click", function() {
+    var name = document.getElementById("buy-step5-name").value.trim();
+    var nameErr = document.getElementById("buy-step5-name-error");
+    if (name.split(/\s+/).filter(Boolean).length < 2) {
+      nameErr.textContent = "Please enter your first and last name.";
+      return;
+    }
+    nameErr.textContent = "";
+    window.funnelState.fullName = name;
+    saveReturningData();
+    showStep(4);
+  });
+
   // ----- Phone formatter shared across all three contact-step phone inputs -----
   function formatPhone() {
     var d = this.value.replace(/\D/g, "").slice(0, 10);
@@ -3857,9 +3886,9 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     phoneErr: "funnel-step6-phone-error",
     submitErr: "funnel-step6-submit-error"
   });
+  // Name is collected on Buy step 3 (-> funnelState.fullName), not on the
+  // final contact step, so no name/nameErr keys here (same as the Sell funnel).
   attachSubmitHandler("buy-step5-submit", "buy", {
-    name: "buy-step5-name",
-    nameErr: "buy-step5-name-error",
     email: "buy-step5-email",
     emailErr: "buy-step5-email-error",
     phone: "buy-step5-phone",
