@@ -2691,7 +2691,7 @@
 #funnel-overlay #funnel-progress-bar {
   height: 100%;
   background: #d92228; /* TODO: confirm Drozq red */
-  width: 16.66%;
+  width: 0; /* JS owns the width; showStep(1) sets it before the overlay is shown */
   transition: width 250ms ease-out;
 }
 #funnel-overlay #funnel-step-container {
@@ -2968,23 +2968,21 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   </div>
   <div class="funnel-step" data-funnel="sell" data-step="2">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <h2>Let's finalize your report.</h2>
+    <h2>What's your name?</h2>
     <input type="text" id="funnel-step5-name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
     <div class="funnel-error" id="funnel-step5-name-error"></div>
-    <input type="text" id="funnel-step5-address" class="funnel-input" placeholder="Property address" autocomplete="street-address" inputmode="text" aria-label="Property address">
-    <div class="funnel-error" id="funnel-step5-address-error"></div>
     <button type="button" id="funnel-step5-continue" class="funnel-cta">Continue</button>
   </div>
   <div class="funnel-step" data-funnel="sell" data-step="3">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <h2>Where should I send your free home value report?</h2>
+    <h2>Where should we send your report?</h2>
     <input type="email" id="funnel-step6-email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
     <div class="funnel-error" id="funnel-step6-email-error"></div>
     <input type="tel" id="funnel-step6-phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
     <div class="funnel-error" id="funnel-step6-phone-error"></div>
     <button type="button" id="funnel-step6-submit" class="funnel-cta">Send My Home Value Report</button>
     <div class="funnel-error" id="funnel-step6-submit-error"></div>
-    <div class="funnel-fineprint">By submitting you agree that Joshua Guerrero may contact you about your home value. No spam. No autodialer.</div>
+    <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your home value.</div>
   </div>
 
   <!-- ============ BUY FUNNEL ============ -->
@@ -3231,19 +3229,17 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       var match = stepFunnel === mode && stepN === String(n);
       steps[i].classList.toggle("active", match);
     }
-    if (progressBar) progressBar.style.width = ((n / totalSteps) * 100) + "%";
+    // Reserve 100% for an actually-submitted lead (set on funnel_submit_success).
+    // n/(totalSteps+1) keeps the bar moving forward without ever reading "done"
+    // while a required step remains. Robust to any step count per funnel.
+    if (progressBar) progressBar.style.width = ((n / (totalSteps + 1)) * 100) + "%";
     overlay.scrollTop = 0;
 
-    // SELL: step 2 = name + address confirm; step 3 = email + phone.
+    // SELL: step 2 = name; step 3 = email + phone.
     if (mode === "sell") {
       if (n === 2) {
         var nameInput = document.getElementById("funnel-step5-name");
-        var addrInput = document.getElementById("funnel-step5-address");
         if (nameInput && window.funnelState.fullName) nameInput.value = window.funnelState.fullName;
-        if (addrInput && window.funnelState.address.formatted) {
-          addrInput.value = window.funnelState.address.formatted;
-          validAddressMap.set(addrInput, true);
-        }
       }
       if (n === 3) {
         var emailInput = document.getElementById("funnel-step6-email");
@@ -3642,29 +3638,21 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     }, 150);
   });
 
-  // ----- SELL: step 4 = name + address, then advance to step 5 -----
+  // ----- SELL: step 2 = name only. The property address is already captured by
+  // the landing-form Google Places autocomplete into funnelState.address before
+  // the Sell funnel can open (tryOpenFunnelFromForm gates Sell on a Places-
+  // validated address), so the old step-2 address re-confirm was a duplicate.
+  // Advance to step 3 (contact). -----
   var s5 = document.getElementById("funnel-step5-continue");
   if (s5) s5.addEventListener("click", function() {
     var name = document.getElementById("funnel-step5-name").value.trim();
-    var addr = document.getElementById("funnel-step5-address").value.trim();
     var nameErr = document.getElementById("funnel-step5-name-error");
-    var addrErr = document.getElementById("funnel-step5-address-error");
-    var ok = true;
     if (name.split(/\s+/).filter(Boolean).length < 2) {
       nameErr.textContent = "Please enter your first and last name.";
-      ok = false;
-    } else { nameErr.textContent = ""; }
-    var addrInput = document.getElementById("funnel-step5-address");
-    if (!addr) {
-      addrErr.textContent = "Please enter your property address.";
-      ok = false;
-    } else if (!validAddressMap.get(addrInput)) {
-      addrErr.textContent = ADDRESS_ERROR_MSG;
-      ok = false;
-    } else { addrErr.textContent = ""; }
-    if (!ok) return;
+      return;
+    }
+    nameErr.textContent = "";
     window.funnelState.fullName = name;
-    window.funnelState.address.formatted = addr;
     saveReturningData();
     showStep(3);
   });
@@ -3745,7 +3733,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       else { phoneErr.textContent = ""; }
 
       // Buy and Sell&Buy collect name on the contact step too. Sell collected it
-      // on step 4 and stored it in funnelState.fullName.
+      // on step 2 and stored it in funnelState.fullName.
       if (ids.name) {
         var nameEl = document.getElementById(ids.name);
         var nameErr = document.getElementById(ids.nameErr);
@@ -3851,6 +3839,8 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
         return res.json().then(function(json) {
           if (res.ok && json && json.ok) {
             track("funnel_submit_success", { mode: mode });
+            // Lead is in: complete the progress bar before the redirect.
+            if (progressBar) progressBar.style.width = "100%";
             // Mark the redirect so /thank-you/ can fire the GA4 generate_lead
             // event ONLY for real funnel conversions, not for direct visits or
             // bookmarks. sessionStorage is tab-scoped so a closed-and-reopened
@@ -3902,7 +3892,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
 
   // Google Places initializer, called by the Maps script via callback=initFunnelPlaces.
   // Attaches Autocomplete to (a) every landing-page form.pos_relative input[name="location"]
-  // and (b) the in-funnel address-confirm input on step 4 (id="funnel-step5-address").
+  // and (b) the Sell&Buy in-funnel address input (id="sellandbuy-step1-address").
   window.initFunnelPlaces = function() {
     if (typeof google === "undefined" || !google.maps || !google.maps.places) return;
 
@@ -4061,8 +4051,8 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       })(landingInputs[i]);
     }
 
-    // In-funnel address inputs: sell step 4 + sellandbuy step 1.
-    attachAutocomplete(document.getElementById("funnel-step5-address"), null);
+    // In-funnel address input: Sell&Buy step 1. (Sell now reuses the landing-form
+    // Places selection; its old step-2 address-confirm field was removed.)
     attachAutocomplete(document.getElementById("sellandbuy-step1-address"), null);
   };
 
