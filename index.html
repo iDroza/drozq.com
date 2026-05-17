@@ -2913,10 +2913,24 @@
   background: #fff; border: 1px solid #e2ddd6; border-radius: 999px;
   padding: 6px 12px; margin-bottom: 10px;
 }
-#funnel-overlay .funnel-dv-proof {
-  font-size: 12px; line-height: 1.5; color: #6b6864; margin: 0;
-  border-left: 2px solid #d92228; padding-left: 10px;
+/* Persistent proof bar: sticky to the funnel's bottom edge so the proof is
+   visible on EVERY step, always below the step's form and button. Mirrors the
+   top value strip. z-index 2 keeps it above scrolling step content; the Google
+   Places dropdown (z-index 100000) still paints above it. */
+#funnel-overlay #funnel-proofbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  background: #fbf8f4;
+  border-top: 1px solid #efece7;
+  color: #6b6864;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+  padding: 9px 16px;
+  letter-spacing: 0.2px;
 }
+#funnel-overlay #funnel-proofbar strong { color: #2b2b2b; font-weight: 700; }
 #funnel-overlay .funnel-assurance {
   margin-top: 16px; font-size: 12px; line-height: 1.55;
   color: #6b6864; text-align: center;
@@ -3073,7 +3087,6 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
           <li>What to fix, what to skip, and a path to MLS in about 7 days.</li>
         </ul>
         <span class="funnel-dv-eta">In your inbox within 24 hours</span>
-        <p class="funnel-dv-proof">Clients have kept $43,250 they would have left on the table, so far. Receipts: Case File 001 and 002.</p>
       </div>
     </div>
     <h2>When are you looking to sell?</h2>
@@ -3123,7 +3136,6 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
           <li>What each should really sell for, so your offer wins without overpaying.</li>
         </ul>
         <span class="funnel-dv-eta">In your inbox within 24 hours</span>
-        <p class="funnel-dv-proof">I read a comp set the same way whether you buy or sell. See Case File 002.</p>
       </div>
     </div>
     <h2>When are you looking to buy?</h2>
@@ -3190,7 +3202,6 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
           <li>The written fallback if one side slips, decided before it happens.</li>
         </ul>
         <span class="funnel-dv-eta">In your inbox within 24 hours</span>
-        <p class="funnel-dv-proof">Two closings on one calendar is the part most agents improvise. I do not.</p>
       </div>
     </div>
     <h2>Where do you want to buy?</h2>
@@ -3228,6 +3239,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your sale and search.</div>
   </div>
 </div>
+<div id="funnel-proofbar"><span id="funnel-proofbar-text">Clients have kept $43,250 they would have left on the table, so far. Receipts: Case File 001 and 002.</span></div>
 </section>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAO__0suXD6CDECevon18renbKLmCF-0ks&libraries=places&callback=initFunnelPlaces"></script>
 <script>
@@ -3510,6 +3522,19 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
         sellandbuy: "<strong>Your move playbook.</strong> Free <span class=\"fv-dot\">·</span> in your inbox within 24 hours"
       };
       vb.innerHTML = VALUEBAR[mode] || VALUEBAR.sell;
+    }
+
+    // Persistent proof bar (sticky to the funnel's bottom edge): the proof
+    // point stays below the step's form/button on every step. Mode-specific,
+    // plain text via textContent, null-safe.
+    var pb = document.getElementById("funnel-proofbar-text");
+    if (pb) {
+      var PROOFBAR = {
+        sell: "Clients have kept $43,250 they would have left on the table, so far. Receipts: Case File 001 and 002.",
+        buy: "I read a comp set the same way whether you buy or sell. See Case File 002.",
+        sellandbuy: "Two closings on one calendar is the part most agents improvise. I do not."
+      };
+      pb.textContent = PROOFBAR[mode] || PROOFBAR.sell;
     }
 
     if (mode === "buy") {
