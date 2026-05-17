@@ -2855,7 +2855,7 @@
   border: 1px solid #ece8e2;
   border-radius: 16px;
   padding: 16px;
-  margin-bottom: 24px;
+  margin: 28px 0 0;
   text-align: left;
 }
 @media (min-width: 560px) {
@@ -2913,24 +2913,14 @@
   background: #fff; border: 1px solid #e2ddd6; border-radius: 999px;
   padding: 6px 12px; margin-bottom: 10px;
 }
-/* Persistent proof bar: sticky to the funnel's bottom edge so the proof is
-   visible on EVERY step, always below the step's form and button. Mirrors the
-   top value strip. z-index 2 keeps it above scrolling step content; the Google
-   Places dropdown (z-index 100000) still paints above it. */
-#funnel-overlay #funnel-proofbar {
-  position: sticky;
-  bottom: 0;
-  z-index: 2;
-  background: #fbf8f4;
-  border-top: 1px solid #efece7;
-  color: #6b6864;
-  font-size: 12px;
-  line-height: 1.45;
-  text-align: center;
-  padding: 9px 16px;
-  letter-spacing: 0.2px;
+#funnel-overlay .funnel-dv-proof {
+  font-size: 12px; line-height: 1.5; color: #6b6864; margin: 0;
+  border-left: 2px solid #d92228; padding-left: 10px;
 }
-#funnel-overlay #funnel-proofbar strong { color: #2b2b2b; font-weight: 700; }
+/* The deliverable card is ONE shared slot rendered as the last child of the
+   step container, so it sits just below the active step's form on every step.
+   openFunnel fills it per mode; hidden until then so no empty box flashes. */
+#funnel-overlay #funnel-deliverable:empty { display: none; }
 #funnel-overlay .funnel-assurance {
   margin-top: 16px; font-size: 12px; line-height: 1.55;
   color: #6b6864; text-align: center;
@@ -3070,25 +3060,6 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
 <div id="funnel-step-container">
   <!-- ============ SELL FUNNEL ============ -->
   <div class="funnel-step active" data-funnel="sell" data-step="1">
-    <div class="funnel-deliverable">
-      <div class="funnel-dv-visual" aria-hidden="true">
-        <div class="dv-bar"></div>
-        <div class="dv-line"></div>
-        <div class="dv-line s"></div>
-        <div class="dv-chart"><i></i><i class="m"></i><i class="t"></i><i class="m"></i><i></i></div>
-        <div class="dv-line"></div>
-      </div>
-      <div class="funnel-dv-body">
-        <div class="funnel-dv-eyebrow">What you get</div>
-        <h3 class="funnel-dv-title">What your home is actually worth, comp by comp</h3>
-        <ul class="funnel-dv-list">
-          <li>Every comparable on your street, adjusted line by line. Not a Zestimate.</li>
-          <li>The price a buyer will really pay, and the list price that gets you there.</li>
-          <li>What to fix, what to skip, and a path to MLS in about 7 days.</li>
-        </ul>
-        <span class="funnel-dv-eta">In your inbox within 24 hours</span>
-      </div>
-    </div>
     <h2>When are you looking to sell?</h2>
     <div class="funnel-options funnel-options-1col">
       <button type="button" class="funnel-option" data-value="Right away">Right away</button>
@@ -3119,25 +3090,6 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
 
   <!-- ============ BUY FUNNEL ============ -->
   <div class="funnel-step" data-funnel="buy" data-step="1">
-    <div class="funnel-deliverable">
-      <div class="funnel-dv-visual" aria-hidden="true">
-        <div class="dv-bar"></div>
-        <div class="dv-row"><span></span><b></b></div>
-        <div class="dv-row"><span></span><b></b></div>
-        <div class="dv-row"><span></span><b></b></div>
-        <div class="dv-line s"></div>
-      </div>
-      <div class="funnel-dv-body">
-        <div class="funnel-dv-eyebrow">What you get</div>
-        <h3 class="funnel-dv-title">The homes worth your money, before the crowd</h3>
-        <ul class="funnel-dv-list">
-          <li>Active, coming soon, and quiet listings filtered to your criteria.</li>
-          <li>Price per square foot by neighborhood, so the mispriced one stands out.</li>
-          <li>What each should really sell for, so your offer wins without overpaying.</li>
-        </ul>
-        <span class="funnel-dv-eta">In your inbox within 24 hours</span>
-      </div>
-    </div>
     <h2>When are you looking to buy?</h2>
     <div class="funnel-options funnel-options-1col">
       <button type="button" class="funnel-option" data-value="Right away">Right away</button>
@@ -3186,24 +3138,6 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
        before this funnel opens (tryOpenFunnelFromForm gates Sell&Buy on a
        Places-validated address), so there is no in-funnel address step. -->
   <div class="funnel-step" data-funnel="sellandbuy" data-step="1">
-    <div class="funnel-deliverable">
-      <div class="funnel-dv-visual" aria-hidden="true">
-        <div class="dv-bar"></div>
-        <div class="dv-track"><i></i><span></span><i></i><span></span><i class="o"></i><span></span><i class="o"></i></div>
-        <div class="dv-line"></div>
-        <div class="dv-line s"></div>
-      </div>
-      <div class="funnel-dv-body">
-        <div class="funnel-dv-eyebrow">What you get</div>
-        <h3 class="funnel-dv-title">Your move, sequenced so you are never homeless or double paying</h3>
-        <ul class="funnel-dv-list">
-          <li>Order of operations: list, accept, rent back or contingency, close.</li>
-          <li>A dated timeline so the sale funds the purchase, not your savings.</li>
-          <li>The written fallback if one side slips, decided before it happens.</li>
-        </ul>
-        <span class="funnel-dv-eta">In your inbox within 24 hours</span>
-      </div>
-    </div>
     <h2>Where do you want to buy?</h2>
     <input type="text" id="sellandbuy-step2-buylocation" class="funnel-input" placeholder="City, neighborhood, or ZIP" autocomplete="address-level2" inputmode="text" aria-label="City, neighborhood, or ZIP">
     <div class="funnel-error" id="sellandbuy-step2-buylocation-error"></div>
@@ -3238,8 +3172,8 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <div class="funnel-assurance"><strong>I personally review every request.</strong> No call center, no bot. Your move playbook lands within 24 hours. Licensed in California, DRE #02267255.</div>
     <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your sale and search.</div>
   </div>
+<div id="funnel-deliverable" class="funnel-deliverable"></div>
 </div>
-<div id="funnel-proofbar"><span id="funnel-proofbar-text">Clients have kept $43,250 they would have left on the table, so far. Receipts: Case File 001 and 002.</span></div>
 </section>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAO__0suXD6CDECevon18renbKLmCF-0ks&libraries=places&callback=initFunnelPlaces"></script>
 <script>
@@ -3524,17 +3458,40 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       vb.innerHTML = VALUEBAR[mode] || VALUEBAR.sell;
     }
 
-    // Persistent proof bar (sticky to the funnel's bottom edge): the proof
-    // point stays below the step's form/button on every step. Mode-specific,
-    // plain text via textContent, null-safe.
-    var pb = document.getElementById("funnel-proofbar-text");
-    if (pb) {
-      var PROOFBAR = {
-        sell: "Clients have kept $43,250 they would have left on the table, so far. Receipts: Case File 001 and 002.",
-        buy: "I read a comp set the same way whether you buy or sell. See Case File 002.",
-        sellandbuy: "Two closings on one calendar is the part most agents improvise. I do not."
+    // Deliverable build-out: ONE shared card rendered just below the active
+    // step's form on EVERY step (it is the last child of the step container,
+    // after the step divs). Mode-specific full card (visual mock + what you
+    // get + bullets + turnaround + proof). Static markup, null-safe.
+    var dv = document.getElementById("funnel-deliverable");
+    if (dv) {
+      var DV_BODY = function(title, b1, b2, b3, proof) {
+        return '<div class="funnel-dv-body"><div class="funnel-dv-eyebrow">What you get</div>' +
+          '<h3 class="funnel-dv-title">' + title + '</h3>' +
+          '<ul class="funnel-dv-list"><li>' + b1 + '</li><li>' + b2 + '</li><li>' + b3 + '</li></ul>' +
+          '<span class="funnel-dv-eta">In your inbox within 24 hours</span>' +
+          '<p class="funnel-dv-proof">' + proof + '</p></div>';
       };
-      pb.textContent = PROOFBAR[mode] || PROOFBAR.sell;
+      var DELIVERABLE = {
+        sell: '<div class="funnel-dv-visual" aria-hidden="true"><div class="dv-bar"></div><div class="dv-line"></div><div class="dv-line s"></div><div class="dv-chart"><i></i><i class="m"></i><i class="t"></i><i class="m"></i><i></i></div><div class="dv-line"></div></div>' +
+          DV_BODY("What your home is actually worth, comp by comp",
+            "Every comparable on your street, adjusted line by line. Not a Zestimate.",
+            "The price a buyer will really pay, and the list price that gets you there.",
+            "What to fix, what to skip, and a path to MLS in about 7 days.",
+            "Clients have kept $43,250 they would have left on the table, so far. Receipts: Case File 001 and 002."),
+        buy: '<div class="funnel-dv-visual" aria-hidden="true"><div class="dv-bar"></div><div class="dv-row"><span></span><b></b></div><div class="dv-row"><span></span><b></b></div><div class="dv-row"><span></span><b></b></div><div class="dv-line s"></div></div>' +
+          DV_BODY("The homes worth your money, before the crowd",
+            "Active, coming soon, and quiet listings filtered to your criteria.",
+            "Price per square foot by neighborhood, so the mispriced one stands out.",
+            "What each should really sell for, so your offer wins without overpaying.",
+            "I read a comp set the same way whether you buy or sell. See Case File 002."),
+        sellandbuy: '<div class="funnel-dv-visual" aria-hidden="true"><div class="dv-bar"></div><div class="dv-track"><i></i><span></span><i></i><span></span><i class="o"></i><span></span><i class="o"></i></div><div class="dv-line"></div><div class="dv-line s"></div></div>' +
+          DV_BODY("Your move, sequenced so you are never homeless or double paying",
+            "Order of operations: list, accept, rent back or contingency, close.",
+            "A dated timeline so the sale funds the purchase, not your savings.",
+            "The written fallback if one side slips, decided before it happens.",
+            "Two closings on one calendar is the part most agents improvise. I do not.")
+      };
+      dv.innerHTML = DELIVERABLE[mode] || DELIVERABLE.sell;
     }
 
     if (mode === "buy") {
