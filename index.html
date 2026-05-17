@@ -2810,6 +2810,11 @@
 }
 @media (min-width: 768px) {
   #funnel-overlay h2 { font-size: 36px; }
+  /* Buy submit-step header is the longest; at 36px it wrapped/stacked in the
+     720px container. Fit it to one centered line on desktop only (mobile keeps
+     the 28px base and is allowed to wrap). 27px + nowrap stays well within the
+     ~672px content width across system-font metrics. */
+  #funnel-overlay h2.funnel-h2-fit { font-size: 27px; white-space: nowrap; }
   #funnel-overlay #funnel-step-container { padding-top: 96px; }
 }
 #funnel-overlay .funnel-back {
@@ -3084,7 +3089,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <div class="funnel-error" id="funnel-step6-phone-error"></div>
     <button type="button" id="funnel-step6-submit" class="funnel-cta">Send My Home Value Report</button>
     <div class="funnel-error" id="funnel-step6-submit-error"></div>
-    <div class="funnel-assurance"><strong>I personally review every request.</strong> No call center, no bot. Your valuation lands within 24 hours. Licensed in California, DRE #02267255.</div>
+    <div class="funnel-assurance"><strong>We personally review every request.</strong> Your valuation lands within 24 hours. Licensed in California, DRE #02267255.</div>
     <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your home value.</div>
   </div>
 
@@ -3119,14 +3124,14 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   </div>
   <div class="funnel-step" data-funnel="buy" data-step="4">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <h2>Where should I send your buyer's strategy?</h2>
+    <h2 class="funnel-h2-fit">Where should I send your buyer's strategy?</h2>
     <input type="email" id="buy-step5-email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
     <div class="funnel-error" id="buy-step5-email-error"></div>
     <input type="tel" id="buy-step5-phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
     <div class="funnel-error" id="buy-step5-phone-error"></div>
     <button type="button" id="buy-step5-submit" class="funnel-cta">Send My Buyer's Strategy</button>
     <div class="funnel-error" id="buy-step5-submit-error"></div>
-    <div class="funnel-assurance"><strong>I personally review every request.</strong> No call center, no bot. Your market brief lands within 24 hours. Licensed in California, DRE #02267255.</div>
+    <div class="funnel-assurance"><strong>We personally review every request.</strong> Your market brief lands within 24 hours. Licensed in California, DRE #02267255.</div>
     <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your home search.</div>
   </div>
 
@@ -3169,7 +3174,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <div class="funnel-error" id="sellandbuy-step6-phone-error"></div>
     <button type="button" id="sellandbuy-step6-submit" class="funnel-cta">Send My Move Plan</button>
     <div class="funnel-error" id="sellandbuy-step6-submit-error"></div>
-    <div class="funnel-assurance"><strong>I personally review every request.</strong> No call center, no bot. Your move playbook lands within 24 hours. Licensed in California, DRE #02267255.</div>
+    <div class="funnel-assurance"><strong>We personally review every request.</strong> Your move playbook lands within 24 hours. Licensed in California, DRE #02267255.</div>
     <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your sale and search.</div>
   </div>
 <div id="funnel-deliverable" class="funnel-deliverable"></div>
