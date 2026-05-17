@@ -3481,19 +3481,28 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   // Geo autofill: fetch the visitor's city/state from /api/geo (Cloudflare's
   // request.cf) and replace the realtor.com clone's "Irvine, CA" defaults
   // throughout the page. Targets:
-  //   1. <input name="location" value="Irvine, CA" aria-label="location"> in landing forms (sell + footer)
+  //   1. <input name="location"> in Buy-mode landing forms ONLY (see below)
   //   2. Visible "Irvine, CA" text nodes (hero strip + market section h2)
   //   3. .funnel-city / .funnel-buy-city placeholder spans inside the funnel overlay
   //   4. .geo-city placeholder spans (top headline) - city only, no state
-  // Skips Buy-mode inputs (their placeholder already says "City, State, or ZIP").
+  // Input autofill (1) is intentionally scoped to Buy-mode forms. Sell, Sell&Buy,
+  // and the footer (default-Sell) location inputs capture the seller's own street
+  // address; an IP-inferred city is not the user's address, so we never prefill
+  // it there. Returning-visitor restore (populateLandingInputs, cookie) is a
+  // separate path and still hydrates Sell from previously submitted data.
+  // (2)(3)(4) are display-only city localization and apply site-wide.
   // Does not touch the realtor market-trends iframe (deferred to full cleanup).
   function applyGeoCity(cityState, city) {
     if (!cityState) return;
 
-    // 1. Form inputs with the Columbus default
+    // 1. Buy-mode form inputs with the "Irvine, CA" default. Buy inputs capture a
+    // target search area, where an IP-detected city is a useful default. Sell +
+    // Sell&Buy + footer(default-Sell) inputs capture the seller's own street
+    // address and are never IP-prefilled (the cookie restore path handles those).
     var inputs = document.querySelectorAll('form.pos_relative input[name="location"]');
     for (var i = 0; i < inputs.length; i++) {
       var inp = inputs[i];
+      if (detectFunnelMode(inp.closest("form.pos_relative")) !== "buy") continue;
       var current = (inp.value || "").trim().toLowerCase();
       if (current === "" || current === "irvine, ca") {
         inp.value = cityState;
