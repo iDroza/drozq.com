@@ -2826,6 +2826,103 @@
   font-family: inherit;
 }
 #funnel-overlay .funnel-back:hover { color: #2b2b2b; }
+
+/* ===== Trust + deliverable (sells the lead magnet) =====
+   Mobile-first. Sized so it never buries the step's action on small
+   screens: the persistent strip is one line; the deliverable card is
+   step-1 only; the assurance is two lines on the final step only. */
+#funnel-overlay #funnel-valuebar {
+  position: sticky;
+  top: 4px; /* sits directly under the 4px progress bar */
+  z-index: 1;
+  background: #fbf8f4;
+  border-bottom: 1px solid #efece7;
+  color: #6b6864;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  padding: 7px 16px;
+  letter-spacing: 0.2px;
+}
+#funnel-overlay #funnel-valuebar strong { color: #2b2b2b; font-weight: 700; }
+#funnel-overlay #funnel-valuebar .fv-dot { color: #d92228; padding: 0 6px; }
+
+#funnel-overlay .funnel-deliverable {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #fbf8f4;
+  border: 1px solid #ece8e2;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+@media (min-width: 560px) {
+  #funnel-overlay .funnel-deliverable { flex-direction: row; align-items: flex-start; padding: 22px; gap: 20px; }
+}
+#funnel-overlay .funnel-dv-visual {
+  flex: 0 0 auto;
+  width: 100%;
+  height: 78px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #e6e2dc;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  overflow: hidden;
+  padding-bottom: 10px;
+}
+@media (min-width: 560px) {
+  #funnel-overlay .funnel-dv-visual { width: 132px; height: 152px; }
+}
+#funnel-overlay .funnel-dv-visual .dv-bar { height: 18px; background: #d92228; margin-bottom: 9px; }
+#funnel-overlay .funnel-dv-visual .dv-line { height: 6px; border-radius: 3px; background: #e9e5df; margin: 7px 12px 0; }
+#funnel-overlay .funnel-dv-visual .dv-line.s { width: 45%; }
+#funnel-overlay .funnel-dv-visual .dv-chart { display: flex; align-items: flex-end; gap: 6px; height: 34px; margin: 10px 12px 0; }
+#funnel-overlay .funnel-dv-visual .dv-chart i { flex: 1; background: #f0c9ca; border-radius: 2px 2px 0 0; height: 45%; }
+#funnel-overlay .funnel-dv-visual .dv-chart i.t { background: #d92228; height: 100%; }
+#funnel-overlay .funnel-dv-visual .dv-chart i.m { height: 70%; }
+#funnel-overlay .funnel-dv-visual .dv-row { display: flex; align-items: center; gap: 8px; margin: 8px 12px 0; }
+#funnel-overlay .funnel-dv-visual .dv-row span { flex: 1; height: 6px; border-radius: 3px; background: #e9e5df; }
+#funnel-overlay .funnel-dv-visual .dv-row b { width: 30px; height: 14px; border-radius: 3px; background: #d92228; }
+#funnel-overlay .funnel-dv-visual .dv-track { display: flex; align-items: center; margin: 14px 12px 0; }
+#funnel-overlay .funnel-dv-visual .dv-track i { width: 12px; height: 12px; border-radius: 50%; background: #d92228; flex: 0 0 auto; }
+#funnel-overlay .funnel-dv-visual .dv-track i.o { background: #f0c9ca; }
+#funnel-overlay .funnel-dv-visual .dv-track span { flex: 1; height: 3px; background: #e9e5df; }
+
+#funnel-overlay .funnel-dv-body { flex: 1; min-width: 0; }
+#funnel-overlay .funnel-dv-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  color: #d92228; text-transform: uppercase; margin-bottom: 6px;
+}
+#funnel-overlay .funnel-dv-title {
+  font-size: clamp(15px, 4.2vw, 20px); font-weight: 700; color: #2b2b2b;
+  line-height: 1.25; margin: 0 0 10px;
+}
+#funnel-overlay .funnel-dv-list { list-style: none; margin: 0 0 12px; padding: 0; }
+#funnel-overlay .funnel-dv-list li {
+  position: relative; padding-left: 18px; font-size: 12.5px; line-height: 1.45;
+  color: #4a4844; margin-bottom: 5px;
+}
+#funnel-overlay .funnel-dv-list li::before {
+  content: ""; position: absolute; left: 2px; top: 6px; width: 6px; height: 6px;
+  background: #d92228; border-radius: 50%;
+}
+#funnel-overlay .funnel-dv-eta {
+  display: inline-block; font-size: 12px; font-weight: 700; color: #2b2b2b;
+  background: #fff; border: 1px solid #e2ddd6; border-radius: 999px;
+  padding: 6px 12px; margin-bottom: 10px;
+}
+#funnel-overlay .funnel-dv-proof {
+  font-size: 12px; line-height: 1.5; color: #6b6864; margin: 0;
+  border-left: 2px solid #d92228; padding-left: 10px;
+}
+#funnel-overlay .funnel-assurance {
+  margin-top: 16px; font-size: 12px; line-height: 1.55;
+  color: #6b6864; text-align: center;
+}
+#funnel-overlay .funnel-assurance strong { color: #2b2b2b; }
+
 /* Google Places dropdown must paint above the funnel overlay (z-index 9999). */
 .pac-container { z-index: 100000 !important; }
 /* Google Places autocomplete dropdown styling to match sell.realtor.com. */
@@ -2955,9 +3052,30 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
 }
 </style>
 <div id="funnel-progress"><div id="funnel-progress-bar"></div></div>
+<div id="funnel-valuebar"><span id="funnel-valuebar-text"><strong>Free, no obligation.</strong> Reviewed personally by Joshua Guerrero.</span></div>
 <div id="funnel-step-container">
   <!-- ============ SELL FUNNEL ============ -->
   <div class="funnel-step active" data-funnel="sell" data-step="1">
+    <div class="funnel-deliverable">
+      <div class="funnel-dv-visual" aria-hidden="true">
+        <div class="dv-bar"></div>
+        <div class="dv-line"></div>
+        <div class="dv-line s"></div>
+        <div class="dv-chart"><i></i><i class="m"></i><i class="t"></i><i class="m"></i><i></i></div>
+        <div class="dv-line"></div>
+      </div>
+      <div class="funnel-dv-body">
+        <div class="funnel-dv-eyebrow">What you get</div>
+        <h3 class="funnel-dv-title">What your home is actually worth, comp by comp</h3>
+        <ul class="funnel-dv-list">
+          <li>Every comparable on your street, adjusted line by line. Not a Zestimate.</li>
+          <li>The price a buyer will really pay, and the list price that gets you there.</li>
+          <li>What to fix, what to skip, and a path to MLS in about 7 days.</li>
+        </ul>
+        <span class="funnel-dv-eta">In your inbox within 24 hours</span>
+        <p class="funnel-dv-proof">Clients have kept $43,250 they would have left on the table, so far. Receipts: Case File 001 and 002.</p>
+      </div>
+    </div>
     <h2>When are you looking to sell?</h2>
     <div class="funnel-options funnel-options-1col">
       <button type="button" class="funnel-option" data-value="Right away">Right away</button>
@@ -2982,11 +3100,32 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <div class="funnel-error" id="funnel-step6-phone-error"></div>
     <button type="button" id="funnel-step6-submit" class="funnel-cta">Send My Home Value Report</button>
     <div class="funnel-error" id="funnel-step6-submit-error"></div>
+    <div class="funnel-assurance"><strong>I personally review every request.</strong> No call center, no bot. Your valuation lands within 24 hours. Licensed in California, DRE #02267255.</div>
     <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your home value.</div>
   </div>
 
   <!-- ============ BUY FUNNEL ============ -->
   <div class="funnel-step" data-funnel="buy" data-step="1">
+    <div class="funnel-deliverable">
+      <div class="funnel-dv-visual" aria-hidden="true">
+        <div class="dv-bar"></div>
+        <div class="dv-row"><span></span><b></b></div>
+        <div class="dv-row"><span></span><b></b></div>
+        <div class="dv-row"><span></span><b></b></div>
+        <div class="dv-line s"></div>
+      </div>
+      <div class="funnel-dv-body">
+        <div class="funnel-dv-eyebrow">What you get</div>
+        <h3 class="funnel-dv-title">The homes worth your money, before the crowd</h3>
+        <ul class="funnel-dv-list">
+          <li>Active, coming soon, and quiet listings filtered to your criteria.</li>
+          <li>Price per square foot by neighborhood, so the mispriced one stands out.</li>
+          <li>What each should really sell for, so your offer wins without overpaying.</li>
+        </ul>
+        <span class="funnel-dv-eta">In your inbox within 24 hours</span>
+        <p class="funnel-dv-proof">I read a comp set the same way whether you buy or sell. See Case File 002.</p>
+      </div>
+    </div>
     <h2>When are you looking to buy?</h2>
     <div class="funnel-options funnel-options-1col">
       <button type="button" class="funnel-option" data-value="Right away">Right away</button>
@@ -3023,6 +3162,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <div class="funnel-error" id="buy-step5-phone-error"></div>
     <button type="button" id="buy-step5-submit" class="funnel-cta">Send My Buyer's Strategy</button>
     <div class="funnel-error" id="buy-step5-submit-error"></div>
+    <div class="funnel-assurance"><strong>I personally review every request.</strong> No call center, no bot. Your market brief lands within 24 hours. Licensed in California, DRE #02267255.</div>
     <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your home search.</div>
   </div>
 
@@ -3034,6 +3174,25 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
        before this funnel opens (tryOpenFunnelFromForm gates Sell&Buy on a
        Places-validated address), so there is no in-funnel address step. -->
   <div class="funnel-step" data-funnel="sellandbuy" data-step="1">
+    <div class="funnel-deliverable">
+      <div class="funnel-dv-visual" aria-hidden="true">
+        <div class="dv-bar"></div>
+        <div class="dv-track"><i></i><span></span><i></i><span></span><i class="o"></i><span></span><i class="o"></i></div>
+        <div class="dv-line"></div>
+        <div class="dv-line s"></div>
+      </div>
+      <div class="funnel-dv-body">
+        <div class="funnel-dv-eyebrow">What you get</div>
+        <h3 class="funnel-dv-title">Your move, sequenced so you are never homeless or double paying</h3>
+        <ul class="funnel-dv-list">
+          <li>Order of operations: list, accept, rent back or contingency, close.</li>
+          <li>A dated timeline so the sale funds the purchase, not your savings.</li>
+          <li>The written fallback if one side slips, decided before it happens.</li>
+        </ul>
+        <span class="funnel-dv-eta">In your inbox within 24 hours</span>
+        <p class="funnel-dv-proof">Two closings on one calendar is the part most agents improvise. I do not.</p>
+      </div>
+    </div>
     <h2>Where do you want to buy?</h2>
     <input type="text" id="sellandbuy-step2-buylocation" class="funnel-input" placeholder="City, neighborhood, or ZIP" autocomplete="address-level2" inputmode="text" aria-label="City, neighborhood, or ZIP">
     <div class="funnel-error" id="sellandbuy-step2-buylocation-error"></div>
@@ -3065,6 +3224,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <div class="funnel-error" id="sellandbuy-step6-phone-error"></div>
     <button type="button" id="sellandbuy-step6-submit" class="funnel-cta">Send My Move Plan</button>
     <div class="funnel-error" id="sellandbuy-step6-submit-error"></div>
+    <div class="funnel-assurance"><strong>I personally review every request.</strong> No call center, no bot. Your move playbook lands within 24 hours. Licensed in California, DRE #02267255.</div>
     <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your sale and search.</div>
   </div>
 </div>
@@ -3338,6 +3498,19 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
 
     mode = mode || "sell";
     window.activeFunnel = mode;
+
+    // Persistent value reminder (the "memory" thread): always on screen so the
+    // user never forgets what they are working toward. Mode-specific deliverable
+    // + free + turnaround. Null-safe so it never breaks the funnel.
+    var vb = document.getElementById("funnel-valuebar-text");
+    if (vb) {
+      var VALUEBAR = {
+        sell: "<strong>Your full home valuation.</strong> Free <span class=\"fv-dot\">·</span> in your inbox within 24 hours",
+        buy: "<strong>Your buyer's market brief.</strong> Free <span class=\"fv-dot\">·</span> in your inbox within 24 hours",
+        sellandbuy: "<strong>Your move playbook.</strong> Free <span class=\"fv-dot\">·</span> in your inbox within 24 hours"
+      };
+      vb.innerHTML = VALUEBAR[mode] || VALUEBAR.sell;
+    }
 
     if (mode === "buy") {
       // Buy uses a city/area string captured from the landing form's location input.
