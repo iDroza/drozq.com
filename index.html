@@ -3180,6 +3180,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
 <div id="funnel-deliverable" class="funnel-deliverable"></div>
 </div>
 </section>
+<script>/* Funnel/Maps race guard: guarantee window.initFunnelPlaces exists before the async (possibly cached) Maps script can invoke it. The real implementation in the inline script below overwrites this stub and self-invokes if Maps already fired. Without this, a cached Maps callback racing ahead of the 40KB inline funnel script silently leaves the address autocomplete unattached. */window.initFunnelPlaces=function(){window.__funnelMapsReady=true;};</script>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAO__0suXD6CDECevon18renbKLmCF-0ks&libraries=places&callback=initFunnelPlaces"></script>
 <script>
 (function() {
@@ -4252,6 +4253,15 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     }
     attachBuyLocationAutocomplete(document.getElementById("sellandbuy-step2-buylocation"));
   };
+
+  // If the async Maps script already loaded and fired its callback before this
+  // inline script defined the real initFunnelPlaces (e.g. cached Maps winning
+  // the race), the pre-Maps stub set __funnelMapsReady. Attach autocomplete now.
+  // attach* helpers are idempotent (dataset.funnelAcAttached guard), so a late
+  // duplicate Maps callback re-invoking this is harmless.
+  if (window.__funnelMapsReady || (typeof google !== "undefined" && google.maps && google.maps.places)) {
+    window.initFunnelPlaces();
+  }
 
   // Open the funnel when a hero address input is populated by autofill, paste,
   // or a programmatic value drop (iPhone autofill, Chrome/Safari/Firefox autofill,
