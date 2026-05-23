@@ -75,8 +75,8 @@ HERO = f"""
   </section>
 
   <section aria-label="Compare California real estate agents" class="pos_relative z_1 pb_48px xs:pb_64px md:pb_80px">
-    <div class="d_flex jc_center pl_32px pr_32px bx-s_border-box mb_24px">
-      <div class="pos_relative w_100% max-w_700px">
+    <div class="d_flex jc_center pl_32px pr_32px bx-s_border-box">
+      <div style="width:100%; max-width: 540px;">
         <div class="pos_relative" role="button" tabindex="0" aria-label="Property transaction type selector">
           <div class="d_flex jc_center gap_6px mb_0px">
             <div role="tablist" class="d_flex jc_center bdr_8px_8px_0_0 ov_hidden">
@@ -90,15 +90,9 @@ HERO = f"""
           </div>
 
           <div class="w_100% bdr_30px pos_relative min-h_60px">
-            <div id="tabpanel-sell"     role="tabpanel" aria-labelledby="tab-sell"     class="d_block">
-              <div class="w_100% max-w_700px pt_0px bg-c_transparent m_0_auto">{landing_form_pill("Enter your California address")}</div>
-            </div>
-            <div id="tabpanel-buy"      role="tabpanel" aria-labelledby="tab-buy"      hidden class="d_none">
-              <div class="w_100% max-w_700px pt_0px bg-c_transparent m_0_auto">{landing_form_pill("City, neighborhood, or ZIP", value="California")}</div>
-            </div>
-            <div id="tabpanel-sell-buy" role="tabpanel" aria-labelledby="tab-sell-buy" hidden class="d_none">
-              <div class="w_100% max-w_700px pt_0px bg-c_transparent m_0_auto">{landing_form_pill("Enter your California address")}</div>
-            </div>
+            <div id="tabpanel-sell"     role="tabpanel" aria-labelledby="tab-sell"     class="d_block">{landing_form_pill("Enter your California address")}</div>
+            <div id="tabpanel-buy"      role="tabpanel" aria-labelledby="tab-buy"      hidden class="d_none">{landing_form_pill("City, neighborhood, or ZIP", value="California")}</div>
+            <div id="tabpanel-sell-buy" role="tabpanel" aria-labelledby="tab-sell-buy" hidden class="d_none">{landing_form_pill("Enter your California address")}</div>
           </div>
         </div>
       </div>
