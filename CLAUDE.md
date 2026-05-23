@@ -342,31 +342,28 @@ The homepage was a clone of sell.realtor.com that has been incrementally cleaned
 - Footer gutted: minimal conversion footer (brand logo, identity line, DRE, phone, social, Privacy/Terms, copyright).
 - "Source: RealEstateSM" attribution masked on the market-trends iframe (170×34 white overlay, click-blocking).
 - Tab IDs renamed (`sellUpnestTab` → `sellTabBtn`, `buyUpnestTab` → `buyTabBtn`).
+- 5 fake agent profile cards replaced with the "How We Match You" infographic.
+- 5 fake out-of-state testimonials swapped for real case files.
+- Move-hosted illustration imagery (`lt6p.com`) removed (zero refs).
+- Move-hosted `@font-face` declarations replaced with self-hosted fonts in `/media/fonts/`.
+- Footer award badges (Inc 5000, Deloitte Fast 500) and UpNest app store badges removed.
 
 ### Deferred
 
-Tracked in `REALTOR_CLEANUP_AUDIT.md` (untracked, repo root). Highlights still pending:
+Remaining realtor.com clone leftovers are tracked in `BACKLOG.md` under the "Realtor.com clone leftovers" section. The big ones are the Move-hosted Irvine market-trends iframe (still embedded, currently attribution-masked) and the inline-CSS purge (~157KB Panda CSS soup).
 
-- 5 fake agent profile cards near top of body.
-- 5 fake out-of-state testimonials (Avondale AZ, Colts Neck NJ, Coral Springs FL, etc.).
-- Move-hosted illustration imagery (`lt6p.com/re/img/buysell/...`).
-- Move-hosted `@font-face` declarations (Roboto + Galano Grotesque from `static.rdc.moveaws.com/fonts/...`) inside the inline `<style>` block.
-- Award badges in footer placeholders (Inc 5000, Deloitte Fast 500 — already neutralized to `#top`).
-- App store badges (UpNest agent app links — already neutralized to `#top`).
-
-When asked to "clean up the homepage," confirm which item(s) before proceeding.
+When asked to "clean up the homepage," check `BACKLOG.md` and confirm which item(s) before proceeding.
 
 ## Reference docs
 
 - **`TEMPLATE.md` (repo root): REQUIRED READING before building or editing any page.** Canonical spec for tokens, header, hero, sections, mid-page tabs, FAQ, footer, funnel overlay, all behaviors, all forms. The homepage at `/index.html` is the live reference; TEMPLATE.md explains what is in it and why. Treat as gospel. Do not deviate without explicit confirmation from Joshua.
-- `REALTOR_CLEANUP_AUDIT.md` (repo root): the comprehensive list of remaining realtor.com clone leftovers. Source of truth when "clean up the homepage" lands as a task.
+- `BACKLOG.md` (repo root): the single consolidated list of active TODOs across the codebase, grouped by category (Strategy / SEO / Tracking / Realtor cleanup / Hygiene). When work ships, delete the line item in the same commit. This replaces the five prior audit docs (AUDIT-INDEX, SEO-AUDIT-INDEX, FAVICON_AUDIT, SPEED-AUDIT, CHANGES.md) and the realtor cleanup audit.
 - `funnels.json` (repo root): funnel sync registry. List of pages carrying the inline funnel + last sync timestamps.
 - `scripts/sync_funnels.py`: the funnel propagation tool.
 - `notes/posthog/`: running log of funnel observations from PostHog. Read `lessons.md` first, then the most recent entries in `funnel-log.md`, before touching anything that could move funnel drop-off (hero copy, tab structure, step ordering, validation, mobile layout). Append a new dated entry after any session that queried PostHog. See `notes/posthog/README.md` for the convention.
 - `notes/ads/`: paid campaign strategy docs (`distressed-sellers-strategy.md`, `sellers-max-intent-campaign.md`). Read before touching the campaigns or campaign landing pages.
 - `.mcp.json` (repo root): wires up the PostHog remote MCP server. Activation requires a `POSTHOG_API_KEY` env var. Run `/mcp` inside Claude Code to confirm the server is connected.
 - `C:\Users\guerr\.claude\projects\C--Users-guerr-Documents-drozq-com\memory\`: auto-memory directory for cross-session context. Read on every session start; updated when stable patterns emerge.
-- Other audit docs (`AUDIT-INDEX-2026-04-26.md`, `SEO-AUDIT-INDEX-2026-04-26.md`, `FAVICON_AUDIT.md`, `SPEED-AUDIT.md`, `CHANGES.md`): legacy / partial overlap with the docs above. Will be consolidated in a future pass.
 
 ## When in doubt
 
