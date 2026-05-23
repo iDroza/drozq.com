@@ -110,14 +110,14 @@ HERO = f"""
 
 HONEST = """
 <section aria-labelledby="ca-honest-title" class="bg_#fff py_48px md:py_64px lg:py_72px">
-  <div class="max-w_780px m_0_auto pl_32px md:pl_16px pr_32px md:pr_16px">
+  <div class="max-w_640px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
 
     <div class="ta_center mb_32px">
       <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">The Honest Version</p>
       <h2 id="ca-honest-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">What "serves California" actually means.</h2>
     </div>
 
-    <div class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px">
+    <div class="c_#3f4650 fs_16px md:fs_17px lh_26px md:lh_28px">
       <p class="mb_16px">Most agents who claim to serve all of California are exaggerating. Real estate is hyper-local. The agent who wins your listing in Bakersfield isn't the same one who wins it in Beverly Hills. I'd rather tell you the truth.</p>
       <p class="mb_16px">I work most densely in Orange County and the South Bay. That's where I show up in person, walk your home, manage your listing, and negotiate your deal. If you're selling in those markets, you get my full attention.</p>
       <p class="m_0">Outside Orange County and the South Bay, I work through a vetted referral network of California agents I've personally chosen. Same standards. Same accountability. You still benefit from my involvement on strategy and structure, just with a local expert physically running the day-to-day.</p>
@@ -225,9 +225,9 @@ MID_TABS = f"""
     <div role="tablist" keyboard-select-mode="focus"
          class="d_flex jc_center pos_relative bg_#fff max-w_251px w_100% h_48px m_0_auto bdr_24px bx-sh_0_1px_5px_rgba(0,0,0,.11) mt_14px bd_1px_solid_#e5e5e5">
       <button id="sellTabBtn" role="tab" aria-controls="sellTab" aria-selected="true"  data-selected="true"  type="button"
-              class="ap_none bd_none bg_transparent cursor_pointer max-w_125px max-h_42px w_100% p_10px_16px bdr_999px fs_14px md:fs_16px fw_700 lh_20px ta_center m_3px_3px_0 c_#2b2b2b">I'm selling</button>
+              class="ap_none bd_none bg_transparent cursor_pointer max-w_125px max-h_42px w_100% p_10px_16px bdr_999px fs_14px md:fs_16px fw_700 lh_20px ta_center m_3px_3px_0 c_#2b2b2b [&amp;[data-selected=&quot;true&quot;]]:bg-c_#2b2b2b [&amp;[data-selected=&quot;true&quot;]]:c_#fff">I'm selling</button>
       <button id="buyTabBtn"  role="tab" aria-controls="buyTab"  aria-selected="false" data-selected="false" type="button"
-              class="ap_none bd_none bg_transparent cursor_pointer max-w_125px max-h_42px w_100% p_10px_16px bdr_999px fs_14px md:fs_16px fw_700 lh_20px ta_center m_3px_3px_0 c_#2b2b2b">I'm buying</button>
+              class="ap_none bd_none bg_transparent cursor_pointer max-w_125px max-h_42px w_100% p_10px_16px bdr_999px fs_14px md:fs_16px fw_700 lh_20px ta_center m_3px_3px_0 c_#2b2b2b [&amp;[data-selected=&quot;true&quot;]]:bg-c_#2b2b2b [&amp;[data-selected=&quot;true&quot;]]:c_#fff">I'm buying</button>
     </div>
 
     <div id="sellTab" role="tabpanel" aria-labelledby="sellTabBtn" class="d_block mt_35px md:mt_64px w_100% max-w_780px m_0_auto">
@@ -295,14 +295,14 @@ MID_TABS = f"""
 
 MARKET = """
 <section aria-labelledby="ca-market-title" class="bg_#fff py_48px md:py_64px lg:py_72px">
-  <div class="max-w_780px m_0_auto pl_32px md:pl_16px pr_32px md:pr_16px">
+  <div class="max-w_640px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
 
     <div class="ta_center mb_32px">
       <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">The Market</p>
       <h2 id="ca-market-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">What's happening in California real estate right now.</h2>
     </div>
 
-    <div class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_24px">
+    <div class="c_#3f4650 fs_16px md:fs_17px lh_26px md:lh_28px mb_24px">
       <p class="mb_16px">The California market is not one market. It's a dozen. Inventory in Orange County is moving differently than the Inland Empire. The Bay Area follows different rules than the Central Valley. What I can tell you, statewide, is this: most California metros are seeing slowly increasing inventory, flat-to-soft demand, and longer expected market times than a year ago. That means pricing strategy matters more than it has in years.</p>
       <p class="m_0">If you want county-level data, that's what the Market Insights page is for. Here, the takeaway is simpler: this isn't 2021. The market rewards prepared, well-priced homes and punishes everything else.</p>
     </div>
@@ -317,19 +317,29 @@ MARKET = """
 
 
 PROOF = """
+<style>
+.ca-proof-card {
+  transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+}
+.ca-proof-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(217, 34, 40, 0.14);
+  border-color: #d92228;
+}
+</style>
 <section aria-labelledby="ca-proof-title" class="bg-c_#f2f0ef py_48px md:py_64px lg:py_72px">
   <div class="max-w_1035px m_0_auto pl_32px md:pl_16px pr_32px md:pr_16px">
 
-    <div class="ta_center mb_40px max-w_780px mx_auto">
+    <div class="ta_center mb_40px max-w_640px mx_auto">
       <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">The Proof</p>
       <h2 id="ca-proof-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">Two recent California transactions.</h2>
-      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px m_0">Every transaction I close becomes a documented case file. Real address, real numbers, real outcome. The clients are anonymized because discretion is part of the service.</p>
+      <p class="c_#3f4650 fs_16px md:fs_17px lh_26px md:lh_28px m_0">Every transaction I close becomes a documented case file. Real address, real numbers, real outcome. The clients are anonymized because discretion is part of the service.</p>
     </div>
 
     <div class="d_grid grid-tc_1fr md:grid-tc_repeat(2,_1fr) gap_16px md:gap_20px mb_32px">
 
       <a href="/testimonials/001-long-beach-firefighter/" aria-label="Read Case File 001: Long Beach firefighter, first-time buyer"
-         class="bg_#fff bdr_16px p_24px md:p_28px bd_1px_solid_#e5e5e5 d_flex flex-d_column gap_12px c_#1a1816 hover:bd-c_#d92228" style="text-decoration:none;">
+         class="ca-proof-card bg_#fff bdr_16px p_24px md:p_28px bd_1px_solid_#e5e5e5 d_flex flex-d_column gap_12px c_#1a1816" style="text-decoration:none;">
         <span class="as_flex-start fs_11px fw_700 ls_2px c_#d92228 bg-c_#fdecec bd_1px_solid_#d92228 bdr_4px p_6px_12px" style="text-transform:uppercase">Case File 001</span>
         <p class="fs_11px fw_700 ls_1.5px c_#3f4650 m_0" style="text-transform:uppercase">Long Beach &middot; First-Time Buyer</p>
         <h3 class="fs_18px md:fs_20px fw_700 c_#1a1816 lh_1.3 m_0">He spends his career protecting other people's homes. We helped him acquire his first.</h3>
@@ -340,7 +350,7 @@ PROOF = """
       </a>
 
       <a href="/testimonials/002-corona-analyst/" aria-label="Read Case File 002: Corona financial analyst, strategic purchase"
-         class="bg_#fff bdr_16px p_24px md:p_28px bd_1px_solid_#e5e5e5 d_flex flex-d_column gap_12px c_#1a1816 hover:bd-c_#d92228" style="text-decoration:none;">
+         class="ca-proof-card bg_#fff bdr_16px p_24px md:p_28px bd_1px_solid_#e5e5e5 d_flex flex-d_column gap_12px c_#1a1816" style="text-decoration:none;">
         <span class="as_flex-start fs_11px fw_700 ls_2px c_#d92228 bg-c_#fdecec bd_1px_solid_#d92228 bdr_4px p_6px_12px" style="text-transform:uppercase">Case File 002</span>
         <p class="fs_11px fw_700 ls_1.5px c_#3f4650 m_0" style="text-transform:uppercase">Corona &middot; Strategic Purchase</p>
         <h3 class="fs_18px md:fs_20px fw_700 c_#1a1816 lh_1.3 m_0">He analyzes numbers for the State of California. Then he ran the numbers on us.</h3>
