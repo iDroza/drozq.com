@@ -190,7 +190,7 @@ MAIN_BODY = CF_STYLE_BLOCK + HERO + CLIENT + MISSION + SEARCH + DEAL + NEGOTIATI
 if __name__ == "__main__":
     scaffold_page(
         target="testimonials/002-corona-analyst/index.html",
-        title="Case File 002 &middot; Corona Analyst | Joshua Guerrero",
+        title="Case File 002 · Corona Analyst | Joshua Guerrero",
         description="$20,000 saved off asking on a Corona condo, repairs handled, early close. Real deal, real numbers, real strategy.",
         canonical="/testimonials/002-corona-analyst/",
         main_body_html=MAIN_BODY,

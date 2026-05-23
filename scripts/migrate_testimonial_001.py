@@ -210,7 +210,7 @@ MAIN_BODY = CF_STYLE_BLOCK + HERO + CLIENT + MISSION + SEARCH + DEAL + NEGOTIATI
 if __name__ == "__main__":
     scaffold_page(
         target="testimonials/001-long-beach-firefighter/index.html",
-        title="Case File 001 &middot; Long Beach Firefighter | Joshua Guerrero",
+        title="Case File 001 · Long Beach Firefighter | Joshua Guerrero",
         description="$23,250 seller credit negotiated on a Long Beach first-home + investment property. Real deal, real numbers, real strategy.",
         canonical="/testimonials/001-long-beach-firefighter/",
         main_body_html=MAIN_BODY,
