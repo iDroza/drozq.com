@@ -2965,7 +2965,7 @@
     </div>
 
     <div class="ta_center">
-      <a href="/market-insights/" class="d_inline-flex ai_center jc_center bg_transparent c_#d92228 bd_1px_solid_#d92228 fw_700 fs_14px md:fs_15px ls_0.3px py_10px px_22px bdr_full hover:bg_#d92228 hover:c_#fff" style="text-decoration:none;">See county-by-county data &rarr;</a>
+      <a href="/market-insights/" class="btn-secondary-outline">See county-by-county data &rarr;</a>
     </div>
 
   </div>
@@ -2980,6 +2980,17 @@
   box-shadow: 0 16px 40px rgba(217, 34, 40, 0.14);
   border-color: #d92228;
 }
+.btn-secondary-outline {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; color: #d92228;
+  border: 1px solid #d92228;
+  font-weight: 700; font-size: 14px; letter-spacing: 0.3px;
+  padding: 10px 22px; border-radius: 9999px;
+  text-decoration: none;
+  transition: background-color .2s ease, color .2s ease;
+}
+.btn-secondary-outline:hover { background: #d92228; color: #fff; }
+@media (min-width: 768px) { .btn-secondary-outline { font-size: 15px; } }
 </style>
 <section aria-labelledby="ca-proof-title" class="bg-c_#f2f0ef py_48px md:py_64px lg:py_72px">
   <div class="max-w_1035px m_0_auto pl_32px md:pl_16px pr_32px md:pr_16px">
@@ -3017,7 +3028,7 @@
     </div>
 
     <div class="ta_center">
-      <a href="/testimonials/" class="d_inline-flex ai_center jc_center bg_transparent c_#d92228 bd_1px_solid_#d92228 fw_700 fs_14px md:fs_15px ls_0.3px py_10px px_22px bdr_full hover:bg_#d92228 hover:c_#fff" style="text-decoration:none;">Read more case files &rarr;</a>
+      <a href="/testimonials/" class="btn-secondary-outline">Read more case files &rarr;</a>
     </div>
 
   </div>

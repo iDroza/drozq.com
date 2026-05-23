@@ -458,12 +458,24 @@ Two button styles exist on the site. **No third style is authorized.** Do not in
 
 **2. Secondary outlined link** — used for navigation, related-content links, and "see more" links. Outlined red on transparent bg, fills red on hover. Smaller and lighter than the primary so it never visually competes with the funnel CTA.
 
+The inherited Panda CSS soup does **not** ship rules like `.bd_1px_solid_#d92228` or `.hover:bg_#d92228` (Panda only generates classes referenced in `/index.html`). So a secondary button cannot be expressed in Panda utility classes alone — it needs a real scoped CSS rule. Include this `<style>` block once on every page that uses a secondary button, and apply `class="btn-secondary-outline"`:
+
 ```html
-<a href="..."
-   class="d_inline-flex ai_center jc_center bg_transparent c_#d92228 bd_1px_solid_#d92228 fw_700 fs_14px md:fs_15px ls_0.3px py_10px px_22px bdr_full hover:bg_#d92228 hover:c_#fff"
-   style="text-decoration:none;">
-  Read more case files &rarr;
-</a>
+<style>
+.btn-secondary-outline {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; color: #d92228;
+  border: 1px solid #d92228;
+  font-weight: 700; font-size: 14px; letter-spacing: 0.3px;
+  padding: 10px 22px; border-radius: 9999px;
+  text-decoration: none;
+  transition: background-color .2s ease, color .2s ease;
+}
+.btn-secondary-outline:hover { background: #d92228; color: #fff; }
+@media (min-width: 768px) { .btn-secondary-outline { font-size: 15px; } }
+</style>
+
+<a href="..." class="btn-secondary-outline">Read more case files &rarr;</a>
 ```
 
 | Token | Value |
@@ -474,7 +486,7 @@ Two button styles exist on the site. **No third style is authorized.** Do not in
 | Padding | `10px 22px` |
 | Font | Roboto 700, 14px mobile / 15px desktop |
 | Border-radius | `9999px` (pill) |
-| Hover | `bg_#d92228` + `c_#fff` (fills red, text white) |
+| Hover | fills red bg + white text |
 | Trailing arrow | `&rarr;` (`→`) |
 
 Use cases that warrant the secondary outlined style:
