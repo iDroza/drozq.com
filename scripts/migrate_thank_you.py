@@ -279,7 +279,7 @@ MAIN_BODY = """
         allowfullscreen=""
         loading="lazy"
         referrerpolicy="no-referrer-when-downgrade"
-        title="Joshua Guerrero, REALTOR &mdash; Irvine office location on Google Maps">
+        title="Joshua Guerrero, REALTOR. Irvine office location on Google Maps">
       </iframe>
     </div>
 
@@ -342,11 +342,11 @@ MAIN_BODY = """
 if __name__ == "__main__":
     scaffold_page(
         target="thank-you/index.html",
-        title="Thanks &mdash; we got your request | Joshua Guerrero",
+        title="Thanks for reaching out | Drozq",
         description="Your home valuation request was received. Joshua Guerrero personally reviews every request and follows up within the hour.",
         canonical="/thank-you/",
         main_body_html=MAIN_BODY,
-        og_title="Thanks &mdash; we got your request | Joshua Guerrero",
+        og_title="Thanks for reaching out | Drozq",
         og_description="Your home valuation request was received. Personal follow-up within the hour.",
         noindex=True,
     )

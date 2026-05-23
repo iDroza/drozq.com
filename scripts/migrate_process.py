@@ -37,24 +37,26 @@ def landing_form_pill(placeholder: str, value: str = "") -> str:
 
 
 HERO = f"""
-<section aria-labelledby="process-hero-title"
-         class="pos_relative z_1 c_textBody d_flex flex-d_column jc_center min-h_450px pt_48px xs:pt_80px pb_104px md:pb_60px">
+<div class="pos_relative ov_hidden">
   <div class="pos_absolute inset_0 z_-1 ov_hidden [&_img]:pos_absolute [&_img]:inset_0 [&_img]:w_100% [&_img]:h_100% [&_img]:d_block [&_img]:obj-f_cover [&_img]:obj-p_100%_60% [&_img]:[@media_(max-width:_480px)]:obj-p_left">
     <img src="/media/images/crystal-cove.webp" alt="Crystal Cove coastline along the Newport Coast"
          width="1280" height="640" fetchpriority="high">
-    <div class="pos_absolute top_0 w_100% h_100% z_2" style="background:rgba(26,24,22,0.4)"></div>
+    <div class="pos_absolute top_0 w_100% h_100% z_2" style="background:rgba(26,24,22,0.5)"></div>
   </div>
 
-  <div class="w_100% max-w_860px pl_32px pr_32px bx-s_border-box d_flex flex-d_column ai_center gap_8px md:gap_16px mx_auto">
-    <p class="ta_center op_0.9 c_#fff ls_2px fs_11px md:fs_12px fw_700 mb_4px" style="text-transform:uppercase">The Process</p>
-    <h1 id="process-hero-title"
-        class="ta_center fw_700 ls_1.5px c_#fff lh_40px md:lh_64px fs_32px md:fs_56px">How I sell your home.<br>Five steps. Six to ten weeks.</h1>
-    <p class="ta_center op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px">The full path from your first call to the keys in the buyer's hand. No improvised steps, no surprises.</p>
+  <section aria-labelledby="process-hero-title" class="pos_relative z_1 c_textBody pt_48px xs:pt_80px pb_24px md:pb_32px">
+    <div class="w_100% max-w_860px pl_32px pr_32px bx-s_border-box mx_auto ta_center">
+      <p class="op_0.9 c_#fff ls_2px fs_11px md:fs_12px fw_700 mb_8px" style="text-transform:uppercase">The Process</p>
+      <h1 id="process-hero-title" class="fw_700 ls_1.5px c_#fff lh_40px md:lh_64px fs_32px md:fs_56px mb_16px">How I sell your home.<br>Five steps. Six to ten weeks.</h1>
+      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">The full path from your first call to the keys in the buyer's hand. No improvised steps, no surprises.</p>
+    </div>
+  </section>
 
-    <div class="mt_24px md:mt_16px">
-      <div class="pos_relative w_100% max-w_700px m_0_auto">
+  <section aria-label="Compare real estate agents" class="pos_relative z_1 pb_48px xs:pb_64px md:pb_80px">
+    <div class="d_flex jc_center pl_32px pr_32px bx-s_border-box">
+      <div class="pos_relative w_100% max-w_700px">
         <div class="pos_relative" role="button" tabindex="0" aria-label="Property transaction type selector">
-          <div class="d_flex jc_center md:jc_flex-start gap_6px mb_0px md:pl_28px">
+          <div class="d_flex jc_center gap_6px mb_0px">
             <div role="tablist" class="d_flex jc_center bdr_8px_8px_0_0 ov_hidden">
               <button role="tab" aria-selected="true"  aria-controls="tabpanel-sell"     id="tab-sell"     tabindex="0"
                       class="bdr_8px_8px_0_0 p_12px_16px fw_700 fs_13px lh_16px ta_center bg_#fff   c_#d92228 bd_none cursor_pointer as_flex-end [&:not(:first-child)]:ml_6px">Sell</button>
@@ -67,20 +69,20 @@ HERO = f"""
 
           <div class="w_100% bdr_30px pos_relative min-h_60px">
             <div id="tabpanel-sell"     role="tabpanel" aria-labelledby="tab-sell"     class="d_block">
-              <div class="w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent m_0_auto">{landing_form_pill("Enter the address you are selling")}</div>
+              <div class="w_100% max-w_700px pt_0px bg-c_transparent m_0_auto">{landing_form_pill("Enter the address you are selling")}</div>
             </div>
             <div id="tabpanel-buy"      role="tabpanel" aria-labelledby="tab-buy"      hidden class="d_none">
-              <div class="w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent m_0_auto">{landing_form_pill("City and State or ZIP", value="Irvine, CA")}</div>
+              <div class="w_100% max-w_700px pt_0px bg-c_transparent m_0_auto">{landing_form_pill("City and State or ZIP", value="Irvine, CA")}</div>
             </div>
             <div id="tabpanel-sell-buy" role="tabpanel" aria-labelledby="tab-sell-buy" hidden class="d_none">
-              <div class="w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent m_0_auto">{landing_form_pill("Enter the address you are selling")}</div>
+              <div class="w_100% max-w_700px pt_0px bg-c_transparent m_0_auto">{landing_form_pill("Enter the address you are selling")}</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+</div>
 """
 
 

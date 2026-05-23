@@ -378,23 +378,65 @@ The hero pill on the homepage uses a two-layer width scaffold. Reuse it verbatim
 
 Do not change these widths. The pill is the most-clicked element on the page; resizing it changes hero engagement.
 
-### Hero centering (canonical, non-homepage pages)
+### Hero structure (canonical, non-homepage pages)
 
-On the **homepage** the hero is a 2-column layout (tabs+pill on the left, image on the right) so the entire CTA stack is left-aligned within the left column.
+The non-homepage hero must be **split into two sibling sections inside a shared background wrapper**. The text section and the pill section each have their own centering context, so the pill is centered as a true block in the viewport and doesn't inherit any layout pull from the text container above it.
 
-On **every other page** the hero is centered (text + pill stacked vertically on a single background). The pill must be centered in the viewport, **and the tab row must left-anchor to the pill's left edge** with the homepage's `md:pl_28px` padding. This is what makes the active "Sell" tab sit visually above the input start. A tab row that is mathematically centered above the pill (`jc_center` everywhere) reads as off-center because the input dominates the left side of the pill and the tabs end up floating above its right-of-center. Mimicking the homepage's anchor-to-pill pattern (just centered as a unit instead of left-aligned in a column) is what looks right.
+```html
+<div class="pos_relative ov_hidden">                          <!-- shared bg wrapper -->
+  <div class="pos_absolute inset_0 z_-1 ov_hidden [&_img]:pos_absolute [&_img]:inset_0 [&_img]:w_100% [&_img]:h_100% [&_img]:d_block [&_img]:obj-f_cover [&_img]:obj-p_100%_60% [&_img]:[@media_(max-width:_480px)]:obj-p_left">
+    <img src="/media/images/crystal-cove.webp" alt="..." width="1280" height="640" fetchpriority="high">
+    <div class="pos_absolute top_0 w_100% h_100% z_2" style="background:rgba(26,24,22,0.55)"></div>
+  </div>
 
-| Element | Homepage class | Non-homepage class |
-|---|---|---|
-| Outer | `max-w_772px m_0_auto` | `max-w_700px m_0_auto` |
-| Tab row | `d_flex jc_center md:jc_left gap_6px mb_0px pl_0px md:pl_28px` | `d_flex jc_center md:jc_flex-start gap_6px mb_0px md:pl_28px` |
-| Per-tabpanel form container | `w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent` | `w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent m_0_auto` |
+  <!-- 1) TEXT SECTION: eyebrow + h1 + subhead, simple block layout, ta_center -->
+  <section aria-labelledby="page-hero-title" class="pos_relative z_1 c_textBody pt_48px xs:pt_80px pb_24px md:pb_32px">
+    <div class="w_100% max-w_860px pl_32px pr_32px bx-s_border-box mx_auto ta_center">
+      <p class="op_0.9 c_#fff ls_2px fs_11px md:fs_12px fw_700 mb_8px" style="text-transform:uppercase">Eyebrow</p>
+      <h1 id="page-hero-title" class="fw_700 ls_1.5px c_#fff lh_40px md:lh_64px fs_32px md:fs_56px mb_16px">Headline.</h1>
+      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">Subhead.</p>
+    </div>
+  </section>
 
-Result:
-- **Mobile** (< md=768px): both tab row and pill are centered (mobile sees one column; centering is the right pattern).
-- **Tablet+** (md=768px and up): tab row left-anchors to the pill's left edge with 28px padding; pill fills the 700px outer; outer is centered in the viewport. The active tab sits above the input start — the natural visual hierarchy.
+  <!-- 2) PILL SECTION: own d_flex jc_center context, tabs jc_center above 700px pill, trust line below -->
+  <section aria-label="Compare agents" class="pos_relative z_1 pb_48px xs:pb_64px md:pb_80px">
+    <div class="d_flex jc_center pl_32px pr_32px bx-s_border-box mb_24px">
+      <div class="pos_relative w_100% max-w_700px">
+        <div class="pos_relative" role="button" tabindex="0" aria-label="Property transaction type selector">
+          <div class="d_flex jc_center gap_6px mb_0px">
+            <div role="tablist" class="d_flex jc_center bdr_8px_8px_0_0 ov_hidden">
+              <button id="tab-sell">Sell</button>
+              <button id="tab-buy">Buy</button>
+              <button id="tab-sell-buy">Sell &amp; Buy</button>
+            </div>
+          </div>
+          <div class="w_100% bdr_30px pos_relative min-h_60px">
+            <div id="tabpanel-sell" role="tabpanel" aria-labelledby="tab-sell" class="d_block">
+              <div class="w_100% max-w_700px pt_0px bg-c_transparent m_0_auto">
+                <!-- landing form pill -->
+              </div>
+            </div>
+            <!-- repeat for buy / sell-buy panels -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="ta_center op_0.85 c_#fff fs_12px md:fs_13px ls_1.5px fw_700" style="text-transform:uppercase">Trust line (DRE, etc).</p>
+  </section>
+</div>
+```
 
-Two prior fix attempts shipped the wrong pattern before this one: `md:jc_left` (homepage-style) left the whole stack offset on a centered hero, and `jc_center md:jc_center` (centered everywhere) left the small tab row floating above the right-of-center portion of the pill. Use the table above.
+Why two sections instead of one:
+
+1. **Independent centering contexts.** Earlier hero versions used a single `d_flex flex-d_column ai_center` parent for eyebrow + h1 + subhead + pill + trust. Because flex-column `ai_center` doesn't stretch children, the pill wrapper would shrink-to-content and the tab row above the pill would inherit a left-leaning alignment from the text container's shrink behavior. The pill ended up visually pulled to the left even when its computed center matched the viewport center.
+2. **Pill is unambiguously centered.** The pill section uses `d_flex jc_center` on its outer wrapper, so the 700px pill block is centered in the viewport with no inheritance from anything above it. Tabs (`jc_center`) sit directly above the pill's geometric center.
+3. **Background remains cohesive.** The image is on a shared wrapper that contains BOTH sections, with `inset: 0` so it spans the entire hero block. The 0.55 dark tint overlay also spans both. Visually it reads as one hero with one background image, even though it's structurally two sections.
+
+Do **NOT** revert this to a single section. Three prior fix attempts (`md:jc_left`, `jc_center md:jc_center`, `md:jc_flex-start md:pl_28px`) all kept the single-section layout and all produced different visible regressions. The two-section split is the structural fix.
+
+### Hero (homepage exception)
+
+The homepage hero is a different layout — a 2-column block where the tabs+pill sit on the left and an image sits on the right. It uses the original `max-w_772px` + `md:jc_left` + `md:pl_28px` pattern and is **not** subject to the split-hero rule. Treat the homepage hero as exempt; all other pages follow the two-section pattern above.
 
 ### Hero typography
 
