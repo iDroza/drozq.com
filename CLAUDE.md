@@ -40,6 +40,8 @@ Legacy brand-mode pages (`/about/`, `/testimonials/`, `/faq/`, `/contact/`, `/fi
 
 ## Creating a new page
 
+**STOP. Before doing anything else, read `TEMPLATE.md` (repo root) front to back.** It is the canonical spec for every visual element, behavior, token, and form pattern that makes a Drozq page a Drozq page. The summary below is just a pointer. The contract is in `TEMPLATE.md`.
+
 When asked to create a new page, follow this protocol:
 
 ### 1. Default to the homepage as scaffolding
@@ -356,6 +358,7 @@ When asked to "clean up the homepage," confirm which item(s) before proceeding.
 
 ## Reference docs
 
+- **`TEMPLATE.md` (repo root): REQUIRED READING before building or editing any page.** Canonical spec for tokens, header, hero, sections, mid-page tabs, FAQ, footer, funnel overlay, all behaviors, all forms. The homepage at `/index.html` is the live reference; TEMPLATE.md explains what is in it and why. Treat as gospel. Do not deviate without explicit confirmation from Joshua.
 - `REALTOR_CLEANUP_AUDIT.md` (repo root): the comprehensive list of remaining realtor.com clone leftovers. Source of truth when "clean up the homepage" lands as a task.
 - `funnels.json` (repo root): funnel sync registry. List of pages carrying the inline funnel + last sync timestamps.
 - `scripts/sync_funnels.py`: the funnel propagation tool.
@@ -367,7 +370,8 @@ When asked to "clean up the homepage," confirm which item(s) before proceeding.
 
 ## When in doubt
 
-- Ambiguous styling or structure on a new page: default to the homepage pattern.
+- Building or editing any page: read `TEMPLATE.md` first. It is the contract.
+- Ambiguous styling or structure on a new page: default to the homepage pattern (per `TEMPLATE.md`).
 - Ambiguous voice or copy direction: confident, first-person, specific, sparse. No platitudes, no SEO filler, no star ratings.
 - Anything that touches the funnel, tracking, forms, or `/api/lead`: stop and audit before modifying.
 - Anything that touches a registered page's funnel block: edit `/index.html` and re-sync; never hand-edit.
