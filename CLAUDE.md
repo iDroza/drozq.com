@@ -95,7 +95,7 @@ The homepage (/index.html) is a paid-traffic conversion machine built on top of 
 Each step is a `<div class="funnel-step" data-funnel="…" data-step="N">` inside `<section id="funnel-overlay">`. The active funnel is `window.activeFunnel`, set via:
 
 - Hero tab clicks (`tab-sell` / `tab-buy` / `tab-sell-buy`) → swap the visible tabpanel; the panel's Compare Agents button opens its matching funnel.
-- Mid-page tab clicks (`sellUpnestTab` / `buyUpnestTab`) → swap copy in the "Why work with an agent?" section between `sellTab` and `buyTab` panels; their inner Compare Agents form opens the matching funnel.
+- Mid-page tab clicks (`sellTabBtn` / `buyTabBtn`) → swap copy in the "Why work with an agent?" section between `sellTab` and `buyTab` panels; their inner Compare Agents form opens the matching funnel.
 - Other CTAs in the body (e.g., "Get Started Today" footer form) default to Sell mode.
 
 `detectFunnelMode(form)` reads the form's `[role="tabpanel"]` ancestor (id + aria-labelledby) and returns `"sell"`, `"buy"`, or `"sellandbuy"`. Used both at landing-CTA click and inside the Places autocomplete `place_changed` callback.
