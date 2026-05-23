@@ -230,6 +230,10 @@ Standard container max-widths used on the homepage:
 | Font | Roboto 14px / 1.5 |
 | Padding | `0` |
 
+### Logo (header and footer)
+
+**The Drozq logo, wherever it appears, is wrapped in `<a href="/" aria-label="Drozq home">`.** This applies to both the header logo (`brand-header-logo.png`) and the footer logo (`brand-logo-white.png`). On the homepage itself the link is a no-op (it scrolls to top); on every other page it is the universal escape hatch back to the conversion-first homepage. Shipping an unlinked logo is a regression.
+
 ### Behavior 1: hidden by default for new desktop visitors
 
 ```css
@@ -487,7 +491,7 @@ Default state: all collapsed (`aria-expanded="false"`, inline `max-height: 0`).
                            [&_a:hover]:td_underline ...">
   <div class="pos_relative max-w_8xl mx_auto px_16px md:px_24px lg:max-w_1069px">
     <div class="d_flex flex-d_column ai_center jc_center ta_center gap_24px">
-      <img src="/media/images/brand-logo-white.png" alt="..." width="165" height="25">
+      <a href="/" aria-label="Drozq home"><img src="/media/images/brand-logo-white.png" alt="..." width="165" height="25"></a>
 
       <div class="d_flex flex-d_column gap_8px fs_14px lh_2">
         <div>Joshua Guerrero &middot; Real Brokerage</div>
@@ -759,6 +763,7 @@ Pushes the updated funnel from /index.html to every page in `funnels.json`. One 
 
 Do not.
 
+- Ship an unlinked logo. The Drozq logo in the header AND the footer must be wrapped in `<a href="/" aria-label="Drozq home">`. Universal back-to-home escape hatch.
 - Strip the Panda CSS utility-class soup. Even unused classes stay; the layer architecture depends on declaration order.
 - Use brand-mode patterns on new pages: mint hero block, navy footer with full nav grid, "Case File N" framing, brand-mode `<style>` system. That's the legacy look; it does not propagate to new work.
 - Hand-edit a synced page's funnel block. Edit `/index.html` instead and re-sync.
