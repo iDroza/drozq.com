@@ -367,6 +367,17 @@ Placeholders by mode:
 
 Google Places Autocomplete is bound to every landing `input[name="location"]` for Sell + Sell&Buy modes; Buy mode is free-text.
 
+### Hero pill width (canonical)
+
+The hero pill on the homepage uses a two-layer width scaffold. Reuse it verbatim on every page that ships a hero with the 3-tab CTA.
+
+| Layer | Class | Effect |
+|---|---|---|
+| Outer hero CTA stack (centers tabs + pill on the page) | `pos_relative w_100% max-w_772px m_0_auto` | Up to 772px wide, centered |
+| Inner per-tabpanel form container | `w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent` | 326px on phones, 361px on larger phones, 700px on desktop |
+
+Do not change these widths. The pill is the most-clicked element on the page; resizing it changes hero engagement.
+
 ### Hero typography
 
 | Element | Mobile | Desktop |
@@ -409,6 +420,20 @@ Standard section conventions:
 | Container max-width | `max-w_100%` | `md:max-w_972px` | `lg:max-w_1035px` or `xl:max-w_1035px` |
 | Horizontal padding | `px_32px` | (same) | `lg:px_16px` |
 | Section background | white or `#f2f0ef` | (same) | (same) |
+
+### Closing CTA pill width (canonical)
+
+Every page's bottom-of-page closing CTA wraps its landing form pill in a 540px-max container so the pill reads centered and comfortable, not stretched.
+
+```html
+<div id="page-closing-cta" role="tabpanel" aria-labelledby="tab-sell" class="d_flex jc_center">
+  <div style="width:100%; max-width: 540px;">
+    <!-- landing form pill here -->
+  </div>
+</div>
+```
+
+The wrapping `<div role="tabpanel" aria-labelledby="tab-sell">` is what tells the funnel JS that this pill opens the Sell funnel. Drop this in on every conversion page exactly as-is; only the outer ID may vary per page.
 
 ### Closing CTA fineprint (every page except the homepage)
 
@@ -471,6 +496,19 @@ Font: Roboto 700 16px. Padding 10px 16px. Border-radius `999px` (pill). The tab 
 - default → `sell`
 
 So `aria-labelledby="buyTabBtn"` on `#buyTab` resolves to buy mode. Renaming the IDs is safe as long as `buy` appears in the buy-mode IDs and not in the sell-mode IDs.
+
+### Mid-page tab pill width (canonical)
+
+Inside each `#sellTab` / `#buyTab` tabpanel, the landing form pill MUST be wrapped in a 540px-max container — never full-width. A full-width pill at desktop reads as broken layout (the input + Compare Agents button stretch into ~780px of horizontal space and look wrong).
+
+```html
+<h4 class="c_#1a1816 fs_16px sm:fs_20px fw_700 lh_24px sm:lh_30px ta_left pb_8px m_0">Enter your address to start the home value report.</h4>
+<div style="width:100%; max-width: 540px;">
+  <!-- landing form pill here -->
+</div>
+```
+
+Same container width as the closing CTA pill (below). The mid-tab pill must match the closing CTA pill width exactly.
 
 ---
 
