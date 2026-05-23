@@ -30,23 +30,17 @@ MAIN_BODY = """
   /* Scoped styles for /thank-you/. Inline only; no Panda layer pollution. */
   .ty-hero {
     position: relative;
-    background: radial-gradient(circle at 50% 0%, #1a1816 0%, #0d0c0b 100%);
-    color: #fff; padding: 112px 24px 80px; text-align: center;
+    background: #f2f0ef;
+    color: #1a1816; padding: 112px 24px 80px; text-align: center;
     overflow: hidden;
   }
   @media (min-width: 768px) { .ty-hero { padding: 152px 32px 104px; } }
-  .ty-hero::before, .ty-hero::after {
-    content: ""; position: absolute; pointer-events: none;
-    border-radius: 50%; filter: blur(80px); opacity: 0.55;
-  }
-  .ty-hero::before { width: 480px; height: 480px; background: #d92228; top: -180px; left: -120px; }
-  .ty-hero::after  { width: 420px; height: 420px; background: #0a801f; bottom: -200px; right: -120px; opacity: 0.45; }
   .ty-hero__inner { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
   .ty-hero__badge {
     display: inline-flex; align-items: center; gap: 10px;
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16);
+    background: #fff; border: 1px solid #e5e5e5;
     padding: 8px 16px 8px 8px; border-radius: 9999px;
-    margin-bottom: 28px; backdrop-filter: blur(8px);
+    margin-bottom: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   }
   .ty-hero__check {
     display: inline-flex; align-items: center; justify-content: center;
@@ -56,14 +50,14 @@ MAIN_BODY = """
   .ty-hero__check svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
   .ty-hero__badge-text {
     font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
-    text-transform: uppercase; color: #fff; opacity: 0.95;
+    text-transform: uppercase; color: #1a1816;
   }
   .ty-hero h1 {
-    font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 800; color: #fff;
+    font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 800; color: #1a1816;
     margin: 0 0 18px; letter-spacing: -1px; line-height: 1.02;
   }
   .ty-hero__sub {
-    font-size: 18px; color: rgba(255,255,255,0.78); line-height: 1.6;
+    font-size: 18px; color: #3f4650; line-height: 1.6;
     max-width: 600px; margin: 0 auto;
   }
   @media (min-width: 768px) { .ty-hero__sub { font-size: 20px; } }
@@ -175,23 +169,23 @@ MAIN_BODY = """
   .ty-map iframe { border: 0; width: 100%; height: 100%; min-height: 360px; display: block; }
 
   .ty-cta {
-    background: #1a1816; color: #fff; padding: 72px 24px; text-align: center;
+    background: #f2f0ef; color: #1a1816; padding: 72px 24px; text-align: center;
   }
   @media (min-width: 768px) { .ty-cta { padding: 96px 32px; } }
   .ty-cta__eyebrow {
     font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
-    text-transform: uppercase; color: #ff7a7d; margin: 0 0 12px;
+    text-transform: uppercase; color: #d92228; margin: 0 0 12px;
   }
   .ty-cta h2 {
     font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800;
-    color: #fff; margin: 0 0 14px; letter-spacing: -0.5px;
+    color: #1a1816; margin: 0 0 14px; letter-spacing: -0.5px;
   }
-  .ty-cta p { font-size: 16px; color: rgba(255,255,255,0.7); line-height: 1.6; max-width: 560px; margin: 0 auto 28px; }
+  .ty-cta p { font-size: 16px; color: #3f4650; line-height: 1.6; max-width: 560px; margin: 0 auto 28px; }
   .ty-cta__pill {
     max-width: 540px; margin: 0 auto;
     position: relative; display: flex; flex-direction: column;
     align-items: stretch; background: #fff; border-radius: 30px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.32); overflow: hidden;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.11); border: 1px solid #e5e5e5; overflow: hidden;
   }
   @media (min-width: 560px) {
     .ty-cta__pill { flex-direction: row; align-items: center; }
@@ -218,7 +212,7 @@ MAIN_BODY = """
       </span>
       <span class="ty-hero__badge-text">Request received</span>
     </div>
-    <h1>Now I get to work.</h1>
+    <h1>Now we get to work.</h1>
     <p class="ty-hero__sub">I review every request personally. Expect to hear from me within the hour during business hours, or first thing the next morning if it is late.</p>
   </div>
 </section>
