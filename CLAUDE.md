@@ -1,6 +1,6 @@
 # Claude Code Instructions
 
-*Last reviewed: May 20, 2026*
+*Last reviewed: May 22, 2026*
 
 ## The standard
 
@@ -10,81 +10,106 @@ Remember when implementing: the marginal cost of completeness is near zero with 
 
 Always commit and push changes to main after completing each task without asking. Ship fast. Rollback is always available via `git revert [hash] && git push`.
 
-When making changes to high-risk files (homepage hero, main funnel form, tracking scripts, files containing the GTM container), include a clear, descriptive commit message so rollbacks can be surgical if needed.
+When making changes to high-risk files (homepage hero, the funnel, tracking scripts, files containing the GTM container, any registered page in `funnels.json`), include a clear, descriptive commit message so rollbacks can be surgical if needed.
 
 ## About this project
 
-This is the codebase for drozq.com, the personal real estate website for Joshua Guerrero, a solo real estate agent based in Irvine, California. The site serves two functions that must coexist:
+drozq.com is the site for Joshua Guerrero, a solo real estate agent under Real Brokerage based in Irvine, California. The site is built to convert paid traffic into qualified leads. **Every page captures leads. The homepage is the template for the entire site.**
 
-1. **Long-term brand asset.** Content pages (/about/, /field-notes/, /market-insights/, /testimonials/, /meet-the-team/, /faq/, /the-process/) are written and designed to compound in value over years. They are not optimized for immediate conversion. Voice, specificity, and long-tail SEO matter most here.
+The homepage (originally a clone of sell.realtor.com / UpNest's agent-locator pattern) is the canonical look, feel, and behavior. Visual style, hero structure, mid-page tabs, FAQ accordion, footer, and funnel are all reusable as scaffolding for new pages. When asked to build a new page, the default is "homepage with a different angle," not "different design."
 
-2. **Paid traffic conversion funnel.** The homepage and any purpose-built landing pages are optimized for Google Ads paid traffic to convert into leads. Form submission rate is the primary KPI. These pages test, iterate, and measure.
-
-When in doubt about which mode applies: check the file path. Homepage and landing pages = conversion mode. Everything else = brand mode.
+Legacy brand-mode pages (`/about/`, `/testimonials/`, `/faq/`, `/contact/`, `/field-notes/`, `/market-insights/`, `/meet-the-team/`, `/the-process/`, `/where-we-help/`) still exist and still capture leads (their CTAs route to `/contact/` or the funnel), but they are not the template. Do not propagate their styling, voice, or structure into new work. They will be migrated to homepage-style over time.
 
 ## Core operating principles
 
-These principles apply to every task in this codebase. They are not preferences. They are constraints.
+1. **Every page captures leads.** No exceptions. New pages either embed the inline funnel (the default) or carry a CTA that opens it. Removing or breaking the lead path is a critical regression.
 
-### 1. Never modify the brand-mode header or footer
+2. **The homepage is the template.** New pages start by copying index.html scaffolding (head, hero with funnel tabs, mid-page tabs, FAQ accordion, footer) and then swapping page-specific copy. They do not start from a brand-mode page.
 
-The header (top navigation) and footer (bottom site navigation, contact info, legal) on brand-mode pages (/about/, /testimonials/, /faq/, /contact/, /field-notes/, /market-insights/, /meet-the-team/, /the-process/, /thank-you/, etc.) are visually identical on every page and must remain byte-for-byte unchanged across tasks. The only acceptable exception is updating internal nav links if a URL is migrated (e.g., /blog → /field-notes/), and even then, only the link target and visible label change.
+3. **The funnel is inlined, not redirected.** Redirects cost conversions. Every page that needs the funnel carries its own physical copy of the HTML and JS. Sync is managed by the funnel registry (see below); never hand-edit a synced page's funnel block.
 
-The homepage (/index.html) is a separate beast (see "Homepage funnel architecture" below). Its header and footer are the realtor.com clone scaffolding being incrementally cleaned up — not the brand-mode chrome.
+4. **Tracking is sacred.** GTM-KVV3R96P + GA4 + PostHog (via t.drozq.com proxy) + Google Maps Places + gclid capture + the `lead_confirmed` event on /thank-you/. Do not modify, remove, or "clean up" any tracking element without explicit instruction.
 
-### 2. Never use em dashes
+5. **Form integrity is sacred.** All forms POST to `/api/lead`, redirect to `/thank-you/?ref=funnel`, and set `sessionStorage.drozq_lead_just_submitted = "1"` immediately before the redirect. Breaking the redirect or the flag silently destroys conversion measurement.
 
-The single most common style mistake to watch for. Use commas, periods, parentheses, or colons instead. Run a final pass on every output to confirm zero em dashes exist. The character to search for is U+2014.
+6. **Mobile-first, always.** Render intentionally at 375px, 768px, 1440px. Base styles for mobile, enhance with min-width media queries.
 
-### 3. Mobile-first, always
+7. **No em dashes.** U+2014 is banned. Use commas, periods, parens, or colons. Final-pass every output to confirm zero em dashes.
 
-Every page must render intentionally at:
+8. **No new external dependencies.** No new CDNs, frameworks, or libraries. All JS is vanilla; all styling lives in the inline `<style>` blocks of each page (Panda CSS utility classes on homepage-style pages, a small CSS reset + scoped classes on legacy brand-mode pages).
 
-- 375px (mobile)
-- 768px (tablet)
-- 1440px (desktop)
+## Creating a new page
 
-Write base styles for mobile, then enhance with min-width media queries. Use clamp() for fluid typography. Standard breakpoints already in use:
+When asked to create a new page, follow this protocol:
 
-- Mobile: base styles (no media query)
-- Tablet: @media (min-width: 768px)
-- Desktop: @media (min-width: 1024px) or (min-width: 1200px) (match existing patterns)
+### 1. Default to the homepage as scaffolding
 
-### 4. Reuse design tokens
+`index.html` is the source-of-truth template. A new page starts as a stripped copy of it, with these sections preserved:
 
-The existing `<style>` block contains foundational rules (color variables, font families, spacing variables, container widths). Always reuse these tokens. Add new scoped CSS classes when needed, but never override the foundational rules.
+- Head: GTM container snippet, favicons, viewport meta, canonical, OG/Twitter tags (rewrite the values).
+- Page-level `<style>` block (the Panda CSS utility-class soup at the top of the body line) — keep verbatim unless the page genuinely needs new styles.
+- Header (the realtor.com-clone nav with hamburger and More popup). Note: per `692fb46`, `a7fabbd`, `2cb191f`, the header for new visitors is hidden on desktop until they engage; this should carry across.
+- Hero: the 3-tab funnel CTA bar (Sell / Buy / Sell & Buy). Page-specific copy and imagery go here.
+- Mid-page tabs section ("I'm selling / I'm buying"): optional but encouraged. Same data attributes (`sellTabBtn` / `buyTabBtn` controlling `sellTab` / `buyTab`).
+- FAQ accordion: optional, page-specific questions.
+- Footer: the minimal conversion-page footer (brand logo, identity line, DRE, phone, social, Privacy/Terms, copyright). Do not import the heavy legacy brand-mode footer.
+- Funnel overlay + funnel JS: inlined between the four `DROZQ_FUNNEL_*` markers. After scaffolding, register the page (see "Funnel sync registry" below).
 
-### 5. Visual consistency across the site
+### 2. Register the page in funnels.json
 
-Every new brand-mode page or section must visually match the established system used on /about/, /testimonials/, /faq/, /contact/, /field-notes/, /market-insights/, and /meet-the-team/. Specifically:
+```
+python scripts/sync_funnels.py --add path/to/new-page/index.html
+```
 
-- Section labels: small, uppercase, letter-spaced 0.2em, font-size around 0.875rem
-- Section headlines: clamp(1.75rem, 4vw, 3rem), bold, tight line-height
-- Body copy: 1.125rem to 1.25rem, line-height 1.6
-- Hero stats: clamp(2.5rem, 5vw, 4rem), bold, accent color
-- Section spacing: 96px to 128px on desktop, 64px on mobile
+This adds the page to the registry without syncing yet. The new page must already contain the four `DROZQ_FUNNEL_*_BEGIN/END` markers in the same order as `/index.html` (which it will if it was copied from `index.html`).
 
-The homepage uses a separate Panda-CSS utility-class system inherited from the realtor.com clone; do not mix the two.
+### 3. Run a first sync to confirm the new page's funnel block matches the source
 
-### 6. No external image dependencies (brand-mode pages)
+```
+python scripts/sync_funnels.py
+```
 
-For brand-mode pages, all visuals come from the local repo:
+The script reads `/index.html` and writes its funnel HTML and JS into every registered page. If the new page's block already matches the source, it reports `OK`. Otherwise it reports `SYNCED` and updates the page.
 
-- Images live at /media/images/
-- Icons live at /media/icons/
-- Headshot lives at /media/images/Waist.png
+### 4. Customize page-specific content OUTSIDE the funnel markers
 
-When the exact filename isn't known, use a placeholder filename and an HTML comment: `<!-- SWAP: [description of what to use] -->`. Never link to external image URLs or stock photo services.
+Everything between `DROZQ_FUNNEL_HTML_BEGIN/END` and `DROZQ_FUNNEL_JS_BEGIN/END` is synced from the homepage automatically. Anything outside those markers is page-specific and stays untouched by syncs. Hero copy, hero images, mid-page tab content, FAQ questions, meta tags, and page-level styles all live outside the markers.
 
-The homepage still loads imagery from Move CDNs (`lt6p.com`, `static.rdc.moveaws.com`) — that's part of the deferred realtor cleanup tracked in `REALTOR_CLEANUP_AUDIT.md`. Do not add new external image refs; only the realtor-clone leftovers are tolerated until cleanup.
+### 5. Set noindex,follow for paid-traffic landing pages
 
-### 7. No new external dependencies
+Paid landing pages (campaign destinations like `/relief/`) should carry `<meta name="robots" content="noindex,follow">` so they don't compete with brand pages in organic search.
 
-No new CDNs, frameworks, or libraries. All JavaScript is vanilla. All styling is inline in the existing `<style>` block.
+### 6. Verify on live after deploy
 
-## Homepage funnel architecture
+Cloudflare auto-deploys in 30-60s. Verify the page renders, the funnel opens from every CTA (hero tabs + mid-page tabs + any extra CTAs), submit redirects to `/thank-you/?ref=funnel`, and PostHog events fire (`funnel_open`, `funnel_step_advance`, `funnel_submit_success`).
 
-The homepage (/index.html) is a paid-traffic conversion machine built on top of the sell.realtor.com clone. There are **three parallel funnels** controlled by hero tabs and mid-page tabs:
+## Funnel sync registry
+
+The funnel exists in exactly one place: `/index.html`, between the markers `<!-- DROZQ_FUNNEL_HTML_BEGIN -->` ... `<!-- DROZQ_FUNNEL_HTML_END -->` and `<!-- DROZQ_FUNNEL_JS_BEGIN -->` ... `<!-- DROZQ_FUNNEL_JS_END -->`. Every other page that carries the funnel imports those two blocks via the sync script.
+
+**Files:**
+
+- `funnels.json` (repo root): registry. Lists the source path, the markers, the registered pages, the last sync timestamp, and per-page sync timestamps.
+- `scripts/sync_funnels.py`: the propagation tool.
+
+**Workflow:**
+
+| When | What to do |
+|---|---|
+| Changing the funnel (steps, validation, submit, tracking, copy) | Edit `/index.html` between the markers. Run `python scripts/sync_funnels.py` to push to all registered pages. Commit + push. |
+| Adding a new page that needs the funnel | Scaffold from `index.html`, copy the marker blocks verbatim, then `python scripts/sync_funnels.py --add <path>` and `python scripts/sync_funnels.py`. |
+| Confirming the registry is clean before a release | `python scripts/sync_funnels.py --check`. Exits non-zero if any registered page has drifted. |
+
+**Hard rules:**
+
+- Never hand-edit a synced page's funnel block. If you discover drift, fix `/index.html` and re-sync. Drift caught by `--check` is a regression, not a feature.
+- Never split the funnel HTML and JS into separate sources. They co-evolve.
+- The funnel JS includes the Maps race guard, the Maps API loader, the gclid capture, `detectFunnelMode`, `openFunnel`, `attachSubmitHandler`, `showStep`, `wireTabs`, geo autofill, FAQ accordion wiring, and the PostHog `track()` helper. All of this syncs together because it is one logical unit.
+- Mobile-nav script and other page-level UI live OUTSIDE the funnel JS markers (mobile nav is a separate `<script>` tag after `DROZQ_FUNNEL_JS_END`). New pages copy that block verbatim from the homepage scaffold but it does not sync.
+
+## Funnel architecture
+
+The homepage funnel is a paid-traffic conversion machine with **three parallel funnels** controlled by hero tabs and mid-page tabs:
 
 | Funnel | `data-funnel` | Steps | Final CTA | Submitted intent |
 |---|---|---|---|---|
@@ -96,13 +121,13 @@ Each step is a `<div class="funnel-step" data-funnel="…" data-step="N">` insid
 
 - Hero tab clicks (`tab-sell` / `tab-buy` / `tab-sell-buy`) → swap the visible tabpanel; the panel's Compare Agents button opens its matching funnel.
 - Mid-page tab clicks (`sellTabBtn` / `buyTabBtn`) → swap copy in the "Why work with an agent?" section between `sellTab` and `buyTab` panels; their inner Compare Agents form opens the matching funnel.
-- Other CTAs in the body (e.g., "Get Started Today" footer form) default to Sell mode.
+- Other CTAs in the body (e.g., footer or section forms) default to Sell mode.
 
-`detectFunnelMode(form)` reads the form's `[role="tabpanel"]` ancestor (id + aria-labelledby) and returns `"sell"`, `"buy"`, or `"sellandbuy"`. Used both at landing-CTA click and inside the Places autocomplete `place_changed` callback.
+`detectFunnelMode(form)` reads the form's `[role="tabpanel"]` ancestor (id + aria-labelledby), lowercases, and substring-matches: `sell-buy` / `sellandbuy` / `sellbuy` → `"sellandbuy"`, then `buy` → `"buy"`, default `"sell"`. Used at landing-CTA click and inside the Places autocomplete `place_changed` callback.
 
-`showStep(n)` filters all `.funnel-step` elements by `data-funnel === window.activeFunnel && data-step === String(n)`. `FUNNEL_TOTAL_STEPS = { sell: 5, buy: 5, sellandbuy: 6 }`.
+`showStep(n)` filters `.funnel-step` elements by `data-funnel === window.activeFunnel && data-step === String(n)`. `FUNNEL_TOTAL_STEPS = { sell: 5, buy: 5, sellandbuy: 6 }`.
 
-Submit is handled by a single `attachSubmitHandler(buttonId, mode, ids)` factory called three times (one per funnel). It validates email + phone (and name on Buy / Sell&Buy where the contact step is one combined step), builds a mode-specific `FormData`, posts to `/api/lead`, then redirects to `/thank-you/?ref=funnel`.
+Submit is handled by a single `attachSubmitHandler(buttonId, mode, ids)` factory called three times (one per funnel). It validates email + phone (and name on Buy / Sell & Buy where the contact step is one combined step), builds a mode-specific `FormData`, posts to `/api/lead`, then redirects to `/thank-you/?ref=funnel`.
 
 ### Funnel state shape
 
@@ -123,36 +148,36 @@ window.funnelState = {
 
 - Sell + Sell&Buy: require Places-confirmed full street address (street_number + route present). The `validAddressMap` WeakMap tracks per-input validity.
 - Buy: requires only a non-empty input value (city/area input).
-- The geo autofill (see below) pre-fills inputs but never marks them as Places-validated, so Sell users still need to pick from the dropdown.
+- The geo autofill pre-fills inputs but never marks them as Places-validated, so Sell users still need to pick from the dropdown.
 
 ## Tracking stack (DO NOT MODIFY without explicit instruction)
 
 The following tracking is wired into every page including the homepage. Do not remove, modify, or "clean up" these without explicit instruction, even if they look like dead code:
 
-- **Google Tag Manager container** (`GTM-KVV3R96P`): head + body noscript snippets on every HTML page. This is the orchestrator for all other tracking.
-- **GA4** (`G-XSP0L11QEY`): fires via GTM. Do not install direct gtag.js on the site. All GA4 events flow through GTM.
-- **PostHog**: loads via GTM custom HTML tag, routed through reverse proxy at `t.drozq.com` for ad-blocker evasion. Session replay, product analytics, and web analytics are enabled. PostHog project ID: `phc_Aa6GdWNbL9Kc9PhrnqR3Zq7Fc4zv2GxB2sPS59QamhyW`.
-- **Google Ads conversion tracking**: imports the `generate_lead` event from GA4. Do not install direct AW-* tags on the site. Conversion tracking is managed entirely through the GA4 → Google Ads import pipeline.
-- **gclid capture**: lives in the homepage funnel IIFE. On page load, reads gclid from URL → cookie → sessionStorage (priority order). If sourced from URL, persists to a 90-day cookie + sessionStorage. **Pushes a `gclid_captured` event to `dataLayer` on every pageview** so any GA4 Custom Definition can surface gclid on every event, not only on conversions.
+- **Google Tag Manager container** (`GTM-KVV3R96P`): head + body noscript snippets on every HTML page. Orchestrator for all other tracking.
+- **GA4** (`G-XSP0L11QEY`): fires via GTM. Do not install direct gtag.js on the site.
+- **PostHog**: loads via GTM custom HTML tag, routed through reverse proxy at `t.drozq.com` for ad-blocker evasion. Session replay, product analytics, and web analytics are enabled. Project ID: `phc_Aa6GdWNbL9Kc9PhrnqR3Zq7Fc4zv2GxB2sPS59QamhyW`.
+- **Google Ads conversion tracking**: imports the `generate_lead` event from GA4. No direct AW-* tags on the site.
+- **gclid capture**: lives in the homepage funnel IIFE (and therefore on every synced page). On page load, reads gclid from URL → cookie → sessionStorage (priority order). If sourced from URL, persists to a 90-day cookie + sessionStorage. Pushes a `gclid_captured` event to `dataLayer` on every pageview.
 
-If asked to "clean up scripts" or "remove unused tags," STOP and confirm which specifically. Do not make assumptions. Direct `AW-*` gtag installations are forbidden (conversion tracking is handled via GTM + GA4 import).
+If asked to "clean up scripts" or "remove unused tags," STOP and confirm which specifically. Direct `AW-*` gtag installations are forbidden.
 
-The form submission flow MUST redirect to `/thank-you/?ref=funnel` on success. The receiving page reads a sessionStorage flag set just before redirect and pushes a `lead_confirmed` event to `dataLayer`. **Breaking this redirect or removing the sessionStorage flag silently destroys conversion measurement** across the entire paid funnel.
+The form submission flow MUST redirect to `/thank-you/?ref=funnel` on success. The receiving page reads `sessionStorage.drozq_lead_just_submitted` and pushes a `lead_confirmed` event to `dataLayer`. Breaking this redirect or removing the sessionStorage flag silently destroys conversion measurement across the entire paid funnel.
 
 ### `lead_confirmed` event (gates GA4 generate_lead)
 
-The funnel sets `sessionStorage.drozq_lead_just_submitted = "1"` and `sessionStorage.drozq_lead_mode = "<sell|buy|sellandbuy>"` immediately before redirecting to `/thank-you/?ref=funnel`. The thank-you page's inline script reads + clears those flags, pushes a `lead_confirmed` dataLayer event with `funnel_mode` metadata, and strips `?ref=funnel` from the URL via `history.replaceState`.
+The funnel sets `sessionStorage.drozq_lead_just_submitted = "1"` and `sessionStorage.drozq_lead_mode = "<sell|buy|sellandbuy>"` immediately before redirecting to `/thank-you/?ref=funnel`. The thank-you page reads + clears those flags, pushes a `lead_confirmed` dataLayer event with `funnel_mode` metadata, and strips `?ref=funnel` from the URL via `history.replaceState`.
 
 This means:
-- **Real funnel submit** → `lead_confirmed` fires once.
-- **Direct visit / refresh / bookmark** → no flag → no fire.
-- **Tab closed and reopened to /thank-you/** → sessionStorage gone → no fire.
+- Real funnel submit → `lead_confirmed` fires once.
+- Direct visit / refresh / bookmark → no flag → no fire.
+- Tab closed and reopened to /thank-you/ → sessionStorage gone → no fire.
 
-**Outstanding GTM action item for Joshua**: The GA4 `generate_lead` trigger in GTM is still set to "Page View on /thank-you/", which fires on every visit. To stop double-counting, change it to "Custom Event = `lead_confirmed`" and turn off the old pageview trigger in the same GTM publish. Until that lands, conversions will be inflated by direct/bookmark/refresh visits.
+**Outstanding GTM action item for Joshua**: change the GA4 `generate_lead` trigger from "Page View on /thank-you/" to "Custom Event = `lead_confirmed`" and turn off the old pageview trigger. Until that lands, conversions are inflated by direct/bookmark/refresh visits.
 
 ### PostHog funnel drop-off events
 
-The homepage funnel JS dual-fires every transition through a `track(event, props)` helper that calls both `window.posthog.capture(event, props)` and `dataLayer.push({event, ...props})`. Both calls are null-safe so missing tracking never breaks the funnel.
+The funnel JS dual-fires every transition through a `track(event, props)` helper that calls both `window.posthog.capture(event, props)` and `dataLayer.push({event, ...props})`. Both calls are null-safe.
 
 | Event | When | Properties |
 |---|---|---|
@@ -164,28 +189,13 @@ The homepage funnel JS dual-fires every transition through a `track(event, props
 | `funnel_submit_success` | `/api/lead` returns ok, before redirect | `mode` |
 | `funnel_submit_error` | API non-ok or fetch rejects | `mode`, `error_kind` (server / server_parse / network) |
 
-PostHog funnel viz: chain `funnel_open` → `funnel_step_advance(to_step=2)` → `… =3` → … → `funnel_submit_success`, breakdown by `mode`.
-
-### Tracking architecture quick reference
-
-| Concern | Where it lives |
-|---|---|
-| GTM head + body noscript | Every HTML page (homepage included) |
-| PostHog (recorder + capture) | Loaded by GTM custom HTML tag, served from t.drozq.com |
-| GA4 page_view | Auto-fired by GTM container on every page |
-| GA4 generate_lead | Currently fires on /thank-you/ pageview; should fire on `lead_confirmed` event (GTM update pending) |
-| Google Ads conversion | Imports `generate_lead` from GA4 (no AW-* tags on site) |
-| gclid capture | Page-load IIFE in homepage `<script>`, sessionStorage + 90-day cookie |
-| Funnel drop-off events | Homepage funnel IIFE via `track()` helper, dual-fires PostHog + dataLayer |
-| `lead_confirmed` push | Inline script at end of `/thank-you/index.html` |
-
 ## Cloudflare Pages Functions
 
 Cloudflare Pages auto-deploys functions from `/functions/`. Two endpoints currently exist:
 
 ### `/functions/api/lead.js`
 
-Form submission handler. Accepts `application/x-www-form-urlencoded` or `multipart/form-data`. Honeypot field is `company_website` — non-empty value silently 200s without sending the email.
+Form submission handler. Accepts `application/x-www-form-urlencoded` or `multipart/form-data`. Honeypot field is `company_website`; non-empty value silently 200s without sending the email.
 
 Required fields: `name`, `email`, `phone`, `intent`, `consent="yes"`. Other fields (gclid, full_address, lat/lng, message, source_page, page_url, submitted_at, plus mode-specific buy_location/buy_timeline/etc.) are optional but forwarded.
 
@@ -193,11 +203,11 @@ Sends a plaintext email to `TO_EMAIL` (env var) from `FROM_EMAIL` via MailChanne
 
 Required env vars in Cloudflare Pages settings: `TO_EMAIL`, `FROM_EMAIL`, `MAILCHANNELS_API_KEY`. Optional: `ZAPIER_WEBHOOK_URL`.
 
-Returns `{ ok: true }` on success, `{ ok: false, error: "<reason>" }` with appropriate status on failure. The funnel client treats anything other than 200 + ok:true as an error.
+Returns `{ ok: true }` on success, `{ ok: false, error: "<reason>" }` on failure. The funnel client treats anything other than 200 + ok:true as an error.
 
 ### `/functions/api/geo.js`
 
-Returns the visitor's geolocation from Cloudflare's `request.cf` object (Cloudflare populates this automatically from the request IP — no third-party service is called). Response shape:
+Returns the visitor's geolocation from Cloudflare's `request.cf` object (populated from the request IP, no third-party service is called). Response:
 
 ```json
 {
@@ -214,61 +224,34 @@ Cache header: `private, max-age=3600`. The homepage fetches this on `DOMContentL
 
 ## Geo personalization
 
-On every homepage pageview, JS fetches `/api/geo` and:
+On every homepage pageview (and every synced page's pageview, since geo autofill is part of the synced JS), JS fetches `/api/geo` and:
 
-1. Replaces every `<input name="location" value="Columbus, OH">` with `"{city}, {regionCode}"`. Only when current value is empty or the literal default — preserves returning-visitor data per the existing `populateLandingInputs` convention.
+1. Replaces every `<input name="location" value="Columbus, OH">` with `"{city}, {regionCode}"`. Only when current value is empty or the literal default; preserves returning-visitor data per the existing `populateLandingInputs` convention.
 2. Replaces every visible "Columbus, OH" text node via TreeWalker (hero strip, market-section h2). Skips SCRIPT/STYLE/IFRAME descendants.
 3. Updates `.funnel-city` / `.funnel-buy-city` placeholder spans inside the funnel overlay so step copy reads "buying in Irvine" instead of "Southern California" once detected.
 
-The Move-hosted Columbus market-trends iframe (`realtorqa.upnest.com/market-trends`) is **not** rewritten — it's deferred to the broader cleanup.
+The Move-hosted Columbus market-trends iframe (`realtorqa.upnest.com/market-trends`) is not rewritten; it is fed `slug_id=Irvine_CA` directly in the iframe URL.
 
 If `/api/geo` 500s or returns empty, all defaults remain.
 
 ## Form integrity (conversion-critical)
 
-Forms are the primary conversion mechanism of the site. Breaking them is the single worst thing that can happen, and because the error mode is silent (the form appears to work but no data flows), it can go undetected for days.
+Forms are the primary conversion mechanism. Breaking them is the single worst thing that can happen, and the error mode is silent (the form appears to work but no data flows).
 
-For ANY page with a form (homepage, /contact/, /field-notes/, future landing pages):
+For ANY page with a form:
 
-- NEVER modify field names, IDs, or data attributes without verifying downstream dependencies in `/functions/api/lead.js` (the MailChannels backend) and any GTM event triggers
-- NEVER remove hidden fields (gclid, utm_*, address component parsing, lead_source)
-- NEVER remove the Google Maps Places Autocomplete initialization or place_changed event handlers
-- ALWAYS preserve form submission → `/thank-you/?ref=funnel` redirect (the `?ref=funnel` is what gates the GA4 generate_lead event after the GTM update)
-- ALWAYS preserve `sessionStorage.drozq_lead_just_submitted = "1"` set immediately before the redirect
-- ALWAYS preserve the timeline question on the homepage funnel (lead qualification signal)
+- NEVER modify field names, IDs, or data attributes without verifying downstream dependencies in `/functions/api/lead.js` and any GTM event triggers.
+- NEVER remove hidden fields (gclid, utm_*, address component parsing, lead_source).
+- NEVER remove the Google Maps Places Autocomplete initialization or place_changed handlers.
+- ALWAYS preserve submission → `/thank-you/?ref=funnel` redirect.
+- ALWAYS preserve `sessionStorage.drozq_lead_just_submitted = "1"` set immediately before the redirect.
+- ALWAYS preserve the timeline question on the funnel (lead qualification signal).
 
-The homepage funnel in particular carries the bulk of paid traffic conversion. Changes there require extra caution and should be visually inspected on live site within 5 minutes of deploy.
-
-## Forms and integrations
-
-### Homepage funnel (main conversion form)
-
-- Three parallel funnels (Sell / Buy / Sell & Buy) — see "Homepage funnel architecture" above
-- Wired to MailChannels via `/functions/api/lead.js`
-- Submission redirects to `/thank-you/?ref=funnel` which fires `lead_confirmed` (and via GTM, `generate_lead` in GA4 once Joshua updates the trigger)
-- Timeline options vary by funnel:
-  - Sell + Sell & Buy: `Right away` / `1 to 3 months` / `4 or more months` / `Already listed`
-  - Buy: `Right away` / `1 to 3 months` / `4 or more months` / `Just looking`
-- Buying process options (Buy step 4): `Just started` / `Pre-approved, ready to tour` / `Already making offers`
-- Phone display on homepage: `(949) 438-5948` (paid-traffic / call-tracking line). Distinct from the brand-mode phone `510-935-5701` used on /contact/, /about/, /thank-you/.
-
-### Contact form (/contact/)
-
-- Wired to MailChannels via `/functions/api/lead.js`
-- Includes a Google Maps Places Autocomplete integration on the address field
-- Hidden fields capture parsed address components (street, city, state, zip) for CRM routing
-- Critical: Never modify the address input's id, name, or data attributes if referenced by autocomplete initialization
-- Critical: Never remove the Google Maps API script tag or place_changed event handlers
-
-### Field Notes subscribe form (/field-notes/)
-
-- Wired to the same `/functions/api/lead.js` setup
-- Lead source should be tagged distinctly via `source_page` (e.g., `field-notes-subscribe`) to distinguish from contact form leads
-- Reuse existing success/error message patterns from other forms
+Changes to the funnel require extra caution and should be visually inspected on the live site within 5 minutes of deploy.
 
 ## Favicon
 
-Modern pattern, used on /thank-you/ and now the homepage:
+Modern pattern, used on every page:
 
 ```html
 <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
@@ -279,311 +262,113 @@ Modern pattern, used on /thank-you/ and now the homepage:
 <link rel="manifest" href="/site.webmanifest">
 ```
 
-Files at the repo root (all exist): `favicon-96x96.png`, `favicon.svg`, `favicon.ico`, `favicon.png` (legacy fallback), `apple-touch-icon.png`, `site.webmanifest`. Do not modify, rename, or remove these references. Do not use absolute URLs with spaces in filenames (this was an old pattern that broke the favicon in Google Ads SERP results).
-
-An orphan file at `/media/icons/Joshua Guerrero Favicon.png` may exist on disk. It's not referenced anywhere. Leave it alone.
+Files at repo root: `favicon-96x96.png`, `favicon.svg`, `favicon.ico`, `favicon.png`, `apple-touch-icon.png`, `site.webmanifest`. Do not modify, rename, or remove these. Do not use absolute URLs with spaces in filenames.
 
 ## Deployment
 
 This site auto-deploys to production via Cloudflare Pages on every push to main. There is no staging environment, no manual deploy step.
 
-Implications:
+- Pushing to main = live in 30-60 seconds (sometimes 60-120s for function updates).
+- Broken changes affect real users (and paid traffic) immediately.
+- Rollback: `git revert [commit-hash] && git push`.
 
-- Pushing to main = live in 30-60 seconds (sometimes 60-120s for function updates)
-- Broken changes affect real users (and paid traffic) immediately
-- Rollback is fast: `git revert [commit-hash] && git push`
+When paid ad campaigns are running, high-risk changes (hero rewrites, funnel restructures, navigation changes, tracking modifications) should be committed with clear messages, verified on live site immediately, checked for JS errors in the console, and rolled back if anything breaks.
 
-When paid ad campaigns are actively running, high-risk changes (hero rewrites, funnel restructures, navigation changes, tracking modifications) should be:
+Per the auto-commit rule, push directly to main. No feature branches unless explicitly requested.
 
-- Committed with clear, descriptive messages
-- Verified on the live site immediately after deploy (Playwright is the standard verification path used in this repo)
-- Checked for JS errors in the browser console
-- Ready to revert if anything breaks
+## Conversion copy principles
 
-Per the auto-commit instruction at the top of this file, commit and push directly to main. Do not create feature branches unless explicitly requested.
+These apply to all pages. The site is one voice across all pages: confident, direct, first-person, low-bullshit. Joshua Guerrero, solo agent, speaking in his own voice.
 
-## Realtor.com clone state (homepage)
+### Optimize the Value Equation
 
-The homepage (/index.html) is structurally still a clone of sell.realtor.com that is being incrementally cleaned up. Knowing what's been done vs. what's deferred matters for understanding the current state of the file.
+Every page should pull at least one of these levers. If copy doesn't, it's filler.
+
+- **Dream Outcome (↑):** specific outcome states. "$23,250 in seller credit negotiated," not "significant savings."
+- **Perceived Likelihood (↑):** systems, data, anti-claims (things you don't do). Concrete process beats vague experience.
+- **Time Delay (↓):** response-time commitments, list-to-MLS speed, step-by-step timelines with numbers.
+- **Effort and Sacrifice (↓):** explicit "I handle X, you handle Y." The most underdeveloped lever in current copy; biggest differentiation opportunity.
+
+### What to avoid
+
+- Generic real estate platitudes ("I'm passionate about helping families find their dream home").
+- SEO-style filler ("how to sell my house fast in [city]").
+- Stock testimonial language ("5-star rated," "trusted advisor").
+- Star ratings or platform-aggregated reviews. The funnel and real numbers do this work better.
+- Hyperbolic claims that can't be backed up.
+- Surface-level "AI" and "automation" framing. The leverage Joshua has is real; the framing is "systems and discipline," not "I use software to do this."
+- Em dashes (U+2014). Banned everywhere.
+
+### Audience archetypes
+
+Sellers (primary):
+- Strategic move-up / move-down (dual-income, 5 to 15 years in home, data-oriented).
+- Life-event forced sellers (divorce, relocation, medical, bankruptcy) — value privacy and discretion.
+- Inherited-property heirs (probate) — value empathy, coordination with attorneys/siblings.
+- Long-term cashing out (retirement, downsizing) — value capital gains awareness.
+- Investor / rental owners — value 1031 experience.
+
+Buyers (secondary):
+- First-time buyers — value patience, education, financing guidance.
+- Move-up buyers — often combined with the Sell&Buy funnel.
+- Investors / 1031 exchange buyers.
+- Out-of-area / relocation buyers.
+
+Page copy should include specific-situation acknowledgments without dedicating whole pages to each. One-sentence callouts beat sections.
+
+## Realtor.com clone state
+
+The homepage was a clone of sell.realtor.com that has been incrementally cleaned. Knowing what's been done vs. what's deferred matters when interpreting the existing markup.
 
 ### Done (do not redo)
 
-- All external `<a href="http(s)://…">` redirected to `#top` so paid clicks don't leak off-site (excludes `tel:`, `mailto:`, relative paths, and the funnel's internal `href="#"` back buttons)
-- Phone numbers replaced: `tel:9494385948` / display `(949) 438-5948` (was UpNest's 800-419-0261 in header and 800-692-5010 in footer)
-- Move Inc tracking pixels destroyed: Facebook pixel `754678604575607`, DoubleClick advertiser `10291144` (3 iframes), Bing UET `25046895`, Adobe/Everest `5154` (2 imgs + 1 iframe + cm.everesttech.net), `<meta property="fb:app_id" content="390296427710609">`
-- GTM-KVV3R96P installed (head + body noscript)
-- Drozq SEO/social meta installed (title, description, canonical, og:*, twitter:*, favicons → all drozq.com)
-- Drozq social URLs in footer: Facebook → `facebook.com/Drozq/`, Instagram → `instagram.com/drozq/`, YouTube → `youtube.com/@drozq` (Twitter stays `#top` — no drozq Twitter)
-- Hero tabs (Sell / Buy / Sell & Buy) wired with switcher JS + lift styling
-- Mid-page "I'm selling / I'm buying" tabs wired (added missing `<div id="buyTab">` panel; `wireTabs` toggles `data-selected` for Panda CSS)
-- FAQ accordion wired (delegated click handler, +/- icon toggle via SVG path split)
-- Three-funnel system built (Sell / Buy / Sell & Buy) replacing the single funnel
-- Geo autofill on page load (replaces "Columbus, OH" with detected city)
-- Funnel drop-off PostHog events wired
-- gclid pushed to dataLayer on page load
-- `generate_lead` gated via sessionStorage flag + `?ref=funnel` redirect
-
-### Deferred (in REALTOR_CLEANUP_AUDIT.md)
-
-The full backlog lives in `REALTOR_CLEANUP_AUDIT.md` (untracked, repo root). Highlights still pending:
-
-- Wrong DRE license still showing in footer: `California BRE #01928572` (UpNest's). Should be `California DRE #02267255` (Joshua's).
-- Wrong jurisdiction: `Indiana PLA RC51800184` in footer. Drozq is CA-only.
-- 5 fake agent profile cards near top of body
-- 5 fake out-of-state testimonials (Avondale AZ, Colts Neck NJ, Coral Springs FL, etc.) and "4.8 Out of 5" star aggregate
-- Move-hosted illustration imagery (`lt6p.com/re/img/buysell/...`)
-- The Columbus market-trends iframe (`realtorqa.upnest.com/market-trends/...?slug_id=Columbus_OH&lat=40.1113&lon=-82.9717`)
-- Move-hosted `@font-face` declarations (Roboto + Galano Grotesque from `static.rdc.moveaws.com/fonts/...`) inside the inline `<style>` block
-- Award badges in footer (Inc 5000, Deloitte Fast 500, goo.gl Google reviews redirect — UpNest-only, no drozq equivalents) — currently `#top` placeholders
-- App store badges (iTunes UpNest agent app, Play Store UpNest agent app) — currently `#top` placeholders
-
-When asked to "clean up the homepage," confirm which item(s) before proceeding. The audit document is the source of truth.
-
-## Content and voice principles
-
-### Voice
-
-The site speaks in a confident, direct, slightly vulnerable first-person voice. "I" not "we." Joshua Guerrero is a solo agent, and the writing should reflect that. The tone is:
-
-- Honest about uncomfortable truths (commission, being a newer agent, anonymizing clients)
-- Specific over generic (real numbers, real outcomes, named partners)
-- Measured, not hyperbolic
-- Sparse, not crowded
-
-### Brand values (echo throughout copy, never name explicitly)
-
-- **Competitive Greatness**: willingness to do what average agents won't
-- **Unimpeachable Character**: would rather lose a commission than lose trust
-- **Speed is King**: deals die in the silence between messages
-
-These values should leak through every section of every page without being heavy-handed. If a value is named explicitly, it's only on /about/ in the dedicated values block.
-
-### What to avoid in copy
-
-- Generic real estate platitudes ("I'm passionate about helping families find their dream home")
-- SEO-style filler ("how to sell my house fast in [city]")
-- Stock testimonial-page language ("5-star rated," "trusted advisor")
-- Hyperbolic claims that can't be backed up
-- Star ratings or platform-aggregated reviews (these belong nowhere on the site, the case files do this work better)
-- Surface-level "AI" and "automation" framing in customer-facing copy. The leverage Joshua has is real, but the framing is systems, discipline, and transparency, not "I use software to do this." Technical posts in /field-notes/ can discuss tooling when directly relevant to readers, but promotional and marketing copy should lead with systems thinking, not tech-stack name-dropping.
-
-### Copy patterns to use
-
-When writing copy, prefer these concrete patterns observed in existing strong pages:
-
-- Specific dollar amounts ("$23,250 in seller credit negotiated," not "significant savings")
-- Specific timelines ("7 days to MLS," not "quick turnaround")
-- Specific neighborhoods named ("Turtle Rock," "Woodbridge," "Northwood," not "Irvine neighborhoods")
-- "So far" framing when owning newness ("$43,250 total client savings, so far," not "extensive savings")
-- First-person honesty about constraints ("I'm not from here, which is exactly why I work harder than the agents who are," not "proud to serve Irvine")
-- Case file numbering ("CASE FILE 001") for implied accumulation
-- Anti-claims (things YOU don't do) as differentiators
-- "What you do vs. what I do" split structure for effort communication
-
-### Formatting principles
-
-- Short paragraphs (3 to 5 sentences max in body copy)
-- Generous whitespace
-- Numbered or bulleted lists only when they genuinely improve scannability
-- Pull quotes and stat callouts for emphasis, not bold-everywhere
-
-## Copy framework: Value Equation (for conversion pages)
-
-All conversion-page copy (homepage, future landing pages) should optimize the four terms of the Value Equation:
-
-- **Dream Outcome (↑):** specific outcome states, not generic promises. Examples: "sold at X% over neighborhood median," "sold in under 45 days," dollar amounts earned or saved.
-- **Perceived Likelihood (↑):** case files, specific market data, systems over experience, credentials. Anti-claims (things YOU don't do) are powerful here.
-- **Time Delay (↓):** response time commitments, list-to-MLS speed, step-by-step timelines with numbers.
-- **Effort and Sacrifice (↓):** explicit "I handle X, you handle Y" structure, privacy protections, removing decisions from the seller.
-
-When writing new conversion copy, name which term(s) the copy is strengthening. If copy doesn't clearly pull at least one of these levers, it's probably filler.
-
-The Effort and Sacrifice lever is the most underdeveloped in current copy and the single biggest opportunity for differentiation. Most competing agents compete on Dream Outcome and Perceived Likelihood. Few commit to reducing the seller's actual workload.
-
-## Audience archetypes
-
-### Sellers (primary)
-
-The site speaks to Irvine homeowners considering selling. Under that umbrella:
-
-- **Strategic move-up / move-down** (primary): dual-income, 5 to 15 years in home, data-oriented
-- **Life-event forced sellers** (divorce, relocation, medical, bankruptcy): value privacy and discretion over speed
-- **Inherited-property heirs** (probate): value empathy, coordination with attorneys and siblings
-- **Long-term cashing out** (retirement, downsizing): value capital gains awareness and patience
-- **Investor / rental owners**: value 1031 experience and tenant-occupied listing expertise
-
-### Buyers (secondary)
-
-The Buy funnel and homepage Buy tab serve buyers. Archetypes:
-
-- **First-time buyers**: value patience, education, financing guidance
-- **Move-up buyers** (often the same person as the strategic-move-up seller): often combined into the Sell & Buy funnel
-- **Investors / 1031 exchange buyers**: value market knowledge, deal flow access
-- **Out-of-area / relocation buyers**: value local-expert framing
-
-Copy should include specific-situation acknowledgments ("Navigating probate? Divorce? Investment property with tenants? Out-of-area relocation?") without dedicating entire pages to each. One-sentence callouts, not sections. The goal is for each archetype to feel seen without fragmenting the copy.
-
-## Site architecture
-
-### Page inventory
-
-- /index.html (home — paid-traffic 3-funnel)
-- /about/index.html
-- /testimonials/index.html (case files index)
-- /testimonials/001-long-beach-firefighter/index.html (Case File 001)
-- /testimonials/002-corona-analyst/index.html (Case File 002)
-- /testimonials/00X-slug/index.html (future case files)
-- /faq/index.html
-- /contact/index.html
-- /field-notes/index.html (replaces former /blog/)
-- /field-notes/00X-slug/index.html (future field notes posts)
-- /market-insights/index.html
-- /meet-the-team/index.html
-- /the-process/index.html (also reachable as /process/)
-- /where-we-help/index.html
-- /privacy/index.html (privacy policy)
-- /thank-you/index.html
-- /california/index.html, /los-angeles/index.html (regional landing pages)
-
-### Cloudflare Pages Functions
-
-- /functions/api/lead.js — form submissions → MailChannels (+ optional Zapier)
-- /functions/api/geo.js — visitor geolocation from `request.cf`
-
-### URL conventions
-
-- All directories use trailing slashes (/about/ not /about)
-- Numbered content uses zero-padded slugs (001-long-beach-firefighter, not 1-long-beach)
-- Slugs are descriptive and SEO-friendly (location and archetype, not generic names)
-
-### Cross-linking patterns
-
-Pages cross-link in a deliberate web, not a hierarchy. Standard cross-link patterns:
-
-- /about/ → links to /testimonials/ (the proof)
-- /testimonials/ → individual case files link back to /testimonials/ (the index)
-- Each case file → links to neighboring case files
-- /field-notes/ → links to /testimonials/
-- /market-insights/ → links to /field-notes/ and /contact/
-- /meet-the-team/ → links to /testimonials/ and /contact/
-- /contact/ → links to /testimonials/ for proof
-- Every brand-mode page → has a primary CTA linking to /contact/ or the booking flow
-
-The homepage doesn't follow brand-mode cross-linking — its CTAs all open the funnel, and most external `<a>` are neutralized to `#top` (paid traffic stays on page).
-
-## Recurring structural patterns
-
-### The "Case File" framing
-
-The series naming convention applies to multiple content types:
-
-- **Case Files**: CASE FILE 001, CASE FILE 002, etc. (testimonials)
-- **Field Notes**: NOTE 001, NOTE 002, etc. (blog posts)
-- **Counties**: COUNTY 01, COUNTY 02, etc. (market insights)
-- **Layers**: LAYER 01, LAYER 02, LAYER 03 (meet the team)
-- **Categories**: CATEGORY 01, etc. (FAQ)
-
-This numbering creates a sense of intentional series and accumulation.
-
-### "Coming soon" placeholder pattern
-
-When a content series has fewer items than its target structure (e.g., only 2 case files but the grid wants 3), add a "Coming soon" placeholder card with:
-
-- Same dimensions as real cards
-- Dashed border instead of solid
-- Reduced opacity (around 0.6 to 0.7)
-- Non-clickable
-- Copy that suggests an active pipeline (e.g., "Currently in escrow / Details coming soon")
-
-### Aggregate stats pattern
-
-The aggregate stats strip on /testimonials/ is a recurring pattern. It appears on:
-
-- /testimonials/ (total client savings, homes closed, etc.)
-- /about/ (volume closed, homes sold, units per month)
-
-When adding new stat strips, match the visual treatment exactly. Wrap stat values in `<!-- UPDATE -->` HTML comments so they're easy to update manually as numbers grow.
-
-### Stat dashboard pattern
-
-Each Case File and the Market Insights county sections use a stat dashboard with:
-
-- A hero stat (the largest, most important number)
-- A grid of secondary stats (3 columns desktop, 1 column mobile)
-- Animated count-up on scroll using IntersectionObserver
-
-### Section label + headline + body pattern
-
-Most brand-mode sections follow this rhythm:
-
-- Small uppercase letter-spaced label
-- Large bold headline
-- Body copy in 1.125rem to 1.25rem with comfortable line-height
-
-### CTA pattern
-
-Every brand-mode page ends with a "Book a 15-minute call" CTA. This is the universal site CTA. Variants of the surrounding copy are encouraged, but the button text and destination (/contact/) should remain consistent.
-
-The homepage uses the funnel as its primary CTA across multiple form instances; the universal "Book a 15-minute call" CTA does not currently appear there (the entire page is one big CTA).
-
-## SEO and metadata standards
-
-Every page must have:
-
-- A unique `<title>` tag (50 to 60 characters, includes "Joshua Guerrero" or "Drozq" as brand suffix)
-- A unique `<meta name="description">` (140 to 160 characters)
-- A `<link rel="canonical">` pointing to the absolute URL on drozq.com (NOT to a third-party site, even when a page is structurally based on one — see realtor.com clone notes)
-- Open Graph tags (og:title, og:description, og:image, og:url, og:type, og:site_name)
-- Twitter Card tags (twitter:card, twitter:title, twitter:description, twitter:image)
-- Appropriate JSON-LD structured data (RealEstateAgent, Person, Article, FAQPage, Blog, BreadcrumbList as relevant)
-- All `<img>` tags with descriptive alt attributes
-- Non-hero images with `loading="lazy"`
-- Hero images with `fetchpriority="high"`
-
-The homepage carries the RealEstateAgent Organization schema (still pending — flagged in the cleanup audit). The About page carries Person schema. Each case file carries Article and BreadcrumbList schema. The FAQ page carries FAQPage schema with all questions and answers mirrored.
-
-`/thank-you/` is `noindex,nofollow` by design. Other pages should be indexable.
-
-Future conversion-optimized landing pages (if built) should include `<meta name="robots" content="noindex">` to prevent organic indexing, since their purpose is paid traffic only.
-
-## Update workflow conventions
-
-For pages that will be updated frequently (especially /market-insights/):
-
-- Wrap every updatable value in clearly-named HTML comments: `<!-- UPDATE: [description] -->` and `<!-- END UPDATE -->`
-- Include an update guide comment block at the top of the file explaining how to update values
-- Structure the markup so updating one value doesn't require editing structural elements
-
-## What this site is NOT
-
-A few explicit anti-patterns to avoid:
-
-- It is not a generic agent template site. Every page should have a point of view and a deliberate angle.
-- It is not a volume-first lead funnel. Conversion optimization on the homepage and landing pages is welcome and intentional, but quality-of-lead matters more than quantity. The timeline qualification field on the funnel is specifically designed to surface intent, not just volume.
-- It is not a place for star ratings, review screenshots, or platform-aggregated social proof. The case files do this work, more credibly.
-- It is not a place to mention AI, automation, or technology tooling in promotional copy. The leverage Joshua has is real, but the framing is "systems and discipline," not "I use software to do this." Technical discussions in /field-notes/ that serve the reader are fine.
-- It is not a content farm. Field Notes posts and Case Files are published when there's something worth saying, not on a schedule.
-- It is not a place for fake team members. Joshua is a solo agent. Partners are named by role only (brokerage, transaction coordinator, photographer, lenders, inspectors, title and escrow), not by invented personal names with stock photos.
-- It is not a site where inline script tags, `gtag()` calls, or third-party pixels should appear outside the GTM container. All third-party tracking goes through GTM.
-- It is not a site that should collect sensitive data in forms beyond what an agent needs to provide a valuation (address, name, contact info, timeline). No SSN, no income, no financials.
+- External `<a href="http(s)://…">` redirected to `#top` so paid clicks don't leak off-site (excludes `tel:`, `mailto:`, relative paths, internal funnel `href="#"` back buttons).
+- Phone numbers replaced: header/footer display `(949) 438-5948` (was UpNest's 800-419-0261 and 800-692-5010).
+- Move Inc tracking pixels destroyed: Facebook pixel `754678604575607`, DoubleClick advertiser `10291144` (3 iframes), Bing UET `25046895`, Adobe/Everest `5154`, `<meta property="fb:app_id">`.
+- GTM-KVV3R96P installed (head + body noscript).
+- Drozq SEO/social meta installed (title, description, canonical, og:*, twitter:*, favicons).
+- Drozq social URLs: Facebook → `facebook.com/Drozq/`, Instagram → `instagram.com/drozq/`, YouTube → `youtube.com/@drozq`. Twitter stays `#top`.
+- Hero tabs (Sell / Buy / Sell & Buy) wired with switcher JS.
+- Mid-page "I'm selling / I'm buying" tabs wired (`sellTabBtn` / `buyTabBtn` controlling `sellTab` / `buyTab`).
+- FAQ accordion wired.
+- Three-funnel system built (Sell / Buy / Sell & Buy).
+- Geo autofill replacing "Columbus, OH" with detected city.
+- Funnel drop-off PostHog events.
+- gclid pushed to dataLayer on page load.
+- `generate_lead` gated via sessionStorage flag + `?ref=funnel` redirect.
+- DRE corrected to `02267255`, Indiana PLA removed.
+- Footer gutted: minimal conversion footer (brand logo, identity line, DRE, phone, social, Privacy/Terms, copyright).
+- "Source: RealEstateSM" attribution masked on the market-trends iframe (170×34 white overlay, click-blocking).
+- Tab IDs renamed (`sellUpnestTab` → `sellTabBtn`, `buyUpnestTab` → `buyTabBtn`).
+
+### Deferred
+
+Tracked in `REALTOR_CLEANUP_AUDIT.md` (untracked, repo root). Highlights still pending:
+
+- 5 fake agent profile cards near top of body.
+- 5 fake out-of-state testimonials (Avondale AZ, Colts Neck NJ, Coral Springs FL, etc.).
+- Move-hosted illustration imagery (`lt6p.com/re/img/buysell/...`).
+- Move-hosted `@font-face` declarations (Roboto + Galano Grotesque from `static.rdc.moveaws.com/fonts/...`) inside the inline `<style>` block.
+- Award badges in footer placeholders (Inc 5000, Deloitte Fast 500 — already neutralized to `#top`).
+- App store badges (UpNest agent app links — already neutralized to `#top`).
+
+When asked to "clean up the homepage," confirm which item(s) before proceeding.
 
 ## Reference docs
 
-- `REALTOR_CLEANUP_AUDIT.md` (untracked, repo root) — the comprehensive list of remaining realtor.com clone leftovers on the homepage. Source of truth when "clean up the homepage" lands as a task.
+- `REALTOR_CLEANUP_AUDIT.md` (repo root): the comprehensive list of remaining realtor.com clone leftovers. Source of truth when "clean up the homepage" lands as a task.
+- `funnels.json` (repo root): funnel sync registry. List of pages carrying the inline funnel + last sync timestamps.
+- `scripts/sync_funnels.py`: the funnel propagation tool.
 - `notes/posthog/`: running log of funnel observations from PostHog. Read `lessons.md` first, then the most recent entries in `funnel-log.md`, before touching anything that could move funnel drop-off (hero copy, tab structure, step ordering, validation, mobile layout). Append a new dated entry after any session that queried PostHog. See `notes/posthog/README.md` for the convention.
-- `.mcp.json` (repo root): wires up the PostHog remote MCP server. Activation requires a `POSTHOG_API_KEY` env var (personal API key from https://app.posthog.com/settings/user-api-keys?preset=mcp_server). The key never lives in the repo. Run `/mcp` inside Claude Code to confirm the server is connected.
-- `C:\Users\guerr\.claude\projects\C--Users-guerr-Documents-drozq-com\memory\` — auto-memory directory for cross-session context (preferences, project state, references). Read on every session start; updated when stable patterns emerge.
+- `notes/ads/`: paid campaign strategy docs (`distressed-sellers-strategy.md`, `sellers-max-intent-campaign.md`). Read before touching the campaigns or campaign landing pages.
+- `.mcp.json` (repo root): wires up the PostHog remote MCP server. Activation requires a `POSTHOG_API_KEY` env var. Run `/mcp` inside Claude Code to confirm the server is connected.
+- `C:\Users\guerr\.claude\projects\C--Users-guerr-Documents-drozq-com\memory\`: auto-memory directory for cross-session context. Read on every session start; updated when stable patterns emerge.
+- Other audit docs (`AUDIT-INDEX-2026-04-26.md`, `SEO-AUDIT-INDEX-2026-04-26.md`, `FAVICON_AUDIT.md`, `SPEED-AUDIT.md`, `CHANGES.md`): legacy / partial overlap with the docs above. Will be consolidated in a future pass.
 
 ## When in doubt
 
-If a request is ambiguous, default to:
-
-- The pattern already established on /testimonials/, /about/, or /faq/ (brand-mode) or the homepage funnel IIFE (conversion-mode)
-- The most concise, confident, sparse interpretation
-- Asking for clarification rather than guessing on brand voice
-
-If a change would affect the brand-mode header, footer, or foundational `<style>` block, stop and confirm before proceeding. These are protected zones.
-
-If a request involves the homepage funnel, the contact form, or the Google Maps autocomplete, stop and audit the existing implementation before modifying anything. Breaking these is the easiest way to silently degrade the most important conversion point on the site.
-
-If a request involves "cleaning up" tracking scripts, GTM tags, gtag calls, or pixel installations, stop and confirm specifically which elements to touch. Assume nothing is dead code without verification. Cross-reference against `REALTOR_CLEANUP_AUDIT.md` if it's the homepage.
+- Ambiguous styling or structure on a new page: default to the homepage pattern.
+- Ambiguous voice or copy direction: confident, first-person, specific, sparse. No platitudes, no SEO filler, no star ratings.
+- Anything that touches the funnel, tracking, forms, or `/api/lead`: stop and audit before modifying.
+- Anything that touches a registered page's funnel block: edit `/index.html` and re-sync; never hand-edit.
+- Anything labeled "DO NOT MODIFY": ask.
