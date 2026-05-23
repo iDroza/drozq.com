@@ -100,7 +100,6 @@ HERO = f"""
       </div>
     </div>
 
-    <p class="ta_center op_0.85 c_#fff fs_12px md:fs_13px ls_1.5px fw_700" style="text-transform:uppercase">38 cities. 6 counties. One agent.</p>
   </section>
 </div>
 """

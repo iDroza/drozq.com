@@ -90,7 +90,6 @@ HERO = f"""
       </div>
     </div>
 
-    <p class="ta_center op_0.85 c_#fff fs_12px md:fs_13px ls_1.5px fw_700" style="text-transform:uppercase">Licensed California REALTOR&reg; &middot; DRE #02267255</p>
   </section>
 </div>
 """
