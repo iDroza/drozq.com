@@ -1,6 +1,6 @@
 # Claude Code Instructions
 
-*Last reviewed: May 22, 2026*
+*Last reviewed: May 23, 2026*
 
 ## The standard
 
