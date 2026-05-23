@@ -21,7 +21,7 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from scaffold_page import scaffold_page
-from _case_file_shared import CF_STYLE_BLOCK, cta_pill
+from _case_file_shared import CF_STYLE_BLOCK, COUNT_UP_AND_REVEAL_SCRIPT, cta_pill
 
 
 HOUSE_SVG = '<svg viewBox="0 0 100 100"><path d="M50 12 L8 48 L18 48 L18 88 L42 88 L42 64 L58 64 L58 88 L82 88 L82 48 L92 48 Z"/></svg>'
@@ -90,7 +90,7 @@ DEAL = """
     </div>
 
     <div class="cf-hero-stat">
-      <div class="cf-hero-stat__number">$23,250</div>
+      <div class="cf-hero-stat__number" data-count-target="23250" data-count-prefix="$">$23,250</div>
       <div class="cf-hero-stat__label">Seller credit negotiated</div>
     </div>
 
@@ -204,7 +204,7 @@ CROSSLINK = """
 """
 
 
-MAIN_BODY = CF_STYLE_BLOCK + HERO + CLIENT + MISSION + SEARCH + DEAL + NEGOTIATION + QUOTE + TAKEAWAY + CROSSLINK
+MAIN_BODY = CF_STYLE_BLOCK + HERO + CLIENT + MISSION + SEARCH + DEAL + NEGOTIATION + QUOTE + TAKEAWAY + CROSSLINK + COUNT_UP_AND_REVEAL_SCRIPT
 
 
 if __name__ == "__main__":

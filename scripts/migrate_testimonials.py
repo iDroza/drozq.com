@@ -12,7 +12,7 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from scaffold_page import scaffold_page
-from _case_file_shared import CF_STYLE_BLOCK, cta_pill
+from _case_file_shared import CF_STYLE_BLOCK, COUNT_UP_AND_REVEAL_SCRIPT, cta_pill
 
 
 HERO = """
@@ -33,28 +33,28 @@ STATS = """
 
       <div class="cf-stats-strip__item">
         <!-- UPDATE AS NEW CASE FILES ARE ADDED -->
-        <span class="cf-stats-strip__number">$43,250</span>
+        <span class="cf-stats-strip__number" data-count-target="43250" data-count-prefix="$">$43,250</span>
         <!-- END UPDATE -->
         <div class="cf-stats-strip__sub">Total client savings</div>
       </div>
 
       <div class="cf-stats-strip__item">
         <!-- UPDATE AS NEW CASE FILES ARE ADDED -->
-        <span class="cf-stats-strip__number">2</span>
+        <span class="cf-stats-strip__number" data-count-target="2">2</span>
         <!-- END UPDATE -->
         <div class="cf-stats-strip__sub">Homes closed</div>
       </div>
 
       <div class="cf-stats-strip__item">
         <!-- UPDATE AS NEW CASE FILES ARE ADDED -->
-        <span class="cf-stats-strip__number">2</span>
+        <span class="cf-stats-strip__number" data-count-target="2">2</span>
         <!-- END UPDATE -->
         <div class="cf-stats-strip__sub">Closed ahead of schedule</div>
       </div>
 
       <div class="cf-stats-strip__item">
         <!-- UPDATE AS NEW CASE FILES ARE ADDED -->
-        <span class="cf-stats-strip__number">23</span>
+        <span class="cf-stats-strip__number" data-count-target="23">23</span>
         <!-- END UPDATE -->
         <div class="cf-stats-strip__sub">Properties toured</div>
       </div>
@@ -111,7 +111,7 @@ CTA = f"""
 """
 
 
-MAIN_BODY = CF_STYLE_BLOCK + HERO + STATS + CARDS + CTA
+MAIN_BODY = CF_STYLE_BLOCK + HERO + STATS + CARDS + CTA + COUNT_UP_AND_REVEAL_SCRIPT
 
 
 if __name__ == "__main__":

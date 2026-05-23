@@ -9,21 +9,31 @@ is fully self-contained inside `<main>` and does not depend on a `:root`
 declaration on the page.
 """
 
-# Color tokens — inlined where they appear in the cf-* rules below.
+# Color tokens — remapped from the legacy brand-mode green/navy palette to
+# the homepage red/dark palette. Inlined where they appear in the cf-* CSS.
 _TOKENS = {
     "var(--color-white)": "#ffffff",
-    "var(--color-green)": "#42cc93",
-    "var(--color-green-hover)": "#34aa83",
-    "var(--color-mint)": "#d0f4e0",
-    "var(--color-navy)": "#1e2f49",
-    "var(--color-navy-light)": "#343f56",
-    "var(--color-gray-light)": "#eaeaea",
-    "var(--color-gray-bg)": "#f7f7f7",
-    "var(--color-star)": "#f7b80c",
+    # Brand-mode green -> homepage primary red.
+    "var(--color-green)": "#d92228",
+    "var(--color-green-hover)": "#a92e2a",
+    # Mint tint -> light red tint, used for accent backgrounds on case-file
+    # tab pills.
+    "var(--color-mint)": "#fdecec",
+    # Navy -> homepage text colors.
+    "var(--color-navy)": "#1a1816",
+    "var(--color-navy-light)": "#3f4650",
+    # Border + light band colors match the homepage convention.
+    "var(--color-gray-light)": "#e5e5e5",
+    "var(--color-gray-bg)": "#f2f0ef",
     "var(--font)": '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif',
     "var(--radius)": "6px",
     "var(--radius-lg)": "20px",
     "var(--transition)": "0.2s ease",
+    # Hardcoded rgba color references in the original cf-* CSS that need to
+    # follow the green->red and navy->dark swap.
+    "rgba(66, 204, 147, 0.18)": "rgba(217, 34, 40, 0.18)",
+    "rgba(66, 204, 147, 0.14)": "rgba(217, 34, 40, 0.14)",
+    "rgba(30, 47, 73, 0.25)": "rgba(26, 24, 22, 0.18)",
 }
 
 
@@ -261,7 +271,12 @@ _CF_CSS_RAW = r"""
 }
 .cf-takeaway__next a:hover { color: var(--color-green); border-color: var(--color-green); }
 
-.cf-reveal { opacity: 1; transform: none; }
+.cf-reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.cf-reveal.is-visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .cf-reveal { transition: none; opacity: 1; transform: none; }
+  .cf-hero__scroll::after, .cf-house--match { animation: none; }
+}
 
 /* Stats strip (index page). */
 .cf-stats-strip { padding: 60px 0; background: var(--color-white); border-top: 1px solid var(--color-gray-light); border-bottom: 1px solid var(--color-gray-light); }
@@ -438,6 +453,65 @@ def _inline_tokens(css: str) -> str:
 
 
 CF_STYLE_BLOCK = "<style>\n" + _inline_tokens(_CF_CSS_RAW) + "\n</style>"
+
+
+# Count-up + reveal-on-scroll IIFE. Inlined at the end of <main> on each
+# case-file page. Animates any [data-count-target] from 0 to its target
+# the first time it scrolls into view, and toggles the .is-visible class
+# on any .cf-reveal that scrolls into view.
+COUNT_UP_AND_REVEAL_SCRIPT = """
+<script>
+(function () {
+  if (typeof IntersectionObserver === "undefined") return;
+
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function animateNumber(el) {
+    var target = parseFloat(el.getAttribute("data-count-target"));
+    if (isNaN(target)) return;
+    var prefix = el.getAttribute("data-count-prefix") || "";
+    var suffix = el.getAttribute("data-count-suffix") || "";
+    var duration = 1400;
+    var startTime = null;
+    function step(t) {
+      if (!startTime) startTime = t;
+      var p = Math.min((t - startTime) / duration, 1);
+      var current = Math.floor(target * easeOutCubic(p));
+      el.textContent = prefix + current.toLocaleString() + suffix;
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = prefix + Math.round(target).toLocaleString() + suffix;
+    }
+    requestAnimationFrame(step);
+  }
+
+  var numEls = document.querySelectorAll("[data-count-target]");
+  if (numEls.length) {
+    var numIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          animateNumber(e.target);
+          numIo.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    numEls.forEach(function (el) { numIo.observe(el); });
+  }
+
+  var revEls = document.querySelectorAll(".cf-reveal");
+  if (revEls.length) {
+    var revIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-visible");
+          revIo.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revEls.forEach(function (el) { revIo.observe(el); });
+  }
+})();
+</script>
+"""
 
 
 # Inline funnel-opening pill (Sell mode). Reusable across all three pages.
