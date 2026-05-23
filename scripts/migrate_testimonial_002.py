@@ -167,6 +167,7 @@ TAKEAWAY = f"""
     <h2 class="cf-takeaway__headline">Lower price. Repairs handled. Early close. Position secured. No emotion. Just execution.</h2>
     <p class="cf-takeaway__sub">If you are approaching your first purchase as a strategic move rather than a milestone, drop your address below.</p>
     {cta_pill()}
+    <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_24px ta_center">Or call direct: <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a></p>
     <div class="cf-takeaway__next">Case File 003 coming soon.</div>
   </div>
 </section>

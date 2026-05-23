@@ -203,7 +203,7 @@ MAIN_BODY = """
           <input type="hidden" name="gclid" value="">
         </form>
       </div>
-      <p class="legal-cta__fineprint">Free CMA. No spam, no autodialer.</p>
+      <p class="legal-cta__fineprint">Or call direct: <a href="tel:9494385948" style="color:#d92228;font-weight:700;text-decoration:none"><strong>(949) 438-5948</strong></a></p>
     </div>
 
   </div>

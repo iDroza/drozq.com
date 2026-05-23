@@ -187,6 +187,7 @@ TAKEAWAY = f"""
     <h2 class="cf-takeaway__headline">First home. Investment property. Rate buy-down. Zero closing costs. One deal. One strategy.</h2>
     <p class="cf-takeaway__sub">If you are a first-time buyer who wants to build real wealth in this market, this is the conversation we want to have with you. Drop your address below.</p>
     {cta_pill()}
+    <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_24px ta_center">Or call direct: <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a></p>
     <div class="cf-takeaway__next"><a href="/testimonials/002-corona-analyst/">Read Case File 002 &rarr;</a></div>
   </div>
 </section>

@@ -106,6 +106,7 @@ CTA = f"""
     <h2>Want your deal to be the next case file?</h2>
     <p class="cf-cta-strip__sub">Most clients find us right here. They read a case file, see themselves in it, and start the conversation. If that is you, drop your address.</p>
     {cta_pill()}
+    <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_24px ta_center">Or call direct: <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a></p>
   </div>
 </section>
 """

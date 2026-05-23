@@ -396,6 +396,16 @@ Standard section conventions:
 | Horizontal padding | `px_32px` | (same) | `lg:px_16px` |
 | Section background | white or `#f2f0ef` | (same) | (same) |
 
+### Closing CTA fineprint (every page except the homepage)
+
+Every page's bottom-of-page closing CTA carries the same single line below the funnel form pill:
+
+```html
+<p class="c_#757575 fs_13px md:fs_14px lh_20px mt_24px ta_center">Or call direct: <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a></p>
+```
+
+No "free CMA," no "no autodialer, no spam" boilerplate. Just the alternate path: call the line. The homepage is the exception (its hero already commits to the timeline; an extra phone CTA at the bottom dilutes the inline funnel).
+
 ### Section headlines (H2)
 
 Standard h2:

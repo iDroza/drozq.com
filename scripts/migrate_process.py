@@ -316,7 +316,7 @@ CLOSING_CTA = f"""
         <div style="width:100%; max-width: 540px;">{landing_form_pill("Enter your home address")}</div>
       </div>
 
-      <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_24px">Or call directly: <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a></p>
+      <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_24px">Or call direct: <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a></p>
     </div>
   </div>
 </section>
