@@ -51,12 +51,36 @@ MAIN_BODY = """
     margin-top: 48px; padding: 32px; background: #fbf8f4;
     border: 1px solid #ece8e2; border-radius: 16px; text-align: center;
   }
-  .legal-cta a.btn {
-    display: inline-block; background: #d92228; color: #fff;
-    padding: 14px 32px; border-radius: 9999px; font-size: 17px;
-    font-weight: 700; text-decoration: none; margin-top: 12px;
+  .legal-cta p.legal-cta__lead {
+    font-size: 18px; font-weight: 700; color: #1a1816; margin: 0 0 16px;
   }
-  .legal-cta a.btn:hover { background: #a92e2a; }
+  .legal-cta form { max-width: 540px; margin: 0 auto; }
+  .legal-cta__pill {
+    position: relative; display: flex; flex-direction: column;
+    align-items: stretch; background: #fff; border-radius: 30px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.11); overflow: hidden;
+  }
+  @media (min-width: 560px) {
+    .legal-cta__pill { flex-direction: row; align-items: center; }
+  }
+  .legal-cta__pill input[name="location"] {
+    flex: 1; height: 56px; padding: 0 24px; border: none;
+    background: transparent; font-size: 16px; color: #1a1816;
+    outline: none; font-family: inherit;
+  }
+  .legal-cta__pill button[type="submit"] {
+    height: 48px; margin: 4px; padding: 0 28px;
+    background: #d92228; color: #fff; border: none; cursor: pointer;
+    border-radius: 9999px; font-size: 16px; font-weight: 700;
+    letter-spacing: 0.3px; font-family: inherit;
+  }
+  @media (min-width: 560px) {
+    .legal-cta__pill button[type="submit"] { height: 48px; }
+  }
+  .legal-cta__pill button[type="submit"]:hover { background: #a92e2a; }
+  .legal-cta__fineprint {
+    font-size: 12px; color: #6b6864; margin: 12px 0 0;
+  }
 </style>
 
 <section class="legal-hero">
@@ -190,8 +214,18 @@ MAIN_BODY = """
     </section>
 
     <div class="legal-cta">
-      <p>Thinking about selling?</p>
-      <a href="/" class="btn">Get a free home valuation</a>
+      <p class="legal-cta__lead">Thinking about selling?</p>
+      <div id="tabpanel-sell" role="tabpanel" aria-labelledby="tab-sell">
+        <form class="pos_relative">
+          <div class="legal-cta__pill">
+            <input type="text" name="location" placeholder="Enter your address"
+                   autocomplete="off" aria-label="Enter your address">
+            <button type="submit">Compare Agents</button>
+          </div>
+          <input type="hidden" name="gclid" value="">
+        </form>
+      </div>
+      <p class="legal-cta__fineprint">Free CMA. No spam, no autodialer.</p>
     </div>
 
   </div>
