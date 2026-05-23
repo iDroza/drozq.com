@@ -271,10 +271,9 @@ _CF_CSS_RAW = r"""
 }
 .cf-takeaway__next a:hover { color: var(--color-green); border-color: var(--color-green); }
 
-.cf-reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
-.cf-reveal.is-visible { opacity: 1; transform: translateY(0); }
+/* .cf-reveal: scroll-fade-in removed; sections render immediately. */
+.cf-reveal { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) {
-  .cf-reveal { transition: none; opacity: 1; transform: none; }
   .cf-hero__scroll::after, .cf-house--match { animation: none; }
 }
 
@@ -455,10 +454,10 @@ def _inline_tokens(css: str) -> str:
 CF_STYLE_BLOCK = "<style>\n" + _inline_tokens(_CF_CSS_RAW) + "\n</style>"
 
 
-# Count-up + reveal-on-scroll IIFE. Inlined at the end of <main> on each
-# case-file page. Animates any [data-count-target] from 0 to its target
-# the first time it scrolls into view, and toggles the .is-visible class
-# on any .cf-reveal that scrolls into view.
+# Count-up IIFE. Inlined at the end of <main> on each case-file page.
+# Animates any [data-count-target] from 0 to its target the first time it
+# scrolls into view. Scroll-fade-in for .cf-reveal blocks was removed per
+# feedback; sections render immediately.
 COUNT_UP_AND_REVEAL_SCRIPT = """
 <script>
 (function () {
@@ -485,30 +484,16 @@ COUNT_UP_AND_REVEAL_SCRIPT = """
   }
 
   var numEls = document.querySelectorAll("[data-count-target]");
-  if (numEls.length) {
-    var numIo = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) {
-          animateNumber(e.target);
-          numIo.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.4 });
-    numEls.forEach(function (el) { numIo.observe(el); });
-  }
-
-  var revEls = document.querySelectorAll(".cf-reveal");
-  if (revEls.length) {
-    var revIo = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) {
-          e.target.classList.add("is-visible");
-          revIo.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.15 });
-    revEls.forEach(function (el) { revIo.observe(el); });
-  }
+  if (!numEls.length) return;
+  var numIo = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        animateNumber(e.target);
+        numIo.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  numEls.forEach(function (el) { numIo.observe(el); });
 })();
 </script>
 """
