@@ -371,25 +371,30 @@ Google Places Autocomplete is bound to every landing `input[name="location"]` fo
 
 The hero pill on the homepage uses a two-layer width scaffold. Reuse it verbatim on every page that ships a hero with the 3-tab CTA.
 
-| Layer | Class | Effect |
-|---|---|---|
-| Outer hero CTA stack (centers tabs + pill on the page) | `pos_relative w_100% max-w_772px m_0_auto` | Up to 772px wide, centered |
-| Inner per-tabpanel form container | `w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent m_0_auto` | 326px on phones, 361px on larger phones, 700px on desktop, **centered** |
+| Layer | Class (homepage) | Class (non-homepage) | Effect |
+|---|---|---|---|
+| Outer hero CTA stack | `pos_relative w_100% max-w_772px m_0_auto` | `pos_relative w_100% max-w_700px m_0_auto` | **Homepage:** 772px (extra room for the 2-column layout). **Non-homepage:** 700px so the outer matches the pill exactly. |
+| Inner per-tabpanel form container | `w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent` | `w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent m_0_auto` | 326px on phones, 361px on larger phones, 700px on desktop. `m_0_auto` on non-homepage centers the pill on mobile when the outer is content-sized. |
 
 Do not change these widths. The pill is the most-clicked element on the page; resizing it changes hero engagement.
 
 ### Hero centering (canonical, non-homepage pages)
 
-On the **homepage** the hero is a 2-column layout (tabs+pill on the left, image on the right), so the tab row uses `md:jc_left` and the form container sits left-aligned in the 772px outer wrapper. That is correct **only on the homepage**.
+On the **homepage** the hero is a 2-column layout (tabs+pill on the left, image on the right) so the entire CTA stack is left-aligned within the left column.
 
-On **every other page** the hero is centered (text + pill stacked vertically on a single background), so the tab row and the form container must both be **center-aligned**:
+On **every other page** the hero is centered (text + pill stacked vertically on a single background). The pill must be centered in the viewport, **and the tab row must left-anchor to the pill's left edge** with the homepage's `md:pl_28px` padding. This is what makes the active "Sell" tab sit visually above the input start. A tab row that is mathematically centered above the pill (`jc_center` everywhere) reads as off-center because the input dominates the left side of the pill and the tabs end up floating above its right-of-center. Mimicking the homepage's anchor-to-pill pattern (just centered as a unit instead of left-aligned in a column) is what looks right.
 
 | Element | Homepage class | Non-homepage class |
 |---|---|---|
-| Tab row | `d_flex jc_center md:jc_left gap_6px mb_0px pl_0px md:pl_28px` | `d_flex jc_center gap_6px mb_0px` |
+| Outer | `max-w_772px m_0_auto` | `max-w_700px m_0_auto` |
+| Tab row | `d_flex jc_center md:jc_left gap_6px mb_0px pl_0px md:pl_28px` | `d_flex jc_center md:jc_flex-start gap_6px mb_0px md:pl_28px` |
 | Per-tabpanel form container | `w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent` | `w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent m_0_auto` |
 
-If a new page copies the homepage hero verbatim it will inherit `md:jc_left`, which on a centered hero leaves the tabs+pill anchored to the left with ~72px of empty space on the right. That is a regression. Always center on non-homepage pages.
+Result:
+- **Mobile** (< md=768px): both tab row and pill are centered (mobile sees one column; centering is the right pattern).
+- **Tablet+** (md=768px and up): tab row left-anchors to the pill's left edge with 28px padding; pill fills the 700px outer; outer is centered in the viewport. The active tab sits above the input start — the natural visual hierarchy.
+
+Two prior fix attempts shipped the wrong pattern before this one: `md:jc_left` (homepage-style) left the whole stack offset on a centered hero, and `jc_center md:jc_center` (centered everywhere) left the small tab row floating above the right-of-center portion of the pill. Use the table above.
 
 ### Hero typography
 
