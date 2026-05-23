@@ -2,7 +2,7 @@
 
 > **READ THIS BEFORE BUILDING OR EDITING ANY PAGE.** This is the canonical specification of what makes a Drozq page a Drozq page. The homepage at `/index.html` is the live reference; this doc explains what is in it and why. If you are spinning up a new page, follow the workflow at the bottom of this doc.
 
-*Last reviewed: May 22, 2026*
+*Last reviewed: May 23, 2026*
 
 ---
 
@@ -25,8 +25,8 @@ A new page passes the bar when all of these are true.
 - [ ] Mobile-nav script outside the funnel JS markers
 - [ ] Page registered in `funnels.json` (`python scripts/sync_funnels.py --add <path>`)
 - [ ] `python scripts/sync_funnels.py` reports `OK` for the page
-- [ ] Tested at 375px, 768px, 1440px (mobile, tablet, desktop)
-- [ ] Verified on live: hero CTA opens funnel, mid-page CTA opens funnel, mid-page tabs swap copy, FAQ accordion expands, mobile drawer opens, More popup hovers, submit redirects to `/thank-you/?ref=funnel`, console clean
+- [ ] **Designed mobile-first.** Renders pristine at 375px before anything else. Tablet (768px) and desktop (1440px) are enhancements, not the starting point. If mobile and desktop disagree on a tradeoff, mobile wins.
+- [ ] Verified at 375px, 768px, and 1440px, in that order. Hero CTA, mid-page CTA, FAQ accordion, mobile drawer, More popup hover, submit → `/thank-you/?ref=funnel`, console clean.
 
 ---
 
@@ -95,7 +95,21 @@ Default body font is Roboto. GalanoGrotesque appears in one place on the homepag
 
 Panda CSS class prefix maps directly: `md:py_48px` means "at min-width 768px, padding-y 48px."
 
-Design at: **375px (mobile)**, **768px (tablet)**, **1440px (desktop)**. Test at all three.
+### Mobile is the primary canvas
+
+The majority of paid traffic and organic visits to drozq.com land on **mobile**. Every page is designed at **375px first**, then enhanced upward for tablet (**768px**) and desktop (**1440px**).
+
+Hard rules:
+
+- **Base styles are mobile.** Use `min-width` media queries (Panda's `md:` / `lg:` / `xl:` prefixes) to add complexity for larger screens. Never use `max-width` queries to subtract from a desktop-first design.
+- **Mobile wins ties.** When mobile and desktop disagree on a layout, copy length, image crop, grid column count, type scale, CTA placement, or tap-target size — mobile is correct. Desktop is the variant.
+- **Hero must be pristine at 375px.** The 3-tab CTA, address input, and Compare Agents button are the conversion engine. They must look intentional at 375px before any tablet/desktop polish.
+- **Tap targets ≥ 44 × 44 px.** Apple HIG / Material both. CTAs, tabs, accordion toggles, mobile drawer items all comply.
+- **No horizontal scroll at 375px, ever.** A scrollbar at mobile width is a regression. Constrain widths, wrap long URLs, audit `min-width` declarations.
+- **Type scale must read on a phone.** Body ≥ 16px (no iOS zoom on input focus), section headlines ≥ 24px, hero ≥ 32px at 375px.
+- **Verify in a real mobile viewport.** Don't certify a page as "works on mobile" by resizing a desktop browser. Use DevTools device emulation at 375 × 812 (iPhone) at minimum, and a real phone for any page touching the funnel.
+
+When all three breakpoints can't share the same content, the order of priority is mobile > tablet > desktop. Cut copy on desktop before you cut copy on mobile.
 
 ### Spacing
 
@@ -786,6 +800,10 @@ Do not.
 - Add em dashes (U+2014) anywhere in output. Banned.
 - Add a separate footer style per page. The minimal footer is the convention.
 - Build a new page without registering it in `funnels.json`. The sync is the propagation mechanism; an unregistered page silently drifts from the source.
+- **Design desktop-first and "make it responsive" after.** Mobile is the primary canvas, not a downstream port. Start at 375px.
+- **Use `max-width` media queries to override a desktop layout for mobile.** Base styles are mobile; use `min-width` queries to add complexity upward.
+- **Ship a page you only verified at 1440px.** A page is not done until it has been verified at 375px first, and any layout that fails there blocks the deploy.
+- **Stuff desktop copy onto a mobile hero.** Cut copy on desktop before you cut copy on mobile. The mobile hero is the constraint that shapes every headline.
 
 ---
 

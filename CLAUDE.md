@@ -32,7 +32,7 @@ Legacy brand-mode pages (`/about/`, `/testimonials/`, `/faq/`, `/contact/`, `/fi
 
 5. **Form integrity is sacred.** All forms POST to `/api/lead`, redirect to `/thank-you/?ref=funnel`, and set `sessionStorage.drozq_lead_just_submitted = "1"` immediately before the redirect. Breaking the redirect or the flag silently destroys conversion measurement.
 
-6. **Mobile-first, always.** Render intentionally at 375px, 768px, 1440px. Base styles for mobile, enhance with min-width media queries.
+6. **Mobile is the primary canvas, not a responsive afterthought.** The majority of paid traffic and organic visits land on mobile. Every page is designed at 375px first, then enhanced upward for tablet (768px) and desktop (1440px). If a layout decision forces a tradeoff between mobile and desktop, **mobile wins** — including hero copy length, CTA placement, grid column count, image crop, type scale, and tap-target size. Base styles are mobile; use `min-width` media queries to add complexity, never `max-width` to subtract from a desktop-first design. Verify in a real mobile viewport (not just a resized desktop browser) before claiming a page works.
 
 7. **No em dashes.** U+2014 is banned. Use commas, periods, parens, or colons. Final-pass every output to confirm zero em dashes.
 
