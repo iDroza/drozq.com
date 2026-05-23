@@ -72,7 +72,7 @@ HERO = f"""
     <div class="mt_24px md:mt_16px">
       <div class="pos_relative w_100% max-w_772px m_0_auto">
         <div class="pos_relative" role="button" tabindex="0" aria-label="Property transaction type selector">
-          <div class="d_flex jc_center md:jc_left gap_6px mb_0px pl_0px md:pl_28px">
+          <div class="d_flex jc_center gap_6px mb_0px">
             <div role="tablist" class="d_flex jc_center bdr_8px_8px_0_0 ov_hidden">
               <button role="tab" aria-selected="true"  aria-controls="tabpanel-sell"     id="tab-sell"     tabindex="0"
                       class="bdr_8px_8px_0_0 p_12px_16px fw_700 fs_13px lh_16px ta_center bg_#fff   c_#d92228 bd_none cursor_pointer as_flex-end [&:not(:first-child)]:ml_6px">Sell</button>
@@ -85,13 +85,13 @@ HERO = f"""
 
           <div class="w_100% bdr_30px pos_relative min-h_60px">
             <div id="tabpanel-sell"     role="tabpanel" aria-labelledby="tab-sell"     class="d_block">
-              <div class="w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent">{landing_form_pill("Enter your Southern California address")}</div>
+              <div class="w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent m_0_auto">{landing_form_pill("Enter your Southern California address")}</div>
             </div>
             <div id="tabpanel-buy"      role="tabpanel" aria-labelledby="tab-buy"      hidden class="d_none">
-              <div class="w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent">{landing_form_pill("City, neighborhood, or ZIP", value="Southern California")}</div>
+              <div class="w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent m_0_auto">{landing_form_pill("City, neighborhood, or ZIP", value="Southern California")}</div>
             </div>
             <div id="tabpanel-sell-buy" role="tabpanel" aria-labelledby="tab-sell-buy" hidden class="d_none">
-              <div class="w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent">{landing_form_pill("Enter your Southern California address")}</div>
+              <div class="w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent m_0_auto">{landing_form_pill("Enter your Southern California address")}</div>
             </div>
           </div>
         </div>

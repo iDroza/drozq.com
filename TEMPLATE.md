@@ -374,9 +374,22 @@ The hero pill on the homepage uses a two-layer width scaffold. Reuse it verbatim
 | Layer | Class | Effect |
 |---|---|---|
 | Outer hero CTA stack (centers tabs + pill on the page) | `pos_relative w_100% max-w_772px m_0_auto` | Up to 772px wide, centered |
-| Inner per-tabpanel form container | `w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent` | 326px on phones, 361px on larger phones, 700px on desktop |
+| Inner per-tabpanel form container | `w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent m_0_auto` | 326px on phones, 361px on larger phones, 700px on desktop, **centered** |
 
 Do not change these widths. The pill is the most-clicked element on the page; resizing it changes hero engagement.
+
+### Hero centering (canonical, non-homepage pages)
+
+On the **homepage** the hero is a 2-column layout (tabs+pill on the left, image on the right), so the tab row uses `md:jc_left` and the form container sits left-aligned in the 772px outer wrapper. That is correct **only on the homepage**.
+
+On **every other page** the hero is centered (text + pill stacked vertically on a single background), so the tab row and the form container must both be **center-aligned**:
+
+| Element | Homepage class | Non-homepage class |
+|---|---|---|
+| Tab row | `d_flex jc_center md:jc_left gap_6px mb_0px pl_0px md:pl_28px` | `d_flex jc_center gap_6px mb_0px` |
+| Per-tabpanel form container | `w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent` | `w_326px xs:w_361px md:w_700px pt_0px bg-c_transparent m_0_auto` |
+
+If a new page copies the homepage hero verbatim it will inherit `md:jc_left`, which on a centered hero leaves the tabs+pill anchored to the left with ~72px of empty space on the right. That is a regression. Always center on non-homepage pages.
 
 ### Hero typography
 
@@ -420,6 +433,56 @@ Standard section conventions:
 | Container max-width | `max-w_100%` | `md:max-w_972px` | `lg:max-w_1035px` or `xl:max-w_1035px` |
 | Horizontal padding | `px_32px` | (same) | `lg:px_16px` |
 | Section background | white or `#f2f0ef` | (same) | (same) |
+
+### Button hierarchy (canonical, the only two authorized styles)
+
+Two button styles exist on the site. **No third style is authorized.** Do not introduce new button variants without first updating this section.
+
+**1. Primary CTA pill** — only ever used for the inline funnel ("Compare Agents" or equivalent action that opens the funnel overlay). Filled red. This is the conversion mechanism; reserve it.
+
+```html
+<button type="submit"
+        class="bg_primary c_white cursor_pointer w_100% xs:w_145px md:w_auto h_48px md:h_54px fs_13px md:fs_18px fw_bold bdr_full px_0px md:px_28px ls_0.5px d_block md:d_inline-flex ai_center gap_0px md:gap_10px hover:bg_primaryHover">
+  Compare Agents
+</button>
+```
+
+| Token | Value |
+|---|---|
+| Background | `#d92228` |
+| Color | `#fff` |
+| Height | 48px mobile / 54px desktop |
+| Font | Roboto 700, 13px mobile / 18px desktop |
+| Border-radius | `9999px` (pill) |
+| Hover | `bg_primaryHover` (`#a92e2a`) |
+
+**2. Secondary outlined link** — used for navigation, related-content links, and "see more" links. Outlined red on transparent bg, fills red on hover. Smaller and lighter than the primary so it never visually competes with the funnel CTA.
+
+```html
+<a href="..."
+   class="d_inline-flex ai_center jc_center bg_transparent c_#d92228 bd_1px_solid_#d92228 fw_700 fs_14px md:fs_15px ls_0.3px py_10px px_22px bdr_full hover:bg_#d92228 hover:c_#fff"
+   style="text-decoration:none;">
+  Read more case files &rarr;
+</a>
+```
+
+| Token | Value |
+|---|---|
+| Background | `transparent` |
+| Border | `1px solid #d92228` |
+| Color | `#d92228` |
+| Padding | `10px 22px` |
+| Font | Roboto 700, 14px mobile / 15px desktop |
+| Border-radius | `9999px` (pill) |
+| Hover | `bg_#d92228` + `c_#fff` (fills red, text white) |
+| Trailing arrow | `&rarr;` (`→`) |
+
+Use cases that warrant the secondary outlined style:
+- Cross-page nav from a related-content section (e.g., "Read more case files →" linking to `/testimonials/`).
+- "See more data" or "Read the full X" linking from a summary section to a deeper page.
+- "Read the full Los Angeles listing playbook →" on `/where-we-help/`.
+
+Do **NOT** use the primary red filled pill for navigation. It visually competes with the funnel CTA and tells the user "this is the conversion action" when it isn't. A nav link that looks like a Compare Agents pill steals attention from the actual lead-capture button on the page.
 
 ### Closing CTA pill width (canonical)
 
