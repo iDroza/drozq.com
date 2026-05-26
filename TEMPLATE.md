@@ -452,6 +452,26 @@ The H1 on the current homepage reads "Compare Agents. Find a Trusted Expert." â€
 
 The homepage hero uses a flat light background. Hero imagery is not currently part of the homepage (it was deferred). If a new page wants a hero image, treat it as additive on top of the existing scaffolding rather than replacing the structure.
 
+For non-homepage pages on the new template, the default hero background is **`/media/images/crystal-cove.webp`** (a Southern California coastal shot) with a 0.55â€“0.62 dark tint overlay so the white hero copy stays readable. Used on `/california/`, `/los-angeles/`, `/where-we-help/`, `/meet-the-team/`, `/contact/`. Swap to a page-specific image only when there's a real reason (e.g., `/faq/` uses `outside-home-pic1.webp` to signal "home interior" rather than coastline). Always lazy-load any background image that isn't the hero's `fetchpriority="high"` element, always include a meaningful `alt` text, and always carry the dark tint overlay (`<div class="pos_absolute top_0 w_100% h_100% z_2" style="background:rgba(26,24,22,0.55)"></div>`) so hero copy contrast survives the image swap.
+
+### Joshua's portrait placement (Waist.png)
+
+The legacy /about/ and /meet-the-team/ pages used `/media/images/Waist.png` (Joshua's waist-up portrait) prominently in the hero. The new template hero is text-only (background image + centered copy + tab CTA), so the portrait does NOT go in the hero. Move it into a **body section as a 2-column split** (`grid-tc_280px_1fr` on desktop, `grid-tc_1fr` on mobile) beside the most personal copy on the page. Examples:
+
+- `/meet-the-team/` Layer 01 (Joshua as point of contact).
+- `/about/` Backstory section (Vallejo origin story).
+
+The portrait wrapper:
+
+```html
+<div class="ta_center md:ta_left">
+  <img src="/media/images/Waist.png" alt="Joshua Guerrero, Real Estate Agent" width="280" height="380" loading="lazy"
+       class="d_inline-block w_220px md:w_280px h_auto bdr_16px ov_hidden bx-sh_0_16px_40px_rgba(30,_47,_73,_0.12)">
+</div>
+```
+
+220px on mobile, 280px on desktop, 16px border-radius, soft drop shadow. The face belongs next to the personal copy, not floating in the hero.
+
 ---
 
 ## 5. Body sections
@@ -584,6 +604,21 @@ Examples observed:
 - Default body: `18px` / 1.6 (h2 body), Roboto 400
 - Captions and labels: `14px`
 - Eyebrows: `11-12px` / 700 / `letter-spacing: 1.5px` / uppercase / `#d92228` (red eyebrow)
+
+### Reusable building blocks (used across migrated pages)
+
+These section patterns are reused 2+ times across the migrated content pages. Treat them as the vocabulary for any future migration. Copy the matching `migrate_*.py` constant verbatim and just retitle.
+
+| Block | Used on | What it is |
+|---|---|---|
+| **Narrow centered copy block** | `/about/` (Backstory copy, School, Pattern, Mission, Closer), `/meet-the-team/` Outcome, `/contact/` Why-pricing | Single `<section>` with `max-w_560` to `max-w_720px` container, eyebrow + h2 + 2-4 body paragraphs, all centered. Mobile 16px / desktop 18px body, lh_28/32. Alternates `bg_#fff` and `bg-c_#f2f0ef` to keep section rhythm. **Don't go wider than 720px** or the paragraph reads as a wall of text. |
+| **Numbered principle card grid** | `/about/` Values (3 cards), `/meet-the-team/` Layer 03 Systems (3 cards) | `d_grid grid-tc_1fr md:grid-tc_repeat(3,_1fr) gap_16px md:gap_20px`. Each card: red eyebrow with "Principle 01" / "System 01" pattern, h3 title, body. White bg, 16px radius, 1px gray border. |
+| **6-card partner grid** | `/meet-the-team/` Layer 02, `/where-we-help/` Why-work-with-me (3 cards, similar) | `grid-tc_1fr md:grid-tc_repeat(2,_1fr) lg:grid-tc_repeat(3,_1fr)`. Each card: red inline SVG icon, gray subtitle eyebrow, h3 title, body. Use when listing trusted partners, area-served counties, or other parallel sets. |
+| **Stats strip** | `/about/` By-the-Numbers (3 stats) | `bg-c_#f2f0ef` band, `max-w_780px`, small uppercase label centered above a `grid-tc_1fr_1fr_1fr` of stat items. Each item: red `fs_36px md:fs_44px fw_800` number + 13-14px uppercase sublabel. **Do not** reintroduce the legacy `cf-count-up` animation; the brand-mode JS that drove it is dropped. Static numbers only. |
+| **Case-file mini-cards** | `/about/` The Receipts (2 cards) | `grid-tc_1fr md:grid-tc_repeat(2,_1fr)`. Each card is an `<a>` linking to a `/testimonials/<slug>/`. Red eyebrow ("Case File 001"), big `fs_30px md:fs_36px fw_800` stat ("$23,250"), small meta line ("Long Beach &middot; First-Time Buyer"). White bg, hover border `#d92228`. |
+| **Crosslink-to-case-files** | `/faq/`, `/meet-the-team/`, `/contact/`, `/about/` | Small narrow centered section near the bottom: red eyebrow, h2, single-paragraph body, single secondary-outlined button linking to `/testimonials/`. Use the `.btn-secondary-outline` style block defined in section 5 (Button hierarchy). |
+| **Two-column portrait split** | `/meet-the-team/` Layer 01, `/about/` Backstory | `grid-tc_1fr md:grid-tc_280px_1fr gap_32px md:gap_48px ai_center`. Joshua's portrait (220px mobile, 280px desktop, 16px radius, soft shadow) on one side; eyebrow + h2 + 2-3 body paragraphs on the other. See "Joshua's portrait placement" under section 4. |
+| **Jump-nav pills + smooth scroll** | `/faq/` only | If a page has 4+ scrolled sections worth jumping between, add a sticky-ish band of `.faq-jump-pill` anchors at the top. Pair with the 30-line vanilla JS smooth-scroll snippet from `migrate_faq.py` (`SMOOTH_SCROLL_SCRIPT` const): 350ms easeOutCubic tween, 24px top offset, respects `prefers-reduced-motion`, replaces history hash without polluting back-button. Scope the JS to `.faq-jump-pill` so it doesn't interfere with header `/#tab-buy` style anchors. |
 
 ---
 
@@ -856,7 +891,11 @@ Do not install AW-* tags, direct gtag, additional pixels, or any tracking outsid
 
 ## 12. Forms (every page)
 
-Every form, including non-funnel page forms, posts to `/api/lead`. The endpoint:
+**The inline 3-funnel is the only lead-capture form on the site.** Do not introduce page-specific intake forms (legacy /contact/ had a 7-field intake form; that's now gone). If the page's conversion intent is "give me a home valuation" or "tell me where you want to buy," the Sell / Buy / Sell&Buy funnels already collect every field (`name`, `email`, `phone`, `address` or `buyLocation`, `timeline`, plus mode-specific qualifiers like `priceRange`, `propertyType`, `buyBudget`, `buyHomeType`). Build the page so the 3-tab CTA + closing address pill are the lead path. Don't rebuild a parallel intake.
+
+The only exception: paid landing pages with a different qualification need (`/relief/` uses a distinct multi-step funnel for distressed sellers, including a confidential-callback intake). Those still post to `/api/lead` and follow the same endpoint contract below.
+
+Every form on the site posts to `/api/lead`. The endpoint:
 - Accepts `application/x-www-form-urlencoded` or `multipart/form-data`.
 - Required fields: `name`, `email`, `phone`, `intent`, `consent="yes"`.
 - Honeypot: `company_website`. Non-empty value silently 200s without sending email.
@@ -888,17 +927,55 @@ If you skipped here, go back. This entire doc is the spec.
 /new-page-slug/index.html
 ```
 
-### Step 2: Scaffold from /index.html
+### Step 2: Scaffold via `scripts/migrate_<slug>.py`
 
-Copy `/index.html` to the new path. Then:
+The canonical way to scaffold a new page (or re-scaffold an existing one after a copy revision) is a per-page migration script in `scripts/`. Every existing migrated page has one: `migrate_california.py`, `migrate_los_angeles.py`, `migrate_where_we_help.py`, `migrate_process.py`, `migrate_faq.py`, `migrate_meet_the_team.py`, `migrate_contact.py`, etc. Follow this shape:
 
-- Update `<title>`, `<meta description>`, `<link rel="canonical">`, OG tags, Twitter tags to the new page's values.
-- If paid landing: add `<meta name="robots" content="noindex,follow">`.
-- Update the H1 in the hero to a page-specific angle.
-- Update mid-page section copy as needed.
-- Update FAQ questions/answers as needed.
-- Leave the four `DROZQ_FUNNEL_*` markers in place. Do not touch their content.
-- Leave the mobile-nav script in place (outside the funnel JS markers).
+```python
+"""Migrate /<slug>/ to the homepage template scaffold.
+
+KILLED: ... (what brand-mode bits the migration drops)
+PRESERVED + reframed: ... (what copy / structure carries over verbatim)
+"""
+from pathlib import Path
+import sys
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
+from scaffold_page import scaffold_page
+
+def landing_form_pill(placeholder, value=""): ...   # copy verbatim from any existing migrate_*.py
+
+HERO            = f"..."   # two-section hero per section 4
+SECTION_A       = "..."    # body sections per section 5 building blocks
+SECTION_B       = "..."
+MID_TABS        = f"..."   # per section 6
+CROSSLINK       = "..."    # crosslink-to-case-files block
+CLOSING_CTA     = f"..."   # closing address pill per section 5
+JSON_LD         = "..."    # Person / BreadcrumbList / FAQPage / etc.
+
+MAIN_BODY = HERO + SECTION_A + SECTION_B + MID_TABS + CROSSLINK + CLOSING_CTA + JSON_LD
+
+if __name__ == "__main__":
+    scaffold_page(
+        target="<slug>/index.html",
+        title="...",
+        description="...",
+        canonical="/<slug>/",
+        main_body_html=MAIN_BODY,
+        og_title="...",
+        og_description="...",
+    )
+```
+
+`scaffold_page()` (in `scripts/scaffold_page.py`) reads `/index.html`, surgically replaces `<title>` / meta description / canonical / OG tags / Twitter tags / `<main>...</main>` body, leaves the funnel markers + footer + mobile-nav + funnel JS untouched, and writes the result to the target path. The funnel block is later filled in by the sync step (Step 3).
+
+Then run:
+
+```
+python scripts/migrate_<slug>.py
+```
+
+If you're editing an existing page on the template, edit its `migrate_*.py` constants (NOT the generated HTML), then re-run the script. Edits made directly to the generated HTML get clobbered the next time the migration script runs.
 
 ### Step 3: Register the page with the funnel sync
 

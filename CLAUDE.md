@@ -18,7 +18,9 @@ drozq.com is the site for Joshua Guerrero, a solo real estate agent under Real B
 
 The homepage (originally a clone of sell.realtor.com / UpNest's agent-locator pattern) is the canonical look, feel, and behavior. Visual style, hero structure, mid-page tabs, FAQ accordion, footer, and funnel are all reusable as scaffolding for new pages. When asked to build a new page, the default is "homepage with a different angle," not "different design."
 
-Legacy brand-mode pages (`/about/`, `/testimonials/`, `/faq/`, `/contact/`, `/field-notes/`, `/market-insights/`, `/meet-the-team/`, `/the-process/`, `/where-we-help/`) still exist and still capture leads (their CTAs route to `/contact/` or the funnel), but they are not the template. Do not propagate their styling, voice, or structure into new work. They will be migrated to homepage-style over time.
+Most pages are now on the homepage template. The remaining legacy brand-mode pages (as of 2026-05-26) are `/about/`, `/field-notes/`, `/market-insights/`, and `/relief/` (the paid distressed-sellers landing, which uses its own custom hero but does inline the funnel). These four still exist and still capture leads, but they are not the template. Do not propagate their styling, voice, or structure into new work.
+
+Already migrated to the homepage template (do NOT treat as legacy): `/`, `/california/`, `/contact/`, `/faq/`, `/los-angeles/`, `/meet-the-team/`, `/privacy/`, `/process/` (renamed from legacy `/the-process/`), `/terms/`, `/testimonials/` (+ /001-long-beach-firefighter/ + /002-corona-analyst/), `/thank-you/`, `/where-we-help/`. The source of truth for "is this page using the synced funnel" is `funnels.json#pages`. The source of truth for "is this page on the homepage template" is the presence of `migrate_<slug>.py` in `scripts/` and the absence of brand-mode classes (`cf-narrow`, `lead-modal`, `mt-hero`, `about-hero`, etc.) in the rendered HTML.
 
 ## Core operating principles
 
