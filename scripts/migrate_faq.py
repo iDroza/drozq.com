@@ -508,6 +508,50 @@ JSON_LD = """
 """
 
 
+SMOOTH_SCROLL_SCRIPT = """
+<script>
+(function() {
+  var pills = document.querySelectorAll('.faq-jump-pill');
+  if (!pills.length) return;
+  var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var OFFSET = 24;
+  var DURATION = 350;
+
+  function smoothTo(targetY) {
+    var start = window.scrollY;
+    var dist = targetY - start;
+    var t0 = null;
+    function tick(now) {
+      if (t0 === null) t0 = now;
+      var p = Math.min((now - t0) / DURATION, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      window.scrollTo(0, start + dist * eased);
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  pills.forEach(function(pill) {
+    pill.addEventListener('click', function(e) {
+      var href = this.getAttribute('href') || '';
+      if (!href.startsWith('#') || href.length < 2) return;
+      var target = document.getElementById(href.slice(1));
+      if (!target) return;
+      e.preventDefault();
+      var top = target.getBoundingClientRect().top + window.scrollY - OFFSET;
+      if (reduceMotion) {
+        window.scrollTo(0, top);
+      } else {
+        smoothTo(top);
+      }
+      history.replaceState(null, '', href);
+    });
+  });
+})();
+</script>
+"""
+
+
 MAIN_BODY = (
     HERO
     + JUMP_NAV_STYLE
@@ -516,6 +560,7 @@ MAIN_BODY = (
     + MID_TABS
     + CLOSING_CTA
     + JSON_LD
+    + SMOOTH_SCROLL_SCRIPT
 )
 
 
