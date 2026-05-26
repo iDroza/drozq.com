@@ -250,8 +250,8 @@ MID_TABS = f"""
         </li>
       </ul>
 
-      <h4 class="c_#1a1816 fs_16px sm:fs_20px fw_700 lh_24px sm:lh_30px ta_left pb_8px m_0">Enter your California address to start the home value report.</h4>
-      <div style="width:100%; max-width: 540px;">{landing_form_pill("Your California address")}</div>
+      <h4 class="c_#1a1816 fs_16px sm:fs_20px fw_700 lh_24px sm:lh_30px ta_center pb_8px m_0">Enter your California address to start the home value report.</h4>
+      <div style="width:100%; max-width: 540px; margin: 0 auto;">{landing_form_pill("Your California address")}</div>
     </div>
 
     <div id="buyTab" role="tabpanel" aria-labelledby="buyTabBtn" hidden class="d_none mt_35px md:mt_64px w_100% max-w_780px m_0_auto">
@@ -279,8 +279,8 @@ MID_TABS = f"""
         </li>
       </ul>
 
-      <h4 class="c_#1a1816 fs_16px sm:fs_20px fw_700 lh_24px sm:lh_30px ta_left pb_8px m_0">Tell me where you want to buy.</h4>
-      <div style="width:100%; max-width: 540px;">{landing_form_pill("City, neighborhood, or ZIP", value="California")}</div>
+      <h4 class="c_#1a1816 fs_16px sm:fs_20px fw_700 lh_24px sm:lh_30px ta_center pb_8px m_0">Tell me where you want to buy.</h4>
+      <div style="width:100%; max-width: 540px; margin: 0 auto;">{landing_form_pill("City, neighborhood, or ZIP", value="California")}</div>
     </div>
 
   </div>

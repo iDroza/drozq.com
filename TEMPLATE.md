@@ -623,9 +623,11 @@ So `aria-labelledby="buyTabBtn"` on `#buyTab` resolves to buy mode. Renaming the
 
 Inside each `#sellTab` / `#buyTab` tabpanel, the landing form pill MUST be wrapped in a 540px-max container — never full-width. A full-width pill at desktop reads as broken layout (the input + Compare Agents button stretch into ~780px of horizontal space and look wrong).
 
+Both the heading and the pill container MUST be centered within the 780px tabpanel. The h4 uses `ta_center`, and the wrapper div carries `margin: 0 auto`. Earlier versions used `ta_left` with no auto margin on the wrapper, which pinned the heading and the 540px pill flush against the left edge of the tabpanel.
+
 ```html
-<h4 class="c_#1a1816 fs_16px sm:fs_20px fw_700 lh_24px sm:lh_30px ta_left pb_8px m_0">Enter your address to start the home value report.</h4>
-<div style="width:100%; max-width: 540px;">
+<h4 class="c_#1a1816 fs_16px sm:fs_20px fw_700 lh_24px sm:lh_30px ta_center pb_8px m_0">Enter your address to start the home value report.</h4>
+<div style="width:100%; max-width: 540px; margin: 0 auto;">
   <!-- landing form pill here -->
 </div>
 ```
