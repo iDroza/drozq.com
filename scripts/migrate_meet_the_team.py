@@ -298,8 +298,10 @@ OUTCOME = """
   <div class="max-w_780px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px ta_center">
     <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">The Result</p>
     <h2 id="mtt-outcome-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_20px">One agent, working with a real network, running a real system.</h2>
-    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_16px">When you list your home with me, you get the personal accountability of working directly with one agent, plus the operational depth of a brand that's been built deliberately. That combination is rare in real estate. Most agents are either solo and overwhelmed, or large teams where you get passed around. What I've built is the third option.</p>
-    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px m_0">If that's the kind of operation you want behind your home sale, let's talk.</p>
+    <div style="max-width: 560px; margin: 0 auto;">
+      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_16px">When you list your home with me, you get the personal accountability of working directly with one agent, plus the operational depth of a brand that's been built deliberately. That combination is rare in real estate. Most agents are either solo and overwhelmed, or large teams where you get passed around. What I've built is the third option.</p>
+      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px m_0">If that's the kind of operation you want behind your home sale, let's talk.</p>
+    </div>
   </div>
 </section>
 """
