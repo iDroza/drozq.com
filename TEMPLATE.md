@@ -456,10 +456,33 @@ For non-homepage pages on the new template, the default hero background is **`/m
 
 ### Joshua's portrait placement (Waist.png)
 
-The legacy /about/ and /meet-the-team/ pages used `/media/images/Waist.png` (Joshua's waist-up portrait) prominently in the hero. The new template hero is text-only (background image + centered copy + tab CTA), so the portrait does NOT go in the hero. Move it into a **body section as a 2-column split** (`grid-tc_280px_1fr` on desktop, `grid-tc_1fr` on mobile) beside the most personal copy on the page. Examples:
+The legacy /about/ and /meet-the-team/ pages used `/media/images/Waist.png` (Joshua's waist-up portrait) prominently in the hero. The new template hero is text-only (background image + centered copy + tab CTA), so the portrait does NOT go in the hero. Move it into a **body section as a 2-column split** beside the most personal copy on the page. Examples:
 
 - `/meet-the-team/` Layer 01 (Joshua as point of contact).
 - `/about/` Backstory section (Vallejo origin story).
+
+The 2-column split itself uses a scoped `.drozq-portrait-split` class, NOT the Panda utility `md:grid-tc_280px_1fr`. The Panda CSS soup inherited from `/index.html` only ships classes referenced in the homepage source; the arbitrary `grid-tc_280px_1fr` value is not in that set, so the utility resolves to nothing and the section silently stacks at desktop. Same pitfall as the `.btn-secondary-outline` button (see Section 5). Include this `<style>` block once on every page that uses the portrait split, and apply `class="drozq-portrait-split"` to the grid container:
+
+```html
+<style>
+.drozq-portrait-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: center;
+}
+@media (min-width: 768px) {
+  .drozq-portrait-split {
+    grid-template-columns: 280px 1fr;
+    gap: 48px;
+  }
+}
+</style>
+
+<div class="drozq-portrait-split">
+  <!-- portrait + copy -->
+</div>
+```
 
 The portrait wrapper:
 
@@ -617,7 +640,7 @@ These section patterns are reused 2+ times across the migrated content pages. Tr
 | **Stats strip** | `/about/` By-the-Numbers (3 stats) | `bg-c_#f2f0ef` band, `max-w_780px`, small uppercase label centered above a `grid-tc_1fr_1fr_1fr` of stat items. Each item: red `fs_36px md:fs_44px fw_800` number + 13-14px uppercase sublabel. **Do not** reintroduce the legacy `cf-count-up` animation; the brand-mode JS that drove it is dropped. Static numbers only. |
 | **Case-file mini-cards** | `/about/` The Receipts (2 cards) | `grid-tc_1fr md:grid-tc_repeat(2,_1fr)`. Each card is an `<a>` linking to a `/testimonials/<slug>/`. Red eyebrow ("Case File 001"), big `fs_30px md:fs_36px fw_800` stat ("$23,250"), small meta line ("Long Beach &middot; First-Time Buyer"). White bg, hover border `#d92228`. |
 | **Crosslink-to-case-files** | `/faq/`, `/meet-the-team/`, `/contact/`, `/about/` | Small narrow centered section near the bottom: red eyebrow, h2, single-paragraph body, single secondary-outlined button linking to `/testimonials/`. Use the `.btn-secondary-outline` style block defined in section 5 (Button hierarchy). |
-| **Two-column portrait split** | `/meet-the-team/` Layer 01, `/about/` Backstory | `grid-tc_1fr md:grid-tc_280px_1fr gap_32px md:gap_48px ai_center`. Joshua's portrait (220px mobile, 280px desktop, 16px radius, soft shadow) on one side; eyebrow + h2 + 2-3 body paragraphs on the other. See "Joshua's portrait placement" under section 4. |
+| **Two-column portrait split** | `/meet-the-team/` Layer 01, `/about/` Backstory | Use the scoped `.drozq-portrait-split` class, NOT the Panda `md:grid-tc_280px_1fr` utility (the latter isn't compiled in the inline CSS soup and silently stacks at desktop). Single column + 32px gap on mobile, two columns `280px 1fr` + 48px gap at >=768px. Joshua's portrait (220px mobile, 280px desktop, 16px radius, soft shadow) on one side; eyebrow + h2 + 2-3 body paragraphs on the other. Full `<style>` block + markup in section 4 "Joshua's portrait placement." |
 | **Jump-nav pills + smooth scroll** | `/faq/` only | If a page has 4+ scrolled sections worth jumping between, add a sticky-ish band of `.faq-jump-pill` anchors at the top. Pair with the 30-line vanilla JS smooth-scroll snippet from `migrate_faq.py` (`SMOOTH_SCROLL_SCRIPT` const): 350ms easeOutCubic tween, 24px top offset, respects `prefers-reduced-motion`, replaces history hash without polluting back-button. Scope the JS to `.faq-jump-pill` so it doesn't interfere with header `/#tab-buy` style anchors. |
 
 ---

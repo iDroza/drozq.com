@@ -122,11 +122,31 @@ HERO = f"""
 # Backstory section: 2-column split with Joshua's portrait on one side,
 # the Vallejo origin story on the other. This is the most personal copy
 # on the page; the face belongs next to it.
+#
+# The Panda CSS soup inherited from /index.html does not ship the arbitrary
+# `md:grid-tc_280px_1fr` class. Without a real CSS rule the section stacks
+# at desktop (portrait above copy, not beside it). The scoped
+# `.drozq-portrait-split` class supplies the missing grid-template-columns.
+# Mirror this same pattern on `/meet-the-team/` (see migrate_meet_the_team.py).
 BACKSTORY = """
+<style>
+.drozq-portrait-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: center;
+}
+@media (min-width: 768px) {
+  .drozq-portrait-split {
+    grid-template-columns: 280px 1fr;
+    gap: 48px;
+  }
+}
+</style>
 <section aria-labelledby="about-backstory-title" class="bg_#fff py_48px md:py_64px lg:py_72px">
   <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
 
-    <div class="d_grid grid-tc_1fr md:grid-tc_280px_1fr gap_32px md:gap_48px ai_center">
+    <div class="drozq-portrait-split">
 
       <div class="ta_center md:ta_left">
         <img src="/media/images/Waist.png" alt="Joshua Guerrero, Real Estate Agent" width="280" height="380" loading="lazy"
