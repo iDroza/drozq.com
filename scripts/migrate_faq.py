@@ -152,8 +152,8 @@ CATEGORIES = [
         [
             (
                 "How do I know if it's the right time to sell?",
-                """The honest answer: nobody can time the market perfectly, and most people who try end up waiting too long. The better question is whether selling now lines up with your personal situation. Are you trying to move up, move out of state, cash in on equity, or simplify? Each of those has different timing dynamics. On our first call, I'll walk you through where the Irvine market is, what comparable homes are doing right now, and what selling in the next 30 to 90 days would realistically look like for your home specifically. No pressure, no "you should list tomorrow" pitch. Just clear numbers.""",
-                """The honest answer: nobody can time the market perfectly, and most people who try end up waiting too long. The better question is whether selling now lines up with your personal situation. Are you trying to move up, move out of state, cash in on equity, or simplify? Each of those has different timing dynamics. On our first call, I'll walk you through where the Irvine market is, what comparable homes are doing right now, and what selling in the next 30 to 90 days would realistically look like for your home specifically. No pressure, no "you should list tomorrow" pitch. Just clear numbers.""",
+                """The honest answer: nobody can time the market perfectly, and most people who try end up waiting too long. The better question is whether selling now lines up with your personal situation. Are you trying to move up, move out of state, cash in on equity, or simplify? Each of those has different timing dynamics. On our first call, I'll walk you through where the Irvine market is, what comparable homes are doing right now, and what selling in the next 30 to 90 days would realistically look like for your home specifically. You leave the call with clear numbers and an honest read on whether to list.""",
+                """The honest answer: nobody can time the market perfectly, and most people who try end up waiting too long. The better question is whether selling now lines up with your personal situation. Are you trying to move up, move out of state, cash in on equity, or simplify? Each of those has different timing dynamics. On our first call, I'll walk you through where the Irvine market is, what comparable homes are doing right now, and what selling in the next 30 to 90 days would realistically look like for your home specifically. You leave the call with clear numbers and an honest read on whether to list.""",
             ),
             (
                 "What is my home actually worth?",
@@ -409,7 +409,7 @@ MID_TABS = f"""
           <span class="flex-sh_0 d_inline-flex ai_center jc_center w_40px h_40px bdr_full bg-c_#fbe9ea c_#d92228 fw_700" aria-hidden="true">3</span>
           <div>
             <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">One agent. One phone. Same-hour replies.</h3>
-            <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">Offers, escrow questions, timeline shifts all route through the same number. No call centers, no junior on the file.</p>
+            <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">Every offer, escrow question, and timeline shift routes through me on the same number.</p>
           </div>
         </li>
       </ul>

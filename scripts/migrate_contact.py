@@ -70,7 +70,7 @@ HERO = f"""
     <div class="w_100% max-w_860px pl_32px pr_32px bx-s_border-box mx_auto ta_center">
       <p class="op_0.9 c_#fff ls_2px fs_11px md:fs_12px fw_700 mb_8px" style="text-transform:uppercase">Contact</p>
       <h1 id="contact-hero-title" class="fw_700 ls_1.5px c_#fff lh_40px md:lh_64px fs_32px md:fs_56px mb_16px">What's your home actually worth?</h1>
-      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">A real CMA, a real pricing strategy, and a real conversation about your goals. Takes 15 minutes. No autodialer, no spam, no pressure.</p>
+      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">A real CMA, a real pricing strategy, and a real conversation about your goals. Fifteen minutes, free, delivered in writing.</p>
     </div>
   </section>
 
@@ -153,7 +153,7 @@ DIRECT_CONTACT = f"""
         </div>
         <p class="c_#757575 fs_11px md:fs_12px fw_700 ls_1.5px m_0" style="text-transform:uppercase">Office</p>
         <p class="fs_15px md:fs_16px fw_700 c_#1a1816 lh_1.4 m_0">17875 Von Karman Ave<br>Suite 150, Irvine, CA 92614</p>
-        <p class="fs_13px md:fs_14px c_#3f4650 m_0">By appointment.</p>
+        <p class="fs_13px md:fs_14px c_#3f4650 m_0">Walk-ins welcome.</p>
       </div>
 
     </div>
@@ -172,11 +172,11 @@ DIRECT_CONTACT = f"""
 
 WHY_PRICING = """
 <section aria-labelledby="contact-why-title" class="bg-c_#f2f0ef py_48px md:py_64px lg:py_72px">
-  <div class="max-w_780px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px ta_center">
+  <div class="max-w_620px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px ta_center">
     <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">Why this matters</p>
     <h2 id="contact-why-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_20px">Pricing wrong costs more than you think.</h2>
-    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_16px">Most sellers overprice on day one because an agent told them what they wanted to hear. That home sits. After 30 days, the "what's wrong with it?" questions start. After 60 days, the price cuts start. After 90 days, the home sells for less than it would have if priced correctly from the beginning.</p>
-    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px m_0">The difference between a home priced right and a home priced wrong isn't a few thousand dollars. It's often tens of thousands. That's the conversation I want to have with you before you list, not after.</p>
+    <p class="c_#3f4650 fs_15px md:fs_17px lh_26px md:lh_30px mb_16px">Most sellers overprice on day one because an agent told them what they wanted to hear. That home sits. After 30 days, the "what's wrong with it?" questions start. After 60 days, the price cuts start. After 90 days, the home sells for less than it would have if priced correctly from the beginning.</p>
+    <p class="c_#3f4650 fs_15px md:fs_17px lh_26px md:lh_30px m_0">The difference between a home priced right and a home priced wrong isn't a few thousand dollars. It's often tens of thousands. That's the conversation I want to have with you before you list, not after.</p>
   </div>
 </section>
 """
@@ -264,8 +264,8 @@ MID_TABS = f"""
         <li class="d_flex ai_flex-start gap_16px">
           <span class="flex-sh_0 d_inline-flex ai_center jc_center w_40px h_40px bdr_full bg-c_#fbe9ea c_#d92228 fw_700" aria-hidden="true">3</span>
           <div>
-            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">No autodialer, no spam, no pressure.</h3>
-            <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">If listing now doesn't make sense, I'll tell you. The conversation has to be worth your time before it's worth mine.</p>
+            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">An honest read on whether to list.</h3>
+            <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">If listing now doesn't make sense, I'll tell you. You walk away with better information about your home and the market than you came in with.</p>
           </div>
         </li>
       </ul>
@@ -418,9 +418,9 @@ if __name__ == "__main__":
     scaffold_page(
         target="contact/index.html",
         title="Contact Joshua Guerrero | Irvine Listing Agent",
-        description="Direct line, email, and Irvine office for Joshua Guerrero, licensed California REALTOR. Free CMA in 15 minutes. Real numbers, no pressure.",
+        description="Direct line, email, and Irvine office for Joshua Guerrero, licensed California REALTOR. Free CMA in 15 minutes. Real numbers, real strategy.",
         canonical="/contact/",
         main_body_html=MAIN_BODY,
         og_title="Contact Joshua Guerrero | Irvine Listing Agent",
-        og_description="Direct line, email, and Irvine office. Free CMA in 15 minutes. Real numbers, no pressure, no autodialer.",
+        og_description="Direct line, email, and Irvine office. Free CMA in 15 minutes. Real numbers, real strategy, walk-ins welcome.",
     )

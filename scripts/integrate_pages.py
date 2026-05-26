@@ -126,7 +126,7 @@ PAGES = [
         "agent_id": "a125aa286f81badd9",
         "target": "contact/index.html",
         "title": "Contact | Joshua Guerrero, Real Brokerage",
-        "description": "What's your home actually worth? Free CMA in 24 hours. No pressure, no pitch. (949) 438-5948.",
+        "description": "What's your home actually worth? Free CMA in 24 hours. Direct line and Irvine office. (949) 438-5948.",
         "canonical": "/contact/",
     },
 ]

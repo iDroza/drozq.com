@@ -314,7 +314,7 @@ MID_TABS = f"""
           <span class="flex-sh_0 d_inline-flex ai_center jc_center w_40px h_40px bdr_full bg-c_#fbe9ea c_#d92228 fw_700" aria-hidden="true">1</span>
           <div>
             <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">One agent on every call.</h3>
-            <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">Every text, negotiation, and milestone routes through me. No call centers, no junior on the file.</p>
+            <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">Every text, negotiation, and milestone routes through me directly.</p>
           </div>
         </li>
         <li class="d_flex ai_flex-start gap_16px">

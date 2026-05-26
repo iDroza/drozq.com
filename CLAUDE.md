@@ -300,6 +300,7 @@ Every page should pull at least one of these levers. If copy doesn't, it's fille
 - Hyperbolic claims that can't be backed up.
 - Surface-level "AI" and "automation" framing. The leverage Joshua has is real; the framing is "systems and discipline," not "I use software to do this."
 - Em dashes (U+2014). Banned everywhere.
+- **Anti-promise / negative-association copy.** Banned phrases: "no autodialer," "no spam," "no pressure," "no call center," "no script," "no pitch," "no obligation," "no team," "no sales script." The reasoning: most prospects aren't worrying about these things; explicitly denying them plants the worry. The rule is "never name the bad thing, even to deny it." Reframe with positive value: "direct callback within X hours," "an honest read on whether to list," "you walk away with better information." Exception: pricing statements that frame a real cost concern positively are fine ("No fee unless we list," "free CMA").
 
 ### Audience archetypes
 

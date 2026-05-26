@@ -186,7 +186,7 @@ Four steps. Lead with the situation (NOT timeline) because that's how distressed
 
 **Step 4: Submit button**
 - Button: `Get Confidential Help`
-- Assurance bar: `Free. Confidential. No pressure. I'll call you within 4 hours.`
+- Assurance bar: `Free. Confidential. Direct callback within 4 hours.`
 - Fine print: `Your inquiry stays between us. No public listing data shared.`
 
 ### Trust signals

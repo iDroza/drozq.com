@@ -565,7 +565,7 @@ Every page's bottom-of-page closing CTA carries the same single line below the f
 <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_24px ta_center">Or call direct: <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a></p>
 ```
 
-No "free CMA," no "no autodialer, no spam" boilerplate. Just the alternate path: call the line. The homepage is the exception (its hero already commits to the timeline; an extra phone CTA at the bottom dilutes the inline funnel).
+Just the alternate path: call the line. Do NOT add anti-promise language ("no autodialer," "no spam," "no pressure," "no call center," "no script," "no pitch," "no obligation"). Those phrases plant a negative the prospect wasn't worrying about and turn warm visitors cold. See [Anti-patterns](#14-anti-patterns) for the full ban list. The homepage is the exception to the closing-CTA-pill rule itself (its hero already commits to the timeline; an extra phone CTA at the bottom dilutes the inline funnel).
 
 ### Section headlines (H2)
 
@@ -960,6 +960,7 @@ Do not.
 - Remove the `sessionStorage.drozq_lead_just_submitted` flag set before the redirect. Same reason.
 - Modify field names, IDs, or `data-funnel` / `data-step` attributes on funnel steps. Downstream JS hardcodes them.
 - Add em dashes (U+2014) anywhere in output. Banned.
+- **Use anti-promise / negative-association copy anywhere.** Banned phrases (non-exhaustive): "no autodialer," "no spam," "no pressure," "no call center," "no script," "no pitch," "no obligation," "no team," "no sales script." These phrases plant a worry the prospect wasn't carrying and turn warm visitors cold. Reframe with positive value: "direct callback within X hours," "from me, with the records pulled," "an honest read on whether to list," "you walk away with better information." Exception: pricing statements that address a real cost concern with positive framing are fine ("No fee unless we list," "free CMA"). The rule is: never name the bad thing, even to deny it.
 - Add a separate footer style per page. The minimal footer is the convention.
 - Build a new page without registering it in `funnels.json`. The sync is the propagation mechanism; an unregistered page silently drifts from the source.
 - **Design desktop-first and "make it responsive" after.** Mobile is the primary canvas, not a downstream port. Start at 375px.
