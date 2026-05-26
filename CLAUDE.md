@@ -362,7 +362,8 @@ When asked to "clean up the homepage," check `BACKLOG.md` and confirm which item
 - `scripts/sync_funnels.py`: the funnel propagation tool.
 - `notes/posthog/`: running log of funnel observations from PostHog. Read `lessons.md` first, then the most recent entries in `funnel-log.md`, before touching anything that could move funnel drop-off (hero copy, tab structure, step ordering, validation, mobile layout). Append a new dated entry after any session that queried PostHog. See `notes/posthog/README.md` for the convention.
 - `notes/ads/`: paid campaign strategy docs (`distressed-sellers-strategy.md`, `sellers-max-intent-campaign.md`). Read before touching the campaigns or campaign landing pages.
-- `.mcp.json` (repo root): wires up the PostHog remote MCP server. Activation requires a `POSTHOG_API_KEY` env var. Run `/mcp` inside Claude Code to confirm the server is connected.
+- `.mcp.json` (repo root): wires up the PostHog and Google Ads MCP servers. Activation requires `POSTHOG_API_KEY` and Google ADC. Run `/mcp` inside Claude Code to confirm the servers are connected.
+- **`notes/mcp-workarounds.md` (repo root): direct REST recipes for PostHog HogQL and Google Ads GAQL. READ THIS the moment either MCP fails (tool rejection, hang, `invalid_grant`, 401, empty schema). Do not retry the MCP — use the direct call. Includes the re-auth one-liner for when the gcloud ADC token expires (every 7 days in OAuth testing mode).**
 - `C:\Users\guerr\.claude\projects\C--Users-guerr-Documents-drozq-com\memory\`: auto-memory directory for cross-session context. Read on every session start; updated when stable patterns emerge.
 
 ## When in doubt
