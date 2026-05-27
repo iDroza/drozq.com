@@ -20,7 +20,7 @@ The homepage (originally a clone of sell.realtor.com / UpNest's agent-locator pa
 
 Every page on the site is now on the homepage template. The historical distressed-sellers paid landing at `/relief/` was deleted on 2026-05-26 (see `BACKLOG.md` for the rebuild task). The strategy playbook for that audience still lives in `notes/ads/distressed-sellers-strategy.md` for when the campaign relaunches.
 
-Pages on the homepage template: `/`, `/about/`, `/california/`, `/contact/`, `/faq/`, `/field-notes/`, `/los-angeles/`, `/market-insights/`, `/meet-the-team/`, `/privacy/`, `/process/` (renamed from legacy `/the-process/`), `/rates/`, `/terms/`, `/testimonials/` (+ /001-long-beach-firefighter/ + /002-corona-analyst/), `/thank-you/`, `/where-we-help/`. The source of truth for "is this page using the synced funnel" is `funnels.json#pages`. The source of truth for "is this page on the homepage template" is the presence of `migrate_<slug>.py` in `scripts/` and the absence of brand-mode classes (`cf-narrow`, `lead-modal`, `mt-hero`, `about-hero`, etc.) in the rendered HTML.
+Pages on the homepage template: `/`, `/about/`, `/california/`, `/contact/`, `/faq/`, `/field-notes/`, `/los-angeles/`, `/market-insights/`, `/meet-the-team/`, `/prices/`, `/privacy/`, `/process/` (renamed from legacy `/the-process/`), `/rates/`, `/terms/`, `/testimonials/` (+ /001-long-beach-firefighter/ + /002-corona-analyst/), `/thank-you/`, `/where-we-help/`. The source of truth for "is this page using the synced funnel" is `funnels.json#pages`. The source of truth for "is this page on the homepage template" is the presence of `migrate_<slug>.py` in `scripts/` and the absence of brand-mode classes (`cf-narrow`, `lead-modal`, `mt-hero`, `about-hero`, etc.) in the rendered HTML.
 
 ## Core operating principles
 
@@ -195,7 +195,7 @@ The funnel JS dual-fires every transition through a `track(event, props)` helper
 
 ## Cloudflare Pages Functions
 
-Cloudflare Pages auto-deploys functions from `/functions/`. Three endpoints currently exist:
+Cloudflare Pages auto-deploys functions from `/functions/`. Four endpoints currently exist:
 
 ### `/functions/api/lead.js`
 
@@ -250,6 +250,19 @@ Required env var in Cloudflare Pages settings: `FRED_API_KEY` (get one free at h
 Consumed by `/rates/index.html`. The page ships static skeletons, then hydrates four rate cards (with inline SVG sparklines + WoW + YoY deltas), an affordability table (5 loan sizes at today's 30-year), and a mortgage payment calculator (default rate auto-syncs to today's 30y / 15y based on the term toggle). FAQ accordion + WebPage/Dataset/FAQPage/BreadcrumbList/Person JSON-LD make the page a citable resource that ranks for rate + calculator + explainer queries.
 
 The page is the live freshness signal: the moment FRED publishes a new PMMS reading (Thursdays at 12 ET), the next `/api/rates` response after edge-cache expiry (within 1h) reflects it.
+
+### `/functions/api/prices.js`
+
+Sibling of `/api/rates.js`. Same FRED-backed pattern, same 1h edge cache, same `FRED_API_KEY` env var. Returns seven series organized into two tiers:
+
+- **California home prices** (Tier 1): `LXXRSA` (LA Metro Case-Shiller, monthly), `SDXRSA` (San Diego Metro Case-Shiller, monthly), `CASTHPI` (FHFA California Statewide HPI, quarterly).
+- **Market signals** (Tier 3): `MSACSR` (months of supply, new homes, monthly), `EXHOSLUSM495S` (existing home sales, monthly SAAR thousands), `FIXHAI` (NAR housing affordability index, monthly), `UNRATE` (US unemployment, monthly).
+
+Response shape per series matches `/api/rates` plus two extra fields for index/count series: `deltaPct` (percent change vs. previous observation) and `deltaYoYPct` (percent change vs. one year ago). The YoY observation is picked via a cadence-specific offset (`{daily:252, weekly:52, monthly:12, quarterly:4}`) instead of "oldest in window", so YoY stays YoY regardless of how much history we fetch.
+
+Originally included a Tier 2 series (`MORTGAGE5US`, the 5/1 ARM rate) as a "cost of money" complement, but Freddie Mac discontinued the 5/1 ARM in their PMMS survey in November 2022. FRED still exposes the series but every observation past 2022-11-10 is null. Until a replacement ARM benchmark surfaces on FRED, `/prices/` carries a thin crosslink band to `/rates/` instead. See the [[fred-mortgage5us-discontinued]] memory for the recheck criteria.
+
+Consumed by `/prices/index.html`. Same render pattern as `/rates/`: static skeletons hydrate on `DOMContentLoaded` with per-unit value formatting (index → integer, percent → `X.XX%`, months → `X.X mo`, thousands → `X.XM` annualized), inline SVG sparklines, and a primary delta + YoY delta per card.
 
 ## Geo personalization
 

@@ -73,7 +73,7 @@ HERO = f"""
     <div class="w_100% max-w_860px pl_32px pr_32px bx-s_border-box mx_auto ta_center">
       <p class="op_0.9 c_#fff ls_2px fs_11px md:fs_12px fw_700 mb_8px" style="text-transform:uppercase">Live Market Data &middot; Federal Reserve, refreshed automatically</p>
       <h1 id="prices-hero-title" class="fw_700 ls_1.5px c_#fff lh_40px md:lh_64px fs_32px md:fs_56px mb_16px">California home prices and the market signals around them.</h1>
-      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">Eight series pulled directly from Federal Reserve Economic Data (FRED), refreshed within an hour of every release. The LA and San Diego Case-Shiller indices, the statewide HPI, plus the supply, sales, affordability, and employment signals that move them.</p>
+      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">Seven series pulled directly from Federal Reserve Economic Data (FRED), refreshed within an hour of every release. The LA and San Diego Case-Shiller indices, the statewide HPI, plus the supply, sales, affordability, and employment signals that move them.</p>
     </div>
   </section>
 
@@ -283,26 +283,20 @@ TIER3_SECTION = f"""
 
 
 # ---------------------------------------------------------------------------
-# 4. Cost of Money (Tier 2, warm gray bg, 1 card + crosslink to /rates/)
+# 4. Crosslink to /rates/ (was Tier 2 / MORTGAGE5US, dropped: FRED still hosts
+#    the series but Freddie Mac stopped publishing 5/1 ARM data in Nov 2022,
+#    so every observation past that date is null. Until a replacement ARM
+#    benchmark lands on FRED, the page surfaces /rates/ via this thin band
+#    instead of rendering stale cost-of-money data.)
 # ---------------------------------------------------------------------------
 
-TIER2_SECTION = f"""
-<section aria-labelledby="prices-tier2-title" class="bg-c_#f2f0ef py_48px md:py_64px lg:py_72px">
-  <div class="max-w_840px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
-
-    <div class="ta_center mb_32px md:mb_40px max-w_640px mx_auto">
-      <span class="drozq-tier-chip">Cost of Money</span>
-      <h2 id="prices-tier2-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">The 5/1 ARM, the underrated California play.</h2>
-      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px m_0">Most buyers default to the 30-year fixed. In a state where median prices clear $1M, the 5/1 ARM's lower headline rate is worth understanding before defaulting. Full set of rates lives on the rates page.</p>
-    </div>
-
-    <div class="drozq-data-grid drozq-data-grid--1 mb_32px md:mb_40px">
-{data_card("rate5_1ARM", "5/1 ARM Rate", "MORTGAGE5US, weekly")}
-    </div>
-
-    <p class="ta_center m_0">
-      <a href="/rates/" class="btn-secondary-outline">See all mortgage and benchmark rates &rarr;</a>
-    </p>
+RATES_CROSSLINK = """
+<section aria-labelledby="prices-rates-link" class="bg-c_#f2f0ef py_40px md:py_56px">
+  <div class="max-w_720px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px ta_center">
+    <span class="drozq-tier-chip">Cost of Money</span>
+    <h2 id="prices-rates-link" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_24px md:fs_30px ls_0.3px ta_center mb_16px">Prices set the ceiling. Rates set the math.</h2>
+    <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px mb_24px m_0_auto" style="max-width:560px;">The companion page tracks the 30-year and 15-year fixed mortgages, the 10-year Treasury (the leading indicator for both), and the Fed funds rate. Same FRED source, same hourly refresh.</p>
+    <a href="/rates/" class="btn-secondary-outline">See live mortgage rates &rarr;</a>
   </div>
 </section>
 """
@@ -382,8 +376,7 @@ PRICES_SCRIPT = r"""
 
   var tier1Keys = ['hpiLA','hpiSD','hpiCA'];
   var tier3Keys = ['supplyMonths','existingSales','affordIdx','unemployment'];
-  var tier2Keys = ['rate5_1ARM'];
-  var allKeys = tier1Keys.concat(tier3Keys).concat(tier2Keys);
+  var allKeys = tier1Keys.concat(tier3Keys);
 
   function fmtDate(iso, cadence) {
     if (!iso) return '';
@@ -550,7 +543,7 @@ MAIN_BODY = (
     + PAGE_STYLE
     + TIER1_SECTION
     + TIER3_SECTION
-    + TIER2_SECTION
+    + RATES_CROSSLINK
     + MID_TABS
     + CLOSING_CTA
     + PRICES_SCRIPT

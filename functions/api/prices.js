@@ -22,19 +22,32 @@
 
 const FRED = "https://api.stlouisfed.org/fred/series/observations";
 
+// NOTE: We dropped the original Tier 2 series (MORTGAGE5US, the 5/1 ARM rate)
+// because Freddie Mac discontinued it in their PMMS survey in November 2022.
+// FRED still serves the series but every observation past 2022-11-10 is null.
+// If a replacement ARM benchmark surfaces on FRED we can wire it back in here.
 const SERIES = [
-  // Tier 1
+  // Tier 1 -- California home prices
   { key: "hpiLA",         id: "LXXRSA",        label: "LA Metro Home Price Index",         unit: "index",     cadence: "monthly",   limit: 36, tier: 1 },
   { key: "hpiSD",         id: "SDXRSA",        label: "San Diego Metro Home Price Index",  unit: "index",     cadence: "monthly",   limit: 36, tier: 1 },
   { key: "hpiCA",         id: "CASTHPI",       label: "California Statewide HPI",          unit: "index",     cadence: "quarterly", limit: 20, tier: 1 },
-  // Tier 3
+  // Tier 3 -- broader market signals
   { key: "supplyMonths",  id: "MSACSR",        label: "Months of Supply, New Homes",       unit: "months",    cadence: "monthly",   limit: 36, tier: 3 },
   { key: "existingSales", id: "EXHOSLUSM495S", label: "Existing Home Sales",               unit: "thousands", cadence: "monthly",   limit: 36, tier: 3 },
   { key: "affordIdx",     id: "FIXHAI",        label: "Housing Affordability Index",       unit: "index",     cadence: "monthly",   limit: 36, tier: 3 },
-  { key: "unemployment",  id: "UNRATE",        label: "US Unemployment Rate",              unit: "%",         cadence: "monthly",   limit: 36, tier: 3 },
-  // Tier 2
-  { key: "rate5_1ARM",    id: "MORTGAGE5US",   label: "5/1 ARM Rate",                      unit: "%",         cadence: "weekly",    limit: 52, tier: 2 }
+  { key: "unemployment",  id: "UNRATE",        label: "US Unemployment Rate",              unit: "%",         cadence: "monthly",   limit: 36, tier: 3 }
 ];
+
+// Map cadence -> index in the descending observation list that corresponds to
+// roughly one calendar year prior to the latest observation. Picking by index
+// (instead of the oldest in the limit window) keeps the "YoY" label honest no
+// matter how much history we fetch for sparklines.
+const YEAR_AGO_OFFSET = {
+  daily:     252,   // approx business days/year
+  weekly:     52,
+  monthly:    12,
+  quarterly:   4
+};
 
 const json = (body, status = 200, extra = {}) =>
   new Response(JSON.stringify(body), {
@@ -64,7 +77,7 @@ function abs(a, b) {
   return Number((a - b).toFixed(2));
 }
 
-function summarize(observations) {
+function summarize(observations, spec) {
   const cleaned = observations
     .map((o) => ({ date: o.date, value: parseValue(o.value) }))
     .filter((o) => o.value != null);
@@ -82,7 +95,11 @@ function summarize(observations) {
 
   const latest = cleaned[0];
   const previous = cleaned[1] || { value: null, date: null };
-  const yearAgo = cleaned.length > 4 ? cleaned[cleaned.length - 1] : { value: null, date: null };
+
+  // Pick the observation at the cadence-specific 1-year offset rather than the
+  // oldest in the window, so YoY stays YoY even when we fetch >1y of history.
+  const offset = YEAR_AGO_OFFSET[spec.cadence];
+  const yearAgo = (offset != null && cleaned[offset]) ? cleaned[offset] : { value: null, date: null };
 
   return {
     latest,
@@ -111,7 +128,7 @@ async function fetchSeries(spec, apiKey) {
     }
     const data = await resp.json();
     const obs = Array.isArray(data?.observations) ? data.observations : [];
-    const summary = summarize(obs);
+    const summary = summarize(obs, spec);
     return [spec.key, {
       seriesId: spec.id,
       label: spec.label,
