@@ -63,6 +63,20 @@ These tokens are declared in the inline `<style>` block at the top of `/index.ht
 
 Section background bands you will see on the homepage: `#f2f0ef` (slightly warmer light gray, used as alternating section bg) and white. The standard rhythm is white → `#f2f0ef` → white.
 
+### Card-on-section contrast (legibility rule, no exceptions)
+
+White cards (`bg_#fff`) MUST sit on a non-white section background. White cards on a white section produce a white-on-white blunder where only a 1px `#e5e5e5` border separates the card from the page — invisible at a glance, especially on glossy displays and at mobile distances.
+
+The canonical pattern (see `/california/` "Proof", `/about/` "Receipts", `/testimonials/` cards):
+
+- **Section bg:** `bg-c_#f2f0ef` (warm light gray)
+- **Card bg:** `bg_#fff` with `bd_1px_solid_#e5e5e5`
+- **Hover lift:** `translateY(-4px)` + `box-shadow: 0 16px 40px rgba(217,34,40,0.14)` + `border-color: #d92228`
+
+If a section MUST stay white for rhythm reasons, the cards inside it MUST switch to `bg-c_#f2f0ef` (or warmer) so the contrast direction inverts but is preserved. Either direction is fine; same-on-same is never fine.
+
+**Self-check before shipping any card grid:** look at the rendered page, squint at the cards. If the cards visually dissolve into the section, the contrast is wrong. Fix it before commit, not after the user spots it.
+
 ### Fonts
 
 | Token | Stack |
