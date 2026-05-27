@@ -20,7 +20,7 @@ The homepage (originally a clone of sell.realtor.com / UpNest's agent-locator pa
 
 Every page on the site is now on the homepage template. The historical distressed-sellers paid landing at `/relief/` was deleted on 2026-05-26 (see `BACKLOG.md` for the rebuild task). The strategy playbook for that audience still lives in `notes/ads/distressed-sellers-strategy.md` for when the campaign relaunches.
 
-Pages on the homepage template: `/`, `/about/`, `/california/`, `/contact/`, `/faq/`, `/field-notes/`, `/los-angeles/`, `/market-insights/`, `/meet-the-team/`, `/privacy/`, `/process/` (renamed from legacy `/the-process/`), `/terms/`, `/testimonials/` (+ /001-long-beach-firefighter/ + /002-corona-analyst/), `/thank-you/`, `/where-we-help/`. The source of truth for "is this page using the synced funnel" is `funnels.json#pages`. The source of truth for "is this page on the homepage template" is the presence of `migrate_<slug>.py` in `scripts/` and the absence of brand-mode classes (`cf-narrow`, `lead-modal`, `mt-hero`, `about-hero`, etc.) in the rendered HTML.
+Pages on the homepage template: `/`, `/about/`, `/california/`, `/contact/`, `/faq/`, `/field-notes/`, `/los-angeles/`, `/market-insights/`, `/meet-the-team/`, `/privacy/`, `/process/` (renamed from legacy `/the-process/`), `/rates/`, `/terms/`, `/testimonials/` (+ /001-long-beach-firefighter/ + /002-corona-analyst/), `/thank-you/`, `/where-we-help/`. The source of truth for "is this page using the synced funnel" is `funnels.json#pages`. The source of truth for "is this page on the homepage template" is the presence of `migrate_<slug>.py` in `scripts/` and the absence of brand-mode classes (`cf-narrow`, `lead-modal`, `mt-hero`, `about-hero`, etc.) in the rendered HTML.
 
 ## Core operating principles
 
@@ -195,7 +195,7 @@ The funnel JS dual-fires every transition through a `track(event, props)` helper
 
 ## Cloudflare Pages Functions
 
-Cloudflare Pages auto-deploys functions from `/functions/`. Two endpoints currently exist:
+Cloudflare Pages auto-deploys functions from `/functions/`. Three endpoints currently exist:
 
 ### `/functions/api/lead.js`
 
@@ -225,6 +225,14 @@ Returns the visitor's geolocation from Cloudflare's `request.cf` object (populat
 ```
 
 Cache header: `private, max-age=3600`. The homepage fetches this on `DOMContentLoaded` and replaces "Columbus, OH" defaults across the page.
+
+### `/functions/api/rates.js`
+
+Proxies the Federal Reserve Economic Data (FRED) API and edge-caches for 1 hour. Returns the latest two observations for four series: `MORTGAGE30US` (30-year fixed), `MORTGAGE15US` (15-year fixed), `DGS10` (10-year Treasury yield), `FEDFUNDS` (Federal funds rate). Each entry includes `{latest:{value,date}, previous:{value,date}, delta, label, unit, cadence, seriesId}`. Top-level fields: `ok`, `series`, `lastUpdated` (most recent observation date across all series), `fetchedAt`, `source`.
+
+Required env var in Cloudflare Pages settings: `FRED_API_KEY` (get one free at https://fred.stlouisfed.org/docs/api/api_key.html). If missing, the endpoint returns `503 {ok:false, error:"fred_api_key_missing"}` and `/rates/` falls back to a graceful "data temporarily unavailable" state.
+
+Consumed by `/rates/index.html`, which renders four placeholder cards server-side and hydrates them on `DOMContentLoaded`. The page is the live freshness signal: the moment FRED publishes a new PMMS reading (Thursdays at 12 ET), the next /api/rates response and the next /rates/ pageview reflect it.
 
 ## Geo personalization
 
