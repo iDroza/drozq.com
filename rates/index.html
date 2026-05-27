@@ -3760,31 +3760,12 @@
     render({ error: (err && err.message) || 'fetch_failed' });
   }
 
-  function wireFAQ() {
-    var items = document.querySelectorAll('.drozq-faq-item button');
-    items.forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var expanded = btn.getAttribute('aria-expanded') === 'true';
-        // Close all
-        items.forEach(function(other){
-          other.setAttribute('aria-expanded', 'false');
-          var rid = other.getAttribute('aria-controls');
-          var region = document.getElementById(rid);
-          if (region) region.style.maxHeight = '0';
-        });
-        if (!expanded) {
-          btn.setAttribute('aria-expanded', 'true');
-          var rid = btn.getAttribute('aria-controls');
-          var region = document.getElementById(rid);
-          if (region) region.style.maxHeight = region.scrollHeight + 'px';
-        }
-      });
-    });
-  }
+  // FAQ accordion is wired by the synced funnel JS (delegated click handler
+  // on every button[aria-controls][aria-expanded] paired with a role="region"
+  // panel). No local handler needed; adding one would double-toggle.
 
   function go() {
     wireCalc();
-    wireFAQ();
     fetch(endpoint, { headers: { 'accept': 'application/json' }})
       .then(function(r){
         if (!r.ok && r.status !== 200) {
