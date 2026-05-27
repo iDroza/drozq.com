@@ -86,7 +86,7 @@ HERO = f"""
     <div class="w_100% max-w_860px pl_32px pr_32px bx-s_border-box mx_auto ta_center">
       <p class="op_0.9 c_#fff ls_2px fs_11px md:fs_12px fw_700 mb_8px" style="text-transform:uppercase">Live Rates &middot; Auto-refreshed from FRED</p>
       <h1 id="rates-hero-title" class="fw_700 ls_1.5px c_#fff lh_40px md:lh_64px fs_32px md:fs_56px mb_16px">Today's mortgage and benchmark rates.</h1>
-      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">Pulled directly from the Federal Reserve's FRED API and refreshed hourly. The four numbers that frame every offer, refinance, and pricing conversation in Southern California, plus a calculator, an affordability table, and a plain-English read on what each rate actually does.</p>
+      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">Pulled directly from the Federal Reserve and refreshed within an hour of every release. The four numbers that frame every offer, refinance, and pricing conversation in Southern California, plus a calculator, an affordability table, and a plain-English read on what each rate actually does.</p>
     </div>
   </section>
 
@@ -552,7 +552,7 @@ MID_TABS = f"""
 
 FAQ_QUESTIONS = [
     ("How often does this page update?",
-     "The page reads four series live from the Federal Reserve Economic Data (FRED) API and edge-caches the response for one hour. The 30- and 15-year fixed rates come from Freddie Mac's Primary Mortgage Market Survey, published every Thursday at 12 pm ET. The 10-year Treasury yield refreshes every business day. The Federal funds rate updates monthly. As soon as FRED publishes a new observation, the next request after the cache expires (within an hour) pulls it in."),
+     "The page reads four series live from Federal Reserve Economic Data (FRED). The 30- and 15-year fixed rates come from Freddie Mac's Primary Mortgage Market Survey, published every Thursday at 12 pm ET. The 10-year Treasury yield refreshes every business day. The Federal funds rate updates monthly. New releases surface here within roughly an hour of publication."),
     ("Why is the 10-year Treasury on a mortgage rate page?",
      "Mortgage rates do not track the Fed funds rate directly. They track the 10-year Treasury yield with a typical spread of 150 to 200 basis points. If you want a leading indicator for where 30-year mortgages are about to move, watch the 10-year, not the next FOMC meeting headline."),
     ("What's the difference between an interest rate and an APR?",
@@ -611,8 +611,8 @@ METHOD_CROSSLINKS = """
   <div class="max-w_840px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px ta_center">
     <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">Methodology</p>
     <h2 id="rates-method-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_20px">Where this data comes from.</h2>
-    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_16px">All four series are pulled directly from the <a href="https://fred.stlouisfed.org/" rel="noopener" class="c_#d92228 fw_700">Federal Reserve Economic Data (FRED) API</a>, maintained by the Federal Reserve Bank of St. Louis. The 30- and 15-year fixed mortgage rates are Freddie Mac's Primary Mortgage Market Survey (series MORTGAGE30US and MORTGAGE15US), the 10-year Treasury yield is the constant-maturity series (DGS10), and the Federal funds rate is the monthly average (FEDFUNDS).</p>
-    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_16px">Each card carries its own observation date so you always know how fresh the read is. The page edge-caches the FRED response for one hour, so a new release surfaces within roughly an hour of publication.</p>
+    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_16px">All four series are pulled directly from <a href="https://fred.stlouisfed.org/" rel="noopener" class="c_#d92228 fw_700">Federal Reserve Economic Data (FRED)</a>, maintained by the Federal Reserve Bank of St. Louis. The 30- and 15-year fixed mortgage rates are Freddie Mac's Primary Mortgage Market Survey (series MORTGAGE30US and MORTGAGE15US), the 10-year Treasury yield is the constant-maturity series (DGS10), and the Federal funds rate is the monthly average (FEDFUNDS).</p>
+    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_16px">Each card carries its own observation date so you always know how fresh the read is. New releases surface on this page within roughly an hour of publication.</p>
     <p class="c_#3f4650 fs_15px md:fs_16px lh_24px md:lh_28px m_0"><em>Authored by Joshua Guerrero, Real Estate Agent, Real Brokerage. California DRE #02267255. Reach out at <a href="tel:9494385948" class="c_#d92228 fw_700">(949) 438-5948</a> or <a href="/contact/" class="c_#d92228 fw_700">/contact/</a>.</em></p>
   </div>
 
