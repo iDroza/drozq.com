@@ -2826,6 +2826,10 @@
   caption-side: top; text-align: left;
   padding: 12px 16px 4px; font-size: 0.82rem; color: #3f4650;
 }
+.drozq-app-date {
+  display: block; font-size: 0.72rem; font-weight: 400;
+  color: #757575; letter-spacing: 0.04em; margin-top: 2px;
+}
 
 /* ---- Explainer cards -------------------------------------------------- */
 .drozq-explain-grid {
@@ -2875,6 +2879,70 @@
 .btn-secondary-outline:hover { background: #d92228; color: #fff; }
 @media (min-width: 768px) { .btn-secondary-outline { font-size: 15px; } }
 </style>
+
+<section aria-labelledby="prices-tier3-title" id="market-signals" class="bg_#fff py_48px md:py_64px lg:py_72px">
+  <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
+
+    <div class="ta_center mb_32px md:mb_40px max-w_720px mx_auto">
+      <span class="drozq-tier-chip">Market Signals</span>
+      <h2 id="prices-tier3-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">The four signals that move prices.</h2>
+      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px m_0">Supply, demand, affordability, and the broader labor market. National data, monthly cadence. Movements here show up in California-specific prices over the following one to three quarters.</p>
+    </div>
+
+    <div class="drozq-data-grid drozq-data-grid--4">
+
+      <div class="drozq-data-card drozq-data-card--tint" id="card-supplyMonths" data-data-card="supplyMonths">
+        <p class="drozq-data-card__label">Months of Supply</p>
+        <p class="drozq-data-card__sub">MSACSR, new homes, US</p>
+        <span class="drozq-data-card__value" data-data-value="supplyMonths">&hellip;</span>
+        <span class="drozq-data-card__spark" data-data-spark="supplyMonths" aria-hidden="true"></span>
+        <div class="drozq-data-card__deltas">
+          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta="supplyMonths">Loading&hellip;</span>
+          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta-yoy="supplyMonths">&nbsp;</span>
+        </div>
+        <p class="drozq-data-card__date" data-data-date="supplyMonths">&nbsp;</p>
+      </div>
+
+      <div class="drozq-data-card drozq-data-card--tint" id="card-existingSales" data-data-card="existingSales">
+        <p class="drozq-data-card__label">Existing Home Sales</p>
+        <p class="drozq-data-card__sub">EXHOSLUSM495S, SAAR</p>
+        <span class="drozq-data-card__value" data-data-value="existingSales">&hellip;</span>
+        <span class="drozq-data-card__spark" data-data-spark="existingSales" aria-hidden="true"></span>
+        <div class="drozq-data-card__deltas">
+          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta="existingSales">Loading&hellip;</span>
+          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta-yoy="existingSales">&nbsp;</span>
+        </div>
+        <p class="drozq-data-card__date" data-data-date="existingSales">&nbsp;</p>
+      </div>
+
+      <div class="drozq-data-card drozq-data-card--tint" id="card-affordIdx" data-data-card="affordIdx">
+        <p class="drozq-data-card__label">Affordability Index</p>
+        <p class="drozq-data-card__sub">NAR Composite, US</p>
+        <span class="drozq-data-card__value" data-data-value="affordIdx">&hellip;</span>
+        <span class="drozq-data-card__spark" data-data-spark="affordIdx" aria-hidden="true"></span>
+        <div class="drozq-data-card__deltas">
+          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta="affordIdx">Loading&hellip;</span>
+          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta-yoy="affordIdx">&nbsp;</span>
+        </div>
+        <p class="drozq-data-card__date" data-data-date="affordIdx">&nbsp;</p>
+      </div>
+
+      <div class="drozq-data-card drozq-data-card--tint" id="card-unemployment" data-data-card="unemployment">
+        <p class="drozq-data-card__label">US Unemployment Rate</p>
+        <p class="drozq-data-card__sub">UNRATE, monthly</p>
+        <span class="drozq-data-card__value" data-data-value="unemployment">&hellip;</span>
+        <span class="drozq-data-card__spark" data-data-spark="unemployment" aria-hidden="true"></span>
+        <div class="drozq-data-card__deltas">
+          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta="unemployment">Loading&hellip;</span>
+          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta-yoy="unemployment">&nbsp;</span>
+        </div>
+        <p class="drozq-data-card__date" data-data-date="unemployment">&nbsp;</p>
+      </div>
+    </div>
+
+    <p class="drozq-data-meta" id="prices-tier3-meta">&nbsp;</p>
+  </div>
+</section>
 
 <section aria-labelledby="prices-tier1-title" id="california-home-prices" class="bg-c_#f2f0ef py_48px md:py_64px lg:py_72px">
   <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
@@ -2939,7 +3007,7 @@
 
     <div class="drozq-app-wrap">
       <table class="drozq-app-table" aria-describedby="prices-app-cap">
-        <caption id="prices-app-cap" data-app-caption>Today, five years ago, ten years ago &middot; compounded annual rates</caption>
+        <caption id="prices-app-cap">Today's column updates live from FRED. Historical anchors and CAGR snapshotted May 2026.</caption>
         <thead>
           <tr>
             <th scope="col">Market</th>
@@ -2951,35 +3019,36 @@
           </tr>
         </thead>
         <tbody>
+
           <tr>
             <td>Los Angeles Metro</td>
             <td data-app-today="hpiLA">&hellip;</td>
-            <td data-app-5y="hpiLA">&hellip;</td>
-            <td data-app-10y="hpiLA">&hellip;</td>
-            <td class="cagr" data-app-cagr5="hpiLA">&hellip;</td>
-            <td class="cagr" data-app-cagr10="hpiLA">&hellip;</td>
+            <td>333<br><span class="drozq-app-date">March 2021</span></td>
+            <td>246<br><span class="drozq-app-date">March 2016</span></td>
+            <td class="cagr">5.87%</td>
+            <td class="cagr">6.05%</td>
           </tr>
           <tr>
             <td>San Diego Metro</td>
             <td data-app-today="hpiSD">&hellip;</td>
-            <td data-app-5y="hpiSD">&hellip;</td>
-            <td data-app-10y="hpiSD">&hellip;</td>
-            <td class="cagr" data-app-cagr5="hpiSD">&hellip;</td>
-            <td class="cagr" data-app-cagr10="hpiSD">&hellip;</td>
+            <td>320<br><span class="drozq-app-date">March 2021</span></td>
+            <td>222<br><span class="drozq-app-date">March 2016</span></td>
+            <td class="cagr">6.79%</td>
+            <td class="cagr">7.18%</td>
           </tr>
           <tr>
             <td>California (statewide)</td>
             <td data-app-today="hpiCA">&hellip;</td>
-            <td data-app-5y="hpiCA">&hellip;</td>
-            <td data-app-10y="hpiCA">&hellip;</td>
-            <td class="cagr" data-app-cagr5="hpiCA">&hellip;</td>
-            <td class="cagr" data-app-cagr10="hpiCA">&hellip;</td>
+            <td>719<br><span class="drozq-app-date">Q1 2021</span></td>
+            <td>544<br><span class="drozq-app-date">Q1 2016</span></td>
+            <td class="cagr">6.33%</td>
+            <td class="cagr">6.03%</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_16px ta_center m_0">Indices are unitless. Read CAGR as the annualized rate at which an index point compounded into a current index point.</p>
+    <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_16px ta_center m_0">Index values are unitless (Case-Shiller normalized to 100 at January 2000; FHFA normalized to 100 at Q1 1991). Read CAGR as the annualized rate at which an index point compounded over that window.</p>
   </div>
 </section>
 
@@ -3006,74 +3075,10 @@
       <div class="drozq-explain">
         <p class="drozq-explain__num">Explainer 03</p>
         <h3>Supply, demand, affordability, and jobs are the four drivers.</h3>
-        <p>The market signals below the price grid (months of supply, existing home sales, NAR affordability, US unemployment) are what move the indices over the following one to three quarters. When months of supply stretches above ~6, prices typically soften. When the affordability index climbs past 100, demand returns. The labor market sets the ceiling: prices rarely keep climbing through a rising unemployment trend.</p>
+        <p>The market signals at the top of the page (months of supply, existing home sales, NAR affordability, US unemployment) are what move the indices over the following one to three quarters. When months of supply stretches above ~6, prices typically soften. When the affordability index climbs past 100, demand returns. The labor market sets the ceiling: prices rarely keep climbing through a rising unemployment trend.</p>
       </div>
     </div>
 
-  </div>
-</section>
-
-<section aria-labelledby="prices-tier3-title" id="market-signals" class="bg_#fff py_48px md:py_64px lg:py_72px">
-  <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
-
-    <div class="ta_center mb_32px md:mb_40px max-w_720px mx_auto">
-      <span class="drozq-tier-chip">Market Signals</span>
-      <h2 id="prices-tier3-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">The four signals that move prices.</h2>
-      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px m_0">Supply, demand, affordability, and the broader labor market. National data, monthly cadence. Movements here show up in California-specific prices over the following one to three quarters.</p>
-    </div>
-
-    <div class="drozq-data-grid drozq-data-grid--4">
-
-      <div class="drozq-data-card drozq-data-card--tint" id="card-supplyMonths" data-data-card="supplyMonths">
-        <p class="drozq-data-card__label">Months of Supply</p>
-        <p class="drozq-data-card__sub">MSACSR, new homes, US</p>
-        <span class="drozq-data-card__value" data-data-value="supplyMonths">&hellip;</span>
-        <span class="drozq-data-card__spark" data-data-spark="supplyMonths" aria-hidden="true"></span>
-        <div class="drozq-data-card__deltas">
-          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta="supplyMonths">Loading&hellip;</span>
-          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta-yoy="supplyMonths">&nbsp;</span>
-        </div>
-        <p class="drozq-data-card__date" data-data-date="supplyMonths">&nbsp;</p>
-      </div>
-
-      <div class="drozq-data-card drozq-data-card--tint" id="card-existingSales" data-data-card="existingSales">
-        <p class="drozq-data-card__label">Existing Home Sales</p>
-        <p class="drozq-data-card__sub">EXHOSLUSM495S, SAAR</p>
-        <span class="drozq-data-card__value" data-data-value="existingSales">&hellip;</span>
-        <span class="drozq-data-card__spark" data-data-spark="existingSales" aria-hidden="true"></span>
-        <div class="drozq-data-card__deltas">
-          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta="existingSales">Loading&hellip;</span>
-          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta-yoy="existingSales">&nbsp;</span>
-        </div>
-        <p class="drozq-data-card__date" data-data-date="existingSales">&nbsp;</p>
-      </div>
-
-      <div class="drozq-data-card drozq-data-card--tint" id="card-affordIdx" data-data-card="affordIdx">
-        <p class="drozq-data-card__label">Affordability Index</p>
-        <p class="drozq-data-card__sub">NAR Composite, US</p>
-        <span class="drozq-data-card__value" data-data-value="affordIdx">&hellip;</span>
-        <span class="drozq-data-card__spark" data-data-spark="affordIdx" aria-hidden="true"></span>
-        <div class="drozq-data-card__deltas">
-          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta="affordIdx">Loading&hellip;</span>
-          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta-yoy="affordIdx">&nbsp;</span>
-        </div>
-        <p class="drozq-data-card__date" data-data-date="affordIdx">&nbsp;</p>
-      </div>
-
-      <div class="drozq-data-card drozq-data-card--tint" id="card-unemployment" data-data-card="unemployment">
-        <p class="drozq-data-card__label">US Unemployment Rate</p>
-        <p class="drozq-data-card__sub">UNRATE, monthly</p>
-        <span class="drozq-data-card__value" data-data-value="unemployment">&hellip;</span>
-        <span class="drozq-data-card__spark" data-data-spark="unemployment" aria-hidden="true"></span>
-        <div class="drozq-data-card__deltas">
-          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta="unemployment">Loading&hellip;</span>
-          <span class="drozq-data-card__delta drozq-data-card__delta--flat" data-data-delta-yoy="unemployment">&nbsp;</span>
-        </div>
-        <p class="drozq-data-card__date" data-data-date="unemployment">&nbsp;</p>
-      </div>
-    </div>
-
-    <p class="drozq-data-meta" id="prices-tier3-meta">&nbsp;</p>
   </div>
 </section>
 
@@ -3727,36 +3732,17 @@
   }
 
   function renderAppreciationTable(series) {
+    // Only the "Today" column is live; the 5y/10y/CAGR columns are
+    // hardcoded snapshots in the HTML and don't need hydration.
     tier1Keys.forEach(function(key){
       var s = series[key];
-      var todayEl   = document.querySelector('[data-app-today="' + key + '"]');
-      var fiveEl    = document.querySelector('[data-app-5y="'    + key + '"]');
-      var tenEl     = document.querySelector('[data-app-10y="'   + key + '"]');
-      var cagr5El   = document.querySelector('[data-app-cagr5="' + key + '"]');
-      var cagr10El  = document.querySelector('[data-app-cagr10="' + key + '"]');
-
-      function setIdx(el, obj) {
-        if (!el) return;
-        if (!obj || obj.value == null) { el.textContent = 'n/a'; return; }
-        el.textContent = integerFmt.format(Math.round(obj.value));
-      }
-      function setCagr(el, v) {
-        if (!el) return;
-        if (v == null || !isFinite(v)) { el.textContent = 'n/a'; el.className = 'cagr'; return; }
-        var sign = v > 0 ? '+' : '';
-        el.textContent = sign + v.toFixed(2) + '%';
-        el.className = v >= 0 ? 'cagr' : 'cagr-down';
-      }
-
-      if (!s) {
-        [todayEl, fiveEl, tenEl, cagr5El, cagr10El].forEach(function(el){ if (el) el.textContent = 'n/a'; });
+      var todayEl = document.querySelector('[data-app-today="' + key + '"]');
+      if (!todayEl) return;
+      if (!s || !s.latest || s.latest.value == null) {
+        todayEl.textContent = 'n/a';
         return;
       }
-      setIdx(todayEl, s.latest);
-      setIdx(fiveEl,  s.fiveYearAgo);
-      setIdx(tenEl,   s.tenYearAgo);
-      setCagr(cagr5El,  s.cagr5y);
-      setCagr(cagr10El, s.cagr10y);
+      todayEl.textContent = integerFmt.format(Math.round(s.latest.value));
     });
   }
 

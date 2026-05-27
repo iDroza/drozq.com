@@ -207,6 +207,10 @@ PAGE_STYLE = """
   caption-side: top; text-align: left;
   padding: 12px 16px 4px; font-size: 0.82rem; color: #3f4650;
 }
+.drozq-app-date {
+  display: block; font-size: 0.72rem; font-weight: 400;
+  color: #757575; letter-spacing: 0.04em; margin-top: 2px;
+}
 
 /* ---- Explainer cards -------------------------------------------------- */
 .drozq-explain-grid {
@@ -310,7 +314,34 @@ TIER1_SECTION = f"""
 # 3. Long-term appreciation table -- citation magnet
 # ---------------------------------------------------------------------------
 
-APPRECIATION_TABLE_SECTION = """
+# Historical reference values for the appreciation table. Snapshotted from
+# FRED on 2026-05-27. Today's column stays live; the rest of the row is
+# manually re-anchored when this script is re-run (the index-point values
+# don't move once published, so the 5y_ago / 10y_ago cells are immutable;
+# the CAGR cells drift by ~0.05 percentage points per month and are
+# considered acceptably stable for a "snapshot" framing).
+APPRECIATION_SNAPSHOT_DATE = "May 2026"
+APPRECIATION_ROWS = [
+    # (display name, key, 5y_ago, 5y_ago_date, 10y_ago, 10y_ago_date, 5y_cagr_pct, 10y_cagr_pct)
+    ("Los Angeles Metro",      "hpiLA", "333", "March 2021",   "246", "March 2016",   "5.87%", "6.05%"),
+    ("San Diego Metro",        "hpiSD", "320", "March 2021",   "222", "March 2016",   "6.79%", "7.18%"),
+    ("California (statewide)", "hpiCA", "719", "Q1 2021",      "544", "Q1 2016",      "6.33%", "6.03%"),
+]
+
+
+def appreciation_row(name: str, key: str, fy: str, fyd: str, ty: str, tyd: str, cagr5: str, cagr10: str) -> str:
+    return f"""
+          <tr>
+            <td>{name}</td>
+            <td data-app-today="{key}">&hellip;</td>
+            <td>{fy}<br><span class="drozq-app-date">{fyd}</span></td>
+            <td>{ty}<br><span class="drozq-app-date">{tyd}</span></td>
+            <td class="cagr">{cagr5}</td>
+            <td class="cagr">{cagr10}</td>
+          </tr>"""
+
+
+APPRECIATION_TABLE_SECTION = f"""
 <section aria-labelledby="prices-appreciation-title" id="long-term-appreciation" class="bg_#fff py_48px md:py_64px lg:py_72px">
   <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
 
@@ -322,7 +353,7 @@ APPRECIATION_TABLE_SECTION = """
 
     <div class="drozq-app-wrap">
       <table class="drozq-app-table" aria-describedby="prices-app-cap">
-        <caption id="prices-app-cap" data-app-caption>Today, five years ago, ten years ago &middot; compounded annual rates</caption>
+        <caption id="prices-app-cap">Today's column updates live from FRED. Historical anchors and CAGR snapshotted {APPRECIATION_SNAPSHOT_DATE}.</caption>
         <thead>
           <tr>
             <th scope="col">Market</th>
@@ -334,35 +365,12 @@ APPRECIATION_TABLE_SECTION = """
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Los Angeles Metro</td>
-            <td data-app-today="hpiLA">&hellip;</td>
-            <td data-app-5y="hpiLA">&hellip;</td>
-            <td data-app-10y="hpiLA">&hellip;</td>
-            <td class="cagr" data-app-cagr5="hpiLA">&hellip;</td>
-            <td class="cagr" data-app-cagr10="hpiLA">&hellip;</td>
-          </tr>
-          <tr>
-            <td>San Diego Metro</td>
-            <td data-app-today="hpiSD">&hellip;</td>
-            <td data-app-5y="hpiSD">&hellip;</td>
-            <td data-app-10y="hpiSD">&hellip;</td>
-            <td class="cagr" data-app-cagr5="hpiSD">&hellip;</td>
-            <td class="cagr" data-app-cagr10="hpiSD">&hellip;</td>
-          </tr>
-          <tr>
-            <td>California (statewide)</td>
-            <td data-app-today="hpiCA">&hellip;</td>
-            <td data-app-5y="hpiCA">&hellip;</td>
-            <td data-app-10y="hpiCA">&hellip;</td>
-            <td class="cagr" data-app-cagr5="hpiCA">&hellip;</td>
-            <td class="cagr" data-app-cagr10="hpiCA">&hellip;</td>
-          </tr>
+{"".join(appreciation_row(*row) for row in APPRECIATION_ROWS)}
         </tbody>
       </table>
     </div>
 
-    <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_16px ta_center m_0">Indices are unitless. Read CAGR as the annualized rate at which an index point compounded into a current index point.</p>
+    <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_16px ta_center m_0">Index values are unitless (Case-Shiller normalized to 100 at January 2000; FHFA normalized to 100 at Q1 1991). Read CAGR as the annualized rate at which an index point compounded over that window.</p>
   </div>
 </section>
 """
@@ -396,7 +404,7 @@ EXPLAINERS_SECTION = """
       <div class="drozq-explain">
         <p class="drozq-explain__num">Explainer 03</p>
         <h3>Supply, demand, affordability, and jobs are the four drivers.</h3>
-        <p>The market signals below the price grid (months of supply, existing home sales, NAR affordability, US unemployment) are what move the indices over the following one to three quarters. When months of supply stretches above ~6, prices typically soften. When the affordability index climbs past 100, demand returns. The labor market sets the ceiling: prices rarely keep climbing through a rising unemployment trend.</p>
+        <p>The market signals at the top of the page (months of supply, existing home sales, NAR affordability, US unemployment) are what move the indices over the following one to three quarters. When months of supply stretches above ~6, prices typically soften. When the affordability index climbs past 100, demand returns. The labor market sets the ceiling: prices rarely keep climbing through a rising unemployment trend.</p>
       </div>
     </div>
 
@@ -902,36 +910,17 @@ PRICES_SCRIPT = r"""
   }
 
   function renderAppreciationTable(series) {
+    // Only the "Today" column is live; the 5y/10y/CAGR columns are
+    // hardcoded snapshots in the HTML and don't need hydration.
     tier1Keys.forEach(function(key){
       var s = series[key];
-      var todayEl   = document.querySelector('[data-app-today="' + key + '"]');
-      var fiveEl    = document.querySelector('[data-app-5y="'    + key + '"]');
-      var tenEl     = document.querySelector('[data-app-10y="'   + key + '"]');
-      var cagr5El   = document.querySelector('[data-app-cagr5="' + key + '"]');
-      var cagr10El  = document.querySelector('[data-app-cagr10="' + key + '"]');
-
-      function setIdx(el, obj) {
-        if (!el) return;
-        if (!obj || obj.value == null) { el.textContent = 'n/a'; return; }
-        el.textContent = integerFmt.format(Math.round(obj.value));
-      }
-      function setCagr(el, v) {
-        if (!el) return;
-        if (v == null || !isFinite(v)) { el.textContent = 'n/a'; el.className = 'cagr'; return; }
-        var sign = v > 0 ? '+' : '';
-        el.textContent = sign + v.toFixed(2) + '%';
-        el.className = v >= 0 ? 'cagr' : 'cagr-down';
-      }
-
-      if (!s) {
-        [todayEl, fiveEl, tenEl, cagr5El, cagr10El].forEach(function(el){ if (el) el.textContent = 'n/a'; });
+      var todayEl = document.querySelector('[data-app-today="' + key + '"]');
+      if (!todayEl) return;
+      if (!s || !s.latest || s.latest.value == null) {
+        todayEl.textContent = 'n/a';
         return;
       }
-      setIdx(todayEl, s.latest);
-      setIdx(fiveEl,  s.fiveYearAgo);
-      setIdx(tenEl,   s.tenYearAgo);
-      setCagr(cagr5El,  s.cagr5y);
-      setCagr(cagr10El, s.cagr10y);
+      todayEl.textContent = integerFmt.format(Math.round(s.latest.value));
     });
   }
 
@@ -987,10 +976,11 @@ PRICES_SCRIPT = r"""
 MAIN_BODY = (
     HERO
     + PAGE_STYLE
-    + TIER1_SECTION
-    + APPRECIATION_TABLE_SECTION
+    + TIER3_SECTION              # Market Signals: lead the page with the four
+                                 #   national signals that move prices
+    + TIER1_SECTION              # California home price indices
+    + APPRECIATION_TABLE_SECTION # 5y/10y CAGR snapshot
     + EXPLAINERS_SECTION
-    + TIER3_SECTION
     + RATES_CROSSLINK
     + MID_TABS
     + FAQ_SECTION
