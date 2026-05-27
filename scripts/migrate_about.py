@@ -271,25 +271,53 @@ THE_MISSION = """
 """
 
 
-# (case file slug, label, stat, meta)
+# (slug, label, meta, headline, stat, stat_label, aria)
 CASE_FILE_MINICARDS = [
-    ("001-long-beach-firefighter", "Case File 001", "$23,250", "Long Beach &middot; First-Time Buyer"),
-    ("002-corona-analyst",         "Case File 002", "$20,000", "Corona &middot; Strategic Purchase"),
+    (
+        "001-long-beach-firefighter",
+        "Case File 001",
+        "Long Beach &middot; First-Time Buyer",
+        "He spends his career protecting other people's homes. We helped him acquire his first.",
+        "$23,250",
+        "Seller credit negotiated",
+        "Read Case File 001: Long Beach firefighter, first-time buyer",
+    ),
+    (
+        "002-corona-analyst",
+        "Case File 002",
+        "Corona &middot; Strategic Purchase",
+        "He analyzes numbers for the State of California. Then he ran the numbers on us.",
+        "$20,000",
+        "Saved off asking price",
+        "Read Case File 002: Corona financial analyst, strategic purchase",
+    ),
 ]
 
 
-def minicard(slug: str, label: str, stat: str, meta: str) -> str:
+def minicard(slug: str, label: str, meta: str, headline: str, stat: str, stat_label: str, aria: str) -> str:
     return f"""
-      <a href="/testimonials/{slug}/"
-         class="bg_#fff bdr_16px p_24px md:p_28px bd_1px_solid_#e5e5e5 d_flex flex-d_column gap_8px td_none c_inherit hover:bd-c_#d92228 trs_all_.2s_ease">
-        <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px m_0" style="text-transform:uppercase">{label}</p>
-        <p class="fs_30px md:fs_36px fw_800 c_#1a1816 lh_1.1 m_0">{stat}</p>
-        <p class="c_#3f4650 fs_13px md:fs_14px m_0">{meta}</p>
+      <a href="/testimonials/{slug}/" aria-label="{aria}"
+         class="about-proof-card bg_#fff bdr_16px p_24px md:p_28px bd_1px_solid_#e5e5e5 d_flex flex-d_column gap_12px c_#1a1816" style="text-decoration:none;">
+        <span class="as_flex-start fs_11px fw_700 ls_2px c_#d92228 bg-c_#fdecec bd_1px_solid_#d92228 bdr_4px p_6px_12px" style="text-transform:uppercase">{label}</span>
+        <p class="fs_11px fw_700 ls_1.5px c_#3f4650 m_0" style="text-transform:uppercase">{meta}</p>
+        <h3 class="fs_18px md:fs_20px fw_700 c_#1a1816 lh_1.3 m_0">{headline}</h3>
+        <div class="mt_auto pt_16px bd-t_1px_solid_#e5e5e5">
+          <span class="d_block fs_28px md:fs_32px fw_800 c_#d92228 lh_1 mb_4px" style="font-variant-numeric: tabular-nums;">{stat}</span>
+          <span class="fs_13px c_#3f4650 fw_500">{stat_label}</span>
+        </div>
       </a>"""
 
 
 THE_RECEIPTS = """
 <style>
+.about-proof-card {
+  transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+}
+.about-proof-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(217, 34, 40, 0.14);
+  border-color: #d92228;
+}
 .btn-secondary-outline {
   display: inline-flex; align-items: center; justify-content: center;
   background: transparent; color: #d92228;
@@ -311,12 +339,12 @@ THE_RECEIPTS = """
       <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px m_0">I don't just tell you I do the work. I show you. Every transaction becomes a case file, anonymized to protect the client, with the real numbers, the real negotiation, and the real outcome. If you want to know how I think, read the case files.</p>
     </div>
 
-    <div class="d_grid grid-tc_1fr md:grid-tc_repeat(2,_1fr) gap_16px md:gap_20px mb_24px md:mb_32px">
-""" + "\n".join(minicard(s, l, st, m) for (s, l, st, m) in CASE_FILE_MINICARDS) + """
+    <div class="d_grid grid-tc_1fr md:grid-tc_repeat(2,_1fr) gap_16px md:gap_20px mb_32px">
+""" + "\n".join(minicard(*c) for c in CASE_FILE_MINICARDS) + """
     </div>
 
     <div class="ta_center">
-      <a href="/testimonials/" class="btn-secondary-outline">See all case files &rarr;</a>
+      <a href="/testimonials/" class="btn-secondary-outline">Read more case files &rarr;</a>
     </div>
   </div>
 </section>
