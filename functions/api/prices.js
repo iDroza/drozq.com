@@ -47,27 +47,24 @@ const SERIES = [
   { key: "unemployment",  id: "UNRATE",        label: "US Unemployment Rate",              unit: "%",         cadence: "monthly",   limit:  36, tier: 3 }
 ];
 
-// Cadence -> index in the descending observation list at N years prior to
-// latest. Used for honest YoY/5y/10y labels regardless of how much history
-// the limit pulls.
-const YEAR_AGO_OFFSET = {
+// Cadence -> approximate obs-per-year. Used as the fast-path index lookup
+// when the series is dense. For sparse series (e.g. FIXHAI -- intermittent
+// publication, many null gaps), we fall back to a date-based nearest-obs
+// search with a per-cadence tolerance window.
+const OBS_PER_YEAR = {
   daily:     252,   // approx business days/year
   weekly:     52,
   monthly:    12,
   quarterly:   4
 };
-const FIVE_YEAR_OFFSET = {
-  daily:    1260,
-  weekly:    260,
+const TOLERANCE_DAYS = {
+  daily:       7,
+  weekly:     15,
   monthly:    60,
-  quarterly:  20
+  quarterly: 180
 };
-const TEN_YEAR_OFFSET = {
-  daily:    2520,
-  weekly:    520,
-  monthly:   120,
-  quarterly:  40
-};
+const MS_PER_DAY = 86400000;
+const DAYS_PER_YEAR = 365.25;
 
 const json = (body, status = 200, extra = {}) =>
   new Response(JSON.stringify(body), {
@@ -105,11 +102,34 @@ function cagr(latestValue, pastValue, years) {
   return Number((r * 100).toFixed(2));
 }
 
-function pickAt(cleaned, offsetMap, cadence) {
-  if (offsetMap == null) return { value: null, date: null };
-  const offset = offsetMap[cadence];
-  if (offset == null) return { value: null, date: null };
-  return cleaned[offset] || { value: null, date: null };
+// Pick the observation N years before `latest`. Tries an index-based lookup
+// first (fast path for dense series); on miss, falls back to a date-based
+// nearest-neighbor search constrained to a per-cadence tolerance window.
+// Returns { value: null, date: null } when no obs is within tolerance.
+function pickNYearsBack(cleaned, latest, yearsBack, cadence) {
+  if (!latest || !latest.date) return { value: null, date: null };
+
+  const perYear = OBS_PER_YEAR[cadence];
+  if (perYear != null) {
+    const idx = perYear * yearsBack;
+    if (cleaned[idx]) return cleaned[idx];
+  }
+
+  const targetMs = new Date(latest.date + "T00:00:00Z").getTime() - yearsBack * DAYS_PER_YEAR * MS_PER_DAY;
+  let best = null;
+  let bestDelta = Infinity;
+  for (const o of cleaned) {
+    const dt = Math.abs(new Date(o.date + "T00:00:00Z").getTime() - targetMs);
+    if (dt < bestDelta) { bestDelta = dt; best = o; }
+  }
+  if (!best) return { value: null, date: null };
+
+  const toleranceMs = (TOLERANCE_DAYS[cadence] || 60) * MS_PER_DAY;
+  // Scale tolerance roughly with yearsBack so a 10y lookup gets a slightly
+  // wider window than a 1y lookup, but cap at one cadence period.
+  const adjustedToleranceMs = toleranceMs + (yearsBack - 1) * (toleranceMs / 2);
+  if (bestDelta > adjustedToleranceMs) return { value: null, date: null };
+  return best;
 }
 
 function summarize(observations, spec) {
@@ -133,9 +153,9 @@ function summarize(observations, spec) {
 
   const latest = cleaned[0];
   const previous = cleaned[1] || { value: null, date: null };
-  const yearAgo     = pickAt(cleaned, YEAR_AGO_OFFSET,  spec.cadence);
-  const fiveYearAgo = pickAt(cleaned, FIVE_YEAR_OFFSET, spec.cadence);
-  const tenYearAgo  = pickAt(cleaned, TEN_YEAR_OFFSET,  spec.cadence);
+  const yearAgo     = pickNYearsBack(cleaned, latest,  1, spec.cadence);
+  const fiveYearAgo = pickNYearsBack(cleaned, latest,  5, spec.cadence);
+  const tenYearAgo  = pickNYearsBack(cleaned, latest, 10, spec.cadence);
 
   return {
     latest,
