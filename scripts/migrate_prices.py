@@ -285,6 +285,50 @@ PAGE_STYLE = """
 .drozq-faq-region { overflow: hidden; max-height: 0; transition: max-height .3s ease; }
 .drozq-faq-region p { margin: 0 0 16px; color: #3f4650; font-size: 15px; line-height: 1.6; }
 
+/* ---- Mortgage payment calculator (ported from /rates/) ---------------- */
+.drozq-calc {
+  background: #ffffff; border: 1px solid #e5e5e5; border-radius: 16px;
+  padding: 24px;
+}
+@media (min-width: 768px) { .drozq-calc { padding: 32px; } }
+.drozq-calc__grid {
+  display: grid; grid-template-columns: 1fr; gap: 16px;
+}
+@media (min-width: 640px) { .drozq-calc__grid { grid-template-columns: 1fr 1fr; gap: 20px; } }
+.drozq-calc__field { display: flex; flex-direction: column; gap: 6px; }
+.drozq-calc__field label {
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #3f4650;
+}
+.drozq-calc__field input {
+  font: inherit; font-size: 16px; padding: 12px 14px;
+  border: 1px solid #d3cfca; border-radius: 10px; background: #fff;
+  color: #1a1816;
+}
+.drozq-calc__field input:focus { outline: none; border-color: #d92228; }
+.drozq-calc__radios { display: flex; gap: 8px; }
+.drozq-calc__radio {
+  flex: 1; display: inline-flex; align-items: center; justify-content: center;
+  padding: 12px 14px; border-radius: 10px; border: 1px solid #d3cfca;
+  background: #fff; font-weight: 700; font-size: 0.95rem; cursor: pointer;
+  color: #1a1816;
+}
+.drozq-calc__radio.is-active { border-color: #d92228; color: #d92228; background: #fff5f5; }
+.drozq-calc__results {
+  margin-top: 24px; display: grid; grid-template-columns: 1fr; gap: 16px;
+}
+@media (min-width: 640px) { .drozq-calc__results { grid-template-columns: repeat(3, 1fr); } }
+.drozq-calc__stat { background: #f7f4ef; border-radius: 12px; padding: 16px; }
+.drozq-calc__stat .lbl {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #3f4650; margin: 0 0 6px;
+}
+.drozq-calc__stat .val {
+  font-size: 1.5rem; font-weight: 800; line-height: 1; color: #1a1816;
+  font-variant-numeric: tabular-nums;
+}
+.drozq-calc__note { margin-top: 18px; font-size: 0.82rem; color: #757575; }
+
 /* ---- Secondary outlined link ------------------------------------------ */
 .btn-secondary-outline {
   display: inline-flex; align-items: center; justify-content: center;
@@ -669,7 +713,79 @@ CROSSLINKS_SECTION = """
 
 
 # ---------------------------------------------------------------------------
-# 11. Closing CTA
+# 11. Mortgage payment calculator (duplicated from /rates/)
+#
+# Lives directly above the closing CTA so the journey reads as
+# "play with the math" -> "talk to me". The rate input is pre-filled
+# live from /api/rates (separate fetch from /api/prices, runs in
+# parallel inside the page IIFE). When the term toggles between 30y
+# and 15y, the rate input swaps to the matching FRED series. If the
+# user manually edits the rate, the auto-fill stops respecting the
+# term toggle (userTouchedRate flag).
+# ---------------------------------------------------------------------------
+
+CALCULATOR_SECTION = f"""
+<section aria-labelledby="prices-calc-title" class="bg-c_#f2f0ef py_48px md:py_64px lg:py_72px">
+  <div class="max-w_840px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
+
+    <div class="ta_center mb_32px md:mb_40px">
+      <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">Run your numbers</p>
+      <h2 id="prices-calc-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">Mortgage payment calculator.</h2>
+      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px m_0">Pre-filled with today's 30-year fixed rate from FRED. Adjust to your scenario; the math updates live.</p>
+    </div>
+
+    <form class="drozq-calc" id="drozq-calc" novalidate>
+      <div class="drozq-calc__grid">
+        <div class="drozq-calc__field">
+          <label for="calc-price">Home price</label>
+          <input id="calc-price" type="number" inputmode="numeric" min="50000" step="10000" value="1000000" aria-describedby="calc-price-hint">
+          <span id="calc-price-hint" class="drozq-calc__note" style="margin-top:0">Total purchase price, in dollars.</span>
+        </div>
+        <div class="drozq-calc__field">
+          <label for="calc-down">Down payment (%)</label>
+          <input id="calc-down" type="number" inputmode="decimal" min="0" max="100" step="0.5" value="20" aria-describedby="calc-down-hint">
+          <span id="calc-down-hint" class="drozq-calc__note" style="margin-top:0">Percent of purchase price paid up front.</span>
+        </div>
+        <div class="drozq-calc__field">
+          <label>Loan term</label>
+          <div class="drozq-calc__radios" role="radiogroup" aria-label="Loan term">
+            <button type="button" class="drozq-calc__radio is-active" data-calc-term="30" aria-pressed="true">30-year</button>
+            <button type="button" class="drozq-calc__radio"           data-calc-term="15" aria-pressed="false">15-year</button>
+          </div>
+        </div>
+        <div class="drozq-calc__field">
+          <label for="calc-rate">Interest rate (%)</label>
+          <input id="calc-rate" type="number" inputmode="decimal" min="0" max="20" step="0.01" value="6.50" aria-describedby="calc-rate-hint">
+          <span id="calc-rate-hint" class="drozq-calc__note" style="margin-top:0">Pre-filled from today's FRED reading for the selected term.</span>
+        </div>
+      </div>
+
+      <div class="drozq-calc__results" aria-live="polite">
+        <div class="drozq-calc__stat"><p class="lbl">Monthly P&amp;I</p><p class="val" id="calc-out-monthly">$0</p></div>
+        <div class="drozq-calc__stat"><p class="lbl">Total interest</p><p class="val" id="calc-out-interest">$0</p></div>
+        <div class="drozq-calc__stat"><p class="lbl">Total paid</p><p class="val" id="calc-out-total">$0</p></div>
+      </div>
+
+      <p class="drozq-calc__note">Principal and interest only. Property tax, insurance, HOA, and PMI not included. For a full picture of your specific scenario, the conversation below is the next step.</p>
+    </form>
+
+    <div class="ta_center mt_32px md:mt_40px">
+      <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">From math to strategy</p>
+      <h3 class="fw_800 op_0.87 c_#2b2b2b lh_32px md:lh_40px fs_22px md:fs_28px ls_0.3px ta_center mb_12px">These numbers are math. Your specific California purchase is a strategy.</h3>
+      <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px max-w_640px m_0_auto mb_24px">A monthly payment is one variable. Comps, condition, contingencies, and timing are the rest. Tell me where you're looking and I'll run the read.</p>
+
+      <div role="tabpanel" aria-labelledby="tab-buy" class="d_flex jc_center">
+        <div style="width:100%; max-width: 540px;">{landing_form_pill("City, neighborhood, or ZIP", value="Irvine, CA")}</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+"""
+
+
+# ---------------------------------------------------------------------------
+# 12. Closing CTA
 # ---------------------------------------------------------------------------
 
 CLOSING_CTA = f"""
@@ -868,10 +984,21 @@ PRICES_SCRIPT = r"""
   var monthFmt   = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
   var integerFmt = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
   var oneDecFmt  = new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  var dollars    = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
   var tier1Keys = ['hpiLA','hpiSD','hpiCA'];
   var tier3Keys = ['supplyMonths','existingSales','affordIdx','unemployment'];
   var allKeys = tier1Keys.concat(tier3Keys);
+
+  // Mortgage payment math: standard fixed-rate formula.
+  function payment(P, annualRate, years) {
+    var r = annualRate / 100 / 12;
+    var n = years * 12;
+    if (n <= 0) return 0;
+    if (r === 0) return P / n;
+    var f = Math.pow(1 + r, n);
+    return P * (r * f) / (f - 1);
+  }
 
   function fmtDate(iso, cadence) {
     if (!iso) return '';
@@ -1023,7 +1150,88 @@ PRICES_SCRIPT = r"""
     render({ error: (err && err.message) || 'fetch_failed' });
   }
 
+  // ---- Calculator (ported from /rates/) ----
+  var calcRateEl   = document.getElementById('calc-rate');
+  var calcPriceEl  = document.getElementById('calc-price');
+  var calcDownEl   = document.getElementById('calc-down');
+  var calcTermEls  = document.querySelectorAll('[data-calc-term]');
+  var calcMonthlyOut  = document.getElementById('calc-out-monthly');
+  var calcInterestOut = document.getElementById('calc-out-interest');
+  var calcTotalOut    = document.getElementById('calc-out-total');
+  var apiRate30 = null, apiRate15 = null;
+  var currentTerm = 30;
+  var userTouchedRate = false;
+
+  function setCalcTerm(term, sourceClick) {
+    currentTerm = term;
+    calcTermEls.forEach(function(el){
+      var on = (parseInt(el.getAttribute('data-calc-term'), 10) === term);
+      el.classList.toggle('is-active', on);
+      el.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    if (sourceClick && !userTouchedRate) {
+      var r = (term === 15 ? apiRate15 : apiRate30);
+      if (r != null && calcRateEl) calcRateEl.value = r.toFixed(2);
+    }
+    calcRecompute();
+  }
+
+  function calcRecompute() {
+    if (!calcPriceEl || !calcDownEl || !calcRateEl) return;
+    var price = parseFloat(calcPriceEl.value) || 0;
+    var downPct = parseFloat(calcDownEl.value) || 0;
+    var rate = parseFloat(calcRateEl.value) || 0;
+    var loan = Math.max(0, price - (price * downPct / 100));
+    var mo = payment(loan, rate, currentTerm);
+    var total = mo * currentTerm * 12;
+    var interest = total - loan;
+    if (calcMonthlyOut)  calcMonthlyOut.textContent  = dollars.format(Math.round(mo));
+    if (calcInterestOut) calcInterestOut.textContent = dollars.format(Math.round(interest));
+    if (calcTotalOut)    calcTotalOut.textContent    = dollars.format(Math.round(total));
+  }
+
+  function wireCalc() {
+    if (!calcPriceEl) return;
+    [calcPriceEl, calcDownEl, calcRateEl].forEach(function(el){
+      if (!el) return;
+      el.addEventListener('input', function(){
+        if (el === calcRateEl) userTouchedRate = true;
+        calcRecompute();
+      });
+    });
+    calcTermEls.forEach(function(el){
+      el.addEventListener('click', function(){
+        var t = parseInt(el.getAttribute('data-calc-term'), 10) || 30;
+        setCalcTerm(t, true);
+      });
+    });
+    calcRecompute();
+  }
+
+  function fetchRatesForCalc() {
+    // Separate fetch (the /api/prices payload doesn't carry mortgage rates).
+    // If this fails, the calculator keeps its 6.50% default and the visitor
+    // can still adjust manually.
+    return fetch('/api/rates', { headers: { 'accept': 'application/json' } })
+      .then(function(r){ if (!r.ok) throw new Error('rates_unavailable'); return r.json(); })
+      .then(function(p){
+        var series = (p && p.series) || {};
+        var r30 = series.rate30y && series.rate30y.latest && series.rate30y.latest.value;
+        var r15 = series.rate15y && series.rate15y.latest && series.rate15y.latest.value;
+        apiRate30 = r30 != null ? r30 : null;
+        apiRate15 = r15 != null ? r15 : null;
+        if (!userTouchedRate && calcRateEl && apiRate30 != null) {
+          var pick = (currentTerm === 15 && apiRate15 != null ? apiRate15 : apiRate30);
+          calcRateEl.value = pick.toFixed(2);
+          calcRecompute();
+        }
+      })
+      .catch(function(){ /* keep the 6.50% default */ });
+  }
+
   function go() {
+    wireCalc();
+    fetchRatesForCalc();
     fetch(endpoint, { headers: { 'accept': 'application/json' } })
       .then(function(r){
         if (!r.ok && r.status !== 200) {
@@ -1060,6 +1268,10 @@ MAIN_BODY = (
     + FAQ_SECTION
     + METHODOLOGY_SECTION
     + CROSSLINKS_SECTION
+    + CALCULATOR_SECTION         # "Run your numbers" -- mortgage calculator,
+                                 #   pre-filled from /api/rates. Sits right
+                                 #   above the closing CTA so the journey
+                                 #   reads as math -> talk to me.
     + CLOSING_CTA
     + JSON_LD_BLOCKS
     + PRICES_SCRIPT
