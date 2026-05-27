@@ -286,7 +286,7 @@ The inline head script sets `data-drozq-header-hidden="1"` before paint when `lo
     <li><a href="/prices/">Home Prices</a></li>
     <li><a href="/#tab-buy">For Buyers</a></li>
     <li><a href="/#tab-sell">For Sellers</a></li>
-    <li><a href="/#top">Home Value</a></li>
+    <li><a href="/value/">Home Value</a></li>
   </ul>
 </aside>
 ```
@@ -304,7 +304,7 @@ Drawer toggle wired in the mobile-nav script (the `<script>` block after `DROZQ_
     <li><a href="/prices/">Home Prices</a></li>
     <li><a href="/#tab-buy">For Buyers</a></li>
     <li><a href="/#tab-sell">For Sellers</a></li>
-    <li><a href="/#top">Home Value</a></li>
+    <li><a href="/value/">Home Value</a></li>
   </ul>
 </li>
 ```

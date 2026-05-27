@@ -30,9 +30,10 @@
     "market-insights/index.html",
     "field-notes/index.html",
     "rates/index.html",
-    "prices/index.html"
+    "prices/index.html",
+    "value/index.html"
   ],
-  "lastSync": "2026-05-27T17:28:51Z",
+  "lastSync": "2026-05-27T20:41:14Z",
   "notes": "Every page that carries the inline funnel must (a) contain the four DROZQ_FUNNEL markers in the same order as /index.html, (b) appear in `pages` above as a path relative to the repo root. Run `python scripts/sync_funnels.py` to propagate the funnel from index.html to every registered page. Source of truth is `source`; never hand-edit a synced page's funnel block.",
   "pageSync": {},
   "sourceHashes": {

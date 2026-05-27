@@ -20,7 +20,7 @@ The homepage (originally a clone of sell.realtor.com / UpNest's agent-locator pa
 
 Every page on the site is now on the homepage template. The historical distressed-sellers paid landing at `/relief/` was deleted on 2026-05-26 (see `BACKLOG.md` for the rebuild task). The strategy playbook for that audience still lives in `notes/ads/distressed-sellers-strategy.md` for when the campaign relaunches.
 
-Pages on the homepage template: `/`, `/about/`, `/california/`, `/contact/`, `/faq/`, `/field-notes/`, `/los-angeles/`, `/market-insights/`, `/meet-the-team/`, `/prices/`, `/privacy/`, `/process/` (renamed from legacy `/the-process/`), `/rates/`, `/terms/`, `/testimonials/` (+ /001-long-beach-firefighter/ + /002-corona-analyst/), `/thank-you/`, `/where-we-help/`. The source of truth for "is this page using the synced funnel" is `funnels.json#pages`. The source of truth for "is this page on the homepage template" is the presence of `migrate_<slug>.py` in `scripts/` and the absence of brand-mode classes (`cf-narrow`, `lead-modal`, `mt-hero`, `about-hero`, etc.) in the rendered HTML.
+Pages on the homepage template: `/`, `/about/`, `/california/`, `/contact/`, `/faq/`, `/field-notes/`, `/los-angeles/`, `/market-insights/`, `/meet-the-team/`, `/prices/`, `/privacy/`, `/process/` (renamed from legacy `/the-process/`), `/rates/`, `/terms/`, `/testimonials/` (+ /001-long-beach-firefighter/ + /002-corona-analyst/), `/thank-you/`, `/value/`, `/where-we-help/`. The source of truth for "is this page using the synced funnel" is `funnels.json#pages`. The source of truth for "is this page on the homepage template" is the presence of `migrate_<slug>.py` in `scripts/` and the absence of brand-mode classes (`cf-narrow`, `lead-modal`, `mt-hero`, `about-hero`, etc.) in the rendered HTML.
 
 ## Core operating principles
 
@@ -195,7 +195,7 @@ The funnel JS dual-fires every transition through a `track(event, props)` helper
 
 ## Cloudflare Pages Functions
 
-Cloudflare Pages auto-deploys functions from `/functions/`. Four endpoints currently exist:
+Cloudflare Pages auto-deploys functions from `/functions/`. Five endpoints currently exist:
 
 ### `/functions/api/lead.js`
 
@@ -263,6 +263,43 @@ Response shape per series matches `/api/rates` plus two extra fields for index/c
 Originally included a Tier 2 series (`MORTGAGE5US`, the 5/1 ARM rate) as a "cost of money" complement, but Freddie Mac discontinued the 5/1 ARM in their PMMS survey in November 2022. FRED still exposes the series but every observation past 2022-11-10 is null. Until a replacement ARM benchmark surfaces on FRED, `/prices/` carries a thin crosslink band to `/rates/` instead. See the [[fred-mortgage5us-discontinued]] memory for the recheck criteria.
 
 Consumed by `/prices/index.html`. Same render pattern as `/rates/`: static skeletons hydrate on `DOMContentLoaded` with per-unit value formatting (index → integer, percent → `X.XX%`, months → `X.X mo`, thousands → `X.XM` annualized), inline SVG sparklines, and a primary delta + YoY delta per card.
+
+### `/functions/api/valuation.js`
+
+Powers the `/value/` page. Aggregates a single paid upstream (Rentcast) into five different "what is this home worth?" answers, plus an investor metrics panel. Edge-cached per address for 7 days.
+
+The five systems:
+
+1. **Market AVM** — Rentcast `/v1/avm/value`. Statistical model on recent local sales (effectively what Zestimate/Redfin Estimate is). Returns value + range + comps.
+2. **Tax assessor value** — Picked from the `taxAssessments` map on the Rentcast `/v1/properties` record (newest year). Falls back to `lastSalePrice` when no assessor entry exists. In CA, this lags market by 30-70% on long-held homes (Prop 13).
+3. **Replacement cost** — Computed in-house from sqft × `REGION_FACTORS[county]` × `QUALITY_FACTORS[tier]` × NAHB 2024 national baseline ($284/sqft). Quality tier inferred from subject's $/sqft vs. regional baseline. Methodology disclosed in the response.
+4. **Investor ARV (after repair value)** — Avg $/sqft of the top third of Rentcast's comparable sales (proxy for "recently renovated"), applied to subject's sqft. Falls back to `AVM × 1.18` premium if fewer than 5 valid comps.
+5. **Triangulated price** — Weighted blend (`AVM 60% + comp median 25% + ARV 15%`). Marked as Joshua's recommended list price; future override slot for properties he's personally walked.
+
+Plus an **investor panel** with rent estimate (Rentcast `/v1/avm/rent/long-term`), cap rate at 35% expense ratio, GRM, 70% wholesale offer (`ARV × 0.70 − $50/sqft rehab`), and monthly P&I + cash flow at current 30y from `/api/rates` (20% down, 30-year term).
+
+Accepts `GET ?address=...&lat=...&lng=...` or `POST` (JSON or form). Response shape:
+```
+{
+  ok, address: {input, formatted, street, city, state, zip, county, lat, lng},
+  property: {propertyType, bedrooms, bathrooms, squareFootage, lotSize, yearBuilt, lastSalePrice, lastSaleDate},
+  systems: {
+    marketAVM:       {label, value, rangeLow, rangeHigh, compsCount, methodology},
+    assessor:        {label, value, year, land, improvements, methodology},
+    replacementCost: {label, value, psf, sqft, region, quality, methodology, ...},
+    arv:             {label, value, method, compsUsed, compsTotal, avgPsf, methodology},
+    triangulated:    {label, value, methodology}
+  },
+  investor: {monthlyRent, capRate, grm, wholesale70: {value, ...}, monthlyPI, monthlyCashFlow, rate30y, methodology},
+  rentEstimate: {monthly, rangeLow, rangeHigh, source},
+  diagnostics: {propertyError, avmError, rentError},
+  source, sourceUrl, fetchedAt
+}
+```
+
+Required env var in Cloudflare Pages settings: `RENTCAST_API_KEY` (get one at https://app.rentcast.io/app/api). If missing, the endpoint returns `503 {ok:false, error:"rentcast_api_key_missing"}` and `/value/` falls back to a graceful error state instead of rendering broken cards.
+
+The page does a side-effect soft lead-save on every valuation submit: POSTs the address (with placeholder name/email/phone) to `/api/lead` with `intent="Home Valuation View"`, so the visitor's address lands in Joshua's CRM even before they hit the funnel CTA. The funnel CTA below the results is the gate for the *refined* CMA (real name + email + phone via the existing 5-step Sell funnel).
 
 ## Geo personalization
 
