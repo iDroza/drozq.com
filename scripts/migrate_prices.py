@@ -696,7 +696,7 @@ METHODOLOGY_SECTION = """
 # ---------------------------------------------------------------------------
 
 CROSSLINKS_SECTION = """
-<section aria-labelledby="prices-crosslinks-title" class="bg-c_#f2f0ef py_48px md:py_64px">
+<section aria-labelledby="prices-crosslinks-title" class="bg_#fff py_48px md:py_64px">
   <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px ta_center">
     <span class="drozq-tier-chip">Related on Drozq</span>
     <h2 id="prices-crosslinks-title" class="fw_800 op_0.87 c_#2b2b2b lh_32px md:lh_40px fs_22px md:fs_28px ls_0.3px ta_center mb_24px">Pair the indices with the local read.</h2>
