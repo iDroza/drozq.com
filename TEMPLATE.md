@@ -405,12 +405,13 @@ The non-homepage hero must be **split into two sibling sections inside a shared 
     <div class="pos_absolute top_0 w_100% h_100% z_2" style="background:rgba(26,24,22,0.55)"></div>
   </div>
 
-  <!-- 1) TEXT SECTION: eyebrow + h1 + subhead, simple block layout, ta_center -->
+  <!-- 1) TEXT SECTION: h1 + subhead only, simple block layout, ta_center.
+       NO opener eyebrow. The hero is value-per-second: one short headline +
+       one short subhead sentence. Body eyebrows are fine; opener is not. -->
   <section aria-labelledby="page-hero-title" class="pos_relative z_1 c_textBody pt_48px xs:pt_80px pb_24px md:pb_32px">
     <div class="w_100% max-w_860px pl_32px pr_32px bx-s_border-box mx_auto ta_center">
-      <p class="op_0.9 c_#fff ls_2px fs_11px md:fs_12px fw_700 mb_8px" style="text-transform:uppercase">Eyebrow</p>
       <h1 id="page-hero-title" class="fw_700 ls_1.5px c_#fff lh_40px md:lh_64px fs_32px md:fs_56px mb_16px">Headline.</h1>
-      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">Subhead.</p>
+      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">One short subhead sentence.</p>
     </div>
   </section>
 
@@ -463,6 +464,17 @@ The homepage hero is a different layout — a 2-column block where the tabs+pill
 | Geo callout ("Irvine, CA") | 24px / 400 / GalanoGrotesqueAltBold | 32px / 400 / GalanoGrotesqueAltBold |
 
 The H1 on the current homepage reads "Compare Agents. Find a Trusted Expert." — this is realtor-clone copy. New pages should rewrite the H1 to a page-specific angle (e.g., for a paid distressed-sellers landing: "Sell your Irvine home, on your timeline.").
+
+### Hero opener copy rule (no exceptions)
+
+The hero is the first thing a visitor sees and the highest-leverage real estate on the page. Two elements only: a short **headline** and a short **subhead**. Nothing else above, between, or below them inside the text section.
+
+- **No opener eyebrow.** The 11-12px uppercase "kicker" line above the H1 (`<p class="op_0.9 c_#fff ls_2px fs_11px ...">EYEBROW</p>`) is banned on the opener of every page. It eats visual budget for label text the headline already implies — a value-per-second loss. Body sections downstream can use the eyebrow pattern freely; it is only the opener where the eyebrow is forbidden.
+- **Headline is short.** A single tight line. Two short lines max (with an intentional `<br>`) when the rhythm earns it (`/process/`'s "How I sell your home. / Five steps. Six to ten weeks." is the ceiling, not the average).
+- **Subhead is one sentence.** Short. Concise. To the point. A desire, a question, or a value statement. Comma-separated lists are fine. Two sentences is wrong: cut to one. Anything longer than ~20 words on desktop probably needs to be cut in half. If the page needs to explain methodology or scope, that belongs in a body section, not the opener.
+- **Value per second.** A visitor scanning the splash should leave with one promise, not a paragraph. Everything that survives must earn its place.
+
+The homepage hero (a different layout entirely) is the exception. The rule binds every other page using the canonical two-section hero structure.
 
 ### Hero background
 
@@ -1083,6 +1095,8 @@ Do not.
 - **Use `max-width` media queries to override a desktop layout for mobile.** Base styles are mobile; use `min-width` queries to add complexity upward.
 - **Ship a page you only verified at 1440px.** A page is not done until it has been verified at 375px first, and any layout that fails there blocks the deploy.
 - **Stuff desktop copy onto a mobile hero.** Cut copy on desktop before you cut copy on mobile. The mobile hero is the constraint that shapes every headline.
+- **Put an eyebrow on the opener.** The hero text section is headline + subhead only. The 11-12px uppercase "kicker" line above the H1 is forbidden on the opener of every page (homepage hero is the exception; it has its own layout). Body eyebrows are fine; opener eyebrows are not. See section 4 "Hero opener copy rule" for the reasoning.
+- **Bloat the hero subhead.** One sentence. Short. Concise. If the subhead is two sentences, cut to one. If it lists methodology, sources, or scope, that belongs in a body section. The opener is value per second.
 
 ---
 

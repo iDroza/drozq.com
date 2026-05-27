@@ -79,9 +79,8 @@ HERO = f"""
 
   <section aria-labelledby="about-hero-title" class="pos_relative z_1 c_textBody pt_48px xs:pt_80px pb_24px md:pb_32px">
     <div class="w_100% max-w_860px pl_32px pr_32px bx-s_border-box mx_auto ta_center">
-      <p class="op_0.9 c_#fff ls_2px fs_11px md:fs_12px fw_700 mb_8px" style="text-transform:uppercase">About Joshua Guerrero</p>
       <h1 id="about-hero-title" class="fw_700 ls_1.5px c_#fff lh_40px md:lh_64px fs_32px md:fs_56px mb_16px">I'm not from here.</h1>
-      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">Irvine, California &middot; Licensed since January 2026</p>
+      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">Irvine, California &middot; Licensed since January 2026.</p>
     </div>
   </section>
 

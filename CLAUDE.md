@@ -322,6 +322,19 @@ Per the auto-commit rule, push directly to main. No feature branches unless expl
 
 These apply to all pages. The site is one voice across all pages: confident, direct, first-person, low-bullshit. Joshua Guerrero, solo agent, speaking in his own voice.
 
+### Hero opener: headline + one-sentence subhead, no eyebrow
+
+Every page on the homepage template (every page except the homepage itself) opens with a hero text section that has exactly **two** elements: a short headline and a short subhead. No eyebrow above the H1, no extra labels, no second paragraph. Body sections downstream can use the 11-12px uppercase eyebrow pattern freely; the opener cannot.
+
+The reasoning: the opener is the highest-leverage real estate on the page, and an eyebrow eats visual budget for label text the headline already implies. Subheads longer than one sentence dilute the read. The standard is **value per second**: a visitor scanning the splash should leave with one promise, not a paragraph.
+
+Concretely:
+- **Headline:** one tight line. Two short lines max with an intentional `<br>` (e.g. `/process/`'s "How I sell your home. / Five steps. Six to ten weeks.").
+- **Subhead:** one sentence. Short. Concise. To the point. A desire, a question, or a value statement. Comma-separated lists are fine; two sentences is wrong. If methodology, sources, or scope need explaining, put them in a body section, not the opener.
+- **No opener eyebrow.** Banned: `<p class="op_0.9 c_#fff ls_2px fs_11px ...">EYEBROW</p>` directly above the H1.
+
+Codified in `TEMPLATE.md` §4 ("Hero opener copy rule") and §14 ("Anti-patterns").
+
 ### Optimize the Value Equation
 
 Every page should pull at least one of these levers. If copy doesn't, it's filler.

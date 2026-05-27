@@ -58,9 +58,8 @@ HERO = f"""
 
   <section aria-labelledby="faq-hero-title" class="pos_relative z_1 c_textBody pt_48px xs:pt_80px pb_24px md:pb_32px">
     <div class="w_100% max-w_860px pl_32px pr_32px bx-s_border-box mx_auto ta_center">
-      <p class="op_0.9 c_#fff ls_2px fs_11px md:fs_12px fw_700 mb_8px" style="text-transform:uppercase">Frequently Asked Questions</p>
       <h1 id="faq-hero-title" class="fw_700 ls_1.5px c_#fff lh_40px md:lh_64px fs_32px md:fs_56px mb_16px">The questions sellers actually ask. Answered honestly.</h1>
-      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">No canned answers. No dodging the uncomfortable questions. If you have been thinking it, it is probably on this page. If it is not, drop your address below and ask it directly.</p>
+      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">Direct answers to the questions sellers ask before they list.</p>
     </div>
   </section>
 

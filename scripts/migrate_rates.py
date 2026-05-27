@@ -84,9 +84,8 @@ HERO = f"""
 
   <section aria-labelledby="rates-hero-title" class="pos_relative z_1 c_textBody pt_48px xs:pt_80px pb_24px md:pb_32px">
     <div class="w_100% max-w_860px pl_32px pr_32px bx-s_border-box mx_auto ta_center">
-      <p class="op_0.9 c_#fff ls_2px fs_11px md:fs_12px fw_700 mb_8px" style="text-transform:uppercase">Live Rates &middot; Auto-refreshed from FRED</p>
       <h1 id="rates-hero-title" class="fw_700 ls_1.5px c_#fff lh_40px md:lh_64px fs_32px md:fs_56px mb_16px">Today's mortgage and benchmark rates.</h1>
-      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">Pulled directly from the Federal Reserve and refreshed within an hour of every release. The four numbers that frame every offer, refinance, and pricing conversation in Southern California, plus a calculator, an affordability table, and a plain-English read on what each rate actually does.</p>
+      <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0">The four numbers that frame every offer, refinance, and pricing conversation in Southern California.</p>
     </div>
   </section>
 
