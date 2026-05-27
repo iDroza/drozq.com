@@ -228,11 +228,28 @@ Cache header: `private, max-age=3600`. The homepage fetches this on `DOMContentL
 
 ### `/functions/api/rates.js`
 
-Proxies the Federal Reserve Economic Data (FRED) API and edge-caches for 1 hour. Returns the latest two observations for four series: `MORTGAGE30US` (30-year fixed), `MORTGAGE15US` (15-year fixed), `DGS10` (10-year Treasury yield), `FEDFUNDS` (Federal funds rate). Each entry includes `{latest:{value,date}, previous:{value,date}, delta, label, unit, cadence, seriesId}`. Top-level fields: `ok`, `series`, `lastUpdated` (most recent observation date across all series), `fetchedAt`, `source`.
+Proxies the Federal Reserve Economic Data (FRED) API and edge-caches for 1 hour. Returns ~1 year of history per series for sparkline rendering and YoY deltas. Four series: `MORTGAGE30US` (30-year fixed, weekly), `MORTGAGE15US` (15-year fixed, weekly), `DGS10` (10-year Treasury yield, daily), `FEDFUNDS` (Federal funds rate, monthly).
+
+Response shape per series entry:
+```
+{
+  seriesId, label, unit, cadence,
+  latest:   {value, date},     // newest observation
+  previous: {value, date},     // observation before latest
+  yearAgo:  {value, date},     // oldest observation in ~1y window
+  history:  [{date, value}, ...],   // ascending order, ~1 year
+  delta,                       // latest - previous
+  deltaYoY                     // latest - yearAgo
+}
+```
+
+Top-level fields: `ok`, `series`, `lastUpdated` (most recent observation date across all series), `fetchedAt`, `source`, `sourceUrl`.
 
 Required env var in Cloudflare Pages settings: `FRED_API_KEY` (get one free at https://fred.stlouisfed.org/docs/api/api_key.html). If missing, the endpoint returns `503 {ok:false, error:"fred_api_key_missing"}` and `/rates/` falls back to a graceful "data temporarily unavailable" state.
 
-Consumed by `/rates/index.html`, which renders four placeholder cards server-side and hydrates them on `DOMContentLoaded`. The page is the live freshness signal: the moment FRED publishes a new PMMS reading (Thursdays at 12 ET), the next /api/rates response and the next /rates/ pageview reflect it.
+Consumed by `/rates/index.html`. The page ships static skeletons, then hydrates four rate cards (with inline SVG sparklines + WoW + YoY deltas), an affordability table (5 loan sizes at today's 30-year), and a mortgage payment calculator (default rate auto-syncs to today's 30y / 15y based on the term toggle). FAQ accordion + WebPage/Dataset/FAQPage/BreadcrumbList/Person JSON-LD make the page a citable resource that ranks for rate + calculator + explainer queries.
+
+The page is the live freshness signal: the moment FRED publishes a new PMMS reading (Thursdays at 12 ET), the next `/api/rates` response after edge-cache expiry (within 1h) reflects it.
 
 ## Geo personalization
 

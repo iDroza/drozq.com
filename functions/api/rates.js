@@ -1,24 +1,28 @@
 // /api/rates - proxy + edge cache for FRED (Federal Reserve Economic Data).
-// Returns the latest observation (and previous, for delta) for a small set of
-// rate series that frame US housing finance: 30y / 15y fixed mortgages, the
-// 10y Treasury yield (the canonical leading indicator for mortgage rates),
-// and the Fed Funds rate.
+//
+// Returns the latest observation plus a ~1-year history per series so the
+// /rates/ page can render sparklines, year-over-year deltas, and a "what the
+// rate has done this year" story. Series:
+//   - MORTGAGE30US (weekly Thursdays)  -> 30-year fixed mortgage
+//   - MORTGAGE15US (weekly Thursdays)  -> 15-year fixed mortgage
+//   - DGS10        (daily business)    -> 10-year Treasury yield
+//   - FEDFUNDS     (monthly)           -> Federal funds rate
 //
 // Env var required:
 //   FRED_API_KEY -- get one at https://fred.stlouisfed.org/docs/api/api_key.html
 //
-// Edge-cached for 1 hour. FRED publishes the weekly PMMS mortgage series
-// every Thursday at 12 ET, so 1h cache keeps the page fresh without hammering
-// FRED. If FRED_API_KEY is missing, returns 503 with a structured error so
-// the page can show a graceful "data unavailable" state.
+// Edge-cached for 1 hour. Free FRED tier is 120 req/min, four requests per
+// cache miss is trivially fine. Returns 503 with structured error when the
+// key is missing so /rates/ degrades gracefully.
 
 const FRED = "https://api.stlouisfed.org/fred/series/observations";
 
+// Per-cadence observation limits sized to cover roughly one year of history.
 const SERIES = [
-  { key: "rate30y",     id: "MORTGAGE30US", label: "30-year fixed mortgage",  unit: "%", cadence: "weekly" },
-  { key: "rate15y",     id: "MORTGAGE15US", label: "15-year fixed mortgage",  unit: "%", cadence: "weekly" },
-  { key: "treasury10y", id: "DGS10",        label: "10-year Treasury yield",  unit: "%", cadence: "daily"  },
-  { key: "fedFunds",    id: "FEDFUNDS",     label: "Federal funds rate",      unit: "%", cadence: "monthly" }
+  { key: "rate30y",     id: "MORTGAGE30US", label: "30-year fixed mortgage",  unit: "%", cadence: "weekly",  limit: 53  },
+  { key: "rate15y",     id: "MORTGAGE15US", label: "15-year fixed mortgage",  unit: "%", cadence: "weekly",  limit: 53  },
+  { key: "treasury10y", id: "DGS10",        label: "10-year Treasury yield",  unit: "%", cadence: "daily",   limit: 260 },
+  { key: "fedFunds",    id: "FEDFUNDS",     label: "Federal funds rate",      unit: "%", cadence: "monthly", limit: 13  }
 ];
 
 const json = (body, status = 200, extra = {}) =>
@@ -33,50 +37,71 @@ const json = (body, status = 200, extra = {}) =>
     }
   });
 
-function parseObs(obs) {
-  if (!obs || obs.value === "." || obs.value === undefined || obs.value === null) {
-    return { value: null, date: obs?.date || null };
+function parseValue(v) {
+  if (v === "." || v === undefined || v === null) return null;
+  const n = parseFloat(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+function summarize(observations) {
+  // observations come from FRED sorted desc (newest first).
+  const cleaned = observations
+    .map((o) => ({ date: o.date, value: parseValue(o.value) }))
+    .filter((o) => o.value != null);
+
+  if (cleaned.length === 0) {
+    return { latest: { value: null, date: null }, previous: { value: null, date: null },
+             yearAgo: { value: null, date: null }, history: [], delta: null, deltaYoY: null };
   }
-  const v = parseFloat(obs.value);
-  return {
-    value: Number.isFinite(v) ? v : null,
-    date: obs.date || null
-  };
+
+  const latest = cleaned[0];
+  const previous = cleaned[1] || { value: null, date: null };
+  // The last item in the desc-sorted list is the oldest we have (~1 year back).
+  const yearAgo = cleaned[cleaned.length - 1] || { value: null, date: null };
+
+  const delta = previous.value != null
+    ? Number((latest.value - previous.value).toFixed(2))
+    : null;
+  const deltaYoY = yearAgo.value != null && cleaned.length > 4
+    ? Number((latest.value - yearAgo.value).toFixed(2))
+    : null;
+
+  // For sparkline rendering, return the cleaned history sorted ascending so
+  // the consumer can render left-to-right without reversing.
+  const history = cleaned.slice().reverse();
+
+  return { latest, previous, yearAgo, history, delta, deltaYoY };
 }
 
 async function fetchSeries(spec, apiKey) {
-  const url = `${FRED}?series_id=${encodeURIComponent(spec.id)}&api_key=${encodeURIComponent(apiKey)}&file_type=json&sort_order=desc&limit=2`;
+  const url = `${FRED}?series_id=${encodeURIComponent(spec.id)}&api_key=${encodeURIComponent(apiKey)}&file_type=json&sort_order=desc&limit=${spec.limit}`;
   try {
     const resp = await fetch(url, {
       cf: { cacheTtl: 3600, cacheEverything: true }
     });
     if (!resp.ok) {
       return [spec.key, {
-        ...spec,
-        latest: null, previous: null, delta: null,
+        seriesId: spec.id, label: spec.label, unit: spec.unit, cadence: spec.cadence,
+        latest: { value: null, date: null }, previous: { value: null, date: null },
+        yearAgo: { value: null, date: null }, history: [], delta: null, deltaYoY: null,
         error: `fred_http_${resp.status}`
       }];
     }
     const data = await resp.json();
     const obs = Array.isArray(data?.observations) ? data.observations : [];
-    const latest = parseObs(obs[0]);
-    const previous = parseObs(obs[1]);
-    const delta = (latest.value != null && previous.value != null)
-      ? Number((latest.value - previous.value).toFixed(2))
-      : null;
+    const summary = summarize(obs);
     return [spec.key, {
       seriesId: spec.id,
       label: spec.label,
       unit: spec.unit,
       cadence: spec.cadence,
-      latest,
-      previous,
-      delta
+      ...summary
     }];
   } catch (err) {
     return [spec.key, {
-      ...spec,
-      latest: null, previous: null, delta: null,
+      seriesId: spec.id, label: spec.label, unit: spec.unit, cadence: spec.cadence,
+      latest: { value: null, date: null }, previous: { value: null, date: null },
+      yearAgo: { value: null, date: null }, history: [], delta: null, deltaYoY: null,
       error: `fetch_failed`
     }];
   }
@@ -100,7 +125,6 @@ export async function onRequest(context) {
     .filter(Boolean)
     .sort();
   const lastUpdated = dates.length ? dates[dates.length - 1] : null;
-
   const anyData = Object.values(series).some((s) => s && s.latest && s.latest.value != null);
 
   return json({
@@ -108,6 +132,7 @@ export async function onRequest(context) {
     series,
     lastUpdated,
     fetchedAt: new Date().toISOString(),
-    source: "Federal Reserve Economic Data (FRED), St. Louis Fed"
+    source: "Federal Reserve Economic Data (FRED), St. Louis Fed",
+    sourceUrl: "https://fred.stlouisfed.org/"
   });
 }
