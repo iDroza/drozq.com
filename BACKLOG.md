@@ -1,10 +1,16 @@
 # Backlog
 
-*Last reviewed: May 22, 2026*
+*Last reviewed: May 26, 2026*
 
 Active TODOs across drozq.com. Consolidated from prior audit docs (deleted as of this rev: `AUDIT-INDEX-2026-04-26.md`, `SEO-AUDIT-INDEX-2026-04-26.md`, `FAVICON_AUDIT.md`, `SPEED-AUDIT.md`, `CHANGES.md`, `REALTOR_CLEANUP_AUDIT.md`). Findings that were already DONE at consolidation time are not listed.
 
 When something ships, remove the item from this file in the same commit. Don't leave done items hanging.
+
+---
+
+## Paid campaigns (parked)
+
+- **Rebuild `/relief/`, the distressed-sellers paid landing.** The original page was deleted on 2026-05-26 (commit pending) because it was the last surviving bespoke page and was not actively serving traffic at the time. The strategy playbook still exists at `notes/ads/distressed-sellers-strategy.md`. When relaunching: build the new `/relief/` on the homepage template (per the workflow in `TEMPLATE.md` section 13), with a distinct multi-step funnel for the distressed audience (foreclosure / divorce / probate / inheritance / short sale) and a confidential-callback intake. Continue posting to `/api/lead`. Companion campaign doc: `notes/ads/sellers-max-intent-campaign.md`. Note before re-running ads: no `_redirects` file exists, so any historical `/relief/` ad clicks are currently 404'ing; pause campaigns OR add a Cloudflare redirect rule before the relaunch.
 
 ---
 

@@ -446,7 +446,7 @@ The homepage hero is a different layout — a 2-column block where the tabs+pill
 | Hero subhead | 18px / 400 | 24px / 400 |
 | Geo callout ("Irvine, CA") | 24px / 400 / GalanoGrotesqueAltBold | 32px / 400 / GalanoGrotesqueAltBold |
 
-The H1 on the current homepage reads "Compare Agents. Find a Trusted Expert." — this is realtor-clone copy. New pages should rewrite the H1 to a page-specific angle (e.g., for `/relief/`: "Sell your Irvine home, on your timeline.").
+The H1 on the current homepage reads "Compare Agents. Find a Trusted Expert." — this is realtor-clone copy. New pages should rewrite the H1 to a page-specific angle (e.g., for a paid distressed-sellers landing: "Sell your Irvine home, on your timeline.").
 
 ### Hero background
 
@@ -916,7 +916,7 @@ Do not install AW-* tags, direct gtag, additional pixels, or any tracking outsid
 
 **The inline 3-funnel is the only lead-capture form on the site.** Do not introduce page-specific intake forms (legacy /contact/ had a 7-field intake form; that's now gone). If the page's conversion intent is "give me a home valuation" or "tell me where you want to buy," the Sell / Buy / Sell&Buy funnels already collect every field (`name`, `email`, `phone`, `address` or `buyLocation`, `timeline`, plus mode-specific qualifiers like `priceRange`, `propertyType`, `buyBudget`, `buyHomeType`). Build the page so the 3-tab CTA + closing address pill are the lead path. Don't rebuild a parallel intake.
 
-The only exception: paid landing pages with a different qualification need (`/relief/` uses a distinct multi-step funnel for distressed sellers, including a confidential-callback intake). Those still post to `/api/lead` and follow the same endpoint contract below.
+The only exception: paid landing pages with a different qualification need (e.g., a future distressed-sellers landing would warrant a distinct multi-step funnel with a confidential-callback intake; see `notes/ads/distressed-sellers-strategy.md`). Those still post to `/api/lead` and follow the same endpoint contract below.
 
 Every form on the site posts to `/api/lead`. The endpoint:
 - Accepts `application/x-www-form-urlencoded` or `multipart/form-data`.
