@@ -2831,6 +2831,42 @@
   color: #757575; letter-spacing: 0.04em; margin-top: 2px;
 }
 
+/* ---- Signal explainers (compact, value-per-second) -------------------- */
+.drozq-signals-explain-grid {
+  display: grid; grid-template-columns: 1fr; gap: 12px;
+  margin-top: 32px;
+}
+@media (min-width: 640px) { .drozq-signals-explain-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+@media (min-width: 1024px) { .drozq-signals-explain-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; } }
+.drozq-signals-explain__lead {
+  text-align: center; margin: 40px auto 0; max-width: 720px;
+}
+.drozq-signals-explain__lead h3 {
+  font-size: 1.25rem; font-weight: 800; color: #1a1816;
+  margin: 0 0 8px; line-height: 1.4;
+}
+@media (min-width: 768px) { .drozq-signals-explain__lead h3 { font-size: 1.5rem; } }
+.drozq-signals-explain__lead p {
+  color: #3f4650; font-size: 0.95rem; line-height: 1.55; margin: 0;
+}
+.drozq-signal-explain {
+  background: #f7f4ef; border: 1px solid #ece8e1; border-radius: 12px;
+  padding: 18px 18px 20px; display: flex; flex-direction: column; gap: 6px;
+  border-left: 3px solid #d92228;
+}
+.drozq-signal-explain__eyebrow {
+  font-size: 0.64rem; font-weight: 700; letter-spacing: 0.16em;
+  text-transform: uppercase; color: #d92228;
+  margin: 0;
+}
+.drozq-signal-explain h4 {
+  font-size: 1rem; font-weight: 800; color: #1a1816;
+  margin: 2px 0 4px; line-height: 1.35;
+}
+.drozq-signal-explain p {
+  color: #3f4650; font-size: 0.88rem; line-height: 1.55; margin: 0;
+}
+
 /* ---- Explainer cards -------------------------------------------------- */
 .drozq-explain-grid {
   display: grid; grid-template-columns: 1fr; gap: 20px;
@@ -2941,6 +2977,39 @@
     </div>
 
     <p class="drozq-data-meta" id="prices-tier3-meta">&nbsp;</p>
+
+    <div class="drozq-signals-explain__lead">
+      <h3>What each signal actually tells you.</h3>
+      <p>Cause on the left, effect on the right. Read across all four to see where the market is heading.</p>
+    </div>
+
+    <div class="drozq-signals-explain-grid">
+
+      <div class="drozq-signal-explain">
+        <p class="drozq-signal-explain__eyebrow">Signal 01 &middot; MSACSR</p>
+        <h4>The inventory clock.</h4>
+        <p>Months of inventory at the current sales pace. Under 4 is a seller's market, 4 to 6 is balanced, over 6 starts to favor buyers. When supply stretches past six, listings begin cutting price. When it drops under four, multiple-offer dynamics come back.</p>
+      </div>
+
+      <div class="drozq-signal-explain">
+        <p class="drozq-signal-explain__eyebrow">Signal 02 &middot; EXHOSLUSM495S</p>
+        <h4>The demand pulse.</h4>
+        <p>Annualized pace of resales closing each month. Healthy is around 5 million, weak is under 4 million, the 2021 peak was 6.5 million. A rising line says buyers are unlocking; a falling line says they're sitting out, and prices follow with a one- to two-quarter lag.</p>
+      </div>
+
+      <div class="drozq-signal-explain">
+        <p class="drozq-signal-explain__eyebrow">Signal 03 &middot; FIXHAI</p>
+        <h4>The qualify-or-not test.</h4>
+        <p>Compares median family income to the income needed to qualify for the median-priced home with 20% down. 100 is exact match. Above means buyers have surplus; below means deficit. California's standalone read runs far below this national composite, which is why local affordability matters more than the headline.</p>
+      </div>
+
+      <div class="drozq-signal-explain">
+        <p class="drozq-signal-explain__eyebrow">Signal 04 &middot; UNRATE</p>
+        <h4>The ceiling on demand.</h4>
+        <p>Share of the labor force unemployed and actively looking. Under 4% supports wage growth and qualifying power. Over 5% erodes both. Prices rarely keep climbing through a rising unemployment trend, because the marginal buyer can't qualify when paychecks are at risk.</p>
+      </div>
+    </div>
+
   </div>
 </section>
 
