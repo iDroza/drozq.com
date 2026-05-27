@@ -1,35 +1,50 @@
 """Migrate /prices/ to the homepage template scaffold.
 
-/prices/ is the site's second FRED-backed data resource and the
-California housing market companion to /rates/. The first pass ships
-the SKELETON: hero with funnel CTA, three data sections (8 cards
-total across the three tiers we surveyed), template-required mid-page
-tabs, and a closing CTA. A second pass will add plain-English
-explainers, FAQ accordion + FAQPage JSON-LD, methodology section,
-crosslinks, and Dataset JSON-LD.
+Second-pass build: production-worthy resource page on California home
+prices and the broader market signals around them. The page is meant
+to be cited by reporters, agents, prospective buyers/sellers, and any
+California real estate observer.
 
-Data product layout:
-  Section 1: "California Home Prices" -- Tier 1 (LXXRSA, SDXRSA, CASTHPI)
-  Section 2: "Market Signals"         -- Tier 3 (MSACSR, EXHOSLUSM495S,
-                                                  FIXHAI, UNRATE)
-  Section 3: "Cost of Money"          -- Tier 2 (MORTGAGE5US),
-                                                  with crosslink to /rates/
+Page anatomy (top to bottom):
+  1.  Hero w/ 3-tab funnel CTA (template requirement).
+  2.  Tier 1 grid: LA Case-Shiller, San Diego Case-Shiller, California
+      statewide HPI. Current value, MoM/QoQ, YoY, sparkline.
+  3.  Long-term appreciation table: 5-year + 10-year CAGR per market.
+      Citation magnet. Hydrated from cagr5y/cagr10y fields on the API.
+  4.  Plain-English explainers (3 cards): Case-Shiller method, FHFA
+      method, what the market signals actually predict.
+  5.  Tier 3 grid: months of supply, existing home sales, NAR
+      affordability index, US unemployment. Cards switch to a tinted
+      bg so the white section keeps card-on-section contrast.
+  6.  Thin "Cost of Money" crosslink band to /rates/ (5/1 ARM
+      discontinued upstream).
+  7.  Mid-page sell/buy tabs (template requirement, second lead path).
+  8.  6-question FAQ accordion. Paired with FAQPage JSON-LD for SERP
+      rich results. Accordion behavior is wired by the synced funnel
+      JS -- no local handler.
+  9.  Methodology section. Source, refresh cadence, outbound links to
+      Case-Shiller (S&P), FHFA, NAR, BLS, FRED. Author attribution
+      with DRE.
+ 10.  Crosslinks band (secondary-outlined): /rates/,
+      /market-insights/, /process/, /field-notes/, /about/.
+ 11.  Closing CTA pill + direct phone fallback.
+ 12.  JSON-LD: WebPage + 7 Dataset + FAQPage + BreadcrumbList +
+      Person. The Person entity reuses the same @id as /rates/ so the
+      author identity is consistent across both data products.
 
-Data flows through /functions/api/prices.js, which uses the same
-FRED_API_KEY env var as /api/rates. Edge-cached 1h. Per-card sparkline
-+ delta + per-cadence date all hydrate on DOMContentLoaded; the page
-ships static skeletons so the SEO crawler sees a complete document.
+Data flows through /functions/api/prices.js (FRED-backed, edge-cached
+1h). Hydration runs on DOMContentLoaded: cards, sparklines, primary +
+YoY delta, and the appreciation table. FAQ accordion + tab switching
+are wired globally by the synced funnel JS.
 
-This page reuses a generic ".drozq-data-card" CSS class instead of the
-".drozq-rate-card" used on /rates/, because card values here span
-mixed units (index, percent, months, thousands) and the future second
-pass may evolve the card structure independently of /rates/.
-
-Card-on-section contrast follows the project's contrast rule: white
-cards live on warm-gray sections, never on white sections.
+Card-on-section contrast: warm-gray sections use white cards, white
+sections use tinted (#f7f4ef) cards. Both directions preserve
+contrast; same-on-same is the banned pattern.
 """
 from pathlib import Path
 import sys
+import json as _json
+import datetime as _dt
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -112,95 +127,130 @@ HERO = f"""
 
 
 # ---------------------------------------------------------------------------
-# Scoped styles -- generic data card, sized for 3 / 4 / 1 card sections
+# Page styles -- data cards (2 variants), appreciation table, explainers, FAQ
 # ---------------------------------------------------------------------------
 
 PAGE_STYLE = """
 <style>
-.drozq-data-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
+/* ---- Data card grid ---------------------------------------------------- */
+.drozq-data-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
 .drozq-data-grid--3 { grid-template-columns: 1fr; }
 @media (min-width: 768px) { .drozq-data-grid--3 { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
 .drozq-data-grid--4 { grid-template-columns: 1fr; }
 @media (min-width: 640px) { .drozq-data-grid--4 { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 960px) { .drozq-data-grid--4 { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
-.drozq-data-grid--1 { grid-template-columns: 1fr; max-width: 360px; margin-left: auto; margin-right: auto; }
 
 .drozq-data-card {
   background: #ffffff;
   border: 1px solid #e5e5e5;
   border-radius: 16px;
   padding: 24px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: flex; flex-direction: column; gap: 10px;
   min-height: 220px;
 }
+/* Tinted card variant: used on white sections so cards keep contrast. */
+.drozq-data-card--tint { background: #f7f4ef; border-color: #ece8e1; }
+
 .drozq-data-card__label {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #3f4650;
-  line-height: 1.35;
-  margin: 0;
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #3f4650; line-height: 1.35; margin: 0;
 }
-.drozq-data-card__sub {
-  font-size: 0.78rem;
-  color: #757575;
-  margin: -4px 0 0;
-}
+.drozq-data-card__sub { font-size: 0.78rem; color: #757575; margin: -4px 0 0; }
 .drozq-data-card__value {
-  font-size: clamp(1.85rem, 3.6vw, 2.5rem);
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: #1a1816;
+  font-size: clamp(1.85rem, 3.6vw, 2.5rem); font-weight: 800;
+  line-height: 1; letter-spacing: -0.02em; color: #1a1816;
   font-variant-numeric: tabular-nums;
 }
 .drozq-data-card__spark { display: block; width: 100%; height: 36px; }
 .drozq-data-card__spark svg { width: 100%; height: 100%; display: block; overflow: visible; }
-.drozq-data-card__deltas {
-  display: flex; flex-direction: column; gap: 4px;
-  font-size: 0.82rem; font-variant-numeric: tabular-nums;
-}
+.drozq-data-card__deltas { display: flex; flex-direction: column; gap: 4px; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
 .drozq-data-card__delta { font-weight: 700; letter-spacing: 0.01em; color: #757575; }
 .drozq-data-card__delta--up   { color: #b81d22; }
 .drozq-data-card__delta--down { color: #0a801f; }
 .drozq-data-card__delta--flat { color: #757575; }
 .drozq-data-card__date { font-size: 0.78rem; color: #757575; margin: 0; }
 
-/* Per-section meta line under the grid */
-.drozq-data-meta {
-  text-align: center;
-  color: #757575;
-  font-size: 0.875rem;
-  margin: 20px 0 0;
-}
+.drozq-data-meta { text-align: center; color: #757575; font-size: 0.875rem; margin: 20px 0 0; }
 .drozq-data-meta strong { color: #2b2b2b; font-weight: 700; }
 
-/* Section "tier" eyebrow chip */
 .drozq-tier-chip {
   display: inline-block;
   font-size: 0.66rem; font-weight: 800; letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #d92228;
   background: #fff5f5; border: 1px solid #f7d3d4;
-  border-radius: 999px; padding: 4px 10px;
-  margin-bottom: 12px;
+  border-radius: 999px; padding: 4px 10px; margin-bottom: 12px;
 }
 
-/* Secondary outlined button (cost-of-money crosslink to /rates/) */
+/* ---- Long-term appreciation table ------------------------------------- */
+.drozq-app-wrap {
+  background: #ffffff; border: 1px solid #e5e5e5; border-radius: 16px;
+  padding: 8px; overflow-x: auto;
+}
+.drozq-app-table {
+  width: 100%; border-collapse: collapse; min-width: 540px;
+  font-variant-numeric: tabular-nums;
+}
+.drozq-app-table th, .drozq-app-table td { padding: 14px 16px; font-size: 0.95rem; }
+.drozq-app-table thead th {
+  text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.72rem;
+  color: #3f4650; border-bottom: 1px solid #e5e5e5; text-align: right;
+}
+.drozq-app-table thead th:first-child { text-align: left; }
+.drozq-app-table tbody td { text-align: right; font-weight: 700; color: #1a1816; }
+.drozq-app-table tbody td:first-child { text-align: left; font-weight: 700; }
+.drozq-app-table tbody tr + tr td { border-top: 1px solid #f0f0f0; }
+.drozq-app-table tbody tr:hover td { background: #faf7f3; }
+.drozq-app-table td.cagr { color: #0a801f; }
+.drozq-app-table td.cagr-down { color: #b81d22; }
+.drozq-app-table caption {
+  caption-side: top; text-align: left;
+  padding: 12px 16px 4px; font-size: 0.82rem; color: #3f4650;
+}
+
+/* ---- Explainer cards -------------------------------------------------- */
+.drozq-explain-grid {
+  display: grid; grid-template-columns: 1fr; gap: 20px;
+}
+@media (min-width: 768px) { .drozq-explain-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+.drozq-explain {
+  background: #ffffff; border: 1px solid #e5e5e5; border-radius: 16px;
+  padding: 24px 22px;
+}
+.drozq-explain__num {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #d92228; margin: 0 0 6px;
+}
+.drozq-explain h3 {
+  font-size: 1.1rem; font-weight: 800; color: #1a1816;
+  margin: 0 0 8px; line-height: 1.4;
+}
+.drozq-explain p { color: #3f4650; font-size: 0.95rem; line-height: 1.6; margin: 0; }
+
+/* ---- FAQ (matches /rates/, wired by synced funnel JS) ----------------- */
+.drozq-faq-list { max-width: 720px; margin: 0 auto; }
+.drozq-faq-item { border-bottom: 1px solid #e5e5e5; }
+.drozq-faq-item button {
+  width: 100%; background: transparent; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  text-align: left; padding: 16px 40px 16px 0; color: #1a1816;
+  font: inherit; font-size: 16px; font-weight: 400; line-height: 1.5;
+}
+.drozq-faq-item button:hover { color: #d92228; }
+.drozq-faq-item button svg {
+  width: 20px; height: 20px; flex-shrink: 0; color: #3f4650;
+  transition: transform .2s ease;
+}
+.drozq-faq-item button[aria-expanded="true"] svg { transform: rotate(45deg); color: #d92228; }
+.drozq-faq-region { overflow: hidden; max-height: 0; transition: max-height .3s ease; }
+.drozq-faq-region p { margin: 0 0 16px; color: #3f4650; font-size: 15px; line-height: 1.6; }
+
+/* ---- Secondary outlined link ------------------------------------------ */
 .btn-secondary-outline {
   display: inline-flex; align-items: center; justify-content: center;
-  background: transparent; color: #d92228;
-  border: 1px solid #d92228;
+  background: transparent; color: #d92228; border: 1px solid #d92228;
   font-weight: 700; font-size: 14px; letter-spacing: 0.3px;
-  padding: 10px 22px; border-radius: 9999px;
-  text-decoration: none;
+  padding: 10px 22px; border-radius: 9999px; text-decoration: none;
   transition: background-color .2s ease, color .2s ease;
 }
 .btn-secondary-outline:hover { background: #d92228; color: #fff; }
@@ -210,13 +260,14 @@ PAGE_STYLE = """
 
 
 # ---------------------------------------------------------------------------
-# Card factory (one shape, used across all three sections)
+# Card factory (reused across both data sections)
 # ---------------------------------------------------------------------------
 
-def data_card(key: str, label: str, sub: str = "") -> str:
+def data_card(key: str, label: str, sub: str = "", variant: str = "") -> str:
+    cls = "drozq-data-card" + (" " + variant if variant else "")
     sub_html = f'<p class="drozq-data-card__sub">{sub}</p>' if sub else ""
     return f"""
-      <div class="drozq-data-card" id="card-{key}" data-data-card="{key}">
+      <div class="{cls}" id="card-{key}" data-data-card="{key}">
         <p class="drozq-data-card__label">{label}</p>
         {sub_html}
         <span class="drozq-data-card__value" data-data-value="{key}">&hellip;</span>
@@ -230,11 +281,11 @@ def data_card(key: str, label: str, sub: str = "") -> str:
 
 
 # ---------------------------------------------------------------------------
-# 2. California Home Prices (Tier 1, warm gray bg, 3 cards)
+# 2. California Home Prices (Tier 1)
 # ---------------------------------------------------------------------------
 
 TIER1_SECTION = f"""
-<section aria-labelledby="prices-tier1-title" class="bg-c_#f2f0ef py_48px md:py_64px lg:py_72px">
+<section aria-labelledby="prices-tier1-title" id="california-home-prices" class="bg-c_#f2f0ef py_48px md:py_64px lg:py_72px">
   <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
 
     <div class="ta_center mb_32px md:mb_40px max-w_720px mx_auto">
@@ -256,11 +307,110 @@ TIER1_SECTION = f"""
 
 
 # ---------------------------------------------------------------------------
-# 3. Market Signals (Tier 3, white bg, 4 cards)
+# 3. Long-term appreciation table -- citation magnet
+# ---------------------------------------------------------------------------
+
+APPRECIATION_TABLE_SECTION = """
+<section aria-labelledby="prices-appreciation-title" id="long-term-appreciation" class="bg_#fff py_48px md:py_64px lg:py_72px">
+  <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
+
+    <div class="ta_center mb_32px md:mb_40px max-w_720px mx_auto">
+      <span class="drozq-tier-chip">Long-term appreciation</span>
+      <h2 id="prices-appreciation-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">Five and ten years, compounded.</h2>
+      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px m_0">CAGR = compound annual growth rate. The headline question for most California homeowners isn't this month, it's what their equity has actually done since they bought. These two columns are that answer for the LA metro, the San Diego metro, and the state as a whole.</p>
+    </div>
+
+    <div class="drozq-app-wrap">
+      <table class="drozq-app-table" aria-describedby="prices-app-cap">
+        <caption id="prices-app-cap" data-app-caption>Today, five years ago, ten years ago &middot; compounded annual rates</caption>
+        <thead>
+          <tr>
+            <th scope="col">Market</th>
+            <th scope="col">Today</th>
+            <th scope="col">5y ago</th>
+            <th scope="col">10y ago</th>
+            <th scope="col">5y CAGR</th>
+            <th scope="col">10y CAGR</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Los Angeles Metro</td>
+            <td data-app-today="hpiLA">&hellip;</td>
+            <td data-app-5y="hpiLA">&hellip;</td>
+            <td data-app-10y="hpiLA">&hellip;</td>
+            <td class="cagr" data-app-cagr5="hpiLA">&hellip;</td>
+            <td class="cagr" data-app-cagr10="hpiLA">&hellip;</td>
+          </tr>
+          <tr>
+            <td>San Diego Metro</td>
+            <td data-app-today="hpiSD">&hellip;</td>
+            <td data-app-5y="hpiSD">&hellip;</td>
+            <td data-app-10y="hpiSD">&hellip;</td>
+            <td class="cagr" data-app-cagr5="hpiSD">&hellip;</td>
+            <td class="cagr" data-app-cagr10="hpiSD">&hellip;</td>
+          </tr>
+          <tr>
+            <td>California (statewide)</td>
+            <td data-app-today="hpiCA">&hellip;</td>
+            <td data-app-5y="hpiCA">&hellip;</td>
+            <td data-app-10y="hpiCA">&hellip;</td>
+            <td class="cagr" data-app-cagr5="hpiCA">&hellip;</td>
+            <td class="cagr" data-app-cagr10="hpiCA">&hellip;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_16px ta_center m_0">Indices are unitless. Read CAGR as the annualized rate at which an index point compounded into a current index point.</p>
+  </div>
+</section>
+"""
+
+
+# ---------------------------------------------------------------------------
+# 4. Plain-English explainers
+# ---------------------------------------------------------------------------
+
+EXPLAINERS_SECTION = """
+<section aria-labelledby="prices-explain-title" class="bg-c_#f2f0ef py_48px md:py_64px lg:py_72px">
+  <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
+
+    <div class="ta_center mb_32px md:mb_40px max-w_720px mx_auto">
+      <span class="drozq-tier-chip">What these numbers mean</span>
+      <h2 id="prices-explain-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">The plain-English read.</h2>
+      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px m_0">Three short explainers on what these indices actually measure and why each one tells a slightly different story.</p>
+    </div>
+
+    <div class="drozq-explain-grid">
+      <div class="drozq-explain">
+        <p class="drozq-explain__num">Explainer 01</p>
+        <h3>Case-Shiller tracks the same homes over time.</h3>
+        <p>The S&amp;P CoreLogic Case-Shiller index uses a repeat-sales methodology: it follows the same physical homes through multiple transactions and measures how their prices changed. That filters out the mix-shift problem (medians get distorted when expensive homes sell more often, or vice versa). It's the cleanest read on what a typical home in the LA or San Diego metro actually appreciated.</p>
+      </div>
+      <div class="drozq-explain">
+        <p class="drozq-explain__num">Explainer 02</p>
+        <h3>FHFA tracks the conforming half of the market.</h3>
+        <p>The Federal Housing Finance Agency's All-Transactions HPI is built from mortgages bought or guaranteed by Fannie Mae and Freddie Mac. That means it covers conforming loans (under the federal limit, currently $806,500 in most counties) and misses jumbo, cash, and non-conforming purchases. The trade-off: it's the only index that gives a single number for the entire state, including counties Case-Shiller doesn't cover.</p>
+      </div>
+      <div class="drozq-explain">
+        <p class="drozq-explain__num">Explainer 03</p>
+        <h3>Supply, demand, affordability, and jobs are the four drivers.</h3>
+        <p>The market signals below the price grid (months of supply, existing home sales, NAR affordability, US unemployment) are what move the indices over the following one to three quarters. When months of supply stretches above ~6, prices typically soften. When the affordability index climbs past 100, demand returns. The labor market sets the ceiling: prices rarely keep climbing through a rising unemployment trend.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+"""
+
+
+# ---------------------------------------------------------------------------
+# 5. Market Signals (Tier 3) -- white bg, tinted cards for contrast
 # ---------------------------------------------------------------------------
 
 TIER3_SECTION = f"""
-<section aria-labelledby="prices-tier3-title" class="bg_#fff py_48px md:py_64px lg:py_72px">
+<section aria-labelledby="prices-tier3-title" id="market-signals" class="bg_#fff py_48px md:py_64px lg:py_72px">
   <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
 
     <div class="ta_center mb_32px md:mb_40px max-w_720px mx_auto">
@@ -270,10 +420,10 @@ TIER3_SECTION = f"""
     </div>
 
     <div class="drozq-data-grid drozq-data-grid--4">
-{data_card("supplyMonths",  "Months of Supply",        "MSACSR, new homes, US")}
-{data_card("existingSales", "Existing Home Sales",     "EXHOSLUSM495S, SAAR")}
-{data_card("affordIdx",     "Affordability Index",     "NAR Composite, US")}
-{data_card("unemployment",  "US Unemployment Rate",    "UNRATE, monthly")}
+{data_card("supplyMonths",  "Months of Supply",        "MSACSR, new homes, US",       variant="drozq-data-card--tint")}
+{data_card("existingSales", "Existing Home Sales",     "EXHOSLUSM495S, SAAR",         variant="drozq-data-card--tint")}
+{data_card("affordIdx",     "Affordability Index",     "NAR Composite, US",           variant="drozq-data-card--tint")}
+{data_card("unemployment",  "US Unemployment Rate",    "UNRATE, monthly",             variant="drozq-data-card--tint")}
     </div>
 
     <p class="drozq-data-meta" id="prices-tier3-meta">&nbsp;</p>
@@ -283,11 +433,7 @@ TIER3_SECTION = f"""
 
 
 # ---------------------------------------------------------------------------
-# 4. Crosslink to /rates/ (was Tier 2 / MORTGAGE5US, dropped: FRED still hosts
-#    the series but Freddie Mac stopped publishing 5/1 ARM data in Nov 2022,
-#    so every observation past that date is null. Until a replacement ARM
-#    benchmark lands on FRED, the page surfaces /rates/ via this thin band
-#    instead of rendering stale cost-of-money data.)
+# 6. Cost of Money (thin band) -- MORTGAGE5US discontinued, link to /rates/
 # ---------------------------------------------------------------------------
 
 RATES_CROSSLINK = """
@@ -303,7 +449,7 @@ RATES_CROSSLINK = """
 
 
 # ---------------------------------------------------------------------------
-# 5. Mid-page tabs (template requirement)
+# 7. Mid-page sell/buy tabs (template requirement)
 # ---------------------------------------------------------------------------
 
 MID_TABS = f"""
@@ -339,11 +485,113 @@ MID_TABS = f"""
 
 
 # ---------------------------------------------------------------------------
-# 6. Closing CTA
+# 8. FAQ (paired with FAQPage JSON-LD below)
+# ---------------------------------------------------------------------------
+
+FAQ_QUESTIONS = [
+    ("How are these home price indices actually calculated?",
+     "The Case-Shiller index uses a repeat-sales methodology: it tracks transactions of the same physical homes over time, which filters out mix-shift bias and gives a cleaner read on what a typical home in that metro appreciated. The FHFA All-Transactions HPI is built from transactions on properties whose mortgages were bought or guaranteed by Fannie Mae or Freddie Mac, which means it covers conforming loans (under the federal limit, currently $806,500 in most counties) and includes both purchases and refinances."),
+    ("Why is the LA index number so different from San Diego if they're both Case-Shiller?",
+     "Each Case-Shiller metro is its own series with its own base. All metros are normalized to 100 at January 2000. From there, the index level just compounds with that metro's price growth. The absolute number doesn't compare across metros; the year-over-year (or multi-year) percent change does."),
+    ("Why are the months-of-supply and existing-sales numbers national, not California-specific?",
+     "There is no single FRED series for California-specific months of supply or existing home sales. The Census Bureau and the National Association of Realtors publish only national aggregates at this cadence. National supply and demand are the leading indicators that California-specific prices follow with a one- to three-quarter lag; for California-specific volumes by county, see the market-insights page."),
+    ("What does the affordability index mean exactly?",
+     "It's the NAR Housing Affordability Composite Index. 100 = a median-income family has exactly enough income to qualify for a conventional 30-year fixed mortgage on a median-priced existing single-family home with a 20% down payment. Above 100 = surplus. Below 100 = deficit. California's standalone affordability is much lower than the national composite shown here; the national index is the macro signal."),
+    ("How current is the data on this page?",
+     "Each card shows its own observation date. The home price indices typically lag two to three months because of how repeat-sales data is collected and revised. The market signals (supply, sales, affordability, unemployment) lag one to two months. The page itself reads from FRED hourly, so a new release surfaces here within about an hour of publication."),
+    ("Where does the underlying data come from?",
+     "All series come from FRED, the Federal Reserve Bank of St. Louis's economic data system. FRED is the redistribution layer; the original publishers are S&amp;P CoreLogic and Case-Shiller (the metro home price indices), the Federal Housing Finance Agency (the statewide HPI), the U.S. Census Bureau (months of supply), the National Association of Realtors (existing sales, affordability), and the Bureau of Labor Statistics (unemployment). Methodology section below links each one."),
+]
+
+
+def faq_item(idx: int, q: str, a: str) -> str:
+    qid = f"prices-faq-{idx}-header"
+    aid = f"prices-faq-{idx}-content"
+    return f"""
+      <div class="drozq-faq-item">
+        <button aria-controls="{aid}" aria-expanded="false" id="{qid}" type="button">
+          <span>{q}</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+        <div role="region" aria-labelledby="{qid}" id="{aid}" class="drozq-faq-region" style="max-height: 0;">
+          <p>{a}</p>
+        </div>
+      </div>"""
+
+
+FAQ_SECTION = f"""
+<section aria-labelledby="prices-faq-title" class="bg-c_#f2f0ef py_48px md:py_64px lg:py_72px">
+  <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
+
+    <div class="ta_center mb_32px md:mb_40px max-w_720px mx_auto">
+      <span class="drozq-tier-chip">FAQ</span>
+      <h2 id="prices-faq-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">Questions about the numbers on this page.</h2>
+    </div>
+
+    <div class="drozq-faq-list">
+{"".join(faq_item(i+1, q, a) for i, (q, a) in enumerate(FAQ_QUESTIONS))}
+    </div>
+
+  </div>
+</section>
+"""
+
+
+# ---------------------------------------------------------------------------
+# 9. Methodology
+# ---------------------------------------------------------------------------
+
+METHODOLOGY_SECTION = """
+<section aria-labelledby="prices-method-title" class="bg_#fff py_48px md:py_64px lg:py_72px">
+  <div class="max-w_840px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px ta_center">
+    <span class="drozq-tier-chip">Methodology</span>
+    <h2 id="prices-method-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_20px">Where this data actually comes from.</h2>
+    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_16px">All seven series are pulled directly from <a href="https://fred.stlouisfed.org/" rel="noopener" class="c_#d92228 fw_700">Federal Reserve Economic Data (FRED)</a>, maintained by the Federal Reserve Bank of St. Louis. FRED is the redistribution layer. The underlying publishers are:</p>
+    <ul class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px ta_left mb_24px" style="max-width:680px; margin-left:auto; margin-right:auto;">
+      <li><a href="https://fred.stlouisfed.org/series/LXXRSA" rel="noopener" class="c_#d92228 fw_700">LXXRSA</a> &middot; <a href="https://fred.stlouisfed.org/series/SDXRSA" rel="noopener" class="c_#d92228 fw_700">SDXRSA</a>. S&amp;P CoreLogic Case-Shiller Home Price Indices, LA and San Diego metros. Monthly, two-month lag, seasonally adjusted.</li>
+      <li><a href="https://fred.stlouisfed.org/series/CASTHPI" rel="noopener" class="c_#d92228 fw_700">CASTHPI</a>. Federal Housing Finance Agency All-Transactions House Price Index for California. Quarterly.</li>
+      <li><a href="https://fred.stlouisfed.org/series/MSACSR" rel="noopener" class="c_#d92228 fw_700">MSACSR</a>. U.S. Census Bureau Monthly Supply of New Houses. Monthly.</li>
+      <li><a href="https://fred.stlouisfed.org/series/EXHOSLUSM495S" rel="noopener" class="c_#d92228 fw_700">EXHOSLUSM495S</a>. National Association of Realtors Existing Home Sales, seasonally adjusted annualized rate, thousands of units. Monthly.</li>
+      <li><a href="https://fred.stlouisfed.org/series/FIXHAI" rel="noopener" class="c_#d92228 fw_700">FIXHAI</a>. National Association of Realtors Housing Affordability Composite Index. Monthly (with gaps).</li>
+      <li><a href="https://fred.stlouisfed.org/series/UNRATE" rel="noopener" class="c_#d92228 fw_700">UNRATE</a>. Bureau of Labor Statistics Civilian Unemployment Rate, seasonally adjusted. Monthly.</li>
+    </ul>
+    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_16px">The page itself reads FRED via a Cloudflare Pages function and caches the response at the edge for one hour. New FRED observations surface within roughly an hour of publication. CAGR figures in the appreciation table are computed at request time from the latest observation and the corresponding observation 5 or 10 years prior (or as close to those points as the published cadence allows).</p>
+    <p class="c_#3f4650 fs_15px md:fs_16px lh_24px md:lh_28px m_0"><em>Authored and maintained by Joshua Guerrero, Real Estate Agent, Real Brokerage. California DRE #02267255. Reach out at <a href="tel:9494385948" class="c_#d92228 fw_700">(949) 438-5948</a> or via <a href="/contact/" class="c_#d92228 fw_700">/contact/</a>.</em></p>
+  </div>
+</section>
+"""
+
+
+# ---------------------------------------------------------------------------
+# 10. Crosslinks
+# ---------------------------------------------------------------------------
+
+CROSSLINKS_SECTION = """
+<section aria-labelledby="prices-crosslinks-title" class="bg-c_#f2f0ef py_48px md:py_64px">
+  <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px ta_center">
+    <span class="drozq-tier-chip">Related on Drozq</span>
+    <h2 id="prices-crosslinks-title" class="fw_800 op_0.87 c_#2b2b2b lh_32px md:lh_40px fs_22px md:fs_28px ls_0.3px ta_center mb_24px">Pair the indices with the local read.</h2>
+    <div class="d_flex flex-wrap_wrap jc_center gap_12px md:gap_16px">
+      <a href="/rates/" class="btn-secondary-outline">Live mortgage rates &rarr;</a>
+      <a href="/market-insights/" class="btn-secondary-outline">Southern California county data &rarr;</a>
+      <a href="/process/" class="btn-secondary-outline">How I work &rarr;</a>
+      <a href="/field-notes/" class="btn-secondary-outline">Field Notes &rarr;</a>
+      <a href="/about/" class="btn-secondary-outline">About the author &rarr;</a>
+    </div>
+  </div>
+</section>
+"""
+
+
+# ---------------------------------------------------------------------------
+# 11. Closing CTA
 # ---------------------------------------------------------------------------
 
 CLOSING_CTA = f"""
-<section class="d_block pt_48px lg:pt_64px pb_48px lg:pb_64px bg-c_#f2f0ef">
+<section class="d_block pt_48px lg:pt_64px pb_48px lg:pb_64px bg_#fff">
   <div class="max-w_1035px w_100% m_0_auto pl_32px lg:pl_16px pr_32px lg:pr_16px">
     <div class="ta_center max-w_640px m_0_auto">
       <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">Your home, your number</p>
@@ -362,7 +610,172 @@ CLOSING_CTA = f"""
 
 
 # ---------------------------------------------------------------------------
-# 7. Inline hydration script (per-unit formatters)
+# 12. JSON-LD: WebPage + 7 Dataset + FAQPage + BreadcrumbList + Person
+# ---------------------------------------------------------------------------
+
+_TODAY = _dt.date.today().isoformat()
+
+PERSON_JSONLD = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": "https://drozq.com/#person-joshua",
+    "name": "Joshua Guerrero",
+    "url": "https://drozq.com/",
+    "jobTitle": "Real Estate Agent",
+    "worksFor": {"@type": "Organization", "name": "Real Brokerage"},
+    "telephone": "+1-949-438-5948",
+    "areaServed": [
+        {"@type": "Place", "name": "Orange County, California"},
+        {"@type": "Place", "name": "Los Angeles County, California"},
+        {"@type": "Place", "name": "Irvine, California"}
+    ],
+    "identifier": {
+        "@type": "PropertyValue",
+        "propertyID": "California DRE",
+        "value": "02267255"
+    }
+}
+
+WEBPAGE_JSONLD = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "California Home Prices and Market Signals -- Live from FRED",
+    "description": "Live LA + San Diego Case-Shiller home price indices, FHFA California statewide HPI, plus months of supply, existing sales, NAR affordability, and US unemployment. Pulled from the Federal Reserve, refreshed hourly. Includes 5- and 10-year CAGR for each home price index.",
+    "url": "https://drozq.com/prices/",
+    "dateModified": _TODAY,
+    "author": {"@id": "https://drozq.com/#person-joshua"},
+    "isPartOf": {"@type": "WebSite", "name": "Drozq", "url": "https://drozq.com/"},
+    "mainContentOfPage": {
+        "@type": "WebPageElement",
+        "name": "California Home Prices and Market Signals"
+    }
+}
+
+
+def dataset_jsonld(series_id: str, name: str, description: str, anchor: str,
+                   cadence: str, original_creator: str, original_creator_url: str | None = None) -> dict:
+    creator = {"@type": "Organization", "name": original_creator}
+    if original_creator_url:
+        creator["url"] = original_creator_url
+    return {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "name": name,
+        "description": description,
+        "url": f"https://drozq.com/prices/#{anchor}",
+        "creator": creator,
+        "distribution": {
+            "@type": "DataDownload",
+            "contentUrl": f"https://fred.stlouisfed.org/series/{series_id}",
+            "encodingFormat": "text/html"
+        },
+        "isBasedOn": f"https://fred.stlouisfed.org/series/{series_id}",
+        "license": "https://research.stlouisfed.org/docs/api/terms_of_use.html",
+        "temporalCoverage": "rolling",
+        "measurementTechnique": cadence,
+        "variableMeasured": {"@type": "PropertyValue", "name": name},
+        "datePublished": _TODAY,
+        "dateModified": _TODAY
+    }
+
+
+DATASETS_JSONLD = [
+    dataset_jsonld(
+        "LXXRSA",
+        "S&P CoreLogic Case-Shiller LA Home Price Index",
+        "Repeat-sales home price index for the Los Angeles-Long Beach-Anaheim metro statistical area, normalized to 100 at January 2000. Monthly, seasonally adjusted.",
+        "california-home-prices",
+        "monthly",
+        "S&P Dow Jones Indices / CoreLogic",
+        "https://www.spglobal.com/spdji/en/index-family/indicators/sp-corelogic-case-shiller/"
+    ),
+    dataset_jsonld(
+        "SDXRSA",
+        "S&P CoreLogic Case-Shiller San Diego Home Price Index",
+        "Repeat-sales home price index for the San Diego-Carlsbad metro statistical area, normalized to 100 at January 2000. Monthly, seasonally adjusted.",
+        "california-home-prices",
+        "monthly",
+        "S&P Dow Jones Indices / CoreLogic",
+        "https://www.spglobal.com/spdji/en/index-family/indicators/sp-corelogic-case-shiller/"
+    ),
+    dataset_jsonld(
+        "CASTHPI",
+        "FHFA All-Transactions House Price Index for California",
+        "FHFA-published purchase + refinance transaction price index covering Fannie Mae and Freddie Mac conforming-loan transactions in California. Quarterly.",
+        "california-home-prices",
+        "quarterly",
+        "Federal Housing Finance Agency",
+        "https://www.fhfa.gov/data/hpi"
+    ),
+    dataset_jsonld(
+        "MSACSR",
+        "U.S. Census Bureau Monthly Supply of New Houses",
+        "Ratio of houses for sale to houses sold, measured in months, for new single-family homes in the United States. Monthly, seasonally adjusted.",
+        "market-signals",
+        "monthly",
+        "U.S. Census Bureau",
+        "https://www.census.gov/construction/nrs/"
+    ),
+    dataset_jsonld(
+        "EXHOSLUSM495S",
+        "National Association of Realtors Existing Home Sales",
+        "Seasonally adjusted annualized rate of existing single-family, townhome, condo, and co-op home sales in the United States, in thousands of units. Monthly.",
+        "market-signals",
+        "monthly",
+        "National Association of Realtors",
+        "https://www.nar.realtor/research-and-statistics/housing-statistics/existing-home-sales"
+    ),
+    dataset_jsonld(
+        "FIXHAI",
+        "National Association of Realtors Housing Affordability Composite Index",
+        "Ratio of median family income to qualifying income for a conventional 30-year fixed mortgage on a median-priced existing single-family home with a 20% down payment. 100 = exact qualification. Monthly.",
+        "market-signals",
+        "monthly",
+        "National Association of Realtors",
+        "https://www.nar.realtor/research-and-statistics/housing-statistics/housing-affordability-index"
+    ),
+    dataset_jsonld(
+        "UNRATE",
+        "U.S. Bureau of Labor Statistics Civilian Unemployment Rate",
+        "Percentage of the civilian labor force that is unemployed and actively seeking work in the United States. Monthly, seasonally adjusted.",
+        "market-signals",
+        "monthly",
+        "U.S. Bureau of Labor Statistics",
+        "https://www.bls.gov/cps/"
+    )
+]
+
+
+FAQ_JSONLD = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": q,
+            "acceptedAnswer": {"@type": "Answer", "text": a}
+        } for q, a in FAQ_QUESTIONS
+    ]
+}
+
+BREADCRUMB_JSONLD = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://drozq.com/"},
+        {"@type": "ListItem", "position": 2, "name": "California Home Prices", "item": "https://drozq.com/prices/"}
+    ]
+}
+
+
+JSON_LD_BLOCKS = "\n".join(
+    f'<script type="application/ld+json">{_json.dumps(obj, indent=2)}</script>'
+    for obj in [PERSON_JSONLD, WEBPAGE_JSONLD] + DATASETS_JSONLD + [FAQ_JSONLD, BREADCRUMB_JSONLD]
+)
+
+
+# ---------------------------------------------------------------------------
+# 13. Inline hydration script
 # ---------------------------------------------------------------------------
 
 PRICES_SCRIPT = r"""
@@ -392,23 +805,20 @@ PRICES_SCRIPT = r"""
     switch (s.unit) {
       case '%':         return v.toFixed(2) + '%';
       case 'months':    return oneDecFmt.format(v) + ' mo';
-      case 'thousands': return oneDecFmt.format(v / 1000) + 'M';   // SAAR thousands -> millions, annualized
+      case 'thousands': return oneDecFmt.format(v / 1000) + 'M';
       case 'index':
       default:          return integerFmt.format(Math.round(v));
     }
   }
 
   function pickPrimaryDelta(s) {
-    // For percent series, the absolute delta in pp is the meaningful read.
-    // For everything else, the percent change is the meaningful read.
     if (!s) return { text: '', cls: 'flat' };
     if (s.unit === '%') {
       var d = s.delta;
       if (d == null || !isFinite(d)) return { text: 'No prior data', cls: 'flat' };
       var unitLbl = (s.cadence === 'monthly') ? 'pp vs. prior month' :
                     (s.cadence === 'weekly')  ? 'pp vs. prior week'  :
-                    (s.cadence === 'daily')   ? 'pp vs. prior day'   :
-                    'pp vs. prior';
+                    (s.cadence === 'daily')   ? 'pp vs. prior day'   : 'pp vs. prior';
       if (d === 0) return { text: 'Flat ' + unitLbl.replace('pp ', ''), cls: 'flat' };
       var sign = d > 0 ? '+' : '';
       return { text: sign + d.toFixed(2) + ' ' + unitLbl, cls: d > 0 ? 'up' : 'down' };
@@ -417,11 +827,9 @@ PRICES_SCRIPT = r"""
     if (p == null || !isFinite(p)) return { text: 'No prior data', cls: 'flat' };
     var lbl = (s.cadence === 'quarterly') ? 'vs. prior quarter' :
               (s.cadence === 'monthly')   ? 'vs. prior month'   :
-              (s.cadence === 'weekly')    ? 'vs. prior week'    :
-              'vs. prior';
+              (s.cadence === 'weekly')    ? 'vs. prior week'    : 'vs. prior';
     if (p === 0) return { text: 'Flat ' + lbl, cls: 'flat' };
     var sign2 = p > 0 ? '+' : '';
-    // For supply / unemployment, a rise is bad for buyers/economy: keep up=red, down=green.
     return { text: sign2 + p.toFixed(1) + '% ' + lbl, cls: p > 0 ? 'up' : 'down' };
   }
 
@@ -446,11 +854,14 @@ PRICES_SCRIPT = r"""
     if (!history || history.length < 2) { targetEl.innerHTML = ''; return; }
     var values = history.map(function(o){ return o.value; }).filter(function(v){ return v != null; });
     if (values.length < 2) { targetEl.innerHTML = ''; return; }
-    var min = Math.min.apply(null, values);
-    var max = Math.max.apply(null, values);
+    // Sparkline shows ~1 year (or the most recent 1y slice of the longer
+    // window we pull for CAGR). Tail of the array since history is ascending.
+    var slice = values.slice(Math.max(0, values.length - 60));
+    var min = Math.min.apply(null, slice);
+    var max = Math.max.apply(null, slice);
     var range = (max - min) || 1;
-    var n = values.length;
-    var pts = values.map(function(v, i){
+    var n = slice.length;
+    var pts = slice.map(function(v, i){
       var x = (i / (n - 1)) * 100;
       var y = 30 - ((v - min) / range) * 30;
       return x.toFixed(2) + ',' + y.toFixed(2);
@@ -477,7 +888,7 @@ PRICES_SCRIPT = r"""
       return;
     }
 
-    if (valEl)  valEl.textContent = fmtValue(s);
+    if (valEl) valEl.textContent = fmtValue(s);
     if (sparkEl) renderSparkline(sparkEl, s.history || []);
 
     var d = pickPrimaryDelta(s);
@@ -488,6 +899,40 @@ PRICES_SCRIPT = r"""
     if (dateEl) {
       dateEl.textContent = s.latest.date ? 'As of ' + fmtDate(s.latest.date, s.cadence) : '';
     }
+  }
+
+  function renderAppreciationTable(series) {
+    tier1Keys.forEach(function(key){
+      var s = series[key];
+      var todayEl   = document.querySelector('[data-app-today="' + key + '"]');
+      var fiveEl    = document.querySelector('[data-app-5y="'    + key + '"]');
+      var tenEl     = document.querySelector('[data-app-10y="'   + key + '"]');
+      var cagr5El   = document.querySelector('[data-app-cagr5="' + key + '"]');
+      var cagr10El  = document.querySelector('[data-app-cagr10="' + key + '"]');
+
+      function setIdx(el, obj) {
+        if (!el) return;
+        if (!obj || obj.value == null) { el.textContent = 'n/a'; return; }
+        el.textContent = integerFmt.format(Math.round(obj.value));
+      }
+      function setCagr(el, v) {
+        if (!el) return;
+        if (v == null || !isFinite(v)) { el.textContent = 'n/a'; el.className = 'cagr'; return; }
+        var sign = v > 0 ? '+' : '';
+        el.textContent = sign + v.toFixed(2) + '%';
+        el.className = v >= 0 ? 'cagr' : 'cagr-down';
+      }
+
+      if (!s) {
+        [todayEl, fiveEl, tenEl, cagr5El, cagr10El].forEach(function(el){ if (el) el.textContent = 'n/a'; });
+        return;
+      }
+      setIdx(todayEl, s.latest);
+      setIdx(fiveEl,  s.fiveYearAgo);
+      setIdx(tenEl,   s.tenYearAgo);
+      setCagr(cagr5El,  s.cagr5y);
+      setCagr(cagr10El, s.cagr10y);
+    });
   }
 
   function setMeta(elId, payload) {
@@ -505,6 +950,7 @@ PRICES_SCRIPT = r"""
   function render(payload) {
     var series = (payload && payload.series) || {};
     allKeys.forEach(function(k){ renderCard(k, series[k]); });
+    renderAppreciationTable(series);
     setMeta('prices-tier1-meta', payload);
     setMeta('prices-tier3-meta', payload);
   }
@@ -542,10 +988,16 @@ MAIN_BODY = (
     HERO
     + PAGE_STYLE
     + TIER1_SECTION
+    + APPRECIATION_TABLE_SECTION
+    + EXPLAINERS_SECTION
     + TIER3_SECTION
     + RATES_CROSSLINK
     + MID_TABS
+    + FAQ_SECTION
+    + METHODOLOGY_SECTION
+    + CROSSLINKS_SECTION
     + CLOSING_CTA
+    + JSON_LD_BLOCKS
     + PRICES_SCRIPT
 )
 
@@ -554,9 +1006,9 @@ if __name__ == "__main__":
     scaffold_page(
         target="prices/index.html",
         title="California Home Prices and Market Signals -- Live from FRED | Joshua Guerrero, Real Brokerage",
-        description="Live LA and San Diego Case-Shiller home price indices, the California statewide HPI, and the four national market signals that move them, pulled directly from the Federal Reserve and refreshed automatically.",
+        description="Live LA and San Diego Case-Shiller home price indices, FHFA California statewide HPI, plus the supply, sales, affordability, and employment signals that move them. Pulled from the Federal Reserve, refreshed hourly. Includes 5- and 10-year CAGR per market.",
         canonical="/prices/",
         main_body_html=MAIN_BODY,
         og_title="California Home Prices and Market Signals -- Live from FRED",
-        og_description="LA + San Diego Case-Shiller, California statewide HPI, plus months of supply, existing sales, affordability, and unemployment. Refreshed automatically from FRED.",
+        og_description="LA + San Diego Case-Shiller, FHFA California statewide HPI, plus months of supply, existing sales, affordability, and unemployment. Includes 5y + 10y CAGR per market. Refreshed automatically.",
     )
