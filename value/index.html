@@ -3326,17 +3326,21 @@ body[data-view="after"] .value-loading { display: none; }
   }
 
   function fmtMoneyFull(n) {
-    if (n == null || !isFinite(n)) return "&mdash;";
-    return "$" + Math.round(n).toLocaleString();
+    if (n == null || !isFinite(n)) return "n/a";
+    var rounded = Math.round(n);
+    var sign = rounded < 0 ? "-" : "";
+    return sign + "$" + Math.abs(rounded).toLocaleString();
   }
   function fmtMoneyShort(n) {
-    if (n == null || !isFinite(n)) return "&mdash;";
-    if (Math.abs(n) >= 1000000) return "$" + (n / 1000000).toFixed(2) + "M";
-    if (Math.abs(n) >= 1000)    return "$" + (n / 1000).toFixed(0)   + "k";
-    return "$" + Math.round(n).toLocaleString();
+    if (n == null || !isFinite(n)) return "n/a";
+    var sign = n < 0 ? "-" : "";
+    var abs = Math.abs(n);
+    if (abs >= 1000000) return sign + "$" + (abs / 1000000).toFixed(2) + "M";
+    if (abs >= 1000)    return sign + "$" + (abs / 1000).toFixed(0)   + "k";
+    return sign + "$" + Math.round(abs).toLocaleString();
   }
   function fmtPct(n) {
-    if (n == null || !isFinite(n)) return "&mdash;";
+    if (n == null || !isFinite(n)) return "n/a";
     return n.toFixed(2) + "%";
   }
   function escapeHTML(s) {
@@ -3428,7 +3432,7 @@ body[data-view="after"] .value-loading { display: none; }
       return '<article class="value-card' + (highlight ? ' value-card--highlight' : '') + '">' +
         '<p class="value-card-num">' + num + '</p>' +
         '<h3 class="value-card-title">' + escapeHTML(title) + '</h3>' +
-        '<p class="value-card-value">&mdash;</p>' +
+        '<p class="value-card-value">n/a</p>' +
         '<p class="value-card-note">Not available for this property.</p>' +
         '</article>';
     }
@@ -3438,7 +3442,7 @@ body[data-view="after"] .value-loading { display: none; }
     } else if (system.year) {
       range = '<p class="value-card-range">Tax year ' + escapeHTML(String(system.year)) + '</p>';
     } else if (system.psf) {
-      range = '<p class="value-card-range">' + fmtMoneyFull(system.psf) + '/sqft &times; ' + (system.sqft ? system.sqft.toLocaleString() + ' sqft' : '&mdash;') + ' (' + escapeHTML(system.quality || "") + ')</p>';
+      range = '<p class="value-card-range">' + fmtMoneyFull(system.psf) + '/sqft &times; ' + (system.sqft ? system.sqft.toLocaleString() + ' sqft' : 'n/a') + ' (' + escapeHTML(system.quality || "") + ')</p>';
     } else if (system.compsUsed) {
       range = '<p class="value-card-range">Avg of top ' + system.compsUsed + ' of ' + system.compsTotal + ' comps @ ' + fmtMoneyFull(system.avgPsf) + '/sqft</p>';
     }
@@ -3471,7 +3475,7 @@ body[data-view="after"] .value-loading { display: none; }
       if (prop.bathrooms)     meta.push(prop.bathrooms + ' BA');
       if (prop.squareFootage) meta.push(prop.squareFootage.toLocaleString() + ' sqft');
       if (prop.yearBuilt)     meta.push('Built ' + prop.yearBuilt);
-      if (meta.length) html += '<p class="value-results-meta">' + escapeHTML(meta.join(' &middot; ')) + '</p>';
+      if (meta.length) html += '<p class="value-results-meta">' + escapeHTML(meta.join(' · ')) + '</p>';
     }
     html += '</div>';
 
@@ -3489,7 +3493,7 @@ body[data-view="after"] .value-loading { display: none; }
       html += '<div class="value-investor-grid">';
       html += '<div><p class="value-investor-stat-label">Monthly rent estimate</p><p class="value-investor-stat-value">' + fmtMoneyFull(inv.monthlyRent) + '</p></div>';
       html += '<div><p class="value-investor-stat-label">Cap rate (at AVM, 35% expenses)</p><p class="value-investor-stat-value">' + fmtPct(inv.capRate) + '</p></div>';
-      html += '<div><p class="value-investor-stat-label">GRM (price &divide; annual rent)</p><p class="value-investor-stat-value">' + (inv.grm != null ? inv.grm.toFixed(1) : '&mdash;') + '</p></div>';
+      html += '<div><p class="value-investor-stat-label">GRM (price &divide; annual rent)</p><p class="value-investor-stat-value">' + (inv.grm != null ? inv.grm.toFixed(1) : 'n/a') + '</p></div>';
       if (inv.wholesale70) {
         html += '<div><p class="value-investor-stat-label">70% wholesale offer (ARV &times; 0.7 &minus; $50/sqft rehab)</p><p class="value-investor-stat-value">' + fmtMoneyFull(inv.wholesale70.value) + '</p></div>';
       }
