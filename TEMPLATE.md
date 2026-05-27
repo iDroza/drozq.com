@@ -738,7 +738,7 @@ Default state: all collapsed (`aria-expanded="false"`, inline `max-height: 0`).
       <a href="/" aria-label="Drozq home"><img src="/media/images/brand-logo-white.png" alt="..." width="165" height="25"></a>
 
       <div class="d_flex flex-d_column gap_8px fs_14px lh_2">
-        <div>Joshua Guerrero &middot; Real Brokerage</div>
+        <div>Drozq.com &middot; Real Brokerage</div>
         <div>California DRE #02267255</div>
         <div><a href="tel:9494385948" class="fw_bold">(949) 438-5948</a></div>
       </div>
