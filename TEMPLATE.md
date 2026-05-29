@@ -744,6 +744,28 @@ Same container width as the closing CTA pill (below). The mid-tab pill must matc
 
 ## 7. FAQ accordion
 
+### Container: centered, single column, reading width (no exceptions)
+
+The FAQ is **reading content**, so the whole section (eyebrow + h2 + every question row) lives in a **centered, single-column** block at a **reading width**, never the full-width or wide body container. Wrap it like this:
+
+```html
+<section aria-labelledby="page-faq-title" class="... bg-c_#f2f0ef">
+  <div class="max-w_720px w_100% m_0_auto pl_32px lg:pl_16px pr_32px lg:pr_16px">
+    <!-- centered FAQ header + accordion items -->
+  </div>
+</section>
+```
+
+- `max-w_720px` + `m_0_auto` is a centered ~720px column, so each question sits next to its +/- toggle instead of the toggle flying to the far right of a 1000px-wide row. `720px` is the reading-width ceiling (§5) and the standard for FAQs going forward; some older migrated pages still use the wider `max-w_1035px` body container.
+- **The `max-w_*` value MUST be a class that is actually compiled in the inherited Panda soup.** The soup only ships utilities referenced in `/index.html`, so an arbitrary width silently no-ops: a container with `max-w_780px` (not compiled) gets **no** `max-width`, so `w_100%` wins and the FAQ stretches **edge-to-edge across the whole page** — the exact "spread out" bug this rule prevents. Known-compiled widths: `max-w_720px`, `max-w_700px`, `max-w_640px`, `max-w_540px`, `max-w_972px`, `max-w_1035px`. Known **no-ops** (do not use): `max-w_780px`, `max-w_760px`, `max-w_800px`, `max-w_860px`. This is the same compiled-classes-only pitfall as `.btn-secondary-outline` / `.drozq-portrait-split` / `grid-tc_280px_1fr` (§4-5): an uncompiled Panda value fails silently.
+- **Verify before commit:** confirm the chosen width is a real rule, and eyeball the result.
+
+```
+grep -o "max-width: 720px" your-page/index.html   # must return a hit, else the class is a no-op
+```
+
+**Self-check at 1440px:** the FAQ column is visibly centered with margins on both sides, never edge-to-edge.
+
 ```html
 <button aria-controls="faq-1-content" aria-expanded="false" id="faq-1-header">
   <span>Is our AgentLocator Service free?</span>
@@ -1109,6 +1131,8 @@ Do not.
 - Modify field names, IDs, or `data-funnel` / `data-step` attributes on funnel steps. Downstream JS hardcodes them.
 - Add em dashes (U+2014) anywhere in output. Banned.
 - **Introduce an ad-hoc hex color.** Every color in a page's CSS/JS must resolve to a named token in §1 or an established `/index.html` value. No invented hues. For multi-series data viz use the market-trends palette (`#d92228` / `#5184e1` / `#0a801f` / `#beb8b0` / `#1a1816`), never a new color. Self-check: `grep -oiE "#[0-9a-f]{6}"` the page and reconcile each hit against §1 before commit. See §1 "Color discipline."
+- **Put the FAQ in a full-width or wide container.** The FAQ accordion is a centered, single-column reading block (`max-w_720px` + `m_0_auto`), not the full-width body. And the `max-w_*` must be a COMPILED class: arbitrary values like `max-w_780px` are not in the Panda soup, silently no-op, and let the FAQ stretch edge-to-edge across the page. Verify it renders constrained (grep the soup / check centered at 1440px). See §7 "Container."
+- **Use an uncompiled Panda utility and assume it works.** The inherited soup only ships classes referenced in `/index.html`. Arbitrary values (`max-w_780px`, `grid-tc_280px_1fr`, `bd_1px_solid_#d92228`, etc.) generate no rule and fail silently. If a new arbitrary value is genuinely needed, add a scoped `<style>` rule for it (as with `.btn-secondary-outline` / `.drozq-portrait-split`); never rely on the class existing.
 - **Use anti-promise / negative-association copy anywhere.** Banned phrases (non-exhaustive): "no autodialer," "no spam," "no pressure," "no call center," "no script," "no pitch," "no obligation," "no team," "no sales script." These phrases plant a worry the prospect wasn't carrying and turn warm visitors cold. Reframe with positive value: "direct callback within X hours," "from me, with the records pulled," "an honest read on whether to list," "you walk away with better information." Exception: pricing statements that address a real cost concern with positive framing are fine ("No fee unless we list," "free CMA"). The rule is: never name the bad thing, even to deny it.
 - Add a separate footer style per page. The minimal footer is the convention.
 - Build a new page without registering it in `funnels.json`. The sync is the propagation mechanism; an unregistered page silently drifts from the source.
