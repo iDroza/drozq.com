@@ -1,12 +1,12 @@
 # MCP workarounds: direct REST when MCPs fail
 
-Both the PostHog MCP and the Google Ads MCP have failed mid-session in the past (PostHog auth flakiness; Google Ads MCP cold-start timeouts / `user-cancel` errors / revoked ADC tokens). When that happens, **do not retry the MCP** — go straight to the direct REST API. Both services have working credentials in env vars on this machine.
+The PostHog MCP has flaked mid-session before (auth flakiness, 401s, empty schema responses). The Google Ads MCP was worse: cold-start timeouts, immediate `user-cancel` rejections, and a gcloud-ADC access token that expired every 7 days (Testing-mode OAuth consent screen) and eventually started hard-blocking consent ("This app is blocked").
 
-Always prefer these direct calls over MCP retries when you see:
-- MCP returns a tool-rejection / `user-cancel` immediately
-- MCP `list_accessible_customers` / `tools` hangs past ~30s
-- `gcloud auth application-default print-access-token` says `invalid_grant`
-- PostHog MCP returns 401 or empty schema responses
+**The Google Ads MCP was removed on 2026-05-28.** Google Ads is now REST-only via `scripts/ads.py`, which authenticates with a stored, long-lived OAuth **refresh token** (no gcloud, no ADC, no MCP). For PostHog, if the MCP fails, go straight to the direct HogQL REST call below.
+
+Always prefer the direct calls over MCP retries when you see:
+- PostHog MCP returns a tool-rejection / hang past ~30s / 401 / empty schema
+- Google Ads: there is no MCP to retry. Use `scripts/ads.py`.
 
 ## PostHog: direct HogQL query
 
@@ -51,40 +51,44 @@ The JSON shape is `{"columns": [...], "results": [[...], [...], ...]}`. Quick li
 
 For raw debug (e.g. when results is empty), pipe to `head -300` instead of the python one-liner.
 
-## Google Ads: direct GAQL
+## Google Ads: scripts/ads.py (refresh-token auth, no gcloud)
 
 **Customer ID (drozq operating account):** `3351363652`.
 **Login (MCC manager):** `1975174499`.
-**Developer token:** `$GOOGLE_ADS_DEVELOPER_TOKEN` (already set as a user env var).
-**Access token:** comes from `gcloud auth application-default print-access-token`. The OAuth client is in "Testing" mode under the `drozq-ads-mcp` GCP project, which means **refresh tokens expire every 7 days**. When they do, you'll see `invalid_grant: Token has been expired or revoked.` and have to ask Joshua to re-auth:
+**Developer token:** `$GOOGLE_ADS_DEVELOPER_TOKEN` (user env var; also copied into the creds file at setup).
+**Auth:** a long-lived OAuth **refresh token** stored in `scripts/.google_ads.json` (gitignored). `scripts/ads.py` exchanges it for an access token against `https://oauth2.googleapis.com/token` on every run. No gcloud, no ADC, no MCP. This replaced the old `gcloud auth application-default` flow, which broke roughly weekly (Testing-mode refresh tokens expire every 7 days) and then started hard-blocking consent.
+
+### Run a pull
 
 ```
-! "C:\Users\guerr\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd" auth application-default login --scopes=https://www.googleapis.com/auth/adwords,https://www.googleapis.com/auth/cloud-platform
+python scripts/ads.py                  # full decision pull: account, bidding strategy, 30-day perf, impression share, keywords (bid vs top-of-page estimate + QS), search terms, devices
+python scripts/ads.py "SELECT campaign.name, metrics.cost_micros, metrics.conversions FROM campaign WHERE segments.date DURING LAST_7_DAYS"
 ```
 
-(Joshua signs in as `guerrerojoshua720@gmail.com`. The "unverified app" warning is expected — click Advanced → Continue. Token persists for another 7 days.)
+The script paginates, converts micros to USD, and derives CPC / CPL / CVR itself (it does not trust `cost_per_conversion` units).
 
-**Endpoint:** `POST https://googleads.googleapis.com/v20/customers/3351363652/googleAds:search`
+### One-time setup (only if scripts/.google_ads.json is missing or the token was revoked)
 
-```bash
-TOKEN=$("/c/Users/guerr/AppData/Local/Google/Cloud SDK/google-cloud-sdk/bin/gcloud.cmd" auth application-default print-access-token 2>/dev/null)
+1. **Publish the OAuth consent screen to Production** so the refresh token does NOT expire every 7 days (Testing mode is exactly what kept breaking this, and it eventually hard-blocks consent):
+   <https://console.cloud.google.com/auth/audience?project=drozq-ads-mcp> then **PUBLISH APP** and confirm.
+2. Mint a fresh refresh token. This opens a browser; Joshua signs in as `guerrerojoshua720@gmail.com`, clicks **Advanced -> Continue** on the "Google hasn't verified this app" warning, then **Allow**:
+   ```
+   python scripts/google_ads_auth.py
+   ```
+   It reuses the OAuth client_id/secret from the old gcloud ADC file (`%APPDATA%\gcloud\application_default_credentials.json`) and writes `scripts/.google_ads.json`. It requests only the `adwords` scope (no `cloud-platform`).
+3. Re-run `python scripts/ads.py`.
 
-curl -s -X POST "https://googleads.googleapis.com/v20/customers/3351363652/googleAds:search" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "developer-token: $GOOGLE_ADS_DEVELOPER_TOKEN" \
-  -H "login-customer-id: 1975174499" \
-  -H "Content-Type: application/json" \
-  -d '{"query":"SELECT search_term_view.search_term, metrics.impressions, metrics.clicks, metrics.cost_micros, metrics.conversions FROM search_term_view WHERE segments.date DURING LAST_7_DAYS ORDER BY metrics.cost_micros DESC LIMIT 50"}' \
-  | python -c "import sys, json; d=json.loads(sys.stdin.read()); print(json.dumps(d, indent=2)[:5000])"
-```
+If `ads.py` prints `invalid_grant`, the refresh token was revoked (someone hit "Remove access" on the Google account, or the app slipped back to Testing and aged out). Re-run step 2; if it recurs, confirm the app is still **In production** in step 1.
+
+**Endpoint (what ads.py calls):** `POST https://googleads.googleapis.com/v20/customers/3351363652/googleAds:search` with headers `Authorization: Bearer <access_token>`, `developer-token: <token>`, `login-customer-id: 1975174499`.
 
 ### Useful resources
 
-- `campaign` — campaign-level rollup. Fields: `campaign.id/name/status/advertising_channel_type`, `campaign_budget.amount_micros`.
-- `ad_group` — ad-group rollup.
-- `search_term_view` — the live search-terms report. Fields: `search_term_view.search_term`, `segments.keyword.info.text`, all `metrics.*`.
-- `keyword_view` — keyword-level performance.
-- `customer` — account-level info.
+- `campaign` - campaign-level rollup. Fields: `campaign.id/name/status/advertising_channel_type/bidding_strategy_type`, `campaign_budget.amount_micros`, plus impression-share metrics.
+- `ad_group` - ad-group rollup, incl. `ad_group.cpc_bid_micros`.
+- `keyword_view` - keyword performance + `ad_group_criterion.quality_info.quality_score` and `ad_group_criterion.position_estimates.top_of_page_cpc_micros` (the bid estimate used to set a CPC cap).
+- `search_term_view` - the live search-terms report. Fields: `search_term_view.search_term`, `segments.keyword.info.text`, all `metrics.*`.
+- `customer` - account-level info.
 
 ### Date ranges
 
@@ -93,7 +97,7 @@ curl -s -X POST "https://googleads.googleapis.com/v20/customers/3351363652/googl
 
 ### Cost conversion
 
-All money is `metrics.cost_micros` in micros: divide by `1_000_000` to get USD.
+All money is in micros: divide by `1_000_000` to get USD. Impression-share metrics are fractions in `[0,1]` (e.g. `0.83` = 83%).
 
 ```python
 import sys, json
@@ -106,6 +110,9 @@ for row in d.get('results', []):
 ## When the workaround should ALSO fail and we genuinely need help
 
 - PostHog: `phx_...` key revoked or rotated. Joshua needs to regenerate at `/settings/user-api-keys?preset=mcp_server` and re-set the env var.
-- Google Ads: developer token revoked OR Joshua hasn't logged into Google Ads in the project for so long that the OAuth client got hard-deleted. The developer token is in `$GOOGLE_ADS_DEVELOPER_TOKEN`; if Google says "developer token is invalid," ask Joshua to confirm the token at <https://ads.google.com/aw/apicenter>.
+- Google Ads:
+  - `invalid_grant` from `ads.py` -> refresh token revoked. Re-run `scripts/google_ads_auth.py` (one-time setup above).
+  - `google_ads_auth.py` says "This app is blocked" / no code received -> the consent screen is back in Testing or the project's OAuth client was deleted. Publish to Production (step 1) and, if needed, recreate a Desktop OAuth client under `drozq-ads-mcp` and set `GOOGLE_OAUTH_CLIENT_ID` / `GOOGLE_OAUTH_CLIENT_SECRET` before rerunning.
+  - "developer token is invalid" -> confirm `$GOOGLE_ADS_DEVELOPER_TOKEN` at <https://ads.google.com/aw/apicenter>.
 
-Otherwise: **do not retry the MCP. Use these calls.**
+Otherwise: **do not retry the PostHog MCP. Use these calls.**

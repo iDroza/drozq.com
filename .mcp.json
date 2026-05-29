@@ -6,14 +6,6 @@
       "headers": {
         "Authorization": "Bearer ${POSTHOG_API_KEY}"
       }
-    },
-    "google-ads": {
-      "command": "C:/Users/guerr/.local/bin/google-ads-mcp.exe",
-      "env": {
-        "GOOGLE_PROJECT_ID": "drozq-ads-mcp",
-        "GOOGLE_ADS_DEVELOPER_TOKEN": "${GOOGLE_ADS_DEVELOPER_TOKEN}",
-        "GOOGLE_ADS_LOGIN_CUSTOMER_ID": "1975174499"
-      }
     }
   }
 }

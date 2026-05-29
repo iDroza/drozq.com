@@ -14,3 +14,6 @@ Thumbs.db
 # Local audit screenshots (drop here when capturing comps)
 drozq-la-*.png
 sellersadvantage-la-*.png
+
+# Google Ads API credentials (OAuth refresh token) - NEVER commit
+scripts/.google_ads.json
