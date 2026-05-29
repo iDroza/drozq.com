@@ -2676,41 +2676,65 @@ body[data-view="after"] .value-loading { display: none; }
   max-width: 700px;
   margin: 0 auto;
 }
+/* Mirrors the homepage hero pill: on mobile, the input is its own white
+   rounded pill and the red action button is a separate full-width pill below
+   it (not trapped inside one box). At >=480 they merge into a single white pill
+   with the button inset on the right; at >=768 both grow to hero size. */
 .value-pill {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  background: #fff;
-  box-shadow: 0 1px 5px rgba(0,0,0,.11);
-  border-radius: 30px;
-  overflow: hidden;
+  gap: 12px;
 }
 .value-pill input {
-  flex: 1;
-  height: 56px;
+  width: 100%;
+  height: 48px;
   border: none;
   outline: none;
-  background: transparent;
+  background: #fff;
+  border-radius: 30px;
+  box-shadow: 0 1px 5px rgba(0,0,0,.11);
+  color: #2b2b2b;
   font-size: 16px;
-  padding: 0 16px 0 24px;
+  padding: 0 24px;
 }
+.value-pill input::placeholder { color: #757575; }
 .value-pill button {
+  width: 100%;
   height: 48px;
-  margin: 4px;
   border: none;
   background: #d92228;
   color: #fff;
   font-weight: 700;
   font-size: 15px;
+  letter-spacing: 0.5px;
   border-radius: 9999px;
   cursor: pointer;
   transition: background-color .2s ease;
 }
 .value-pill button:hover { background: #a92e2a; }
 @media (min-width: 480px) {
-  .value-pill { flex-direction: row; align-items: center; }
-  .value-pill input { height: 60px; padding: 0 8px 0 32px; }
+  .value-pill {
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+    background: #fff;
+    border-radius: 30px;
+    box-shadow: 0 1px 5px rgba(0,0,0,.11);
+  }
+  .value-pill input {
+    flex: 1;
+    height: 48px;
+    background: transparent;
+    border-radius: 30px 0 0 30px;
+    box-shadow: none;
+    padding: 0 8px 0 24px;
+  }
+  .value-pill button { width: auto; height: 40px; margin: 0 4px 0 0; padding: 0 24px; }
+}
+@media (min-width: 768px) {
+  .value-pill input { height: 60px; padding: 0 8px 0 32px; font-size: 18px; }
   .value-pill button { height: 54px; padding: 0 28px; font-size: 18px; }
 }
 
@@ -3028,7 +3052,7 @@ body[data-view="after"] .value-loading { display: none; }
 /* ---- Report actions (print/save) ---- */
 .value-report-actions { text-align: center; margin: 4px 0 28px; }
 .value-print-btn {
-  background: transparent; border: 1px solid #cfccc7; color: #3f4650;
+  background: transparent; border: 1px solid #d3cfca; color: #3f4650;
   font-size: 13px; font-weight: 600; padding: 9px 18px; border-radius: 9999px;
   cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
   transition: border-color .2s ease, color .2s ease;
@@ -3090,7 +3114,7 @@ body[data-view="after"] .value-loading { display: none; }
 .value-spread-end.hi { text-align: right; }
 .value-spread-legend {
   display: grid; grid-template-columns: 1fr; gap: 10px;
-  margin-top: 22px; padding-top: 20px; border-top: 1px solid #f0eeea;
+  margin-top: 22px; padding-top: 20px; border-top: 1px solid #ece8e2;
 }
 @media (min-width: 560px) { .value-spread-legend { grid-template-columns: 1fr 1fr; gap: 10px 28px; } }
 .value-spread-legend-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #3f4650; }
@@ -3123,7 +3147,7 @@ body[data-view="after"] .value-loading { display: none; }
 }
 @media (min-width: 768px) { .value-comps { padding: 28px 32px; } }
 .value-comp-sub { color: #3f4650; font-size: 14px; line-height: 21px; margin: 4px 0 8px; }
-.value-comp-row { display: flex; flex-direction: column; gap: 4px; padding: 15px 0; border-top: 1px solid #efefef; }
+.value-comp-row { display: flex; flex-direction: column; gap: 4px; padding: 15px 0; border-top: 1px solid #ece8e2; }
 @media (min-width: 600px) { .value-comp-row { flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; } }
 .value-comp-addr { font-size: 14px; font-weight: 700; color: #1a1816; margin: 0; }
 .value-comp-meta { font-size: 12.5px; color: #757575; margin: 2px 0 0; line-height: 18px; }
@@ -3134,7 +3158,7 @@ body[data-view="after"] .value-loading { display: none; }
 
 /* ---- Disclaimer ---- */
 .value-disclaimer {
-  color: #8a8a8a; font-size: 12px; line-height: 18px; margin: 0 auto 24px; text-align: center; max-width: 760px;
+  color: #757575; font-size: 12px; line-height: 18px; margin: 0 auto 24px; text-align: center; max-width: 760px;
 }
 .value-results-root:focus { outline: none; }
 
@@ -3611,7 +3635,7 @@ body[data-view="after"] .value-loading { display: none; }
     var defs = [
       { key: "marketAVM",       name: "Market AVM",    color: "#1a1816", cls: "" },
       { key: "assessor",        name: "Tax assessor",  color: "#5184e1", cls: "" },
-      { key: "replacementCost", name: "Rebuild cost",  color: "#b08968", cls: "" },
+      { key: "replacementCost", name: "Rebuild cost",  color: "#beb8b0", cls: "" },
       { key: "arv",             name: "Investor ARV",  color: "#0a801f", cls: "" },
       { key: "triangulated",    name: "Joshua's read", color: "#d92228", cls: "value-spread-marker--lg" }
     ];
