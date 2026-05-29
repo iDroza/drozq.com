@@ -63,6 +63,26 @@ These tokens are declared in the inline `<style>` block at the top of `/index.ht
 
 Section background bands you will see on the homepage: `#f2f0ef` (slightly warmer light gray, used as alternating section bg) and white. The standard rhythm is white → `#f2f0ef` → white.
 
+### Color discipline (every color maps to a token, no exceptions)
+
+Every color in a page's CSS and JS must resolve to a **named token from the table above**, or to a value **already established in `/index.html`** (the funnel ships a few non-table values: `#f0c9ca` light-red accent, `#ece8e2` warm divider/track, `#d3cfca` control border). **No ad-hoc hex codes.** "It looked about right" is how an off-brand brown (`#b08968`) once shipped as a chart color, alongside one-off grays (`#cfccc7`, `#8a8a8a`, `#efefef`); the tokens already cover every role, so an invented hex is never necessary, only drift.
+
+Pick by role, not by eye:
+
+- **Text:** body `#2b2b2b`, secondary `#3f4650`, muted / fine-print `#757575`, darkest `#1a1816`.
+- **Borders / dividers:** card border `#e5e5e5`, control border `#d3cfca`, ultra-light internal divider `#ece8e2`.
+- **Surfaces:** white `#fff`, warm section band `#f2f0ef`, dark block `#1a1816` (optionally graded to `#2b2b2b`), footer-only navy `#141f2a`.
+- **Red accents / CTAs:** `#d92228`, hover `#a92e2a`; light-red tint (e.g. an eyebrow on a dark block) `#f7d3d4` (`--colors-light-primary`) or the funnel's `#f0c9ca`.
+- **Multi-series data viz** (charts, the `/value/` spread): use the market-trends palette as the categorical set, in this order: `#d92228` (red), `#5184e1` (buyer blue), `#0a801f` (positive green), `#beb8b0` (balanced taupe), `#1a1816` (dark). Never invent a hue for "one more series" (no browns, oranges, purples, teals).
+
+**Self-check before commit:** grep the page's new CSS/JS for hex literals and reconcile each against this section.
+
+```
+grep -oiE "#[0-9a-f]{6}" your-page/index.html | sort -u
+```
+
+Every result must be a token value above or an established `/index.html` value (ignore the large inherited Panda token block, which is the source of truth itself). Anything else is off-brand and blocks the commit.
+
 ### Card-on-section contrast (legibility rule, no exceptions)
 
 White cards (`bg_#fff`) MUST sit on a non-white section background. White cards on a white section produce a white-on-white blunder where only a 1px `#e5e5e5` border separates the card from the page — invisible at a glance, especially on glossy displays and at mobile distances.
@@ -1088,6 +1108,7 @@ Do not.
 - Remove the `sessionStorage.drozq_lead_just_submitted` flag set before the redirect. Same reason.
 - Modify field names, IDs, or `data-funnel` / `data-step` attributes on funnel steps. Downstream JS hardcodes them.
 - Add em dashes (U+2014) anywhere in output. Banned.
+- **Introduce an ad-hoc hex color.** Every color in a page's CSS/JS must resolve to a named token in §1 or an established `/index.html` value. No invented hues. For multi-series data viz use the market-trends palette (`#d92228` / `#5184e1` / `#0a801f` / `#beb8b0` / `#1a1816`), never a new color. Self-check: `grep -oiE "#[0-9a-f]{6}"` the page and reconcile each hit against §1 before commit. See §1 "Color discipline."
 - **Use anti-promise / negative-association copy anywhere.** Banned phrases (non-exhaustive): "no autodialer," "no spam," "no pressure," "no call center," "no script," "no pitch," "no obligation," "no team," "no sales script." These phrases plant a worry the prospect wasn't carrying and turn warm visitors cold. Reframe with positive value: "direct callback within X hours," "from me, with the records pulled," "an honest read on whether to list," "you walk away with better information." Exception: pricing statements that address a real cost concern with positive framing are fine ("No fee unless we list," "free CMA"). The rule is: never name the bad thing, even to deny it.
 - Add a separate footer style per page. The minimal footer is the convention.
 - Build a new page without registering it in `funnels.json`. The sync is the propagation mechanism; an unregistered page silently drifts from the source.
