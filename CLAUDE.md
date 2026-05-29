@@ -284,7 +284,7 @@ Accepts `GET ?address=...&lat=...&lng=...` or `POST` (JSON or form). Response sh
   ok, address: {input, formatted, street, city, state, zip, county, lat, lng},
   property: {propertyType, bedrooms, bathrooms, squareFootage, lotSize, yearBuilt, lastSalePrice, lastSaleDate},
   systems: {
-    marketAVM:       {label, value, rangeLow, rangeHigh, compsCount, methodology},
+    marketAVM:       {label, value, rangeLow, rangeHigh, psf, compsCount, methodology},
     assessor:        {label, value, year, land, improvements, methodology},
     replacementCost: {label, value, psf, sqft, region, quality, methodology, ...},
     arv:             {label, value, method, compsUsed, compsTotal, avgPsf, methodology},
@@ -292,14 +292,20 @@ Accepts `GET ?address=...&lat=...&lng=...` or `POST` (JSON or form). Response sh
   },
   investor: {monthlyRent, capRate, grm, wholesale70: {value, ...}, monthlyPI, monthlyCashFlow, rate30y, methodology},
   rentEstimate: {monthly, rangeLow, rangeHigh, source},
+  comps: [{formattedAddress, bedrooms, bathrooms, squareFootage, price, psf, distance, daysOld, saleDate, correlation}],  // top ~6, sorted by correlation then distance
+  compMedian,            // median comp sale price (also feeds the triangulated blend)
   diagnostics: {propertyError, avmError, rentError},
   source, sourceUrl, fetchedAt
 }
 ```
 
+`marketAVM.psf` is the subject's price-per-sqft (AVM / sqft). `comps` is a trimmed, display-ready slice of the raw AVM comparables (added in the second pass); it is purely additive, so older edge-cached responses without it degrade gracefully (the page just omits the comps section).
+
 Required env var in Cloudflare Pages settings: `RENTCAST_API_KEY` (get one at https://app.rentcast.io/app/api). If missing, the endpoint returns `503 {ok:false, error:"rentcast_api_key_missing"}` and `/value/` falls back to a graceful error state instead of rendering broken cards.
 
 The page does a side-effect soft lead-save on every valuation submit: POSTs the address (with placeholder name/email/phone) to `/api/lead` with `intent="Home Valuation View"`, so the visitor's address lands in Joshua's CRM even before they hit the funnel CTA. The funnel CTA below the results is the gate for the *refined* CMA (real name + email + phone via the existing 5-step Sell funnel).
+
+The results render (second pass) is, top to bottom: a headline answer band (the AVM as the single defensible number + its confidence range), a spread visualization (all available systems plotted min-to-max on one axis with the AVM confidence band shaded, plus a legend), derived insight chips (land value = market minus rebuild cost, Prop 13 assessor gap, $/sqft, renovated ARV upside), the five system cards, the real comparable-sales list (`comps`), the investor panel, a disclaimer, and the conversion CTA. The CTA opens the Sell funnel directly via `window.openFunnel(address, "sell")` (the funnel JS now exposes `openFunnel` on `window` for bespoke pages). A "Print or save this report" button + a `@media print` stylesheet make the report a keepable artifact. All result blocks are scoped to `.value-*` classes in the page's inline `<style>`.
 
 ## Geo personalization
 

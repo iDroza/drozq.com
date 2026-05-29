@@ -229,6 +229,41 @@ function compMedianPrice(avm) {
 }
 
 // ---------------------------------------------------------------------------
+// Trim the raw AVM comparables down to a clean, display-ready set. These are
+// the actual recent sales the model leaned on; surfacing them is the single
+// biggest trust lever the page has (no Zestimate competitor shows its work).
+// Sorted by correlation (Rentcast's similarity score) so the closest matches
+// lead, with distance as the tiebreak. Every field is null-guarded.
+function trimComps(avm, limit) {
+  limit = limit || 6;
+  const raw = Array.isArray(avm?.comparables) ? avm.comparables : [];
+  const mapped = raw.map(c => {
+    const price = numberOrNull(c?.price);
+    const sqft  = numberOrNull(c?.squareFootage);
+    return {
+      formattedAddress: c?.formattedAddress || c?.addressLine1 || null,
+      bedrooms:      numberOrNull(c?.bedrooms),
+      bathrooms:     numberOrNull(c?.bathrooms),
+      squareFootage: sqft,
+      price,
+      psf:        (price && sqft) ? Math.round(price / sqft) : null,
+      distance:   c?.distance    != null ? Number(Number(c.distance).toFixed(2)) : null,
+      daysOld:    numberOrNull(c?.daysOld),
+      saleDate:   c?.removedDate || c?.lastSeenDate || c?.listedDate || null,
+      correlation: c?.correlation != null ? Number(Number(c.correlation).toFixed(3)) : null
+    };
+  }).filter(c => c.price > 0);
+
+  mapped.sort((a, b) => {
+    const ca = a.correlation, cb = b.correlation;
+    if (ca != null && cb != null && cb !== ca) return cb - ca;
+    if (a.distance != null && b.distance != null) return a.distance - b.distance;
+    return 0;
+  });
+  return mapped.slice(0, limit);
+}
+
+// ---------------------------------------------------------------------------
 // Investor metrics. Cap rate uses a coarse expense estimate (35% of gross
 // rent for ops + vacancy + maintenance + taxes + insurance); cash flow uses
 // the current 30y mortgage rate from our own /api/rates.
@@ -435,13 +470,16 @@ export async function onRequest(context) {
   const marketHigh   = numberOrNull(avm?.priceRangeHigh);
   const monthlyRent  = numberOrNull(rent?.rent);
 
+  const subjectSqft  = numberOrNull(property?.squareFootage);
   const replacement  = computeReplacementCost(property, marketValue);
   const arv          = computeARV(avm, property);
   const assessor     = pickAssessorValue(property);
   const compMedian   = compMedianPrice(avm);
   const triangulated = computeTriangulated(marketValue, arv?.value, compMedian);
   const investor     = await computeInvestorMetrics(marketValue, monthlyRent, request.url);
-  const wholesale    = computeWholesaleOffer(arv?.value, numberOrNull(property?.squareFootage));
+  const wholesale    = computeWholesaleOffer(arv?.value, subjectSqft);
+  const comps        = trimComps(avm);
+  const subjectPsf   = (marketValue && subjectSqft) ? Math.round(marketValue / subjectSqft) : null;
 
   const anyData = marketValue || replacement?.value || arv?.value || assessor?.value;
 
@@ -473,6 +511,7 @@ export async function onRequest(context) {
         value: marketValue,
         rangeLow:  marketLow,
         rangeHigh: marketHigh,
+        psf: subjectPsf,
         compsCount: Array.isArray(avm?.comparables) ? avm.comparables.length : 0,
         source: "Rentcast AVM",
         methodology: "Statistical model trained on recent local sales of properties matching beds, baths, sqft, age, and lot. Updated daily as new sales close."
@@ -492,6 +531,8 @@ export async function onRequest(context) {
       rangeHigh: numberOrNull(rent?.rentRangeHigh),
       source: "Rentcast rent AVM"
     } : null,
+    comps,
+    compMedian,
     diagnostics: {
       propertyError: propertyResult?.error || null,
       avmError:      avmResult?.error || null,

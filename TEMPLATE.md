@@ -906,7 +906,7 @@ All of this lives in the big `<script>` between `DROZQ_FUNNEL_JS_BEGIN/END`. One
 |---|---|
 | `captureGclid()` | Reads gclid from URL → cookie → sessionStorage. URL wins; persists to 90-day cookie + sessionStorage. Pushes `gclid_captured` to dataLayer on every pageview. |
 | `detectFunnelMode(form)` | Returns `"sell"` / `"buy"` / `"sellandbuy"` based on form's tabpanel ancestor. |
-| `openFunnel(prefill, mode)` | Opens the overlay. Sets `window.activeFunnel`, reveals header, captures gclid, fires `funnel_open`. |
+| `openFunnel(prefill, mode)` | Opens the overlay. Sets `window.activeFunnel`, reveals header, captures gclid, fires `funnel_open`. Exposed as `window.openFunnel` so bespoke pages (e.g. `/value/`) can open the funnel programmatically: `window.openFunnel(address, "sell")`. `prefill` is the address/location string, `mode` is `sell`/`buy`/`sellandbuy`. |
 | `closeFunnel()` | Closes overlay, restores body scroll. |
 | `showStep(n)` | Filters `.funnel-step` by `data-funnel === activeFunnel && data-step === String(n)`. Fires `funnel_step_advance` or `funnel_back`. |
 | `attachSubmitHandler(btnId, mode, ids)` | Wires the final-step submit per mode. |
