@@ -4428,6 +4428,97 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
 })();
 </script>
 <!-- DROZQ_FUNNEL_JS_END -->
+
+<!-- Google One Tap email capture. NOT part of the synced funnel: it is a separate,
+     optional net that captures a real Google-verified email with one tap. It stays
+     completely inert (loads no external script, renders nothing) until a real client
+     ID is pasted below, so committing it does not change live behavior until you opt in.
+     Server verification + lead save: /functions/api/onetap.js. -->
+<script>
+(function () {
+  // STEP TO GO LIVE: paste your Google OAuth Client ID below (ends in
+  // ".apps.googleusercontent.com"), commit, done. Get one in ~2 min:
+  // Google Cloud Console -> APIs & Services -> Credentials -> Create OAuth client ID
+  // -> Web application -> Authorized JavaScript origins: https://drozq.com
+  var ONE_TAP_CLIENT_ID = "PASTE_YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com";
+
+  // Inert until configured. With the placeholder, nothing below runs and no
+  // Google script is loaded, so the live homepage is byte-for-byte unchanged.
+  if (!ONE_TAP_CLIENT_ID || ONE_TAP_CLIENT_ID.indexOf("PASTE_YOUR") === 0) return;
+
+  // Dual-fire tracking, matching the funnel's house style (null-safe).
+  function track(event, props) {
+    try { if (window.posthog && window.posthog.capture) window.posthog.capture(event, props || {}); } catch (e) {}
+    try { window.dataLayer = window.dataLayer || []; window.dataLayer.push(Object.assign({ event: event }, props || {})); } catch (e) {}
+  }
+
+  // Reuse the funnel's gclid (cookie first, then sessionStorage) for attribution.
+  function readGclid() {
+    try {
+      var m = document.cookie.match(/(?:^|;\s*)gclid=([^;]+)/);
+      if (m) return decodeURIComponent(m[1]);
+      return sessionStorage.getItem("drozq_gclid") || "";
+    } catch (e) { return ""; }
+  }
+
+  // Decode the JWT payload client-side for display/tracking only. The server
+  // (/api/onetap) re-verifies the signature before anything is saved.
+  function decodeJwt(jwt) {
+    try {
+      var part = jwt.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+      return JSON.parse(decodeURIComponent(escape(atob(part))));
+    } catch (e) { return {}; }
+  }
+
+  function handleCredential(response) {
+    if (!response || !response.credential) return;
+    var info = decodeJwt(response.credential);
+    track("one_tap_accepted", { has_email: !!info.email });
+
+    var body = new URLSearchParams();
+    body.set("credential", response.credential);
+    body.set("source_page", location.pathname);
+    body.set("page_url", location.href);
+    body.set("gclid", readGclid());
+
+    fetch("/api/onetap", {
+      method: "POST",
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      body: body.toString()
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var emailDomain = ((info.email || "").split("@")[1] || "");
+        track(data && data.ok ? "one_tap_lead_saved" : "one_tap_lead_error", { email_domain: emailDomain });
+      })
+      .catch(function () { track("one_tap_lead_error", { email_domain: "" }); });
+  }
+
+  function initOneTap() {
+    if (!window.google || !google.accounts || !google.accounts.id) return;
+    try {
+      google.accounts.id.initialize({
+        client_id: ONE_TAP_CLIENT_ID,
+        callback: handleCredential,
+        use_fedcm_for_prompt: true, // FedCM is mandatory for GIS as of Aug 2025
+        auto_select: false,
+        cancel_on_tap_outside: false,
+        context: "signin"
+      });
+      google.accounts.id.prompt();
+      track("one_tap_prompt_requested", {});
+    } catch (e) {}
+  }
+
+  var s = document.createElement("script");
+  s.src = "https://accounts.google.com/gsi/client";
+  s.async = true;
+  s.defer = true;
+  s.onload = initOneTap;
+  document.head.appendChild(s);
+})();
+</script>
+
 <script>
 (function() {
   "use strict";

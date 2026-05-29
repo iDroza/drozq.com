@@ -193,9 +193,20 @@ The funnel JS dual-fires every transition through a `track(event, props)` helper
 | `funnel_submit_success` | `/api/lead` returns ok, before redirect | `mode` |
 | `funnel_submit_error` | API non-ok or fetch rejects | `mode`, `error_kind` (server / server_parse / network) |
 
+### Google One Tap events
+
+Fired by the homepage One Tap block (separate from the funnel; same dual-fire `posthog.capture` + `dataLayer.push` pattern). Only active once a real client ID is set.
+
+| Event | When | Properties |
+|---|---|---|
+| `one_tap_prompt_requested` | `google.accounts.id.prompt()` is called on load | (none) |
+| `one_tap_accepted` | Visitor picks an account; Google returns a credential | `has_email` |
+| `one_tap_lead_saved` | `/api/onetap` verified the token and saved the lead | `email_domain` |
+| `one_tap_lead_error` | `/api/onetap` returned not-ok or the fetch failed | `email_domain` |
+
 ## Cloudflare Pages Functions
 
-Cloudflare Pages auto-deploys functions from `/functions/`. Five endpoints currently exist:
+Cloudflare Pages auto-deploys functions from `/functions/`. Six endpoints currently exist:
 
 ### `/functions/api/lead.js`
 
@@ -306,6 +317,16 @@ Required env var in Cloudflare Pages settings: `RENTCAST_API_KEY` (get one at ht
 The page does a side-effect soft lead-save on every valuation submit: POSTs the address (with placeholder name/email/phone) to `/api/lead` with `intent="Home Valuation View"`, so the visitor's address lands in Joshua's CRM even before they hit the funnel CTA. The funnel CTA below the results is the gate for the *refined* CMA (real name + email + phone via the existing 5-step Sell funnel).
 
 The results render (second pass) is, top to bottom: a headline answer band (the AVM as the single defensible number + its confidence range), a spread visualization (all available systems plotted min-to-max on one axis with the AVM confidence band shaded, plus a legend), derived insight chips (land value = market minus rebuild cost, Prop 13 assessor gap, $/sqft, renovated ARV upside), the five system cards, the real comparable-sales list (`comps`), the investor panel, a disclaimer, and the conversion CTA. The CTA opens the Sell funnel directly via `window.openFunnel(address, "sell")` (the funnel JS now exposes `openFunnel` on `window` for bespoke pages). A "Print or save this report" button + a `@media print` stylesheet make the report a keepable artifact. All result blocks are scoped to `.value-*` classes in the page's inline `<style>`.
+
+### `/functions/api/onetap.js`
+
+Server-side verifier for the Google One Tap ("Sign in with Google") email-capture prompt. The homepage shows One Tap (the `ONE_TAP` IIFE in `/index.html`, a page-level script after `DROZQ_FUNNEL_JS_END`, NOT part of the synced funnel). When a visitor taps it, Google returns a signed ID token (JWT); the browser POSTs `{credential, source_page, page_url, gclid}` here.
+
+This endpoint verifies the token (Google `tokeninfo` validates signature + expiry; this endpoint additionally pins `iss` to accounts.google.com and, when `GOOGLE_ONETAP_CLIENT_ID` is set, pins `aud` to the client ID), requires `email_verified`, then forwards the real Google email + name into `/api/lead` server-side with `intent="Google One Tap Lead"`, `phone="0000000000"` (One Tap returns no phone), `consent="yes"`, and `referral_source="Google One Tap"`. The client never controls the saved email. One Tap leads land in the same inbox as form leads.
+
+Accepts JSON or form POST. Returns `{ok, email, name, lead_saved}`. Optional env var: `GOOGLE_ONETAP_CLIENT_ID` (recommended; same value as the client ID in `/index.html`).
+
+**Gating:** the homepage One Tap block is inert until a real client ID replaces the `PASTE_YOUR_GOOGLE_CLIENT_ID_HERE...` placeholder. With the placeholder, no Google script loads and live behavior is unchanged. One Tap is the one sanctioned exception to the "no new external dependencies" rule (rule #8): it requires Google's `accounts.google.com/gsi/client` library, loaded dynamically only after a real client ID is set. To roll site-wide, copy the `ONE_TAP` block from `/index.html` into other pages (it does not sync); skip `/thank-you/`, `/privacy/`, `/terms/`.
 
 ## Geo personalization
 

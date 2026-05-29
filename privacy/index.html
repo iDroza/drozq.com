@@ -2750,6 +2750,7 @@
     <section>
       <h2>What Data We Collect</h2>
       <p><strong>Information you submit through forms.</strong> When you fill out a home valuation form, contact form, or lead modal on this site, we collect: your name, email address, phone number, the property address you enter (including street, city, state, ZIP, and geocoded latitude/longitude if you select an autocomplete suggestion), the page you submitted from, a submission timestamp, and any marketing source or campaign identifiers passed with your session.</p>
+      <p><strong>Information from &ldquo;Sign in with Google.&rdquo;</strong> If you choose to use the Google sign-in (One Tap) prompt, Google shares with us the basic profile information associated with the Google account you select: your name, email address, profile picture, and a Google account identifier. We use this to follow up with you by email about your interest in our services. Using the prompt is optional; if you dismiss it, we receive nothing.</p>
       <p><strong>Information collected automatically.</strong> When you load a page, our analytics tools record your IP address, browser and device type, operating system, referring URL, pages viewed, time on page, clicks, form interactions, and approximate geolocation derived from your IP. Through PostHog (see below), we also record a synthetic replay of your session showing page navigation, clicks, scroll position, and form interactions.</p>
       <p><strong>Cookies and similar identifiers.</strong> We use first-party cookies set by this site and third-party cookies set through our Google Tag Manager container. See &ldquo;Cookies and Tracking&rdquo; below for details.</p>
     </section>
@@ -2760,6 +2761,7 @@
       <p><strong>Through Google Tag Manager</strong> (container <code>GTM-KVV3R96P</code>), loaded on every page. The tags currently loaded through our container are Google Analytics 4, Google Ads measurement, and PostHog. The set of tags it activates may change over time.</p>
       <p><strong>Through PostHog</strong> (product analytics, web analytics, and session replay), routed through our subdomain <code>t.drozq.com</code>. Session replay records a synthetic rendering of your visit (page navigation, clicks, scroll, form interactions) so we can diagnose usability issues and improve our funnel. Form field values you type are intended to be masked in the replay; however, you should not rely on this masking for sensitive information you would not type into any web form.</p>
       <p><strong>Through Google Maps Places Autocomplete.</strong> When you type a property address into one of our forms, the characters you type are sent to Google to return address suggestions.</p>
+      <p><strong>Through &ldquo;Sign in with Google&rdquo; (One Tap).</strong> If you tap the Google sign-in prompt, Google returns a signed token containing your account&rsquo;s name and email to a verification endpoint on this domain (<code>/api/onetap</code>). We never see your Google password, and the prompt only shares data after you actively select your account.</p>
       <p>We do <strong>not</strong> currently operate a Meta/Facebook pixel, TikTok pixel, Microsoft Clarity, or a consent-management platform such as Cookiebot or OneTrust on this site.</p>
     </section>
 
@@ -2774,7 +2776,7 @@
 
     <section>
       <h2>Who We Share It With</h2>
-      <p><strong>Google</strong>, via Google Tag Manager (analytics and ad measurement) and Google Maps Places API (address autocomplete).</p>
+      <p><strong>Google</strong>, via Google Tag Manager (analytics and ad measurement), Google Maps Places API (address autocomplete), and &ldquo;Sign in with Google&rdquo; (identity verification when you use the One Tap prompt).</p>
       <p><strong>PostHog</strong>, for product analytics, web analytics, and session replay. Data is routed through our subdomain <code>t.drozq.com</code>.</p>
       <p><strong>MailChannels</strong>, the transactional email provider that delivers your form submission to our inbox.</p>
       <p><strong>Real Brokerage</strong>, our brokerage of record, when required for transaction processing or regulatory compliance.</p>
