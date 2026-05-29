@@ -4856,8 +4856,19 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   });
 
   // ----- Phone formatter shared across all three contact-step phone inputs -----
+  // Reduce any input to a clean 10-digit US national number, dropping a leading
+  // country code. A US/Canada number typed or autofilled as "+1 (949)..." or
+  // "1 949..." arrives as 11 digits beginning with 1. NANP area codes never
+  // start with 1, so that leading 1 is unambiguously the country code. Without
+  // stripping it, the old slice(0,10) shoved the 1 into the area-code slot
+  // ("(194)...") AND truncated the real last digit, silently corrupting leads.
+  function normalizeUsDigits(value) {
+    var d = String(value == null ? "" : value).replace(/\D/g, "");
+    if (d.length === 11 && d.charAt(0) === "1") d = d.slice(1);
+    return d.slice(0, 10);
+  }
   function formatPhone() {
-    var d = this.value.replace(/\D/g, "").slice(0, 10);
+    var d = normalizeUsDigits(this.value);
     var out = "";
     if (d.length > 0) out = "(" + d.slice(0, 3);
     if (d.length >= 4) out += ") " + d.slice(3, 6);
@@ -4888,9 +4899,18 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       var ok = true;
       if (!emailRe.test(email)) { emailErr.textContent = "Please enter a valid email."; ok = false; }
       else { emailErr.textContent = ""; }
-      var phoneDigits = phone.replace(/\D/g, "");
+      // normalizeUsDigits also covers the case where the value was set
+      // programmatically (autofill / returning-visitor prefill) without ever
+      // firing formatPhone, so a "+1 ..." paste still validates to 10 digits.
+      var phoneDigits = normalizeUsDigits(phone);
       if (phoneDigits.length !== 10) { phoneErr.textContent = "Please enter a 10-digit US phone number."; ok = false; }
-      else { phoneErr.textContent = ""; }
+      else {
+        phoneErr.textContent = "";
+        // Canonicalize to the national format and reflect it back so the user
+        // sees the corrected number and funnelState stores a clean value.
+        phone = "(" + phoneDigits.slice(0, 3) + ") " + phoneDigits.slice(3, 6) + "-" + phoneDigits.slice(6);
+        phoneEl.value = phone;
+      }
 
       // Buy and Sell&Buy collect name on the contact step too. Sell collected it
       // on step 2 and stored it in funnelState.fullName.

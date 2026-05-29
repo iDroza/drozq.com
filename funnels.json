@@ -33,31 +33,31 @@
     "prices/index.html",
     "value/index.html"
   ],
-  "lastSync": "2026-05-29T00:46:52Z",
+  "lastSync": "2026-05-29T22:09:49Z",
   "notes": "Every page that carries the inline funnel must (a) contain the four DROZQ_FUNNEL markers in the same order as /index.html, (b) appear in `pages` above as a path relative to the repo root. Run `python scripts/sync_funnels.py` to propagate the funnel from index.html to every registered page. Source of truth is `source`; never hand-edit a synced page's funnel block.",
   "pageSync": {
-    "privacy/index.html": "2026-05-29T00:46:52Z",
-    "terms/index.html": "2026-05-29T00:46:52Z",
-    "process/index.html": "2026-05-29T00:46:52Z",
-    "thank-you/index.html": "2026-05-29T00:46:52Z",
-    "los-angeles/index.html": "2026-05-29T00:46:52Z",
-    "testimonials/index.html": "2026-05-29T00:46:52Z",
-    "testimonials/001-long-beach-firefighter/index.html": "2026-05-29T00:46:52Z",
-    "testimonials/002-corona-analyst/index.html": "2026-05-29T00:46:52Z",
-    "california/index.html": "2026-05-29T00:46:52Z",
-    "where-we-help/index.html": "2026-05-29T00:46:52Z",
-    "faq/index.html": "2026-05-29T00:46:52Z",
-    "meet-the-team/index.html": "2026-05-29T00:46:52Z",
-    "contact/index.html": "2026-05-29T00:46:52Z",
-    "about/index.html": "2026-05-29T00:46:52Z",
-    "market-insights/index.html": "2026-05-29T00:46:52Z",
-    "field-notes/index.html": "2026-05-29T00:46:52Z",
-    "rates/index.html": "2026-05-29T00:46:52Z",
-    "prices/index.html": "2026-05-29T00:46:52Z",
-    "value/index.html": "2026-05-29T00:46:52Z"
+    "privacy/index.html": "2026-05-29T22:09:48Z",
+    "terms/index.html": "2026-05-29T22:09:48Z",
+    "process/index.html": "2026-05-29T22:09:48Z",
+    "thank-you/index.html": "2026-05-29T22:09:48Z",
+    "los-angeles/index.html": "2026-05-29T22:09:48Z",
+    "testimonials/index.html": "2026-05-29T22:09:48Z",
+    "testimonials/001-long-beach-firefighter/index.html": "2026-05-29T22:09:48Z",
+    "testimonials/002-corona-analyst/index.html": "2026-05-29T22:09:48Z",
+    "california/index.html": "2026-05-29T22:09:48Z",
+    "where-we-help/index.html": "2026-05-29T22:09:48Z",
+    "faq/index.html": "2026-05-29T22:09:48Z",
+    "meet-the-team/index.html": "2026-05-29T22:09:48Z",
+    "contact/index.html": "2026-05-29T22:09:49Z",
+    "about/index.html": "2026-05-29T22:09:49Z",
+    "market-insights/index.html": "2026-05-29T22:09:49Z",
+    "field-notes/index.html": "2026-05-29T22:09:49Z",
+    "rates/index.html": "2026-05-29T22:09:49Z",
+    "prices/index.html": "2026-05-29T22:09:49Z",
+    "value/index.html": "2026-05-29T22:09:49Z"
   },
   "sourceHashes": {
     "html": "9f5465976e31",
-    "js": "4877bce9e954"
+    "js": "bee565b1eab7"
   }
 }

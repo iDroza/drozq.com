@@ -921,7 +921,7 @@ window.funnelState = {
 - Sell / Sell&Buy address: must be Places-confirmed (street_number + route present). Tracked via `validAddressMap` WeakMap.
 - Buy location: free-text, just non-empty.
 - Email: standard regex.
-- Phone: digit count + standard regex.
+- Phone: `normalizeUsDigits()` strips non-digits, drops a leading country-code `1` (an 11-digit string starting with `1` is a leaked `+1`; NANP area codes never start with `1`), then caps at 10. Must be exactly 10 after that. The validated number is canonicalized to `(XXX) XXX-XXXX` and written back to the input so the visitor sees the corrected value and `funnelState.phone` stores it clean. **Never re-introduce the old `value.replace(/\D/g,"").slice(0,10)` shortcut: it shoves the country code into the area-code slot (`(194)...`) and truncates the real last digit, silently corrupting leads.** The formatter and the validator both call `normalizeUsDigits` so a programmatic value drop (autofill / returning-visitor prefill) that never fires the `input` listener is still normalized at submit.
 - Name: non-empty.
 
 ### Submit flow
@@ -993,6 +993,7 @@ Every form on the site posts to `/api/lead`. The endpoint:
 - Required fields: `name`, `email`, `phone`, `intent`, `consent="yes"`.
 - Honeypot: `company_website`. Non-empty value silently 200s without sending email.
 - Returns `{ok:true}` on success, `{ok:false, error}` on failure.
+- Normalizes the phone server-side via `normalizePhone()` (defense in depth behind the client formatter): drops a leaked `+1` country code and stamps `+1` on every real lead's phone, so the email Joshua reads and the Zapier payload always carry the full `+1 (XXX) XXX-XXXX` plus a `phone_e164` field. Placeholder phones (`0000000000` from One Tap / valuation-view) pass through untouched; it never rejects a lead.
 - Sends plaintext email to `TO_EMAIL` via MailChannels.
 - Optionally POSTs to `ZAPIER_WEBHOOK_URL` if set.
 

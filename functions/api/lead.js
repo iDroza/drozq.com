@@ -4,6 +4,28 @@ const json = (data, status = 200) =>
     headers: { "content-type": "application/json; charset=UTF-8" }
   });
 
+// Normalize a US/Canada phone to a clean national + E.164 form. Defense in depth
+// behind the client formatter: drops a leaked "+1" country code (an 11-digit
+// string starting with 1 — NANP area codes never start with 1) so the number is
+// never truncated or mis-bucketed, and stamps "+1" on every real lead's phone
+// (the email Joshua reads + the Zapier/CRM payload), per the "capture the +1 on
+// every lead" rule. Anything that isn't a recognizable 10-digit NANP number
+// (e.g. the "0000000000" placeholder used by One Tap + valuation-view leads)
+// passes through untouched, so this never rejects or mangles a lead.
+function normalizePhone(raw) {
+  const original = String(raw == null ? "" : raw).trim();
+  let digits = original.replace(/\D/g, "");
+  if (digits.length === 11 && digits.charAt(0) === "1") digits = digits.slice(1);
+  if (digits.length === 10 && /^[2-9]\d{2}[2-9]\d{6}$/.test(digits)) {
+    return {
+      e164: "+1" + digits,
+      pretty: "+1 (" + digits.slice(0, 3) + ") " + digits.slice(3, 6) + "-" + digits.slice(6),
+      valid: true
+    };
+  }
+  return { e164: original, pretty: original, valid: false };
+}
+
 export async function onRequestPost(context) {
   try {
     const { request, env } = context;
@@ -31,7 +53,11 @@ export async function onRequestPost(context) {
     const lastName = String(formData.get("last_name") || "").trim();
     const name = (firstName + " " + lastName).trim() || String(formData.get("name") || "").trim();
     const email = String(formData.get("email") || "").trim();
-    const phone = String(formData.get("phone") || "").trim();
+    const phoneRaw = String(formData.get("phone") || "").trim();
+    const phoneNorm = normalizePhone(phoneRaw);
+    // pretty carries the +1 for valid numbers; falls back to the raw value for
+    // placeholders (One Tap / valuation-view) so nothing is ever dropped.
+    const phone = phoneNorm.pretty;
 
     const intent = String(formData.get("intent") || "").trim();
     const message = String(formData.get("message") || "").trim();
@@ -174,6 +200,7 @@ Consent: ${consent}
             name,
             email,
             phone,
+            phone_e164: phoneNorm.e164,
             intent,
             street_address: streetAddress,
             address_line_2: addressLine2,

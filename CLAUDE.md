@@ -214,6 +214,8 @@ Form submission handler. Accepts `application/x-www-form-urlencoded` or `multipa
 
 Required fields: `name`, `email`, `phone`, `intent`, `consent="yes"`. Other fields (gclid, full_address, lat/lng, message, source_page, page_url, submitted_at, plus mode-specific buy_location/buy_timeline/etc.) are optional but forwarded.
 
+Phone is normalized server-side by `normalizePhone()` (defense in depth behind the client `normalizeUsDigits()`): it drops a leaked `+1` country code, validates NANP, and emits `+1 (XXX) XXX-XXXX` into the email + Zapier payload (plus a `phone_e164` field), so the `+1` is captured on every real lead. Placeholder phones (`0000000000` from One Tap / valuation-view) pass through untouched; normalization never rejects a lead.
+
 Sends a plaintext email to `TO_EMAIL` (env var) from `FROM_EMAIL` via MailChannels. Optionally posts the same fields to `ZAPIER_WEBHOOK_URL` if set.
 
 Required env vars in Cloudflare Pages settings: `TO_EMAIL`, `FROM_EMAIL`, `MAILCHANNELS_API_KEY`. Optional: `ZAPIER_WEBHOOK_URL`.
@@ -352,6 +354,7 @@ For ANY page with a form:
 - ALWAYS preserve submission → `/thank-you/?ref=funnel` redirect.
 - ALWAYS preserve `sessionStorage.drozq_lead_just_submitted = "1"` set immediately before the redirect.
 - ALWAYS preserve the timeline question on the funnel (lead qualification signal).
+- ALWAYS normalize US phone input by stripping a leading country-code `1` BEFORE capping at 10 digits. A US number entered/autofilled as `+1 (949)...` arrives as 11 digits; the old `replace(/\D/g,"").slice(0,10)` shoved the `1` into the area-code slot (`(194)...`) and truncated the real last digit, silently corrupting leads (the Mary Morris incident, 2026-05-29). The client helper is `normalizeUsDigits()` (funnel JS, synced); the server backstop is `normalizePhone()` in `lead.js`, which also stamps `+1` on every real lead's phone. NANP area codes never start with `1`, so a leading `1` on an 11-digit string is always the country code.
 
 Changes to the funnel require extra caution and should be visually inspected on the live site within 5 minutes of deploy.
 
