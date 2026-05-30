@@ -554,7 +554,7 @@ Below the hero, the homepage runs a vertical rhythm of alternating bands. The pa
 [light gray band #f2f0ef] — "How We Match You" / agent profiles
 [white band] — review carousel #hpcar
 [white band max-w 972/1035] — content
-[wide centered div max-w 1035] — market trends iframe + Irvine stats
+[wide centered div max-w 1035] — market trends map (self-hosted Irvine Google Map) + Irvine stats
 [light gray band #f2f0ef] — "Why work with an agent?" with mid-page tabs
 [white band] — content
 [max-w 1035 band] — content

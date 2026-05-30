@@ -54,7 +54,6 @@ These move the needle the most. They are concentrated on `/index.html`.
 
 These were tracked in the now-deleted `REALTOR_CLEANUP_AUDIT.md`. The Done items have been folded into the "Realtor.com clone state" section of `CLAUDE.md`. What remains:
 
-- **Move-hosted market-trends iframe.** `https://realtorqa.upnest.com/market-trends/index.html?map_only=true&slug_id=Irvine_CA&...` still embedded. UpNest attribution is currently masked with a white overlay (commit `b58f7c5`). Long-term: replace with a static stat block you control, or drop the section entirely. Removing it leaves a ~472px desktop gap to fill.
 - **Inline CSS purge.** The inline `<style>` block is ~157KB of Panda CSS utilities. Probably ~80% unused. Tree-shake against actual class usage and inline only what is needed. Biggest remaining perf win.
 - **Header nav markup cleanup.** Dead `#top` links remain in the DOM even when the header is hidden for new visitors. Reduce DOM clutter by deleting the unused nav items (`Login`, dead "Reviews" link, etc.) rather than just hiding them.
 - **Orphan files on disk.** Delete: `/media/icons/realtor-com-logo.png` (0 refs in HTML). Delete: `/media/images/Joshua Guerrero - Transparent Headshot.png` (1.81MB, 0 refs).

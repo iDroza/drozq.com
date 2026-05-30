@@ -4212,7 +4212,8 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   // it there. Returning-visitor restore (populateLandingInputs, cookie) is a
   // separate path and still hydrates Sell from previously submitted data.
   // (2)(3)(4) are display-only city localization and apply site-wide.
-  // Does not touch the realtor market-trends iframe (deferred to full cleanup).
+  // The Irvine market-trends readout is exempted via data-geo-static (step 2's
+  // walker skips it), so its heading always reads Irvine, CA regardless of IP.
   function applyGeoCity(cityState, city) {
     if (!cityState) return;
 
@@ -4231,17 +4232,20 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     }
 
     // 2. Visible "Irvine, CA" text nodes, TreeWalker over #__next subtree.
-    // Skip our own funnel overlay (handled separately) and skip iframe-embedded
-    // market-trends widget (out of scope, will be removed in full cleanup).
+    // Skip script/style/iframe descendants and any data-geo-static container
+    // (e.g. the Irvine market-trends readout, which is pinned to Irvine).
     var root = document.getElementById("__next") || document.body;
     var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode: function(node) {
         if (!node.nodeValue || node.nodeValue.indexOf("Irvine, CA") < 0) return NodeFilter.FILTER_REJECT;
-        // Skip text inside script/style/iframe descendants
+        // Skip text inside script/style/iframe descendants, and inside any element
+        // marked data-geo-static (a city locked to its literal value, e.g. the
+        // Irvine market-trends readout, which must read Irvine regardless of IP).
         var p = node.parentNode;
         while (p && p !== root) {
           var tag = p.tagName;
           if (tag === "SCRIPT" || tag === "STYLE" || tag === "IFRAME") return NodeFilter.FILTER_REJECT;
+          if (p.nodeType === 1 && p.hasAttribute("data-geo-static")) return NodeFilter.FILTER_REJECT;
           p = p.parentNode;
         }
         return NodeFilter.FILTER_ACCEPT;

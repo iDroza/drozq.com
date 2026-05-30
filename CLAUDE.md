@@ -340,10 +340,10 @@ Accepts JSON or form POST. Returns `{ok, email, name, lead_saved}`. Optional env
 On every homepage pageview (and every synced page's pageview, since geo autofill is part of the synced JS), JS fetches `/api/geo` and:
 
 1. Replaces every `<input name="location" value="Columbus, OH">` with `"{city}, {regionCode}"`. Only when current value is empty or the literal default; preserves returning-visitor data per the existing `populateLandingInputs` convention.
-2. Replaces every visible "Columbus, OH" text node via TreeWalker (hero strip, market-section h2). Skips SCRIPT/STYLE/IFRAME descendants.
+2. Replaces every visible "Columbus, OH" text node via TreeWalker (hero strip, market-section h2). Skips SCRIPT/STYLE/IFRAME descendants and any element marked `data-geo-static` (the Irvine market-trends readout, pinned to Irvine regardless of visitor IP).
 3. Updates `.funnel-city` / `.funnel-buy-city` placeholder spans inside the funnel overlay so step copy reads "buying in Irvine" instead of "Southern California" once detected.
 
-The Move-hosted Columbus market-trends iframe (`realtorqa.upnest.com/market-trends`) is not rewritten; it is fed `slug_id=Irvine_CA` directly in the iframe URL.
+The market-trends widget (next to the "real estate trends in Irvine, CA" stats) no longer hotlinks the Move/realtor.com map (`realtorqa.upnest.com` stopped allowing third-party embeds). It renders a self-hosted Google Map of Irvine via the site's own Maps JS key (the same key + `<script>` the funnel's Places Autocomplete loads), lazy-rendered on scroll-into-view and desktop-only (lg+). Its heading month is live (current month via JS) and the whole readout is pinned to Irvine via `data-geo-static`, so visitor IP never rewrites it. The page-specific script lives after `DROZQ_FUNNEL_JS_END` in `/index.html` and is NOT synced.
 
 If `/api/geo` 500s or returns empty, all defaults remain.
 
@@ -466,7 +466,7 @@ The homepage was a clone of sell.realtor.com that has been incrementally cleaned
 - `generate_lead` gated via sessionStorage flag + `?ref=funnel` redirect.
 - DRE corrected to `02267255`, Indiana PLA removed.
 - Footer gutted: minimal conversion footer (brand logo, identity line, DRE, phone, social, Privacy/Terms, copyright).
-- "Source: RealEstateSM" attribution masked on the market-trends iframe (170×34 white overlay, click-blocking).
+- Market-trends map self-hosted: the hotlinked `realtorqa.upnest.com` iframe (and its 170×34 white "Source: RealEstateSM" attribution overlay) replaced by a lazy, desktop-only Google Map of Irvine on the site's own Maps JS key. Heading month is live; the trends readout is pinned to Irvine via `data-geo-static`; days-on-market reads 45.
 - Tab IDs renamed (`sellUpnestTab` → `sellTabBtn`, `buyUpnestTab` → `buyTabBtn`).
 - 5 fake agent profile cards replaced with the "How We Match You" infographic.
 - 5 fake out-of-state testimonials swapped for real case files.
@@ -476,7 +476,7 @@ The homepage was a clone of sell.realtor.com that has been incrementally cleaned
 
 ### Deferred
 
-Remaining realtor.com clone leftovers are tracked in `BACKLOG.md` under the "Realtor.com clone leftovers" section. The big ones are the Move-hosted Irvine market-trends iframe (still embedded, currently attribution-masked) and the inline-CSS purge (~157KB Panda CSS soup).
+Remaining realtor.com clone leftovers are tracked in `BACKLOG.md` under the "Realtor.com clone leftovers" section. The big remaining one is the inline-CSS purge (~157KB Panda CSS soup); the Move-hosted market-trends iframe is resolved (replaced with a self-hosted Irvine Google Map, see "Done" above).
 
 When asked to "clean up the homepage," check `BACKLOG.md` and confirm which item(s) before proceeding.
 
