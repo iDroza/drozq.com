@@ -45,7 +45,6 @@ These move the needle the most. They are concentrated on `/index.html`.
 
 ## Tracking & measurement
 
-- **GTM trigger update.** GA4 `generate_lead` is still triggered on "Page View on /thank-you/" instead of "Custom Event = `lead_confirmed`." This is a GTM-side change (off-repo). Until it ships, conversions are inflated by direct/refresh/bookmark visits to the thank-you page. CLAUDE.md flags this as an outstanding Joshua action.
 - **UTM parameter capture.** The funnel IIFE captures `gclid` but not `utm_source` / `utm_medium` / `utm_campaign` / `utm_content` / `utm_term`. Mirror the gclid pattern: read from URL → cookie → sessionStorage, persist to 90-day cookies, push to dataLayer, forward to `/api/lead` as hidden fields.
 - **Funnel input `name=` attributes.** Funnel steps' inputs (`#funnel-step5-name`, `#buy-step5-email`, etc.) have IDs but no `name=` attrs. Graceful degradation: if JS fails, the form should still submit identifiable fields. Add `name="full_name"`, `name="email"`, `name="phone"`.
 

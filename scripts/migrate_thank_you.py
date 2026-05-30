@@ -310,8 +310,10 @@ MAIN_BODY = """
   // sessionStorage.drozq_lead_just_submitted = "1" right before redirecting
   // here; we read + clear it so refreshes, direct visits, and bookmarks
   // DO NOT inflate Google Ads conversions.
-  // GTM action item: change the generate_lead trigger from "Page View on
-  // /thank-you/" to "Custom Event = lead_confirmed".
+  // generate_lead now fires via a GTM "GA4 Event" tag bound to this
+  // lead_confirmed dataLayer event. The old GA4 "Create event" rule that
+  // synthesized generate_lead from every /thank-you/ page_view was removed
+  // 2026-05-29, so this gate is the only source of the conversion.
   (function(){
     var flag = null;
     try { flag = sessionStorage.getItem("drozq_lead_just_submitted"); } catch (e) {}

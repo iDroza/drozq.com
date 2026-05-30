@@ -1261,10 +1261,10 @@ add_bullet("gclid persisted to 90-day cookie + pushed to dataLayer on every page
 add_bullet("Funnel step drop-off events (funnel_open, funnel_step_advance, funnel_back, etc.)")
 
 add_p(
-    "The Phase-1 tracking action items for Joshua are narrow: (1) confirm the GTM "
-    "generate_lead trigger is moved from \"page view on /thank-you/\" to \"Custom Event = "
-    "lead_confirmed\" (flagged in CLAUDE.md as outstanding), and (2) wire Google Ads conversion "
-    "import from GA4 in the Ads UI. Both are 1-hour tasks."
+    "The Phase-1 tracking action items are complete (2026-05-29): generate_lead now fires "
+    "via a GTM \"GA4 Event\" tag on the lead_confirmed custom event (the inflated GA4 "
+    "Create-event rule on /thank-you/ page views was deleted), it is a GA4 Key event, and it "
+    "is imported into Google Ads as the conversion. Conversions now count once per real submit."
 )
 
 add_h4('Phase 2: Lose Money (Months 3–6, ~$3,500 ad spend testing)')
