@@ -2839,6 +2839,40 @@
   padding: 12px 16px 4px; font-size: 0.82rem; color: #3f4650;
 }
 
+/* Affordability table -- stacked cards on mobile so the four-column figures never
+   force a horizontal drag. Desktop (>=768px) keeps the scrolling table above, unchanged. */
+@media (max-width: 767.98px) {
+  .drozq-aff-wrap {
+    background: transparent; border: 0; border-radius: 0; padding: 0; overflow: visible;
+  }
+  .drozq-aff-table { min-width: 0; }
+  .drozq-aff-table thead { display: none; }
+  .drozq-aff-table caption { padding: 0 2px 14px; }
+  .drozq-aff-table tbody tr {
+    display: block; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 14px;
+    padding: 4px 16px 8px; margin-bottom: 12px;
+  }
+  .drozq-aff-table tbody tr:last-child { margin-bottom: 0; }
+  .drozq-aff-table tbody tr:hover td { background: transparent; }
+  .drozq-aff-table td {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 16px; padding: 9px 0; font-size: 0.95rem;
+  }
+  .drozq-aff-table td:first-child {
+    display: block; border-top: 0; border-bottom: 1px solid #ececec;
+    padding: 6px 0 10px; margin-bottom: 2px;
+    font-weight: 800; font-size: 1.02rem; color: #1a1816;
+  }
+  .drozq-aff-table td.num { border-top: 1px solid #f4f2f0; text-align: right; }
+  .drozq-aff-table td[data-aff-mo] { border-top: 0; }
+  .drozq-aff-table td[data-aff-mo]::before  { content: "Monthly P&I"; }
+  .drozq-aff-table td[data-aff-int]::before { content: "Total interest (30y)"; }
+  .drozq-aff-table td[data-aff-tot]::before { content: "Total paid"; }
+  .drozq-aff-table td.num::before {
+    font-weight: 600; font-size: 0.9rem; letter-spacing: 0; text-transform: none; color: #3f4650;
+  }
+}
+
 /* Calculator */
 .drozq-calc {
   background: #ffffff;
