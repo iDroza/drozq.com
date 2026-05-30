@@ -177,7 +177,7 @@ This means:
 - Direct visit / refresh / bookmark → no flag → no fire.
 - Tab closed and reopened to /thank-you/ → sessionStorage gone → no fire.
 
-**Conversion trigger (resolved 2026-05-29):** `generate_lead` fires via a GTM "GA4 Event" tag bound to the `lead_confirmed` custom event (container `GTM-KVV3R96P`, GA4 `G-XSP0L11QEY`). It is a GA4 Key event, imported into Google Ads as the conversion. The previous inflated source, a GA4 "Create event" rule that synthesized `generate_lead` from every `page_view` whose `page_location` contained `drozq.com/thank-you`, was deleted. Net: the conversion counts once per real funnel submit, not on refreshes/bookmarks/direct visits. Rollback if ever needed: recreate that GA4 Create-event rule (event_name equals page_view AND page_location contains drozq.com/thank-you).
+**Conversion trigger (resolved 2026-05-29):** `generate_lead` fires via a GTM "GA4 Event" tag bound to the `lead_confirmed` custom event (container `GTM-KVV3R96P`, GA4 `G-XSP0L11QEY`). It is a GA4 Key event, imported into Google Ads as the conversion. The tag also passes `funnel_mode` (`sell` / `buy` / `sellandbuy`, from the `DLV - funnel_mode` data layer variable) as an event parameter, captured by a GA4 event-scoped custom dimension so conversions can be segmented by funnel. The previous inflated source, a GA4 "Create event" rule that synthesized `generate_lead` from every `page_view` whose `page_location` contained `drozq.com/thank-you`, was deleted. Net: the conversion counts once per real funnel submit, not on refreshes/bookmarks/direct visits. Rollback if ever needed: recreate that GA4 Create-event rule (event_name equals page_view AND page_location contains drozq.com/thank-you).
 
 ### PostHog funnel drop-off events
 
