@@ -241,12 +241,17 @@ Cache header: `private, max-age=3600`. The homepage fetches this on `DOMContentL
 
 ### `/functions/api/rates.js`
 
-Proxies the Federal Reserve Economic Data (FRED) API and edge-caches for 1 hour. Returns ~1 year of history per series for sparkline rendering and YoY deltas. Four series: `MORTGAGE30US` (30-year fixed, weekly), `MORTGAGE15US` (15-year fixed, weekly), `DGS10` (10-year Treasury yield, daily), `FEDFUNDS` (Federal funds rate, monthly).
+Proxies the Federal Reserve Economic Data (FRED) API and edge-caches for 1 hour. Returns ~1 year of history per series for sparkline rendering and YoY deltas. **Ten series in two groups.**
+
+- **Macro benchmarks** (Freddie Mac PMMS + Treasury + Fed): `MORTGAGE30US` (30-year fixed, weekly), `MORTGAGE15US` (15-year fixed, weekly), `DGS10` (10-year Treasury yield, daily), `FEDFUNDS` (Federal funds rate, monthly).
+- **Rates by loan program** (Optimal Blue Mortgage Market Indices, OBMMI: daily, locked-rate based, hosted on FRED under the same `FRED_API_KEY`): `OBMMIC30YF` (30y conforming / "SC"), `OBMMIJUMBO30YF` (30y jumbo, also the page's stand-in for high balance since OBMMI has **no** dedicated HB index), `OBMMIFHA30YF` (30y FHA), `OBMMIVA30YF` (30y VA), `OBMMIUSDA30YF` (30y USDA), `OBMMIC15YF` (15y conforming).
+
+Per the [[fred-mortgage5us-discontinued]] discipline, recheck a series' latest-observation date before trusting it. All ten confirmed current as of the 2026-05-28 daily read. OBMMI cards carry `provider: "Optimal Blue"`; the macro four carry `provider: null`.
 
 Response shape per series entry:
 ```
 {
-  seriesId, label, unit, cadence,
+  seriesId, label, unit, cadence, provider,   // provider: "Optimal Blue" on OBMMI series, null on macro benchmarks
   latest:   {value, date},     // newest observation
   previous: {value, date},     // observation before latest
   yearAgo:  {value, date},     // oldest observation in ~1y window
@@ -260,9 +265,9 @@ Top-level fields: `ok`, `series`, `lastUpdated` (most recent observation date ac
 
 Required env var in Cloudflare Pages settings: `FRED_API_KEY` (get one free at https://fred.stlouisfed.org/docs/api/api_key.html). If missing, the endpoint returns `503 {ok:false, error:"fred_api_key_missing"}` and `/rates/` falls back to a graceful "data temporarily unavailable" state.
 
-Consumed by `/rates/index.html`. The page ships static skeletons, then hydrates four rate cards (with inline SVG sparklines + WoW + YoY deltas), an affordability table (5 loan sizes at today's 30-year), and a mortgage payment calculator (default rate auto-syncs to today's 30y / 15y based on the term toggle). FAQ accordion + WebPage/Dataset/FAQPage/BreadcrumbList/Person JSON-LD make the page a citable resource that ranks for rate + calculator + explainer queries.
+Consumed by `/rates/index.html`. The page ships static skeletons, then hydrates two card grids (inline SVG sparklines + WoW + YoY deltas): the four macro-benchmark cards (`.drozq-rates-grid`), then a six-card "Rates by loan program" section (`.drozq-loans-grid`: conforming/SC, jumbo + high balance, FHA, VA, USDA, 15y conforming). Below those sit an affordability table (5 loan sizes at today's 30-year) and a mortgage payment calculator (default rate auto-syncs to today's 30y / 15y based on the term toggle). FAQ accordion + WebPage/Dataset (one per series)/FAQPage/BreadcrumbList/Person JSON-LD make the page a citable resource that ranks for rate + calculator + explainer queries. Card rendering is generic and data-attribute driven (`data-rate-*="<key>"` + the `rateKeys` array), so adding a series is: one `SERIES` entry in the API, one card block, and one key in `rateKeys`.
 
-The page is the live freshness signal: the moment FRED publishes a new PMMS reading (Thursdays at 12 ET), the next `/api/rates` response after edge-cache expiry (within 1h) reflects it.
+The page is the live freshness signal: the macro cards reflect a new PMMS reading (Thursdays at 12 ET) within an hour of edge-cache expiry; the OBMMI loan-program cards refresh every business day on the same path.
 
 ### `/functions/api/prices.js`
 

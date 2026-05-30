@@ -2757,6 +2757,14 @@
 }
 @media (min-width: 640px) { .drozq-rates-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 960px) { .drozq-rates-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
+/* Rates-by-loan-program grid: 6 cards, even 3-up at desktop (2 rows of 3). */
+.drozq-loans-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 640px) { .drozq-loans-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .drozq-loans-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
 .drozq-rate-card {
   background: #ffffff;
   border: 1px solid #e5e5e5;
@@ -3007,6 +3015,88 @@
   </div>
 </section>
 
+<section aria-labelledby="rates-loans-title" class="bg-c_#f2f0ef py_48px md:py_64px lg:py_72px">
+  <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
+
+    <div class="ta_center mb_32px md:mb_40px max-w_720px mx_auto">
+      <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">By loan type</p>
+      <h2 id="rates-loans-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">Today's rates by loan program.</h2>
+      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px m_0">The programs Southern California buyers actually shop, refreshed every business day. These track real locked rates, not survey averages, so the spread between conforming, jumbo, FHA, VA, and USDA is the live one.</p>
+    </div>
+
+    <div class="drozq-loans-grid" id="drozq-loans-grid">
+
+      <div class="drozq-rate-card" id="conforming30" data-rate-card="conforming30">
+        <p class="drozq-rate-card__label">30-year conforming</p>
+        <span class="drozq-rate-card__value" data-rate-value="conforming30">&hellip;</span>
+        <span class="drozq-rate-card__spark" data-rate-spark="conforming30" aria-hidden="true"></span>
+        <div class="drozq-rate-card__deltas">
+          <span class="drozq-rate-card__delta drozq-rate-card__delta--flat" data-rate-delta-wow="conforming30">Loading daily data&hellip;</span>
+          <span class="drozq-rate-card__delta drozq-rate-card__delta--flat" data-rate-delta-yoy="conforming30">&nbsp;</span>
+        </div>
+        <p class="drozq-rate-card__date" data-rate-date="conforming30">&nbsp;</p>
+      </div>
+
+      <div class="drozq-rate-card" id="jumbo30" data-rate-card="jumbo30">
+        <p class="drozq-rate-card__label">30-year jumbo / high balance</p>
+        <span class="drozq-rate-card__value" data-rate-value="jumbo30">&hellip;</span>
+        <span class="drozq-rate-card__spark" data-rate-spark="jumbo30" aria-hidden="true"></span>
+        <div class="drozq-rate-card__deltas">
+          <span class="drozq-rate-card__delta drozq-rate-card__delta--flat" data-rate-delta-wow="jumbo30">Loading daily data&hellip;</span>
+          <span class="drozq-rate-card__delta drozq-rate-card__delta--flat" data-rate-delta-yoy="jumbo30">&nbsp;</span>
+        </div>
+        <p class="drozq-rate-card__date" data-rate-date="jumbo30">&nbsp;</p>
+      </div>
+
+      <div class="drozq-rate-card" id="fha30" data-rate-card="fha30">
+        <p class="drozq-rate-card__label">30-year FHA</p>
+        <span class="drozq-rate-card__value" data-rate-value="fha30">&hellip;</span>
+        <span class="drozq-rate-card__spark" data-rate-spark="fha30" aria-hidden="true"></span>
+        <div class="drozq-rate-card__deltas">
+          <span class="drozq-rate-card__delta drozq-rate-card__delta--flat" data-rate-delta-wow="fha30">Loading daily data&hellip;</span>
+          <span class="drozq-rate-card__delta drozq-rate-card__delta--flat" data-rate-delta-yoy="fha30">&nbsp;</span>
+        </div>
+        <p class="drozq-rate-card__date" data-rate-date="fha30">&nbsp;</p>
+      </div>
+
+      <div class="drozq-rate-card" id="va30" data-rate-card="va30">
+        <p class="drozq-rate-card__label">30-year VA</p>
+        <span class="drozq-rate-card__value" data-rate-value="va30">&hellip;</span>
+        <span class="drozq-rate-card__spark" data-rate-spark="va30" aria-hidden="true"></span>
+        <div class="drozq-rate-card__deltas">
+          <span class="drozq-rate-card__delta drozq-rate-card__delta--flat" data-rate-delta-wow="va30">Loading daily data&hellip;</span>
+          <span class="drozq-rate-card__delta drozq-rate-card__delta--flat" data-rate-delta-yoy="va30">&nbsp;</span>
+        </div>
+        <p class="drozq-rate-card__date" data-rate-date="va30">&nbsp;</p>
+      </div>
+
+      <div class="drozq-rate-card" id="usda30" data-rate-card="usda30">
+        <p class="drozq-rate-card__label">30-year USDA</p>
+        <span class="drozq-rate-card__value" data-rate-value="usda30">&hellip;</span>
+        <span class="drozq-rate-card__spark" data-rate-spark="usda30" aria-hidden="true"></span>
+        <div class="drozq-rate-card__deltas">
+          <span class="drozq-rate-card__delta drozq-rate-card__delta--flat" data-rate-delta-wow="usda30">Loading daily data&hellip;</span>
+          <span class="drozq-rate-card__delta drozq-rate-card__delta--flat" data-rate-delta-yoy="usda30">&nbsp;</span>
+        </div>
+        <p class="drozq-rate-card__date" data-rate-date="usda30">&nbsp;</p>
+      </div>
+
+      <div class="drozq-rate-card" id="conforming15" data-rate-card="conforming15">
+        <p class="drozq-rate-card__label">15-year conforming</p>
+        <span class="drozq-rate-card__value" data-rate-value="conforming15">&hellip;</span>
+        <span class="drozq-rate-card__spark" data-rate-spark="conforming15" aria-hidden="true"></span>
+        <div class="drozq-rate-card__deltas">
+          <span class="drozq-rate-card__delta drozq-rate-card__delta--flat" data-rate-delta-wow="conforming15">Loading daily data&hellip;</span>
+          <span class="drozq-rate-card__delta drozq-rate-card__delta--flat" data-rate-delta-yoy="conforming15">&nbsp;</span>
+        </div>
+        <p class="drozq-rate-card__date" data-rate-date="conforming15">&nbsp;</p>
+      </div>
+    </div>
+
+    <p class="drozq-rates-meta" style="margin-top:24px">Daily locked-rate indices from the <a href="https://fred.stlouisfed.org/release?rid=473" rel="noopener" style="color:#d92228; font-weight:700; text-decoration:none">Optimal Blue Mortgage Market Indices</a>, via FRED. Each card carries its own observation date.</p>
+  </div>
+</section>
+
 <section aria-labelledby="rates-affordability-title" class="bg_#fff py_48px md:py_64px lg:py_72px">
   <div class="max-w_1035px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px">
 
@@ -3216,7 +3306,7 @@
           </svg>
         </button>
         <div role="region" aria-labelledby="rates-faq-1-header" id="rates-faq-1-content" class="drozq-faq-region" style="max-height: 0;">
-          <p>The page reads four series live from Federal Reserve Economic Data (FRED). The 30- and 15-year fixed rates come from Freddie Mac's Primary Mortgage Market Survey, published every Thursday at 12 pm ET. The 10-year Treasury yield refreshes every business day. The Federal funds rate updates monthly. New releases surface here within roughly an hour of publication.</p>
+          <p>Every card reads live from Federal Reserve Economic Data (FRED). The benchmark cards: the 30- and 15-year fixed averages are Freddie Mac's Primary Mortgage Market Survey (Thursdays at 12 pm ET), the 10-year Treasury refreshes every business day, and the Federal funds rate updates monthly. The rates-by-loan-program cards (conforming, jumbo, FHA, VA, USDA) are the Optimal Blue Mortgage Market Indices and refresh every business day. New releases surface here within roughly an hour of publication.</p>
         </div>
       </div>
       <div class="drozq-faq-item">
@@ -3279,6 +3369,42 @@
           <p>Two paths. For a strategic read on your specific home (the right list price for a seller, the right offer math for a buyer), use the form above and I'll come back inside 24 hours with the numbers pulled. For a live rate quote on a specific mortgage application, I'll connect you with a vetted local lender from my bench. No app, no credit pull, just a real conversation.</p>
         </div>
       </div>
+      <div class="drozq-faq-item">
+        <button aria-controls="rates-faq-7-content" aria-expanded="false" id="rates-faq-7-header" type="button">
+          <span>What's the difference between conforming, jumbo, FHA, VA, and USDA rates?</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+        <div role="region" aria-labelledby="rates-faq-7-header" id="rates-faq-7-content" class="drozq-faq-region" style="max-height: 0;">
+          <p>Each program prices its own way, which is why the cards above differ on the same day. Conforming loans fall within the Fannie Mae and Freddie Mac limit and carry the baseline rate. Jumbo loans exceed that limit and price separately depending on the lender's appetite. FHA and VA are government-backed: FHA suits lower down payments and credit, and VA, for eligible veterans and service members, usually shows the lowest rate on this page. USDA covers eligible rural and some suburban areas with zero down. The card you should watch is the one matching the loan you'll actually use.</p>
+        </div>
+      </div>
+      <div class="drozq-faq-item">
+        <button aria-controls="rates-faq-8-content" aria-expanded="false" id="rates-faq-8-header" type="button">
+          <span>What is a high-balance loan, and why does it matter in California?</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+        <div role="region" aria-labelledby="rates-faq-8-header" id="rates-faq-8-content" class="drozq-faq-region" style="max-height: 0;">
+          <p>A high-balance loan is a conforming loan in a high-cost county: above the national baseline limit but at or below the county ceiling. In Orange County and Los Angeles County that 2026 ceiling is $1,209,750 (150% of the $806,500 baseline), so a large share of SoCal purchases land in high-balance territory. Its pricing sits between standard conforming and true jumbo. There is no separate public daily index for it, so the 30-year jumbo / high balance card above is the closest live read; an actual high-balance quote usually lands a touch below the jumbo number.</p>
+        </div>
+      </div>
+      <div class="drozq-faq-item">
+        <button aria-controls="rates-faq-9-content" aria-expanded="false" id="rates-faq-9-header" type="button">
+          <span>Why are FHA and VA rates often lower than conforming rates?</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+        <div role="region" aria-labelledby="rates-faq-9-header" id="rates-faq-9-content" class="drozq-faq-region" style="max-height: 0;">
+          <p>Both are government-backed, which lowers the lender's risk and lets them quote a lower note rate. VA loans are guaranteed by the Department of Veterans Affairs and usually show the lowest rate on this page; FHA loans are insured by the Federal Housing Administration. The catch is the insurance cost: FHA carries mortgage insurance premiums and VA charges a one-time funding fee, so the lower note rate does not always mean the lowest total cost. Compare the all-in number, not just the rate.</p>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -3288,7 +3414,7 @@
   <div class="max-w_840px m_0_auto pl_32px md:pl_24px pr_32px md:pr_24px ta_center">
     <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">Methodology</p>
     <h2 id="rates-method-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_20px">Where this data comes from.</h2>
-    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_16px">All four series are pulled directly from <a href="https://fred.stlouisfed.org/" rel="noopener" class="c_#d92228 fw_700">Federal Reserve Economic Data (FRED)</a>, maintained by the Federal Reserve Bank of St. Louis. The 30- and 15-year fixed mortgage rates are Freddie Mac's Primary Mortgage Market Survey (series MORTGAGE30US and MORTGAGE15US), the 10-year Treasury yield is the constant-maturity series (DGS10), and the Federal funds rate is the monthly average (FEDFUNDS).</p>
+    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_16px">Every series on this page is pulled directly from <a href="https://fred.stlouisfed.org/" rel="noopener" class="c_#d92228 fw_700">Federal Reserve Economic Data (FRED)</a>, maintained by the Federal Reserve Bank of St. Louis. The benchmark cards are Freddie Mac's Primary Mortgage Market Survey (MORTGAGE30US and MORTGAGE15US), the 10-year Treasury constant-maturity series (DGS10), and the monthly Federal funds rate (FEDFUNDS). The rates-by-loan-program cards are the <a href="https://fred.stlouisfed.org/release?rid=473" rel="noopener" class="c_#d92228 fw_700">Optimal Blue Mortgage Market Indices</a> (OBMMIC30YF, OBMMIJUMBO30YF, OBMMIFHA30YF, OBMMIVA30YF, OBMMIUSDA30YF, and OBMMIC15YF), daily indices built from actual rate locks across roughly a third of U.S. mortgage transactions.</p>
     <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_16px">Each card carries its own observation date so you always know how fresh the read is. New releases surface on this page within roughly an hour of publication.</p>
     <p class="c_#3f4650 fs_15px md:fs_16px lh_24px md:lh_28px m_0"><em>Authored by Joshua Guerrero, Real Estate Agent, Real Brokerage. California DRE #02267255. Reach out at <a href="tel:9494385948" class="c_#d92228 fw_700">(949) 438-5948</a> or <a href="/contact/" class="c_#d92228 fw_700">/contact/</a>.</em></p>
   </div>
@@ -3479,6 +3605,144 @@
 }</script>
 <script type="application/ld+json">{
   "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "30-Year Fixed Rate Conforming Mortgage Index (United States)",
+  "description": "Daily index of locked 30-year fixed-rate conforming mortgage rates from the Optimal Blue Mortgage Market Indices (OBMMI), built from actual rate locks across roughly a third of U.S. mortgage transactions.",
+  "url": "https://drozq.com/rates/#conforming30",
+  "creator": {
+    "@type": "Organization",
+    "name": "Optimal Blue",
+    "url": "https://www2.optimalblue.com/obmmi/"
+  },
+  "isBasedOn": "https://fred.stlouisfed.org/series/OBMMIC30YF",
+  "license": "https://research.stlouisfed.org/docs/api/terms_of_use.html",
+  "temporalCoverage": "rolling-1-year",
+  "measurementTechnique": "daily",
+  "variableMeasured": {
+    "@type": "PropertyValue",
+    "name": "30-Year Fixed Rate Conforming Mortgage Index",
+    "unitText": "percent"
+  },
+  "datePublished": "2026-05-28",
+  "dateModified": "2026-05-28"
+}</script>
+<script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "30-Year Fixed Rate Jumbo Mortgage Index (United States)",
+  "description": "Daily index of locked 30-year fixed-rate jumbo mortgage rates from the Optimal Blue Mortgage Market Indices (OBMMI). Jumbo loans exceed the conforming limit; high-balance loans in high-cost counties price between conforming and jumbo.",
+  "url": "https://drozq.com/rates/#jumbo30",
+  "creator": {
+    "@type": "Organization",
+    "name": "Optimal Blue",
+    "url": "https://www2.optimalblue.com/obmmi/"
+  },
+  "isBasedOn": "https://fred.stlouisfed.org/series/OBMMIJUMBO30YF",
+  "license": "https://research.stlouisfed.org/docs/api/terms_of_use.html",
+  "temporalCoverage": "rolling-1-year",
+  "measurementTechnique": "daily",
+  "variableMeasured": {
+    "@type": "PropertyValue",
+    "name": "30-Year Fixed Rate Jumbo Mortgage Index",
+    "unitText": "percent"
+  },
+  "datePublished": "2026-05-28",
+  "dateModified": "2026-05-28"
+}</script>
+<script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "30-Year Fixed Rate FHA Mortgage Index (United States)",
+  "description": "Daily index of locked 30-year fixed-rate FHA mortgage rates from the Optimal Blue Mortgage Market Indices (OBMMI). FHA loans are insured by the Federal Housing Administration.",
+  "url": "https://drozq.com/rates/#fha30",
+  "creator": {
+    "@type": "Organization",
+    "name": "Optimal Blue",
+    "url": "https://www2.optimalblue.com/obmmi/"
+  },
+  "isBasedOn": "https://fred.stlouisfed.org/series/OBMMIFHA30YF",
+  "license": "https://research.stlouisfed.org/docs/api/terms_of_use.html",
+  "temporalCoverage": "rolling-1-year",
+  "measurementTechnique": "daily",
+  "variableMeasured": {
+    "@type": "PropertyValue",
+    "name": "30-Year Fixed Rate FHA Mortgage Index",
+    "unitText": "percent"
+  },
+  "datePublished": "2026-05-28",
+  "dateModified": "2026-05-28"
+}</script>
+<script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "30-Year Fixed Rate Veterans Affairs (VA) Mortgage Index (United States)",
+  "description": "Daily index of locked 30-year fixed-rate VA mortgage rates from the Optimal Blue Mortgage Market Indices (OBMMI). VA loans are guaranteed by the U.S. Department of Veterans Affairs for eligible veterans and service members.",
+  "url": "https://drozq.com/rates/#va30",
+  "creator": {
+    "@type": "Organization",
+    "name": "Optimal Blue",
+    "url": "https://www2.optimalblue.com/obmmi/"
+  },
+  "isBasedOn": "https://fred.stlouisfed.org/series/OBMMIVA30YF",
+  "license": "https://research.stlouisfed.org/docs/api/terms_of_use.html",
+  "temporalCoverage": "rolling-1-year",
+  "measurementTechnique": "daily",
+  "variableMeasured": {
+    "@type": "PropertyValue",
+    "name": "30-Year Fixed Rate VA Mortgage Index",
+    "unitText": "percent"
+  },
+  "datePublished": "2026-05-28",
+  "dateModified": "2026-05-28"
+}</script>
+<script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "30-Year Fixed Rate USDA Mortgage Index (United States)",
+  "description": "Daily index of locked 30-year fixed-rate USDA mortgage rates from the Optimal Blue Mortgage Market Indices (OBMMI). USDA loans cover eligible rural and some suburban areas with no down payment.",
+  "url": "https://drozq.com/rates/#usda30",
+  "creator": {
+    "@type": "Organization",
+    "name": "Optimal Blue",
+    "url": "https://www2.optimalblue.com/obmmi/"
+  },
+  "isBasedOn": "https://fred.stlouisfed.org/series/OBMMIUSDA30YF",
+  "license": "https://research.stlouisfed.org/docs/api/terms_of_use.html",
+  "temporalCoverage": "rolling-1-year",
+  "measurementTechnique": "daily",
+  "variableMeasured": {
+    "@type": "PropertyValue",
+    "name": "30-Year Fixed Rate USDA Mortgage Index",
+    "unitText": "percent"
+  },
+  "datePublished": "2026-05-28",
+  "dateModified": "2026-05-28"
+}</script>
+<script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "15-Year Fixed Rate Conforming Mortgage Index (United States)",
+  "description": "Daily index of locked 15-year fixed-rate conforming mortgage rates from the Optimal Blue Mortgage Market Indices (OBMMI), built from actual rate locks across roughly a third of U.S. mortgage transactions.",
+  "url": "https://drozq.com/rates/#conforming15",
+  "creator": {
+    "@type": "Organization",
+    "name": "Optimal Blue",
+    "url": "https://www2.optimalblue.com/obmmi/"
+  },
+  "isBasedOn": "https://fred.stlouisfed.org/series/OBMMIC15YF",
+  "license": "https://research.stlouisfed.org/docs/api/terms_of_use.html",
+  "temporalCoverage": "rolling-1-year",
+  "measurementTechnique": "daily",
+  "variableMeasured": {
+    "@type": "PropertyValue",
+    "name": "15-Year Fixed Rate Conforming Mortgage Index",
+    "unitText": "percent"
+  },
+  "datePublished": "2026-05-28",
+  "dateModified": "2026-05-28"
+}</script>
+<script type="application/ld+json">{
+  "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
     {
@@ -3486,7 +3750,7 @@
       "name": "How often does this page update?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The page reads four series live from Federal Reserve Economic Data (FRED). The 30- and 15-year fixed rates come from Freddie Mac's Primary Mortgage Market Survey, published every Thursday at 12 pm ET. The 10-year Treasury yield refreshes every business day. The Federal funds rate updates monthly. New releases surface here within roughly an hour of publication."
+        "text": "Every card reads live from Federal Reserve Economic Data (FRED). The benchmark cards: the 30- and 15-year fixed averages are Freddie Mac's Primary Mortgage Market Survey (Thursdays at 12 pm ET), the 10-year Treasury refreshes every business day, and the Federal funds rate updates monthly. The rates-by-loan-program cards (conforming, jumbo, FHA, VA, USDA) are the Optimal Blue Mortgage Market Indices and refresh every business day. New releases surface here within roughly an hour of publication."
       }
     },
     {
@@ -3528,6 +3792,30 @@
         "@type": "Answer",
         "text": "Two paths. For a strategic read on your specific home (the right list price for a seller, the right offer math for a buyer), use the form above and I'll come back inside 24 hours with the numbers pulled. For a live rate quote on a specific mortgage application, I'll connect you with a vetted local lender from my bench. No app, no credit pull, just a real conversation."
       }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the difference between conforming, jumbo, FHA, VA, and USDA rates?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Each program prices its own way, which is why the cards above differ on the same day. Conforming loans fall within the Fannie Mae and Freddie Mac limit and carry the baseline rate. Jumbo loans exceed that limit and price separately depending on the lender's appetite. FHA and VA are government-backed: FHA suits lower down payments and credit, and VA, for eligible veterans and service members, usually shows the lowest rate on this page. USDA covers eligible rural and some suburban areas with zero down. The card you should watch is the one matching the loan you'll actually use."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a high-balance loan, and why does it matter in California?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A high-balance loan is a conforming loan in a high-cost county: above the national baseline limit but at or below the county ceiling. In Orange County and Los Angeles County that 2026 ceiling is $1,209,750 (150% of the $806,500 baseline), so a large share of SoCal purchases land in high-balance territory. Its pricing sits between standard conforming and true jumbo. There is no separate public daily index for it, so the 30-year jumbo / high balance card above is the closest live read; an actual high-balance quote usually lands a touch below the jumbo number."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why are FHA and VA rates often lower than conforming rates?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both are government-backed, which lowers the lender's risk and lets them quote a lower note rate. VA loans are guaranteed by the Department of Veterans Affairs and usually show the lowest rate on this page; FHA loans are insured by the Federal Housing Administration. The catch is the insurance cost: FHA carries mortgage insurance premiums and VA charges a one-time funding fee, so the lower note rate does not always mean the lowest total cost. Compare the all-in number, not just the rate."
+      }
     }
   ]
 }</script>
@@ -3553,7 +3841,8 @@
 (function(){
   var endpoint = '/api/rates';
   var dateFmt  = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
-  var rateKeys = ['rate30y','rate15y','treasury10y','fedFunds'];
+  var rateKeys = ['rate30y','rate15y','treasury10y','fedFunds',
+                  'conforming30','jumbo30','fha30','va30','usda30','conforming15'];
 
   // Mortgage payment math.
   function payment(P, annualRate, years) {
