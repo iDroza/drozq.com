@@ -191,7 +191,8 @@ The funnel JS dual-fires every transition through a `track(event, props)` helper
 | `funnel_option_selected` | Auto-advance option click | `mode`, `step`, `value` |
 | `funnel_submit_attempt` | Validation passes, fetch starts | `mode` |
 | `funnel_submit_success` | `/api/lead` returns ok, before redirect | `mode` |
-| `funnel_submit_error` | API non-ok or fetch rejects | `mode`, `error_kind` (server / server_parse / network) |
+| `funnel_submit_retry` | A transient failure (fetch reject / abort-timeout / 5xx / 429) right before an automatic retry | `mode`, `attempt`, `error_kind` |
+| `funnel_submit_error` | All 3 attempts failed: API non-ok, non-JSON, or fetch rejects | `mode`, `error_kind` (server / server_parse / network) |
 
 ### Google One Tap events
 
@@ -212,15 +213,17 @@ Cloudflare Pages auto-deploys functions from `/functions/`. Six endpoints curren
 
 Form submission handler. Accepts `application/x-www-form-urlencoded` or `multipart/form-data`. Honeypot field is `company_website`; non-empty value silently 200s without sending the email.
 
-Required fields: `name`, `email`, `phone`, `intent`, `consent="yes"`. Other fields (gclid, full_address, lat/lng, message, source_page, page_url, submitted_at, plus mode-specific buy_location/buy_timeline/etc.) are optional but forwarded.
+Hard-required fields: `email`, `phone`, `consent="yes"` (the contactable + compliance fields). `name` and `intent` are captured when present but no longer rejected: a missing value falls back to a placeholder instead of a 400, so a client-side name-capture gap can never cost a lead. Other fields (gclid, full_address, lat/lng, message, source_page, page_url, submitted_at, plus mode-specific buy_location/buy_timeline/etc.) are optional but forwarded.
 
 Phone is normalized server-side by `normalizePhone()` (defense in depth behind the client `normalizeUsDigits()`): it drops a leaked `+1` country code, validates NANP, and emits `+1 (XXX) XXX-XXXX` into the email + Zapier payload (plus a `phone_e164` field), so the `+1` is captured on every real lead. Placeholder phones (`0000000000` from One Tap / valuation-view) pass through untouched; normalization never rejects a lead.
 
 Sends a plaintext email to `TO_EMAIL` (env var) from `FROM_EMAIL` via MailChannels. Optionally posts the same fields to `ZAPIER_WEBHOOK_URL` if set.
 
+**Acceptance is decoupled from delivery (2026-05-31).** Once a lead validates, the handler schedules delivery via `context.waitUntil(deliverLead(...))` and returns `{ ok: true }` immediately, so a slow or unconfigured email channel can never surface to the visitor as "something went wrong" or 500 the request. `deliverLead` fires MailChannels and Zapier as independent best-effort tasks, each wrapped in an 8s `fetchWithTimeout` with its own error logging; on channel failure it logs (`LEAD_EMAIL_FAILED` / `LEAD_ZAPIER_FAILED`), and if NO channel is configured it logs the full lead (`LEAD_NOT_DELIVERED`) so it stays recoverable from the Cloudflare function logs. A lead is never silently dropped, and a delivery problem never blocks the conversion.
+
 Required env vars in Cloudflare Pages settings: `TO_EMAIL`, `FROM_EMAIL`, `MAILCHANNELS_API_KEY`. Optional: `ZAPIER_WEBHOOK_URL`.
 
-Returns `{ ok: true }` on success, `{ ok: false, error: "<reason>" }` on failure. The funnel client treats anything other than 200 + ok:true as an error.
+Returns `{ ok: true }` once the lead is accepted, `{ ok: false, error: "<reason>" }` only on a validation reject (4xx) or an unexpected exception (5xx). The funnel client treats anything other than 200 + ok:true as a failure, but now RETRIES transient failures (network / abort-timeout / 5xx / 429) up to 3 attempts before surfacing the error (per-attempt timeout 20s; see the `funnel_submit_retry` row under "PostHog funnel drop-off events").
 
 ### `/functions/api/geo.js`
 
