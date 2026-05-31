@@ -4345,8 +4345,34 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       fd.append("source_page", source);
       fd.append("message", message);
 
-      var ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
-      var timeoutId = setTimeout(function() { if (ctrl) ctrl.abort(); }, 10000);
+      // Submit with automatic retry. A single network blip or a slow cold-start
+      // on mobile must never dead-end a lead (the "network" error_kind we saw in
+      // PostHog), so transient failures (fetch reject, abort/timeout, or a 5xx)
+      // are retried up to MAX_ATTEMPTS with a short backoff before we surface an
+      // error. A 4xx (validation) is terminal and not retried. The per-attempt
+      // timeout is generous (20s) because a lead is worth the wait far more than
+      // a fast failure; the old 10s cap clipped slow mobile connections. In the
+      // rare case where the server received a submit but its response was lost,
+      // a retry can create a duplicate lead; that is deliberately preferred over
+      // losing the lead, and duplicates are trivially deduped downstream.
+      var MAX_ATTEMPTS = 3;
+      var ATTEMPT_TIMEOUT_MS = 20000;
+
+      function finishSuccess() {
+        track("funnel_submit_success", { mode: mode });
+        // Lead is in: complete the progress bar before the redirect.
+        if (progressBar) progressBar.style.width = "100%";
+        // Mark the redirect so /thank-you/ can fire the GA4 generate_lead
+        // event ONLY for real funnel conversions, not for direct visits or
+        // bookmarks. sessionStorage is tab-scoped so a closed-and-reopened
+        // tab won't re-trigger; ?ref=funnel is a backup signal we strip
+        // from the URL on the receiving page.
+        try {
+          sessionStorage.setItem("drozq_lead_just_submitted", "1");
+          sessionStorage.setItem("drozq_lead_mode", mode);
+        } catch (e) {}
+        window.location.href = "/thank-you/?ref=funnel";
+      }
 
       function showFunnelError(kind) {
         track("funnel_submit_error", { mode: mode, error_kind: kind || "unknown" });
@@ -4355,37 +4381,46 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
         btn.textContent = origLabel;
       }
 
-      fetch(FUNNEL_ENDPOINT, {
-        method: "POST",
-        body: fd,
-        signal: ctrl ? ctrl.signal : undefined
-      }).then(function(res) {
-        clearTimeout(timeoutId);
-        return res.json().then(function(json) {
-          if (res.ok && json && json.ok) {
-            track("funnel_submit_success", { mode: mode });
-            // Lead is in: complete the progress bar before the redirect.
-            if (progressBar) progressBar.style.width = "100%";
-            // Mark the redirect so /thank-you/ can fire the GA4 generate_lead
-            // event ONLY for real funnel conversions, not for direct visits or
-            // bookmarks. sessionStorage is tab-scoped so a closed-and-reopened
-            // tab won't re-trigger; ?ref=funnel is a backup signal we strip
-            // from the URL on the receiving page.
-            try {
-              sessionStorage.setItem("drozq_lead_just_submitted", "1");
-              sessionStorage.setItem("drozq_lead_mode", mode);
-            } catch (e) {}
-            window.location.href = "/thank-you/?ref=funnel";
+      function submitAttempt(attempt) {
+        var ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+        var timeoutId = setTimeout(function() { if (ctrl) ctrl.abort(); }, ATTEMPT_TIMEOUT_MS);
+
+        function retryOrFail(kind) {
+          if (attempt < MAX_ATTEMPTS) {
+            track("funnel_submit_retry", { mode: mode, attempt: attempt, error_kind: kind });
+            btn.textContent = "Retrying...";
+            // Linear backoff: 1s before attempt 2, 2s before attempt 3.
+            setTimeout(function() { submitAttempt(attempt + 1); }, attempt * 1000);
           } else {
-            showFunnelError("server");
+            showFunnelError(kind);
           }
-        }, function() {
-          showFunnelError("server_parse");
+        }
+
+        fetch(FUNNEL_ENDPOINT, {
+          method: "POST",
+          body: fd,
+          signal: ctrl ? ctrl.signal : undefined
+        }).then(function(res) {
+          clearTimeout(timeoutId);
+          // 5xx / 429 are transient server states worth a retry; other non-2xx
+          // (e.g. a 4xx validation reject) are terminal.
+          if (res.status >= 500 || res.status === 429) { retryOrFail("server"); return; }
+          return res.json().then(function(json) {
+            if (res.ok && json && json.ok) {
+              finishSuccess();
+            } else {
+              showFunnelError("server");
+            }
+          }, function() {
+            showFunnelError("server_parse");
+          });
+        }).catch(function() {
+          clearTimeout(timeoutId);
+          retryOrFail("network");
         });
-      }).catch(function() {
-        clearTimeout(timeoutId);
-        showFunnelError("network");
-      });
+      }
+
+      submitAttempt(1);
     });
   }
 

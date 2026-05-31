@@ -26,6 +26,91 @@ function normalizePhone(raw) {
   return { e164: original, pretty: original, valid: false };
 }
 
+// fetch() with a hard timeout. A degraded upstream (e.g. MailChannels after the
+// free tier ended) must never hang the worker. This runs inside waitUntil, after
+// the visitor already has their 200, so it can never delay or fail the response.
+async function fetchWithTimeout(url, options, ms) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), ms);
+  try {
+    return await fetch(url, Object.assign({}, options, { signal: ctrl.signal }));
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+// Deliver an accepted lead to every configured channel, best effort. CRITICAL
+// DESIGN POINT: acceptance (the 200 the visitor sees) is fully DECOUPLED from
+// delivery. This function runs in context.waitUntil AFTER the response is sent,
+// so a slow or misconfigured delivery channel can never surface as "something
+// went wrong" in the funnel again. Each channel is independent; a failure is
+// logged, never thrown. If NO channel is configured, the full lead is logged so
+// it is still recoverable from Cloudflare's function logs — a lead is never
+// silently dropped.
+async function deliverLead(env, lead) {
+  const { emailContent, zapierPayload, logLine } = lead;
+  const tasks = [];
+  let channels = 0;
+
+  const TO_EMAIL = env.TO_EMAIL;
+  const FROM_EMAIL = env.FROM_EMAIL;
+  const MAILCHANNELS_API_KEY = env.MAILCHANNELS_API_KEY;
+
+  if (TO_EMAIL && FROM_EMAIL && MAILCHANNELS_API_KEY) {
+    channels++;
+    tasks.push(
+      fetchWithTimeout("https://api.mailchannels.net/tx/v1/send", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "X-Api-Key": MAILCHANNELS_API_KEY,
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          personalizations: [{ to: [{ email: TO_EMAIL }] }],
+          from: { email: FROM_EMAIL, name: "drozq.com Lead Form" },
+          reply_to: { email: emailContent.replyToEmail, name: emailContent.replyToName },
+          subject: emailContent.subject,
+          content: [{ type: "text/plain", value: emailContent.body }]
+        })
+      }, 8000).then(async (r) => {
+        if (!r.ok) {
+          let body = "";
+          try { body = await r.text(); } catch (e) {}
+          console.error("LEAD_EMAIL_FAILED MailChannels status=" + r.status + " body=" + body + " | " + logLine);
+        }
+      }).catch((e) => {
+        console.error("LEAD_EMAIL_THREW MailChannels " + ((e && e.message) || e) + " | " + logLine);
+      })
+    );
+  } else {
+    console.error("LEAD_EMAIL_SKIPPED MailChannels not configured (need TO_EMAIL + FROM_EMAIL + MAILCHANNELS_API_KEY) | " + logLine);
+  }
+
+  if (env.ZAPIER_WEBHOOK_URL) {
+    channels++;
+    tasks.push(
+      fetchWithTimeout(env.ZAPIER_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(zapierPayload)
+      }, 8000).then((r) => {
+        if (!r.ok) console.error("LEAD_ZAPIER_FAILED status=" + r.status + " | " + logLine);
+      }).catch((e) => {
+        console.error("LEAD_ZAPIER_THREW " + ((e && e.message) || e) + " | " + logLine);
+      })
+    );
+  }
+
+  if (channels === 0) {
+    // No delivery channel at all: log the full lead so Joshua can recover it
+    // from the Cloudflare Pages function logs. The visitor still got a 200.
+    console.error("LEAD_NOT_DELIVERED no channel configured; recoverable lead below | " + logLine);
+  }
+
+  await Promise.allSettled(tasks);
+}
+
 export async function onRequestPost(context) {
   try {
     const { request, env } = context;
@@ -78,23 +163,27 @@ export async function onRequestPost(context) {
     const timeline = String(formData.get("timeline") || "").trim();
     const gclid = String(formData.get("gclid") || "").trim();
 
-    // 4) Server-side validation
-    if (!name || !email || !phone) {
+    // 4) Validation. Email + phone + consent are the hard requirements: they are
+    // what makes a lead contactable and compliant. Name is captured when present
+    // but NEVER blocks a lead — a client-side gap in name capture must not cost a
+    // conversion, so a missing name falls back to a placeholder instead of a 400
+    // (which the funnel surfaces to the visitor as "something went wrong"). Same
+    // for intent: default it rather than reject.
+    if (!email || !phone) {
       return json({ ok: false, error: "Missing required fields" }, 400);
-    }
-    if (!intent) {
-      return json({ ok: false, error: "Missing inquiry type" }, 400);
     }
     if (consent !== "yes") {
       return json({ ok: false, error: "Consent required" }, 400);
     }
+    const safeName = name || "Website Lead (name not provided)";
+    const safeIntent = intent || "Website Lead";
 
     // 5) Length guards
     if (
-      name.length > 200 ||
+      safeName.length > 200 ||
       email.length > 200 ||
       phone.length > 50 ||
-      intent.length > 80 ||
+      safeIntent.length > 80 ||
       sourcePage.length > 100 ||
       message.length > 5000 ||
       streetAddress.length > 300 ||
@@ -103,45 +192,29 @@ export async function onRequestPost(context) {
       return json({ ok: false, error: "Payload too large" }, 413);
     }
 
-    // 6) Env vars
-    const TO_EMAIL = env.TO_EMAIL;
-    const FROM_EMAIL = env.FROM_EMAIL;
-    const MAILCHANNELS_API_KEY = env.MAILCHANNELS_API_KEY;
-
-    if (!TO_EMAIL || !FROM_EMAIL) {
-      return json(
-        { ok: false, error: "Server not configured: TO_EMAIL/FROM_EMAIL missing" },
-        500
-      );
-    }
-    if (!MAILCHANNELS_API_KEY) {
-      return json(
-        { ok: false, error: "Server not configured: MAILCHANNELS_API_KEY missing" },
-        500
-      );
-    }
-
-    // 7) Metadata
+    // 6) Metadata
     const ip =
       request.headers.get("cf-connecting-ip") ||
       request.headers.get("x-forwarded-for") ||
       "";
     const ua = request.headers.get("user-agent") || "";
     const url = new URL(request.url);
+    const pageUrl = String(formData.get("page_url") || "");
+    const submittedAt = String(formData.get("submitted_at") || "");
 
-    // 8) Compose address block
+    // 7) Compose address block
     const addressBlock = [
       streetAddress,
       addressLine2,
       [city, state, zip].filter(Boolean).join(", ")
     ].filter(Boolean).join("\n");
 
-    // 9) Compose email
+    // 8) Compose email
     const emailBody =
 `New lead from drozq.com
 
 IDENTITY
-Name: ${name}
+Name: ${safeName}
 Email: ${email}
 Phone: ${phone}
 
@@ -151,7 +224,7 @@ Full (Google): ${fullAddress || "—"}
 Lat/Lng: ${lat || "—"}, ${lng || "—"}
 
 INQUIRY
-Type: ${intent}
+Type: ${safeIntent}
 Timeline: ${timeline || "—"}
 Referral Source: ${referralSource || "—"}
 
@@ -160,8 +233,8 @@ ${message || "—"}
 
 META
 Source: ${sourcePage || "—"}
-Page URL: ${String(formData.get("page_url") || "—")}
-Submitted: ${String(formData.get("submitted_at") || "—")}
+Page URL: ${pageUrl || "—"}
+Submitted: ${submittedAt || "—"}
 GCLID: ${gclid || "—"}
 Endpoint: ${url.pathname}
 IP: ${ip || "—"}
@@ -169,62 +242,52 @@ User-Agent: ${ua || "—"}
 Consent: ${consent}
 `;
 
-    // 10) Send email via MailChannels (non-blocking)
-    context.waitUntil(
-      fetch("https://api.mailchannels.net/tx/v1/send", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "X-Api-Key": MAILCHANNELS_API_KEY,
-          "Accept": "application/json"
-        },
-        body: JSON.stringify({
-          personalizations: [{ to: [{ email: TO_EMAIL }] }],
-          from: { email: FROM_EMAIL, name: "drozq.com Lead Form" },
-          reply_to: { email, name },
-          subject: `🏠 New Lead (${intent}): ${name} — ${city || "Unknown City"}, ${state || "CA"}`,
-          content: [{ type: "text/plain", value: emailBody }]
-        })
-      })
-    );
+    // 9) Build channel payloads + a compact recoverable log line
+    const emailContent = {
+      subject: `🏠 New Lead (${safeIntent}): ${safeName} — ${city || "Unknown City"}, ${state || "CA"}`,
+      body: emailBody,
+      replyToEmail: email,
+      replyToName: safeName
+    };
 
-    // 11) Optional Zapier forward (non-blocking)
-    if (env.ZAPIER_WEBHOOK_URL) {
-      context.waitUntil(
-        fetch(env.ZAPIER_WEBHOOK_URL, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            first_name: firstName,
-            last_name: lastName,
-            name,
-            email,
-            phone,
-            phone_e164: phoneNorm.e164,
-            intent,
-            street_address: streetAddress,
-            address_line_2: addressLine2,
-            city,
-            state,
-            zip,
-            full_address: fullAddress,
-            lat,
-            lng,
-            referral_source: referralSource,
-            timeline,
-            gclid,
-            message,
-            source_page: sourcePage,
-            consent,
-            ip,
-            user_agent: ua
-          })
-        })
-      );
-    }
+    const zapierPayload = {
+      first_name: firstName,
+      last_name: lastName,
+      name: safeName,
+      email,
+      phone,
+      phone_e164: phoneNorm.e164,
+      intent: safeIntent,
+      street_address: streetAddress,
+      address_line_2: addressLine2,
+      city,
+      state,
+      zip,
+      full_address: fullAddress,
+      lat,
+      lng,
+      referral_source: referralSource,
+      timeline,
+      gclid,
+      message,
+      source_page: sourcePage,
+      consent,
+      ip,
+      user_agent: ua
+    };
+
+    const logLine = JSON.stringify({
+      name: safeName, email, phone, intent: safeIntent,
+      city, state, source: sourcePage, gclid, submitted_at: submittedAt
+    });
+
+    // 10) Accept now, deliver after. The visitor's 200 does not depend on email
+    // or Zapier succeeding, so a delivery outage can never break the funnel.
+    context.waitUntil(deliverLead(env, { emailContent, zapierPayload, logLine }));
 
     return json({ ok: true }, 200);
   } catch (err) {
+    console.error("LEAD_HANDLER_ERROR " + ((err && err.stack) || err));
     return json({ ok: false, error: "Server error" }, 500);
   }
 }
