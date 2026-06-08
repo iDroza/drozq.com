@@ -507,7 +507,7 @@ def cta_pill(placeholder: str = "Enter your address") -> str:
         <div class="cf-cta-pill">
           <input type="text" name="location" placeholder="{placeholder}"
                  autocomplete="off" aria-label="{placeholder}">
-          <button type="submit">Compare Agents</button>
+          <button type="submit">See Plan</button>
         </div>
         <input type="hidden" name="gclid" value="">
       </form>

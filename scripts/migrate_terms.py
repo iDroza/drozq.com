@@ -198,7 +198,7 @@ MAIN_BODY = """
           <div class="legal-cta__pill">
             <input type="text" name="location" placeholder="Enter your address"
                    autocomplete="off" aria-label="Enter your address">
-            <button type="submit">Compare Agents</button>
+            <button type="submit">See Plan</button>
           </div>
           <input type="hidden" name="gclid" value="">
         </form>

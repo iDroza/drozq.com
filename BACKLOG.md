@@ -18,7 +18,6 @@ When something ships, remove the item from this file in the same commit. Don't l
 
 These move the needle the most. They are concentrated on `/index.html`.
 
-- **Hero rewrite.** H1 still says "Compare Agents. Find a Trusted Expert." This is realtor.com clone framing. Replace with Joshua-specific positioning. The Sell / Buy / Sell & Buy tab structure stays; only hero copy changes. "Compare Agents" appears 4x in the homepage body.
 - **"Our partner agents are..." section.** 6-tile grid (Skilled / Licensed / Expert negotiators / Highly reviewed / Competitive rates / Market experts) still framed as plural agents. Either rewrite as Joshua's differentiators or delete the section. CLAUDE.md voice rules apply.
 - **Trusted-brands logo grid.** Compass / Keller Williams / Berkshire Hathaway / Long & Foster / eXp / Douglas Elliman logos still embedded. Misrepresentation risk: Joshua is not affiliated with these. Delete or relabel as "Brokerages we have closed deals with" (only if true).
 - **"AgentLocator" copy.** 1 leftover reference in homepage body + appears in 4 FAQ questions. Rewrite to drop the framing entirely.

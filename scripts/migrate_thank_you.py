@@ -295,7 +295,7 @@ MAIN_BODY = """
       <div class="ty-cta__pill">
         <input type="text" name="location" placeholder="Enter another address"
                autocomplete="off" aria-label="Enter another address">
-        <button type="submit">Compare Agents</button>
+        <button type="submit">See Plan</button>
       </div>
       <input type="hidden" name="gclid" value="">
     </form>

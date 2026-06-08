@@ -38,7 +38,7 @@ These tokens are declared in the inline `<style>` block at the top of `/index.ht
 
 | Token | Hex | Use |
 |---|---|---|
-| `--colors-primary` | `#d92228` | Primary CTA red. Hero tabs (selected fg), Compare Agents button bg, funnel CTA bg, funnel progress fill, focus borders, accent strokes. |
+| `--colors-primary` | `#d92228` | Primary CTA red. Hero tabs (selected fg), See Plan button bg, funnel CTA bg, funnel progress fill, focus borders, accent strokes. |
 | `--colors-primary-hover` | `#a92e2a` | Primary CTA hover state. |
 | `--colors-secondary` | `#d41f24` | Secondary red, near-identical to primary; rarely used. |
 | `--colors-light-primary` | `#f7d3d4` | Light red tint. |
@@ -137,7 +137,7 @@ Hard rules:
 
 - **Base styles are mobile.** Use `min-width` media queries (Panda's `md:` / `lg:` / `xl:` prefixes) to add complexity for larger screens. Never use `max-width` queries to subtract from a desktop-first design.
 - **Mobile wins ties.** When mobile and desktop disagree on a layout, copy length, image crop, grid column count, type scale, CTA placement, or tap-target size — mobile is correct. Desktop is the variant.
-- **Hero must be pristine at 375px.** The 3-tab CTA, address input, and Compare Agents button are the conversion engine. They must look intentional at 375px before any tablet/desktop polish.
+- **Hero must be pristine at 375px.** The 3-tab CTA, address input, and See Plan button are the conversion engine. They must look intentional at 375px before any tablet/desktop polish.
 - **Tap targets ≥ 44 × 44 px.** Apple HIG / Material both. CTAs, tabs, accordion toggles, mobile drawer items all comply.
 - **No horizontal scroll at 375px, ever.** A scrollbar at mobile width is a regression. Constrain widths, wrap long URLs, audit `min-width` declarations.
 - **Type scale must read on a phone.** Body ≥ 16px (no iOS zoom on input focus), section headlines ≥ 24px, hero ≥ 32px at 375px.
@@ -339,7 +339,7 @@ Header carries a phone CTA on desktop showing `(949) 438-5948` (paid-traffic lin
 
 ## 4. Hero
 
-The hero is the top of every page. It contains three things, top to bottom: the **transaction-type tab bar**, the **landing form pill** (address/location + Compare Agents button), and the **hero copy/visual**.
+The hero is the top of every page. It contains three things, top to bottom: the **transaction-type tab bar**, the **landing form pill** (address/location + See Plan button), and the **hero copy/visual**.
 
 ### Tab bar (Sell / Buy / Sell & Buy)
 
@@ -365,7 +365,7 @@ Font: Roboto 700 13px / 16px. The selected tab pops up because of the 4px taller
 
 Each tab has a sibling `<div role="tabpanel" id="tabpanel-{sell|buy|sell-buy}">` whose visibility is toggled by `wireTabs()` (sets `aria-selected` + `data-selected` + adds/removes `d_none` class + `hidden` attribute).
 
-Inside each tabpanel: a `<form>` with the landing input + Compare Agents submit button.
+Inside each tabpanel: a `<form>` with the landing input + See Plan submit button.
 
 ### Landing form pill
 
@@ -374,7 +374,7 @@ Inside each tabpanel: a `<form>` with the landing input + Compare Agents submit 
   <div class="...">  <!-- white pill wrapper -->
     <input type="text" name="location" placeholder="Enter the address you are selling"
            value="" autocomplete="off" ...>
-    <button type="submit" class="...">Compare Agents</button>
+    <button type="submit" class="...">See Plan</button>
   </div>
   <input type="hidden" name="gclid" value="">
 </form>
@@ -394,7 +394,7 @@ Style:
 | Button | Font | Roboto 700 18px |
 | Button | Height | `54px` |
 | Button | Border-radius | `9999px` (right pill cap) |
-| Button | Text | "Compare Agents" |
+| Button | Text | "See Plan" |
 
 Placeholders by mode:
 - Sell: "Enter the address you are selling"
@@ -483,7 +483,7 @@ The homepage hero is a different layout — a 2-column block where the tabs+pill
 | Hero subhead | 18px / 400 | 24px / 400 |
 | Geo callout ("Irvine, CA") | 24px / 400 / GalanoGrotesqueAltBold | 32px / 400 / GalanoGrotesqueAltBold |
 
-The H1 on the current homepage reads "Compare Agents. Find a Trusted Expert." — this is realtor-clone copy. New pages should rewrite the H1 to a page-specific angle (e.g., for a paid distressed-sellers landing: "Sell your Irvine home, on your timeline.").
+The H1 on the current homepage reads "Irvine Homeowners! Do You Want Every Dollar It's Worth?", a seller-focused avatar call-out. New pages should rewrite the H1 to a page-specific angle (e.g., for a paid distressed-sellers landing: "Sell your Irvine home, on your timeline.").
 
 ### Hero opener copy rule (no exceptions)
 
@@ -576,12 +576,12 @@ Standard section conventions:
 
 Two button styles exist on the site. **No third style is authorized.** Do not introduce new button variants without first updating this section.
 
-**1. Primary CTA pill** — only ever used for the inline funnel ("Compare Agents" or equivalent action that opens the funnel overlay). Filled red. This is the conversion mechanism; reserve it.
+**1. Primary CTA pill** — only ever used for the inline funnel ("See Plan" or equivalent action that opens the funnel overlay). Filled red. This is the conversion mechanism; reserve it.
 
 ```html
 <button type="submit"
         class="bg_primary c_white cursor_pointer w_100% xs:w_145px md:w_auto h_48px md:h_54px fs_13px md:fs_18px fw_bold bdr_full px_0px md:px_28px ls_0.5px d_block md:d_inline-flex ai_center gap_0px md:gap_10px hover:bg_primaryHover">
-  Compare Agents
+  See Plan
 </button>
 ```
 
@@ -632,7 +632,7 @@ Use cases that warrant the secondary outlined style:
 - "See more data" or "Read the full X" linking from a summary section to a deeper page.
 - "Read the full Los Angeles listing playbook →" on `/where-we-help/`.
 
-Do **NOT** use the primary red filled pill for navigation. It visually competes with the funnel CTA and tells the user "this is the conversion action" when it isn't. A nav link that looks like a Compare Agents pill steals attention from the actual lead-capture button on the page.
+Do **NOT** use the primary red filled pill for navigation. It visually competes with the funnel CTA and tells the user "this is the conversion action" when it isn't. A nav link that looks like a See Plan pill steals attention from the actual lead-capture button on the page.
 
 ### Closing CTA pill width (canonical)
 
@@ -695,7 +695,7 @@ These section patterns are reused 2+ times across the migrated content pages. Tr
 
 ## 6. Mid-page tabs ("I'm selling / I'm buying")
 
-Used inside a content section that needs to swap copy between seller and buyer messaging. Each tab opens a panel that contains its own Compare Agents form, which opens the funnel in the matching mode.
+Used inside a content section that needs to swap copy between seller and buyer messaging. Each tab opens a panel that contains its own See Plan form, which opens the funnel in the matching mode.
 
 ```html
 <div role="tablist">
@@ -727,7 +727,7 @@ So `aria-labelledby="buyTabBtn"` on `#buyTab` resolves to buy mode. Renaming the
 
 ### Mid-page tab pill width (canonical)
 
-Inside each `#sellTab` / `#buyTab` tabpanel, the landing form pill MUST be wrapped in a 540px-max container — never full-width. A full-width pill at desktop reads as broken layout (the input + Compare Agents button stretch into ~780px of horizontal space and look wrong).
+Inside each `#sellTab` / `#buyTab` tabpanel, the landing form pill MUST be wrapped in a 540px-max container — never full-width. A full-width pill at desktop reads as broken layout (the input + See Plan button stretch into ~780px of horizontal space and look wrong).
 
 Both the heading and the pill container MUST be centered within the 780px tabpanel. The h4 uses `ta_center`, and the wrapper div carries `margin: 0 auto`. Earlier versions used `ta_left` with no auto margin on the wrapper, which pinned the heading and the 540px pill flush against the left edge of the tabpanel.
 
