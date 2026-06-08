@@ -551,7 +551,7 @@ Below the hero, the homepage runs a vertical rhythm of alternating bands. The pa
 
 ```
 [white hero]
-[light gray band #f2f0ef] — "How We Match You" / agent profiles
+[light gray band #f2f0ef] — "The Hard Parts Are My Job, Not Yours" / agent profiles
 [white band] — review carousel #hpcar
 [white band max-w 972/1035] — content
 [wide centered div max-w 1035] — market trends map (self-hosted Irvine Google Map) + Irvine stats
@@ -666,7 +666,7 @@ Standard h2:
 - Scale down on mobile
 
 Examples observed:
-- "How We Match You With the Right Agent" — 32px / 800
+- "The Hard Parts Are My Job, Not Yours" — 32px / 800
 - "Why work with an agent?" — 32px / 800
 - "Real reviews. Real outcomes." — 20px / 800
 

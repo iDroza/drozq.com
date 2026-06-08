@@ -472,7 +472,7 @@ The homepage was a clone of sell.realtor.com that has been incrementally cleaned
 - Footer gutted: minimal conversion footer (brand logo, identity line, DRE, phone, social, Privacy/Terms, copyright).
 - Market-trends map self-hosted: the hotlinked `realtorqa.upnest.com` iframe (and its 170×34 white "Source: RealEstateSM" attribution overlay) replaced by a lazy, desktop-only Google Map of Irvine on the site's own Maps JS key. Heading month is live; the trends readout is pinned to Irvine via `data-geo-static`; days-on-market reads 45.
 - Tab IDs renamed (`sellUpnestTab` → `sellTabBtn`, `buyUpnestTab` → `buyTabBtn`).
-- 5 fake agent profile cards replaced with the "How We Match You" infographic.
+- 5 fake agent profile cards replaced with the "The Hard Parts Are My Job, Not Yours" infographic.
 - 5 fake out-of-state testimonials swapped for real case files.
 - Move-hosted illustration imagery (`lt6p.com`) removed (zero refs).
 - Move-hosted `@font-face` declarations replaced with self-hosted fonts in `/media/fonts/`.
