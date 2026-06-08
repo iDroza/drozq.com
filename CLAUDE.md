@@ -10,6 +10,8 @@ Remember when implementing: the marginal cost of completeness is near zero with 
 
 Always commit and push changes to main after completing each task without asking. Ship fast. Rollback is always available via `git revert [hash] && git push`.
 
+**Everything goes live instantly. There is no staging, no batching, no holding.** Every edit auto-deploys to production in 30-60 seconds the moment it lands on main. So the moment a change is made, it ships. Do not sit on a finished edit waiting for a follow-up decision, a sibling change, or my approval. If one piece of a larger change is done and another is still being decided (for example, a headline is set but the subhead is still being chosen), push the finished piece NOW and ship the rest when it's decided. Work-in-progress lives on main and gets iterated live, never parked in an un-pushed working tree. "I'll wait until you pick X before pushing" is a banned behavior: ship what's done, iterate live, roll back if needed. The only reason to ever hold a push is an explicit "don't push this yet" from me.
+
 When making changes to high-risk files (homepage hero, the funnel, tracking scripts, files containing the GTM container, any registered page in `funnels.json`), include a clear, descriptive commit message so rollbacks can be surgical if needed.
 
 ## About this project
