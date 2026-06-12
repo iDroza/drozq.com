@@ -18,7 +18,6 @@ When something ships, remove the item from this file in the same commit. Don't l
 
 These move the needle the most. They are concentrated on `/index.html`.
 
-- **"Our partner agents are..." section.** 6-tile grid (Skilled / Licensed / Expert negotiators / Highly reviewed / Competitive rates / Market experts) still framed as plural agents. Either rewrite as Joshua's differentiators or delete the section. CLAUDE.md voice rules apply.
 - **Trusted-brands logo grid.** Compass / Keller Williams / Berkshire Hathaway / Long & Foster / eXp / Douglas Elliman logos still embedded. Misrepresentation risk: Joshua is not affiliated with these. Delete or relabel as "Brokerages we have closed deals with" (only if true).
 - **"AgentLocator" copy.** Homepage body reference killed 2026-06-11 (offer-stack subhead). Remaining: 1 FAQ accordion Q+A ("Is our AgentLocator Service free?"). Rewrite to drop the framing entirely.
 - **Headshot above the fold.** Joshua's `Waist.png` is referenced in JSON-LD schema but does not appear in the visible body. Add a hero block or aside that puts a face on the page.
