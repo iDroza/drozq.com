@@ -476,6 +476,7 @@ The homepage was a clone of sell.realtor.com that has been incrementally cleaned
 - 5 fake out-of-state testimonials swapped for real case files.
 - Move-hosted illustration imagery (`lt6p.com`) removed (zero refs).
 - Move-hosted `@font-face` declarations replaced with self-hosted fonts in `/media/fonts/`.
+- **Typography consolidated to Galano Grotesque Alt site-wide (2026-06-12).** Galano is now the entire type system, body and headings, on every page, the funnel, forms, every character. Each page carries a one-block override in `<head>` (just before `</head>`) that registers a real `GalanoGrotesque` weight-700 face (bold from the bold woff, no faux-bold) and repoints `--global-font-body` + `--fonts-sans` to `GalanoGrotesque`. New pages scaffold from `index.html` and inherit it automatically (`scaffold_page.py` copies the whole `<head>`). Roboto is retired (files kept, unreferenced); the never-loaded `ProximaNova` vars/`.ff_proxima*` classes are dead cruft. See `TEMPLATE.md` §Fonts. Do not reintroduce Roboto or Proxima as a body/text font.
 - Footer award badges (Inc 5000, Deloitte Fast 500) and UpNest app store badges removed.
 
 ### Deferred

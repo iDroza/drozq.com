@@ -99,22 +99,23 @@ If a section MUST stay white for rhythm reasons, the cards inside it MUST switch
 
 ### Fonts
 
-| Token | Stack |
+| Token | Stack (effective) |
 |---|---|
-| `--global-font-body` | `Roboto, sans-serif` |
-| `--fonts-sans` | `Roboto, sans-serif` |
+| `--global-font-body` | `GalanoGrotesque, "Helvetica Neue", Helvetica, Arial, sans-serif` |
+| `--fonts-sans` | `GalanoGrotesque, "Helvetica Neue", Helvetica, Arial, sans-serif` |
 | `--fonts-galano-regular` | `GalanoGrotesque, "Helvetica Neue", Helvetica, Arial, sans-serif` |
 | `--fonts-galano-bold` | `GalanoGrotesqueAltBold, "Helvetica Neue", Helvetica, Arial, sans-serif` |
-| `--fonts-proxima-nova` | `ProximaNova, "Helvetica Neue", Helvetica, Arial, sans-serif` |
 
 Self-hosted at `/media/fonts/`:
-- `roboto-400.woff2` + `.woff`, `roboto-700.woff2` + `.woff`
-- `galano-grotesque-alt-regular.woff2` + `.woff`
-- `galano-grotesque-alt-bold.woff2` + `.woff`
+- `galano-grotesque-alt-regular.woff2` + `.woff` (weight 400)
+- `galano-grotesque-alt-bold.woff2` + `.woff` (weight 700)
+- `roboto-400.woff2` + `.woff`, `roboto-700.woff2` + `.woff` (retired, see below)
 
-`@font-face` declarations are at the top of the inline `<style>` block. Copy them verbatim.
+**Galano Grotesque Alt is the entire type system, body included (2026-06-12).** Every page carries a one-block override in `<head>` right before `</head>`: it registers a real `GalanoGrotesque` weight-700 face (so bold pulls the bold woff, never a synthesized faux-bold) and repoints `--global-font-body` + `--fonts-sans` to `GalanoGrotesque`. Result: all body copy, headings, the funnel, forms, every character renders in Galano. `ff_galanoBold` (bold) and `ff_galanoRegular` (regular) utility classes still work as before. Copy that override block verbatim onto any new page (or just scaffold from `index.html`, which carries it).
 
-Default body font is Roboto. GalanoGrotesque appears in one place on the homepage: the geo-personalized location callout in the hero ("Irvine, CA"). It is a display font, not a body font.
+`@font-face` declarations are at the top of the inline `<style>` block; the Galano-700 face + var override is the appended `<style>` before `</head>`. Copy both verbatim.
+
+Note: anywhere this doc still says "Roboto" for a specific element's font (hero H1, tabs, buttons, etc.), it now resolves to Galano via the global override; the size/weight/line-height in those rows still hold. Roboto is retired (files kept for now, no longer referenced). The phantom `ProximaNova` layer (vars + `.ff_proxima*` classes, never loaded, never used) is realtor-clone cruft slated for deletion.
 
 ### Breakpoints
 
