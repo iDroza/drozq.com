@@ -42,7 +42,6 @@ These move the needle the most. They are concentrated on `/index.html`.
 ## Tracking & measurement
 
 - **UTM parameter capture.** The funnel IIFE captures `gclid` but not `utm_source` / `utm_medium` / `utm_campaign` / `utm_content` / `utm_term`. Mirror the gclid pattern: read from URL → cookie → sessionStorage, persist to 90-day cookies, push to dataLayer, forward to `/api/lead` as hidden fields.
-- **Funnel input `name=` attributes.** Funnel steps' inputs (`#funnel-step5-name`, `#buy-step5-email`, etc.) have IDs but no `name=` attrs. Graceful degradation: if JS fails, the form should still submit identifiable fields. Add `name="full_name"`, `name="email"`, `name="phone"`.
 
 ---
 
@@ -59,10 +58,8 @@ These were tracked in the now-deleted `REALTOR_CLEANUP_AUDIT.md`. The Done items
 
 ## Hygiene & polish
 
-- **Two `TODO: confirm Drozq red` comments.** In the inline funnel `<style>` block. The current red is `#d92228`. Either confirm and remove the TODOs or pick a different shade.
 - **`highlight-reviews.png` (204KB).** 1 ref on homepage. Convert to WebP or remove if the section is being rewritten.
 - **`/404.html`.** Not present. Cloudflare Pages currently serves index.html (or a generic 404) for missing paths, which can cause soft-404s in Google's index. Create a real 404 page following the homepage template (minimal funnel-equipped scaffold + "Page not found" hero copy).
-- **Funnel error accessibility.** Only 1 `role="alert"`/`aria-live` match in index.html. The funnel's `.funnel-error` divs should have `role="alert"` (transient errors) or `aria-live="polite"` so screen readers announce validation failures.
 - **Skip-to-content link.** No `class="skip-link"` or skip-to-content anchor at the top of the body. Add for keyboard / screen-reader users.
 - **`<img>` width/height coverage.** Most images have explicit `width`/`height` attrs (good for CLS), but not 100%. Audit images that load without dimensions and add them.
 - **12px body font on sub-tiles.** Some content sub-tiles still render at 12px, below the recommended 14px floor for body text. Bump to 14px.

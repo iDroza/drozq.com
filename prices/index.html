@@ -4092,7 +4092,7 @@
 }
 #funnel-overlay #funnel-progress-bar {
   height: 100%;
-  background: #d92228; /* TODO: confirm Drozq red */
+  background: #d92228;
   width: 0; /* JS owns the width; showStep(1) sets it before the overlay is shown */
   transition: width 250ms ease-out;
 }
@@ -4152,7 +4152,7 @@
   width: 100%;
   height: 56px;
   min-height: 48px;
-  background: #d92228; /* TODO: confirm Drozq red */
+  background: #d92228;
   color: #ffffff;
   border: none;
   border-radius: 999px;
@@ -4573,19 +4573,19 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   <div class="funnel-step" data-funnel="sell" data-step="2">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h2>What's your name?</h2>
-    <input type="text" id="funnel-step5-name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
-    <div class="funnel-error" id="funnel-step5-name-error"></div>
+    <input type="text" id="funnel-step5-name" name="full_name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
+    <div class="funnel-error" role="alert" id="funnel-step5-name-error"></div>
     <button type="button" id="funnel-step5-continue" class="funnel-cta">Continue</button>
   </div>
   <div class="funnel-step" data-funnel="sell" data-step="3">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h2>Where should we send your report?</h2>
-    <input type="email" id="funnel-step6-email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
-    <div class="funnel-error" id="funnel-step6-email-error"></div>
-    <input type="tel" id="funnel-step6-phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
-    <div class="funnel-error" id="funnel-step6-phone-error"></div>
+    <input type="email" id="funnel-step6-email" name="email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
+    <div class="funnel-error" role="alert" id="funnel-step6-email-error"></div>
+    <input type="tel" id="funnel-step6-phone" name="phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
+    <div class="funnel-error" role="alert" id="funnel-step6-phone-error"></div>
     <button type="button" id="funnel-step6-submit" class="funnel-cta">Send My Home Value Report</button>
-    <div class="funnel-error" id="funnel-step6-submit-error"></div>
+    <div class="funnel-error" role="alert" id="funnel-step6-submit-error"></div>
     <div class="funnel-assurance"><strong>We personally review every request.</strong> Your valuation lands within 24 hours. Licensed in California, DRE #02267255.</div>
     <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your home value.</div>
   </div>
@@ -4615,19 +4615,19 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   <div class="funnel-step" data-funnel="buy" data-step="3">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h2>What's your name?</h2>
-    <input type="text" id="buy-step5-name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
-    <div class="funnel-error" id="buy-step5-name-error"></div>
+    <input type="text" id="buy-step5-name" name="full_name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
+    <div class="funnel-error" role="alert" id="buy-step5-name-error"></div>
     <button type="button" id="buy-name-continue" class="funnel-cta">Continue</button>
   </div>
   <div class="funnel-step" data-funnel="buy" data-step="4">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h2 class="funnel-h2-fit">Where should I send your buyer's strategy?</h2>
-    <input type="email" id="buy-step5-email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
-    <div class="funnel-error" id="buy-step5-email-error"></div>
-    <input type="tel" id="buy-step5-phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
-    <div class="funnel-error" id="buy-step5-phone-error"></div>
+    <input type="email" id="buy-step5-email" name="email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
+    <div class="funnel-error" role="alert" id="buy-step5-email-error"></div>
+    <input type="tel" id="buy-step5-phone" name="phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
+    <div class="funnel-error" role="alert" id="buy-step5-phone-error"></div>
     <button type="button" id="buy-step5-submit" class="funnel-cta">Send My Buyer's Strategy</button>
-    <div class="funnel-error" id="buy-step5-submit-error"></div>
+    <div class="funnel-error" role="alert" id="buy-step5-submit-error"></div>
     <div class="funnel-assurance"><strong>We personally review every request.</strong> Your market brief lands within 24 hours. Licensed in California, DRE #02267255.</div>
     <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your home search.</div>
   </div>
@@ -4641,8 +4641,8 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
        Places-validated address), so there is no in-funnel address step. -->
   <div class="funnel-step" data-funnel="sellandbuy" data-step="1">
     <h2>Where do you want to buy?</h2>
-    <input type="text" id="sellandbuy-step2-buylocation" class="funnel-input" placeholder="City, neighborhood, or ZIP" autocomplete="address-level2" inputmode="text" aria-label="City, neighborhood, or ZIP">
-    <div class="funnel-error" id="sellandbuy-step2-buylocation-error"></div>
+    <input type="text" id="sellandbuy-step2-buylocation" name="buy_location" class="funnel-input" placeholder="City, neighborhood, or ZIP" autocomplete="address-level2" inputmode="text" aria-label="City, neighborhood, or ZIP">
+    <div class="funnel-error" role="alert" id="sellandbuy-step2-buylocation-error"></div>
     <button type="button" id="sellandbuy-step2-continue" class="funnel-cta">Continue</button>
   </div>
   <div class="funnel-step" data-funnel="sellandbuy" data-step="2">
@@ -4658,19 +4658,19 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   <div class="funnel-step" data-funnel="sellandbuy" data-step="3">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h2>What's your name?</h2>
-    <input type="text" id="sellandbuy-step6-name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
-    <div class="funnel-error" id="sellandbuy-step6-name-error"></div>
+    <input type="text" id="sellandbuy-step6-name" name="full_name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
+    <div class="funnel-error" role="alert" id="sellandbuy-step6-name-error"></div>
     <button type="button" id="sellandbuy-name-continue" class="funnel-cta">Continue</button>
   </div>
   <div class="funnel-step" data-funnel="sellandbuy" data-step="4">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
     <h2>Where should I send your move plan?</h2>
-    <input type="email" id="sellandbuy-step6-email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
-    <div class="funnel-error" id="sellandbuy-step6-email-error"></div>
-    <input type="tel" id="sellandbuy-step6-phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
-    <div class="funnel-error" id="sellandbuy-step6-phone-error"></div>
+    <input type="email" id="sellandbuy-step6-email" name="email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
+    <div class="funnel-error" role="alert" id="sellandbuy-step6-email-error"></div>
+    <input type="tel" id="sellandbuy-step6-phone" name="phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
+    <div class="funnel-error" role="alert" id="sellandbuy-step6-phone-error"></div>
     <button type="button" id="sellandbuy-step6-submit" class="funnel-cta">Send My Move Plan</button>
-    <div class="funnel-error" id="sellandbuy-step6-submit-error"></div>
+    <div class="funnel-error" role="alert" id="sellandbuy-step6-submit-error"></div>
     <div class="funnel-assurance"><strong>We personally review every request.</strong> Your move playbook lands within 24 hours. Licensed in California, DRE #02267255.</div>
     <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your sale and search.</div>
   </div>
