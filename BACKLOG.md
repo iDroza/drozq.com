@@ -27,14 +27,9 @@ These move the needle the most. They are concentrated on `/index.html`.
 
 ## SEO / AI search
 
-- **FAQPage JSON-LD.** Wrap the existing FAQ accordion in a FAQPage schema block. Each question + answer pair becomes a `Question` node. Currently 0 FAQPage matches in `index.html`.
 - **Internal links footer block.** Only `/privacy/`, `/terms/`, and `/faq/` (via header) are linked from the homepage. Add a small internal-links section linking `/about/`, `/testimonials/`, `/field-notes/`, `/market-insights/`, `/the-process/`, `/where-we-help/`, `/contact/`. Important for crawl coverage. (Note: these are legacy brand-mode pages; they still exist and accept traffic.)
-- **Rewrite generic H2s.** "Common Questions" → "Frequently asked: selling and buying in Irvine." "Why work with an agent?" → "Why work with a local Irvine agent?" Targets seller intent keywords.
-- **Heading hierarchy.** Market-trends section has H2 → H4 skip. Either bump H4 to H3 or add an intermediate H3.
-- **`google-site-verification` token.** Current `<meta>` is the literal placeholder `REPLACE-WITH-SEARCH-CONSOLE-TOKEN`. Replace with the real token from Search Console.
-- **Bing Webmaster verification.** Add `<meta name="msvalidate.01" content="...">` next to the Google one.
-- **`<meta name="theme-color">`.** Not present. Add at least `<meta name="theme-color" content="#d92228">` for browser chrome on mobile.
-- **Sitemap `lastmod` refresh.** Homepage entry in `sitemap.xml` is current (2026-05-07), but the other 14 URLs are still dated 2026-04-15. Update lastmod on any URL with real edits since.
+- **`google-site-verification` token.** Current `<meta>` is the literal placeholder `REPLACE-WITH-SEARCH-CONSOLE-TOKEN`. Replace with the real token from Search Console. (Needs the token from Joshua's Search Console account; not automatable.)
+- **Bing Webmaster verification.** Add `<meta name="msvalidate.01" content="...">` next to the Google one. (Same: needs the real token.)
 
 ---
 
