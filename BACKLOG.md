@@ -18,7 +18,6 @@ When something ships, remove the item from this file in the same commit. Don't l
 
 These move the needle the most. They are concentrated on `/index.html`.
 
-- **"AgentLocator" copy.** Homepage body reference killed 2026-06-11 (offer-stack subhead). Remaining: 1 FAQ accordion Q+A ("Is our AgentLocator Service free?"). Rewrite to drop the framing entirely.
 - **Headshot above the fold.** Joshua's `Waist.png` is referenced in JSON-LD schema but does not appear in the visible body. Add a hero block or aside that puts a face on the page.
 - **Stat callouts.** No specific Joshua stats on the homepage ("$43,250 in client savings so far," "7 days to MLS," etc.). Pull from case files. Three callouts max.
 - **Sticky mobile CTA bar.** Bottom-of-viewport persistent CTA on mobile (≤767px) that opens the funnel in Sell mode. Increases mobile conversion materially per the prior audit.
