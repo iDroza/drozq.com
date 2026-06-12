@@ -4171,6 +4171,66 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   // valued). Synced to every registered page, so the global is always present.
   window.openFunnel = openFunnel;
 
+  // ---- Sticky mobile CTA bar ----------------------------------------------
+  // Mobile-only (max-width 767.98px) fixed bottom bar that opens the Sell
+  // funnel. Hidden until the visitor scrolls past the first screen so the hero
+  // pill stays the only CTA above the fold, hidden again while an input
+  // outside the overlay has focus (on-screen keyboard), and skipped entirely
+  // on /thank-you/ (post-conversion). z-index 900 keeps it under the funnel
+  // overlay (9999) and the mobile drawer (1100), so both naturally cover it.
+  (function stickyMobileCta() {
+    if (window.location.pathname.indexOf("/thank-you") === 0) return;
+    if (document.getElementById("drozq-sticky-cta")) return;
+
+    var styleEl = document.createElement("style");
+    styleEl.textContent =
+      "#drozq-sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:900;display:none;" +
+      "padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#fff;" +
+      "box-shadow:0 -4px 16px rgba(26,24,22,0.12);transform:translateY(110%);" +
+      "transition:transform .25s ease;}" +
+      "#drozq-sticky-cta.is-visible{transform:translateY(0);}" +
+      "#drozq-sticky-cta button{display:block;width:100%;height:48px;border:none;border-radius:9999px;" +
+      "background:#d92228;color:#fff;font-family:inherit;font-size:16px;font-weight:700;" +
+      "letter-spacing:.5px;cursor:pointer;}" +
+      "#drozq-sticky-cta button:active{background:#a92e2a;}" +
+      "@media (max-width:767.98px){#drozq-sticky-cta{display:block;}}" +
+      "@media (prefers-reduced-motion:reduce){#drozq-sticky-cta{transition:none;}}";
+    document.head.appendChild(styleEl);
+
+    var bar = document.createElement("div");
+    bar.id = "drozq-sticky-cta";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "What's my home worth?";
+    bar.appendChild(btn);
+    document.body.appendChild(bar);
+
+    btn.addEventListener("click", function () {
+      track("sticky_cta_click", { mode: "sell" });
+      openFunnel("", "sell");
+    });
+
+    var inputFocused = false;
+    function updateBar() {
+      var threshold = (window.innerHeight || 600) * 0.75;
+      var show = !inputFocused && (window.scrollY || window.pageYOffset || 0) > threshold;
+      bar.classList.toggle("is-visible", show);
+    }
+    window.addEventListener("scroll", updateBar, { passive: true });
+    document.addEventListener("focusin", function (e) {
+      var t = e.target;
+      if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) && overlay && !overlay.contains(t)) {
+        inputFocused = true;
+        updateBar();
+      }
+    });
+    document.addEventListener("focusout", function () {
+      inputFocused = false;
+      setTimeout(updateBar, 150);
+    });
+    updateBar();
+  })();
+
   function readPrefillFromForm(form) {
     if (!form) return "";
     var input = form.querySelector('input[name="location"]');

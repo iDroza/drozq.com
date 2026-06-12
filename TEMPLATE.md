@@ -958,6 +958,7 @@ All of this lives in the big `<script>` between `DROZQ_FUNNEL_JS_BEGIN/END`. One
 | Geo autofill | `fetch('/api/geo')` → replace "Columbus, OH" defaults across page + funnel placeholders. |
 | FAQ accordion | Delegated click handler on `button[aria-controls$="-content"]`. Toggles aria-expanded + animates max-height. Exclusive: opens one closes others. |
 | `track(event, props)` | Dual-fires PostHog (`window.posthog.capture`) + dataLayer (`dataLayer.push({event, ...props})`). Null-safe. |
+| Sticky mobile CTA bar | JS-injected `#drozq-sticky-cta` (fixed bottom bar + "What's my home worth?" pill button). Mobile only (`max-width: 767.98px`). Appears once the visitor scrolls past ~0.75 viewport heights (the hero pill stays the only above-the-fold CTA), hides while an input outside the overlay has focus (on-screen keyboard), skipped entirely on `/thank-you/`. Tap fires `sticky_cta_click` {mode:"sell"} then `openFunnel("", "sell")`. z-index 900: under the funnel overlay (9999) and mobile drawer (1100). Safe-area padding via `env(safe-area-inset-bottom)`. Do not add a second bottom-fixed element on mobile; this slot is taken. |
 
 The mobile-nav IIFE (separate `<script>` tag, OUTSIDE the funnel JS markers) wires:
 - `#drozq-hamburger` click → toggle drawer (`[data-testid="sidebar"][data-active="true"]`).
@@ -977,6 +978,7 @@ The mobile-nav IIFE (separate `<script>` tag, OUTSIDE the funnel JS markers) wir
 | Google Ads conversion tracking | Imports `generate_lead` from GA4. No AW-* tags on the site. |
 | gclid capture | Funnel IIFE on page load. Persists to 90-day cookie + sessionStorage. |
 | Funnel drop-off events | Funnel IIFE `track()` helper. Dual-fires PostHog + dataLayer. |
+| `sticky_cta_click` | Funnel IIFE sticky mobile CTA bar (mode always `sell`). Fires right before `funnel_open`. |
 | `lead_confirmed` event | Inline script at end of `/thank-you/index.html`. Gated by sessionStorage flag. |
 
 Do not install AW-* tags, direct gtag, additional pixels, or any tracking outside the GTM container.

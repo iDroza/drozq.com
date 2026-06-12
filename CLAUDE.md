@@ -110,7 +110,7 @@ The funnel exists in exactly one place: `/index.html`, between the markers `<!--
 
 - Never hand-edit a synced page's funnel block. If you discover drift, fix `/index.html` and re-sync. Drift caught by `--check` is a regression, not a feature.
 - Never split the funnel HTML and JS into separate sources. They co-evolve.
-- The funnel JS includes the Maps race guard, the Maps API loader, the gclid capture, `detectFunnelMode`, `openFunnel`, `attachSubmitHandler`, `showStep`, `wireTabs`, geo autofill, FAQ accordion wiring, and the PostHog `track()` helper. All of this syncs together because it is one logical unit.
+- The funnel JS includes the Maps race guard, the Maps API loader, the gclid capture, `detectFunnelMode`, `openFunnel`, `attachSubmitHandler`, `showStep`, `wireTabs`, geo autofill, FAQ accordion wiring, the sticky mobile CTA bar, and the PostHog `track()` helper. All of this syncs together because it is one logical unit.
 - Mobile-nav script and other page-level UI live OUTSIDE the funnel JS markers (mobile nav is a separate `<script>` tag after `DROZQ_FUNNEL_JS_END`). New pages copy that block verbatim from the homepage scaffold but it does not sync.
 
 ## Funnel architecture
@@ -195,6 +195,9 @@ The funnel JS dual-fires every transition through a `track(event, props)` helper
 | `funnel_submit_success` | `/api/lead` returns ok, before redirect | `mode` |
 | `funnel_submit_retry` | A transient failure (fetch reject / abort-timeout / 5xx / 429) right before an automatic retry | `mode`, `attempt`, `error_kind` |
 | `funnel_submit_error` | All 3 attempts failed: API non-ok, non-JSON, or fetch rejects | `mode`, `error_kind` (server / server_parse / network) |
+| `sticky_cta_click` | Sticky mobile CTA bar tapped (fires right before its `funnel_open`) | `mode` (always `sell`) |
+
+The sticky mobile CTA bar itself (JS-injected `#drozq-sticky-cta`, mobile-only, scroll-triggered, skipped on `/thank-you/`) is part of the synced funnel JS, so it ships on every registered page automatically. Spec in `TEMPLATE.md` §10.
 
 ### Google One Tap events
 
