@@ -15,5 +15,12 @@ Thumbs.db
 drozq-la-*.png
 sellersadvantage-la-*.png
 
+# Local verification screenshots (claude live-checks; never deploy these)
+verify-*.png
+
+# Python bytecode
+__pycache__/
+*.pyc
+
 # Google Ads API credentials (OAuth refresh token) - NEVER commit
 scripts/.google_ads.json
