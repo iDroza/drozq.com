@@ -856,6 +856,11 @@ Do **not** import the heavier legacy brand-mode footer with site-wide nav links.
 
 Full structure lives between `DROZQ_FUNNEL_HTML_BEGIN/END` in `/index.html` and is synced to every registered page by `scripts/sync_funnels.py`. Do not hand-edit on synced pages.
 
+**Working on the funnel safely (hard-won):**
+- **Funnel CSS is synced too.** The funnel `<style>` block sits INSIDE the `DROZQ_FUNNEL_HTML` markers, so new funnel classes added there propagate to every page. Put funnel CSS there, never in the page's main style block.
+- **Editing `/index.html`.** The funnel block has real newlines (Edit-tool friendly), but the rest of the `<body>` is one ~97KB minified line that the Read/Edit tools choke on. For the body line, or for guarded multi-spot funnel edits, use a Python/PowerShell script: read bytes, detect + preserve the BOM (currently none), `data.replace(old, new)` with `assert data.count(old) == N` BEFORE each replace (a mismatch aborts instead of silently doing a partial edit), assemble all edits in memory, write once with `newline=""`. Always assert the functional funnel IDs survived (`funnel-step5-name`, `funnel-step6-email/phone/submit`, etc.). After a Python write the Edit tool says "File has been modified since read" , re-Read or keep editing in Python.
+- **Verify without creating a lead.** Serve locally (`python -m http.server`), open the funnel via `window.openFunnel(address, mode)` (it's exposed on `window`), step through, force-load lazy images, and click submit with an empty field to confirm validation FIRES (don't actually submit, that posts a real lead). The JS submit handler reads `btn.textContent` dynamically, so changing a button label is safe. `fullPage` screenshots flatten the `position:fixed` overlay (shows the page behind) , use viewport screenshots. Cloudflare deploys in ~20s; poll a unique string to confirm before live-verifying.
+
 ### Overlay container
 
 ```css

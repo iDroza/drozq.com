@@ -109,6 +109,7 @@ The funnel exists in exactly one place: `/index.html`, between the markers `<!--
 **Hard rules:**
 
 - Never hand-edit a synced page's funnel block. If you discover drift, fix `/index.html` and re-sync. Drift caught by `--check` is a regression, not a feature.
+- Editing `/index.html` is script-only for the minified `<body>` line: Python/PowerShell with `assert data.count(old) == N` count-guards + BOM preservation, never a blind Read/Edit (the line is ~97KB; the tools choke). Funnel CSS goes INSIDE the `DROZQ_FUNNEL_HTML` markers (it syncs). Verify via `window.openFunnel(addr, mode)` on a local server + an empty-field submit to confirm validation fires, never a real submit. Full recipe: `TEMPLATE.md` §9 "Working on the funnel safely."
 - Never split the funnel HTML and JS into separate sources. They co-evolve.
 - The funnel JS includes the Maps race guard, the Maps API loader, the gclid capture, `detectFunnelMode`, `openFunnel`, `attachSubmitHandler`, `showStep`, `wireTabs`, geo autofill, FAQ accordion wiring, the sticky mobile CTA bar, and the PostHog `track()` helper. All of this syncs together because it is one logical unit.
 - Mobile-nav script and other page-level UI live OUTSIDE the funnel JS markers (mobile nav is a separate `<script>` tag after `DROZQ_FUNNEL_JS_END`). New pages copy that block verbatim from the homepage scaffold but it does not sync.
@@ -417,6 +418,8 @@ Per the auto-commit rule, push directly to main. No feature branches unless expl
 
 These apply to all pages. The site is one voice across all pages: confident, direct, first-person, low-bullshit. Joshua Guerrero, solo agent, speaking in his own voice.
 
+**Promise boldly.** The old "no claims you can't back up" rule is deleted. Lead with the biggest true outcome (an instant home valuation, sold in about six weeks, "$23,250 in seller credit negotiated"). Joshua decides what's too grandiose, not a hedging rule. Two guardrails still hold: the anti-promise ban below stays, and when copy promises something the backend does not yet deliver (e.g. "instant" delivery that isn't wired), flag it so it gets built. Ship the bold line; never quietly leave an unbacked promise sitting on a live, paid page.
+
 ### Hero opener: headline + one-sentence subhead, no eyebrow
 
 Every page on the homepage template (every page except the homepage itself) opens with a hero text section that has exactly **two** elements: a short headline and a short subhead. No eyebrow above the H1, no extra labels, no second paragraph. Body sections downstream can use the 11-12px uppercase eyebrow pattern freely; the opener cannot.
@@ -446,6 +449,9 @@ Every page should pull at least one of these levers. If copy doesn't, it's fille
 - Stock testimonial language ("5-star rated," "trusted advisor").
 - Star ratings or platform-aggregated reviews. The funnel and real numbers do this work better.
 - Surface-level "AI" and "automation" framing. The leverage Joshua has is real; the framing is "systems and discipline," not "I use software to do this."
+- **Exposing the plumbing.** Never name the vendor or tooling behind a system: no "API," "Rentcast," "Zillow data," "automated." Frame every tool and data source as Joshua's own earned system: "my own valuation model," "the same data investors and other buyers use, tuned by me," "every internal playbook I use." The edge should read as hard-won and exclusive, not a SaaS wrapper. (The flip side of the "systems and discipline" rule above.)
+- **Team / staff language.** Joshua is a solo agent. Never "our agents," "our team," "our agents may contact you," or anything implying a staff. Use "I", or "we" only as Joshua speaking for himself. (Site-wide fix: "our agents may contact you" became "we may contact you.")
+- **Loaded industry labels.** Watch the association a term plants. "Cash buyers" reads as lowball / distressed-flipper; say "investors and other buyers." Squint at every label for the worry or downgrade it implies.
 - Em dashes (U+2014). Banned everywhere.
 - **Anti-promise / negative-association copy.** Banned phrases: "no autodialer," "no spam," "no pressure," "no call center," "no script," "no pitch," "no obligation," "no team," "no sales script." The reasoning: most prospects aren't worrying about these things; explicitly denying them plants the worry. The rule is "never name the bad thing, even to deny it." Reframe with positive value: "direct callback within X hours," "an honest read on whether to list," "you walk away with better information." Exception: pricing statements that frame a real cost concern positively are fine ("No fee unless we list," "free CMA").
 
