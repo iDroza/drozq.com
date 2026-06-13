@@ -3277,8 +3277,8 @@
 #funnel-overlay .funnel-vp-note { font-size: 13px; line-height: 1.55; color: #6b6864; margin: 0; }
 #funnel-overlay .funnel-vp-covers { display: flex; gap: 7px; margin: 4px 0 14px; }
 #funnel-overlay .funnel-vp-covers img { width: 19%; height: auto; display: block; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.22)); }
-#funnel-overlay .funnel-vp-badge { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; margin-top: 20px; background: #2b2b2b; color: #fff; font-size: 12.5px; font-weight: 700; padding: 10px 16px; border-radius: 999px; }
-#funnel-overlay .funnel-vp-badge::before { content: "\26A1"; font-family: Arial, sans-serif; }
+#funnel-overlay .funnel-vp-badge { display: flex; align-items: center; gap: 9px; margin-top: 20px; padding-top: 18px; border-top: 1px solid #ece7e1; color: #2b2b2b; font-size: 13px; font-weight: 700; letter-spacing: 0.2px; }
+#funnel-overlay .funnel-vp-badge::before { content: "\26A1"; color: #d92228; font-size: 16px; font-family: Arial, sans-serif; }
 #funnel-overlay .funnel-timeline-sec { display: none; }
 #funnel-overlay .funnel-timeline-cap { font-size: 11.5px; font-weight: 800; letter-spacing: 0.7px; text-transform: uppercase; color: #8a857e; text-align: center; margin: 0 0 12px; }
 #funnel-overlay .funnel-timeline-sec img { width: 100%; height: auto; display: block; border-radius: 12px; }
@@ -3655,7 +3655,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   </div>
   <div class="funnel-step" data-funnel="sell" data-step="2">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <h2>What's your name?</h2>
+    <h2>What's your full name?</h2>
     <input type="text" id="funnel-step5-name" name="full_name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
     <div class="funnel-error" role="alert" id="funnel-step5-name-error"></div>
     <button type="button" id="funnel-step5-continue" class="funnel-cta">Continue</button>
@@ -3670,7 +3670,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <button type="button" id="funnel-step6-submit" class="funnel-cta">Send My Report + 5 Playbooks</button>
     <div class="funnel-error" role="alert" id="funnel-step6-submit-error"></div>
     <div class="funnel-assurance"><strong>Your valuation and all 5 playbooks hit your inbox the instant you submit.</strong> Reviewed personally. Licensed in California, DRE #02267255.</div>
-    <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your home value.</div>
+    <div class="funnel-fineprint">By submitting you agree that we may contact you about your home value.</div>
   </div>
 
   <!-- ============ BUY FUNNEL ============ -->
@@ -4047,7 +4047,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     var vb = document.getElementById("funnel-valuebar-text");
     if (vb) {
       var VALUEBAR = {
-        sell: "<strong>Your instant home valuation + 5 seller playbooks.</strong> Free <span class=\"fv-dot\">·</span> delivered the moment you finish",
+        sell: "<strong>Your instant home valuation + BONUS 5 seller playbooks.</strong> Free <span class=\"fv-dot\">·</span> delivered the moment you finish",
         buy: "<strong>Your buyer's market brief.</strong> Free <span class=\"fv-dot\">·</span> in your inbox within 24 hours",
         sellandbuy: "<strong>Your move playbook.</strong> Free <span class=\"fv-dot\">·</span> in your inbox within 24 hours"
       };
@@ -4073,12 +4073,13 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
           '<div class="funnel-vp-title">What your home is really worth, to the penny</div>' +
           '<ul class="funnel-vp-list"><li>Its true market value today, the number a real buyer pays</li>' +
           '<li>What it would cost to rebuild from the dirt up</li>' +
-          '<li>A same-day cash offer, calculated to the dollar</li>' +
+          '<li>A same-day cash offer, calculated to the dollar (if you want it)</li>' +
           '<li>Every comparable sale on your street, adjusted line by line</li></ul>' +
-          '<div class="funnel-vp-note">Run through my own valuation model: the same data the cash buyers use, tuned by me. Not a Zestimate guess.</div></div>' +
-          '<div class="funnel-vp-block"><div class="funnel-vp-eyebrow">Plus all 5 seller playbooks, free</div>' +
+          '<div class="funnel-vp-note">Run through my own valuation model: the same data investors and other buyers use, tuned by me. Not a Zestimate guess.</div></div>' +
+          '<div class="funnel-vp-block"><div class="funnel-vp-eyebrow">The bonus bundle</div>' +
+          '<div class="funnel-vp-title">Every internal document I use to get a home sold</div>' +
           '<div class="funnel-vp-covers"><img src="/media/images/pb-pricing.webp" alt="Irvine Pricing Playbook" loading="lazy"><img src="/media/images/pb-marketing.webp" alt="Irvine Marketing Playbook" loading="lazy"><img src="/media/images/pb-negotiation.webp" alt="Irvine Negotiation Playbook" loading="lazy"><img src="/media/images/pb-speed.webp" alt="Irvine Speed Playbook" loading="lazy"><img src="/media/images/pb-concierge.webp" alt="Irvine Concierge Playbook" loading="lazy"></div>' +
-          '<div class="funnel-vp-note">Every system I use to get homes sold, yours to keep even if you never list with me. Enough to do it yourself if you wanted to.</div></div>' +
+          '<div class="funnel-vp-note">Pricing, marketing, negotiation, speed, concierge, the playbooks normally reserved for a signed client. All yours free the instant you submit, because the fastest way to prove how deep this runs is to just hand it over.</div></div>' +
           '<div class="funnel-vp-badge">Delivered the instant you hit submit</div>',
         buy: '<div class="funnel-dv-visual" aria-hidden="true"><div class="dv-bar"></div><div class="dv-row"><span></span><b></b></div><div class="dv-row"><span></span><b></b></div><div class="dv-row"><span></span><b></b></div><div class="dv-line s"></div></div>' +
           DV_BODY("The homes worth your money, before the crowd",
