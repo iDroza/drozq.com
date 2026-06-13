@@ -1,5 +1,7 @@
 # Sellers, Max-Intent Search Campaign
 
+> **SUPERSEDED (2026-06-13) by [`sellers-valuation-rebuild-2026-06.md`](sellers-valuation-rebuild-2026-06.md).** This doc's positioning (§0 cohesion contract, §4 keywords, §7 ad copy, §8 sitelinks) was written for the OLD "Compare Agents" homepage. The homepage is now the **instant home valuation + 5 playbooks** lead magnet, so all ad copy and the cohesion contract changed. The still-valid *operational* sections , pre-flight tracking (§1), audience signals (§6), tracking sanity checks (§9), launch sequence (§10), budget math (§12), kill switches (§14) , remain in force and are referenced by the rebuild. Read the rebuild doc first.
+
 Build spec for a Google Search campaign that targets **high-intent home sellers in Irvine and Orange County**. Optimized for **conversion rate over volume**: every keyword, every word of ad copy, and every asset is anchored to what the landing page (drozq.com) actually promises and what the on-page funnel actually delivers. Cohesion is the entire thesis: ad query = ad copy = landing-page hero = funnel CTA. Zero message gap.
 
 This is **NOT** the high-painpoint campaign (pre-foreclosure, divorce, probate, inheritance). That campaign is built next and intentionally carved out as negatives here so the two cannot cannibalize.

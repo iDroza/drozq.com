@@ -8,6 +8,30 @@ Data is pulled with `python scripts/ads.py` (see `notes/mcp-workarounds.md`).
 
 ---
 
+## 2026-06-13 — Valuation rebuild keeps the bid strategy UNCHANGED
+
+### Decision
+
+The Sellers campaign is being rebuilt to the new homepage (positioning flipped from "compare agents" to the **instant home valuation + 5 playbooks** lead magnet; see `sellers-valuation-rebuild-2026-06.md`). The **bid strategy does not change.** Keep the portfolio **Target CPA `Sellers Conversions + $15 cap`** (target $400, max CPC $15) and apply that same portfolio strategy to the new campaign(s). Max Clicks remains rejected (Joshua, "that strategy doesn't work"). The rebuild changes copy / keywords / landing-page match, not the economics decision from 2026-05-28.
+
+### Why nothing changes on bidding
+
+The 05-28 decision was about *controlling per-click cost while staying on conversion bidding* given thin conversion data. That situation still holds: the old window banked ~0,1 clean conversions, so we are still seeding. A new campaign with a new LP starts cold either way; the cap is still the right guardrail.
+
+### What the rebuild SHOULD change (downstream)
+
+- **CVR should rise well above the old ~2.86%.** The new homepage is a purpose-built instant-valuation lead magnet (address , value + 5 playbooks instantly), and message match is now tight (valuation query , "instant valuation" ad , valuation homepage). Higher CVR at the same ~$9,11 effective CPC means **lower CPL and faster conversion accumulation.**
+- **Conversion signal is clean** since the 2026-05-29 GTM trigger fix (`generate_lead` fires on `lead_confirmed`, confirmed working). So tCPA can be trusted as data accumulates.
+- **Reaching the exit criteria faster.** Per the 05-28 exit criteria, once ~15,30 conversions bank in a trailing 30 days, set a real data-driven Target CPA at ~1.2x the observed clean CPL and loosen/remove the $15 cap. The rebuild should get us there in weeks, not months.
+
+### Watch items
+
+1. Apply the **same portfolio strategy** to the new campaign(s) (portfolio strategies span campaigns) , do not create a fresh strategy and reset learning needlessly.
+2. If CPL drops fast (likely), don't prematurely yank the cap; wait for the 15,30 conversion threshold, then graduate.
+3. Geo widened to **all of Orange County** (county-level) per Joshua, vs the old city+ZIP list , watch that county-level reach doesn't pull lower-intent fringe; the search-terms report + negatives are the control, not the bid.
+
+---
+
 ## 2026-05-28 — Cap CPC at $15 via portfolio Target CPA (stay on conversion bidding)
 
 ### Decision
