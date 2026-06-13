@@ -1,44 +1,48 @@
-# Cash-Offer Intercept Campaign (the wholesaler-competitor)
+# Cash-Offer / We-Buy-Houses Campaign (VERBATIM replica)
 
-Build spec for a Google Search campaign that **intercepts the "we buy houses / sell my house fast / cash offer / sell as-is" searcher** and converts them with the equity-preservation wedge. This is the third seller lane. It is deliberately walled off from the other two:
+Direct replication of the Wholesaling PPC playbook for Joshua's cash-buyer operation. We have cash buyers who need deals. We run the wholesalers' **exact ad copy**, geo-swapped from their markets (UT / MD / VA / SC / Toronto) to SoCal (Irvine / Orange County / LA). Structure, copy, extensions, and funnel shape mirror theirs 1:1.
 
-- `sellers-max-intent-campaign.md` owns traditional intent (compare agents, home value report, commission). LP = homepage.
-- `distressed-sellers-strategy.md` owns high-painpoint intent (foreclosure, divorce, probate, short sale). LP = `/relief/`.
-- **This campaign owns the convenience / cash-curious seller.** LP = `/value/`.
+- **Copy:** their verbatim headlines, descriptions, sitelinks, callouts (see §1 source corpus). Geo tokens are the only edit.
+- **Lander:** new cash-offer lander, built next (Carrot-style: address-first form, instant cash-offer framing). Final URL is a placeholder until it ships.
+- **Goal:** motivated-seller leads to feed the cash-buyer network.
 
-Both existing campaigns already list `we buy houses`, `cash offer`, `sell my house fast cash`, `instant offer` as **negatives**, so this intent is currently unclaimed and waiting. This campaign claims it.
+Reverse-engineered from the top advertisers: Property Sell Wise (74 live ads), 4 Brothers (14), Dynamic Home Buyers (14), GTA House Buyers (13). Full teardown: `Downloads/wholesaling-ppc-teardown.md`. Plan: **replicate, test 1 month, iterate.**
 
-**Origin:** reverse-engineered from the Wholesaling PPC agency and its top advertisers (Property Sell Wise 74 ads, 4 Brothers 14, Dynamic Home Buyers 14, GTA House Buyers 13). Full teardown in `Downloads/wholesaling-ppc-teardown.md`. Plan per Joshua: **replicate their setup first, run a month of testing, then iterate.**
-
-*Created: 2026-06-13.*
+*Created 2026-06-13. Supersedes the prior agent-adapted draft.*
 
 ---
 
-## 0. The strategy in one paragraph (read this first)
+## 1. Verbatim source corpus (the swipe file)
 
-The wholesalers win the click with **speed-to-a-number** ("Get an offer in 60 seconds," "Cash offer in 7 minutes," "How much is your house worth?") and a **cash + as-is + no-fees** offer. We cannot and will not pretend to be a cash buyer (Joshua is a licensed agent, see §14). Instead we **take their exact keywords and their exact hook, and point it at a better, honest payoff**: drozq.com/value returns an *instant* valuation that shows the seller their true market value, a same-day cash-offer number, AND what they would net listing on the market. That single screen exposes the wholesaler's lowball. We use their copy structure verbatim; we swap the one claim we can't make ("we buy your house") for the one that beats it ("see what your house is really worth, then choose"). Per the distressed-sellers doc, this equity-preservation framing is "the central pitch."
+Captured live from the Google Ads Transparency Center. This is what we're replicating, word for word.
 
-### The four cohesion promises every ad MUST echo
+**4 Brothers Buy Houses (DC/MD/VA):**
+- H: "We'll Buy Your Maryland House - How Much Is Your House Worth?"
+- H: "We'll Buy Your Virginia House - We'll Beat Any Serious Offers"
+- H: "4 Brothers Buy Houses - Highest-Rated Cash Home Buyers"
+- H: "We Buy Unlisted Houses - Get a Fair Cash Offer Today"
+- D: "Enter Your Maryland Address And Receive a Fair Cash Offer Within 7 Minutes. We Pay Cash For All Kinds Of Properties. Any Condition & Situation. No Commitment Or Pressure. Cash Offer In 7 Minutes. Simple Process."
+- D: "Enter Your Virginia Address And Receive a Fair Cash Offer Within 7 Minutes. Sell As-Is, Any Condition. We Pay All Closing Costs. No Repairs Necessary."
+- D: "#1 Trusted Home Buyer in Virginia, Maryland and Washington DC since 2009."
 
-1. **Your instant home valuation** (the `/value/` hero: "Your instant home valuation," "Estimated market value today")
-2. **Cash offer AND market value, side by side** (the wedge that exposes the lowball)
-3. **Keep your equity** (cash buyers pay 10 to 30% under market; list and keep the difference)
-4. **Free, no obligation, on your timeline** (matches the live funnel assurance + DRE #02267255)
+**Property Sell Wise (Utah + Boston):**
+- H: "Get An Offer Within 60 Seconds - We Pay Cash For Utah Houses"
+- H: "Trust Property Sellwise Today - Property Sellwise Buys Fast"
+- H: "We Pay Cash For Utah Houses - All Fees Paid. Make No Repairs"
+- H: "We Buy Houses In Boston" / "Skip Agents And Sell Direct"
+- D: "Don't Fix It Sell It. We Buy Utah Houses Fast For Cash In 7 Days. Save Time And Money."
+- D: "Sell Your House Directly To Property Sellwise And Skip Agents Today. Contact Us Today! Property Sellwise Buys Homes Fast With Guaranteed Cash Offers For Sellers. Call Us Now! Boston #1 Home Buyers. A+ BBB."
+- Sitelinks: "Reviews" / "We Buy Any Condition, AS-IS" / "Get A Quote Within 60 Seconds" / "Get Your Cash Offer" / "About Us"
 
-Anything outside those four breaks message match with `/value/`. Anything inside compounds it.
+**Dynamic Home Buyers (Myrtle Beach SC):**
+- H: "We Pay Cash For SC Houses - We Buy Any Condition, AS-IS"
+- H: "Companies That Buy Houses SC - Get An Offer In Seconds"
+- D: "When You Just Need To Be Done With It. Check Out Our Local Myrtle Beach Reviews. Fill Out Short Form For An Immediate Cash Offer. Sound Fair Enough?"
+- Sitelink: "How Does This Work?"
 
----
-
-## 1. Pre-flight (gates clean Smart Bidding signal, do before launch)
-
-Same gates as the max-intent campaign. Do not skip.
-
-1. **GTM `generate_lead` trigger fix must be live** (fire on `lead_confirmed` custom event, not `/thank-you/` pageview). Until it lands, stay on Maximize Conversions; do NOT move to tCPA on inflated signal.
-2. **Google Ads <-> GA4 link healthy**, `generate_lead` importing with recent counts.
-3. **Auto-tagging ON** (gclid lands; the page already captures it).
-4. **IP-exclude** Joshua's home/office/VPN IPs. Cash-term CPCs are high; self-clicks are expensive here.
-5. **Verified advertiser** identity in place ("Joshua A Guerrero"); submit "Drozq" as business-name asset.
-6. **Confirm `/value/` is the funnel-synced Sell mode** and that an address submit fires `generate_lead` with `funnel_mode=sell`. (It opens the Sell funnel via `openFunnel(address,"sell")`.)
+**GTA House Buyers (Toronto):**
+- H: "We are Toronto's #1 Home Buyer"
+- D: "Toronto's #1 Home Buying Company. Sell As Is. Close in 7 Days."
 
 ---
 
@@ -46,579 +50,396 @@ Same gates as the max-intent campaign. Do not skip.
 
 | Field | Value |
 |---|---|
-| **Campaign name** | `Search \| Sellers \| Cash-Offer-Intercept \| Irvine+OC` |
+| **Campaign name** | `Search \| Cash-Buyers \| We-Buy-Houses \| OC+LA` |
 | **Goal** | Leads |
 | **Type** | Search |
-| **Conversion goals** | `Leads` only. Account-default `generate_lead` Primary. Everything else Secondary. (Segmentation by campaign is automatic in Ads; optional dedicated conversion in §11 iteration.) |
+| **Conversion goals** | `Leads`. Optimize to the lander's lead submit (wire conversion when the lander ships). |
 | **Networks** | Search: ON. **Search Partners: OFF. Display Expansion: OFF.** |
-| **Locations (Presence, NOT Interest)** | "People in or regularly in your targeted locations" |
-| **Location targets** | Irvine; Tustin; Newport Beach; Costa Mesa; Lake Forest; Mission Viejo; Aliso Viejo; Laguna Hills; Laguna Niguel; Orange; Yorba Linda; Rancho Santa Margarita; Ladera Ranch; Dana Point; Santa Ana; Anaheim; Huntington Beach; Fountain Valley; Garden Grove; Westminster. (Broader than max-intent: cash/fast intent skews to a wider, less-luxury slice of OC. Add ZIPs 92807/92808 Anaheim Hills; 92610 Foothill Ranch.) |
-| **Languages** | English only. |
+| **Locations (Presence)** | Orange County + South LA County. Start cities: Irvine, Santa Ana, Anaheim, Huntington Beach, Costa Mesa, Garden Grove, Orange, Tustin, Fountain Valley, Westminster, Lake Forest, Mission Viejo, Long Beach, Lakewood, Cerritos, Whittier, Downey, Norwalk, Bellflower. (Cash buyers close anywhere in SoCal; widen to IE west once volume proves out: Corona, Riverside, Ontario, Chino, Moreno Valley.) |
+| **Languages** | English (+ add Spanish once a Spanish lander exists; cash-seller traffic skews bilingual). |
 | **Audiences** | Observation, NOT Targeting. See §6. |
-| **Devices** | All, no adjustment at launch. (Expect mobile-heavy; cash-seller traffic is ~70% mobile.) |
+| **Devices** | All. Expect ~70% mobile. |
 | **Ad rotation** | Optimize. |
-| **Bidding** | Phase 1 (week 0 to ~30 conv): **Maximize Conversions**, no cap. Phase 2: **Target CPA** at ~1.2x observed CPL. |
-| **Daily budget** | **$120/day** floor. Cash terms in SoCal run $20 to $55 CPC; at ~$35 CPC and ~8% lead rate, expected CPL ~$440. $120/day x ~21 days seeds ~5 to 7 conv/wk. Compress to $200/day to reach Phase 2 faster. |
+| **Bidding** | Phase 1 (to ~30 conv): **Maximize Conversions**, no cap. Phase 2: **Target CPA** at ~1.2x observed CPL. |
+| **Daily budget** | **$120/day** floor. SoCal "we buy houses / cash offer" CPC runs $20 to $55; at ~$35 CPC and ~8% lead rate, expect CPL ~$440. Compress to $200/day to reach Phase 2 in ~2 weeks. |
+| **Final URL** | **`https://drozq.com/<new-cash-lander>/` (TBD, building next).** |
 | **Final URL suffix** | `utm_source=google&utm_medium=cpc&utm_campaign={campaignid}&utm_content={creative}&utm_term={keyword}&utm_matchtype={matchtype}` |
-| **Start/end** | ASAP after pre-flight. No end date. |
-
-Final URL for every ad group: **`https://drozq.com/value/`**
 
 ---
 
-## 3. Ad group structure (mirrors the wholesalers' four ad themes)
+## 3. Ad group structure (their four themes, exactly)
 
-Reverse-engineered from their accounts: they cluster ads into (1) cash/we-buy-houses, (2) sell-fast, (3) as-is/any-condition, (4) cash-offer-for-house. We mirror it exactly, theme-per-ad-group, geo via keyword + `{LOCATION(City)}` insertion.
+| Ad group | Their theme | Keyword core |
+|---|---|---|
+| `AG1 \| We-Buy-Houses` | we buy houses / cash home buyers | "we buy houses [city]" |
+| `AG2 \| Sell-House-Fast` | sell my house fast | "sell my house fast [city]" |
+| `AG3 \| Sell-As-Is` | as-is / any condition / no repairs | "sell my house as is" |
+| `AG4 \| Cash-Offer` | cash offer / how much is it worth | "cash offer for my house" |
 
-| Ad group | Intercepts their theme | Their hook we're swiping | `/value/` anchor |
-|---|---|---|---|
-| `AG1 \| We-Buy-Houses` | "we buy houses [city]," "cash home buyers" | "We Buy Houses, Any Condition" | "Estimated market value today" |
-| `AG2 \| Sell-My-House-Fast` | "sell my house fast [city]" | "Sell Your House Fast, 7 Days" | "Your instant home valuation" |
-| `AG3 \| Sell-As-Is` | "sell my house as is," "no repairs" | "Sell As-Is, We Pay Closing" | cash-offer + fix-and-list upside |
-| `AG4 \| Cash-Offer-For-House` | "cash offer for my house" | "Get a Fair Cash Offer Today" | cash offer vs. market spread |
-
-Display paths per ad group below in §7.
+Geo via `{LOCATION(City)}` insertion in headlines + geo in keywords. Option (their method): hard-split per city into separate ad groups once a city earns volume.
 
 ---
 
 ## 4. Keywords per ad group
 
-**Match-type policy at launch:** Exact-heavy + small Phrase. NO Broad until the negative list is locked and Phase 2 is live (then test Broad in AG1/AG2 only). Notation: `[exact]`, `"phrase"`.
+Exact-heavy + small Phrase at launch. No Broad until negatives are locked + Phase 2 live (then Broad in AG1/AG2). `[exact]`, `"phrase"`.
 
-### AG1 - We-Buy-Houses  (display path `/Irvine` `/Home-Value`)
-
-Exact:
+### AG1 - We-Buy-Houses  (paths `/Cash-Offer` `/Any-Condition`)
 ```
 [we buy houses irvine]
 [we buy houses orange county]
-[cash home buyers irvine]
-[cash home buyers orange county]
-[companies that buy houses irvine]
-[home buyers irvine]
-[sell my house to investor irvine]
 [we buy houses santa ana]
 [we buy houses anaheim]
 [we buy houses huntington beach]
-[cash for houses orange county]
+[we buy houses long beach]
+[cash home buyers orange county]
+[cash home buyers los angeles]
+[companies that buy houses orange county]
 [house buying companies orange county]
+[cash for houses orange county]
+[sell my house to investor orange county]
 ```
-Phrase:
-```
-"we buy houses orange county"
-"cash home buyers near me"
-"companies that buy houses"
-"cash for my house"
-```
+Phrase: `"we buy houses"` `"cash home buyers near me"` `"companies that buy houses"` `"cash for my house"`
 
-### AG2 - Sell-My-House-Fast  (display path `/Irvine` `/Sell-Fast`)
-
-Exact:
+### AG2 - Sell-House-Fast  (paths `/Cash-Offer` `/7-Day-Close`)
 ```
 [sell my house fast irvine]
 [sell my house fast orange county]
-[sell house fast irvine]
-[need to sell my house fast]
-[sell my house quickly irvine]
-[sell my home fast orange county]
-[how to sell my house fast]
 [sell my house fast santa ana]
 [sell my house fast anaheim]
-[sell my house fast huntington beach]
+[sell my house fast long beach]
 [sell house fast for cash orange county]
-[quick house sale irvine]
+[need to sell my house fast]
+[sell my house quickly orange county]
+[how to sell my house fast]
+[quick house sale orange county]
+[sell my home fast los angeles]
+[sell house fast cash los angeles]
 ```
-Phrase:
-```
-"sell my house fast"
-"sell house fast orange county"
-"need to sell my house fast"
-"sell my home quickly"
-```
+Phrase: `"sell my house fast"` `"sell house fast for cash"` `"need to sell my house fast"` `"sell my home quickly"`
 
-### AG3 - Sell-As-Is  (display path `/Irvine` `/Sell-As-Is`)
-
-Exact:
+### AG3 - Sell-As-Is  (paths `/Sell-As-Is` `/No-Repairs`)
 ```
-[sell my house as is irvine]
-[sell house as is orange county]
+[sell my house as is orange county]
+[sell house as is for cash]
 [sell my house without repairs]
 [sell house any condition orange county]
-[sell house that needs work irvine]
-[sell my house as is for cash]
+[sell house that needs work]
 [sell ugly house orange county]
-[sell fixer upper irvine]
+[sell fixer upper orange county]
 [as is home sale orange county]
-[sell my house no repairs orange county]
+[sell my house no repairs]
+[sell damaged house orange county]
 ```
-Phrase:
-```
-"sell my house as is"
-"sell house any condition"
-"sell house without repairs"
-"sell house that needs work"
-```
+Phrase: `"sell my house as is"` `"sell house any condition"` `"sell house without repairs"` `"sell house that needs work"`
 
-### AG4 - Cash-Offer-For-House  (display path `/Irvine` `/Cash-Offer`)
-
-Exact:
+### AG4 - Cash-Offer  (paths `/Cash-Offer` `/60-Seconds`)
 ```
-[cash offer for my house irvine]
-[cash offer for house orange county]
+[cash offer for my house orange county]
+[cash offer for house los angeles]
 [get a cash offer on my house]
 [fair cash offer for my home]
-[cash offer my house irvine]
 [instant cash offer house orange county]
-[sell house for cash irvine]
-[cash offer house santa ana]
-[cash offer house anaheim]
+[sell house for cash orange county]
+[cash offer my house santa ana]
+[cash offer my house anaheim]
 [how much will a cash buyer pay]
+[same day cash offer house]
 ```
-Phrase:
-```
-"cash offer for my house"
-"get a cash offer on my home"
-"sell my house for cash"
-"fair cash offer house"
-```
+Phrase: `"cash offer for my house"` `"get a cash offer on my home"` `"sell my house for cash"` `"instant cash offer"`
 
 ---
 
-## 5. Negative keywords
+## 5. Negative keywords  (`Negatives | Cash-Buyers`)
 
-Create shared list **`Negatives | Cash-Offer Funnel`**. Attach to this campaign. It walls off the OTHER two campaigns and the usual junk.
+Tuned for a cash-buyer campaign: keep distressed/motivated terms IN (they're prime deals), filter only true junk.
 
-### Wall off Max-Intent territory (the homepage campaign owns these)
+**Jobs / education / how-to-invest (tire-kickers + competitors):**
 ```
-compare agents
-compare realtors
-listing agent
-best real estate agent
-realtor commission
-agent commission rates
-home value report
-free cma
-what is my home worth
-top listing agent
-```
-
-### Wall off Distressed territory (the /relief/ campaign owns these)
-```
-foreclosure
-pre foreclosure
-stop foreclosure
-behind on mortgage
-trustee sale
-notice of default
-short sale
-underwater mortgage
-divorce
-probate
-inherited property
-sell my parents house
-```
-
-### Investor / wholesaler-side (we want SELLERS, not buyers or competitors)
-```
+we buy houses jobs
+real estate investor jobs
 how to wholesale real estate
-wholesale real estate
-cash buyers list
-become a cash home buyer
-real estate investor course
+wholesale real estate course
 how to flip houses
-investment property for sale
-buy houses cheap
-sell my house fast jobs
-real estate wholesaling
+become a cash home buyer
+cash buyers list
+real estate investing course
+how to start wholesaling
 ```
-
-### DIY / FSBO / won't hire
+**DIY research / not selling:**
 ```
-for sale by owner
-fsbo
-sell house without agent
-sell my house myself
-flat fee mls
-flat fee listing
-1 percent commission
-```
-
-### Research / not ready
-```
-how does selling a house work
-how to sell a house
-home selling process
-closing costs calculator
-realtor fees explained
 zillow
 redfin
 zestimate
 trulia
+realtor.com
+home value calculator
 reddit
 youtube
+how does selling a house work
 ```
-
-### Rentals / wrong owner type
+**Rentals / wrong intent:**
 ```
 rent
 rental
 for rent
-landlord
-tenant
+apartment
+apartments
+lease
 section 8
-property management
 ```
-
-### Buyers (out of scope)
+**Buyers (we want sellers):**
 ```
-buy a home
+houses for sale orange county
 homes for sale
-houses for sale
+buy a house orange county
 first time home buyer
-buyers agent
 homes for rent
+cheap houses for sale
+foreclosures for sale
+buy foreclosure
 ```
-
-### Out-of-state geo (block search-network mismatch)
-```
-texas
-florida
-new york
-arizona
-phoenix
-nevada
-las vegas
-georgia
-chicago
-ohio
-columbus
-```
-
-### Brand defense (don't pay to lose / don't fund competitors)
+**Competitor cash-buyer / iBuyer brands (don't fund them):**
 ```
 opendoor
 offerpad
 homevestors
 we buy ugly houses
-homelight
-ideal agent
-upnest
-clever real estate
+sundae
+homelight simple sale
+osgood home buyers
 ```
-*(Note: iBuyer brand intercept - bidding ON `opendoor`/`offerpad` with the equity wedge - is a deliberate Month-2 test, see §11. At launch we exclude them to keep QS and CPL clean.)*
-
-### Campaign-level negatives
+**Out-of-state geo:**
+```
+texas
+florida
+arizona
+phoenix
+nevada
+las vegas
+georgia
+ohio
+```
+**Campaign-level:**
 ```
 drozq jobs
 drozq careers
-joshua guerrero salary
-agent locator login
 ```
 
----
-
-## 6. Audience signals (Observation, NOT Targeting)
-
-Collect data without restricting reach. Bid up winners in Phase 2.
-
-**In-Market:** Residential Properties (For Sale); Residential Properties / Selling; Moving Services; Real Estate Services.
-**Detailed Demographics:** Homeowners; Household Income all tiers (cash/fast intent is income-broad, unlike max-intent which skews top-30%); Age 35 to 64+.
-**Custom segment `Cash-Curious Sellers`:** People who searched: we buy houses, sell my house fast, cash offer for my house, sell house as is, companies that buy houses, sell house for cash.
-**Custom segment `iBuyer Researchers`:** People who browsed opendoor.com/sell, offerpad.com, homelight.com/simple-sale, zillow.com (sell).
-**Remarketing:** `/value/` visitors who did NOT submit in 30 days (build in GA4, layer when >1,000).
-
-**Demographic exclusions:** none at launch.
+Note: foreclosure, probate, divorce, inherited, behind on mortgage, tenant-occupied, relocation = KEPT (not negatived). These are the highest-converting motivated-seller deals for a cash buyer. (This crosses the agent-side `/relief/` plan; for the cash operation, these belong here. Decide which lane owns them before both go live.)
 
 ---
 
-## 7. Ads (RSA per ad group)
+## 6. RSAs per ad group (VERBATIM, geo-swapped, char-verified <=30 / <=90)
 
-One RSA per ad group at launch, all 15 headlines and 4 descriptions filled, pin only #1 and #2. Add a second RSA per ad group in week 3. **Every headline <=30 chars, every description <=90 chars (verified).** `{LOCATION(City):Irvine}` defaults to "Irvine."
+`{LOCATION(City):Irvine}` defaults to "Irvine." Their casing kept where it reads as ad-style; normalized where needed.
 
 ### AG1 RSA - We-Buy-Houses
 **Pin:** H1 -> pos 1, H2 -> pos 2.
 **Headlines (15):**
-1. `What's Your Home Really Worth?` *(pin 1)*
-2. `See Your Cash Offer + Value` *(pin 2)*
-3. `Don't Take a Lowball Offer`
-4. `Instant Home Valuation`
-5. `We Buy Houses? See Real Value`
-6. `Cash Offer vs. Market Price`
-7. `Sell Fast, Keep Your Equity`
-8. `Sell Your {LOCATION(City):Irvine} Home As-Is`
-9. `Cash Buyers Pay Less. See.`
-10. `Free Home Value Report`
-11. `Know Your Number First`
-12. `Sell On Your Own Timeline`
-13. `Orange County Home Values`
-14. `A Real Offer, Not a Lowball`
-15. `Reviewed by a Licensed Agent`
+1. `We Buy Houses {LOCATION(City):Irvine}` *(pin 1)*
+2. `Get a Fair Cash Offer Today` *(pin 2)*
+3. `We Buy Any Condition, AS-IS`
+4. `Cash Offer In 7 Minutes`
+5. `We Pay All Closing Costs`
+6. `No Repairs Necessary`
+7. `Highest-Rated Cash Home Buyers`
+8. `Companies That Buy Houses`
+9. `Sell As Is. Close in 7 Days`
+10. `Guaranteed Cash Offers`
+11. `Skip Agents And Sell Direct`
+12. `We Buy Unlisted Houses`
+13. `Simple Process`
+14. `Save Time And Money`
+15. `We Buy Houses In {LOCATION(City):Irvine}`
 
 **Descriptions (4):**
-1. `See your home's true market value and a real cash-offer number, free and instant.`
-2. `Cash buyers pay 10-30% below market. See what you'd net listing it instead.`
-3. `Enter your address and get your instant valuation. Keep your equity. Sell for more.`
-4. `Free, no obligation, reviewed personally by a licensed Irvine agent. DRE #02267255.`
+1. `We pay cash for all kinds of properties. Any condition & situation.`
+2. `We pay all closing costs. No repairs necessary. Sell as-is, any condition.`
+3. `We buy homes fast with guaranteed cash offers for sellers. Call us now!`
+4. `Enter your address and receive a fair cash offer within 7 minutes.`
 
-**Display path:** `/Irvine` `/Home-Value`
+**Paths:** `/Cash-Offer` `/Any-Condition`
 
-### AG2 RSA - Sell-My-House-Fast
+### AG2 RSA - Sell-House-Fast
 **Pin:** H1 -> pos 1, H2 -> pos 2.
 **Headlines (15):**
-1. `Sell Your {LOCATION(City):Irvine} Home Fast` *(pin 1)*
-2. `Cash Offer + Market Value` *(pin 2)*
-3. `Sell Fast Without Selling Low`
-4. `Your Instant Home Valuation`
-5. `Sell On Your Timeline`
-6. `Fast Sale, Full Value`
-7. `See Your Cash Offer Today`
-8. `Don't Leave Equity Behind`
-9. `Need to Sell Fast? Start Here`
-10. `Free, No-Obligation Valuation`
-11. `Sell for More Than a Lowball`
-12. `Skip the Cash-Buyer Discount`
-13. `Top Dollar, On Your Schedule`
-14. `Orange County Home Selling`
-15. `Reviewed by Joshua, DRE Lic.`
+1. `Sell Your House Fast` *(pin 1)*
+2. `Cash Offer In 7 Minutes` *(pin 2)*
+3. `Get An Offer Within 60 Seconds`
+4. `We Buy {LOCATION(City):Irvine} Houses Fast`
+5. `Sell As Is. Close in 7 Days`
+6. `Don't Fix It Sell It`
+7. `We Pay All Closing Costs`
+8. `Save Time And Money`
+9. `Get a Fair Cash Offer Today`
+10. `No Repairs Necessary`
+11. `Simple Process`
+12. `We Buy Any Condition, AS-IS`
+13. `Guaranteed Cash Offers`
+14. `Skip Agents And Sell Direct`
+15. `How Much Is Your House Worth?`
 
 **Descriptions (4):**
-1. `Need to sell fast? See your instant valuation and your options before you decide.`
-2. `A fast cash sale costs you 10-30%. See what you'd net listing, then choose.`
-3. `Enter your address for an instant home value plus a real cash-offer number. Free.`
-4. `Sell on your timeline with a licensed Irvine agent. No obligation. DRE #02267255.`
+1. `Don't fix it, sell it. We buy houses fast for cash in 7 days. Save time and money.`
+2. `Enter your address and receive a fair cash offer within 7 minutes.`
+3. `We pay cash for all kinds of properties. Any condition & situation.`
+4. `No commitment or pressure. Cash offer in 7 minutes. Simple process.`
 
-**Display path:** `/Irvine` `/Sell-Fast`
+**Paths:** `/Cash-Offer` `/7-Day-Close`
 
 ### AG3 RSA - Sell-As-Is
 **Pin:** H1 -> pos 1, H2 -> pos 2.
 **Headlines (15):**
-1. `Sell Your House As-Is` *(pin 1)*
-2. `See Your Cash Offer + Value` *(pin 2)*
-3. `No Repairs. Keep Your Equity.`
-4. `Sell {LOCATION(City):Irvine} Home As-Is`
-5. `What's It Worth As-Is?`
-6. `Skip Repairs, Not the Profit`
-7. `Cash Offer vs. Fix-and-List`
-8. `Any Condition, Real Value`
-9. `Instant Home Valuation`
-10. `Don't Take a Lowball Offer`
-11. `Free As-Is Home Value Report`
-12. `Sell On Your Own Timeline`
-13. `See Both Numbers, Then Decide`
-14. `Orange County As-Is Sales`
-15. `Reviewed by a Licensed Agent`
+1. `We Buy Any Condition, AS-IS` *(pin 1)*
+2. `We Pay All Closing Costs` *(pin 2)*
+3. `No Repairs Necessary`
+4. `Sell As Is. Close in 7 Days`
+5. `Don't Fix It Sell It`
+6. `Get a Fair Cash Offer Today`
+7. `We Buy Houses {LOCATION(City):Irvine}`
+8. `Cash Offer In 7 Minutes`
+9. `Companies That Buy Houses`
+10. `Sell Your House Fast`
+11. `Get An Offer In Seconds`
+12. `We Buy Unlisted Houses`
+13. `Guaranteed Cash Offers`
+14. `Save Time And Money`
+15. `How Much Is Your House Worth?`
 
 **Descriptions (4):**
-1. `Sell as-is and still keep your equity. See your cash offer and your list value.`
-2. `Repairs not required. See what your home is worth as-is vs. fixed up, instantly.`
-3. `Enter your address for an instant valuation and a real cash-offer number. Free.`
-4. `A licensed Irvine agent, reviewed personally. No obligation. DRE #02267255.`
+1. `We pay all closing costs. No repairs necessary. Sell as-is, any condition.`
+2. `When you just need to be done with it. Fill out our short form for a cash offer.`
+3. `We pay cash for all kinds of properties. Any condition & situation.`
+4. `Don't fix it, sell it. We buy houses fast for cash in 7 days. Save time and money.`
 
-**Display path:** `/Irvine` `/Sell-As-Is`
+**Paths:** `/Sell-As-Is` `/No-Repairs`
 
-### AG4 RSA - Cash-Offer-For-House
+### AG4 RSA - Cash-Offer
 **Pin:** H1 -> pos 1, H2 -> pos 2.
 **Headlines (15):**
-1. `Get a Real Cash Offer` *(pin 1)*
-2. `Cash Offer vs. Market Value` *(pin 2)*
-3. `See Both Before You Sell`
-4. `What's Your Home Worth?`
-5. `Don't Take the First Lowball`
-6. `Cash Offer on Your {LOCATION(City):Irvine} Home`
-7. `Instant Valuation + Cash Offer`
-8. `Keep Your Equity`
-9. `A Fair Number, Not a Lowball`
-10. `Cash Buyers Pay Less. See.`
-11. `Free, No-Obligation Offer`
-12. `Sell On Your Own Timeline`
-13. `Know Your Real Number`
-14. `Orange County Cash Offers`
-15. `Reviewed by Joshua, DRE Lic.`
+1. `How Much Is Your House Worth?` *(pin 1)*
+2. `Get An Offer Within 60 Seconds` *(pin 2)*
+3. `Get a Fair Cash Offer Today`
+4. `We'll Beat Any Serious Offers`
+5. `Get An Offer In Seconds`
+6. `Fair Cash Offer`
+7. `Cash Offer In 7 Minutes`
+8. `We Pay Cash For OC Houses`
+9. `We Buy Any Condition, AS-IS`
+10. `Guaranteed Cash Offers`
+11. `We Pay All Closing Costs`
+12. `Sell As Is. Close in 7 Days`
+13. `Skip Agents And Sell Direct`
+14. `Simple Process`
+15. `{LOCATION(City):Irvine} #1 Home Buyer`
 
 **Descriptions (4):**
-1. `Get a real cash-offer number and your true market value, side by side. Free.`
-2. `Most cash offers come in 10-30% under market. See the gap before you sign.`
-3. `Enter your address for an instant valuation plus a cash-offer estimate. Free.`
-4. `Reviewed personally by a licensed Irvine agent. No obligation. DRE #02267255.`
+1. `Enter your address and receive a fair cash offer within 7 minutes.`
+2. `We buy homes fast with guaranteed cash offers for sellers. Call us now!`
+3. `Check out our local reviews. Get an immediate cash offer. Sound fair enough?`
+4. `No commitment or pressure. Cash offer in 7 minutes. Simple process.`
 
-**Display path:** `/Irvine` `/Cash-Offer`
+**Paths:** `/Cash-Offer` `/60-Seconds`
 
 ---
 
-## 8. Account / campaign-level assets (mirror the wholesalers' SERP domination)
+## 7. Extensions (verbatim from their stack)
 
-The wholesalers run a heavy sitelink + callout stack (Reviews, How It Works, We Buy Any Condition AS-IS, Get A Quote Within 60 Seconds, Get Your Cash Offer, About Us). We mirror the stack, truthful, pointed at real pages.
+### Sitelinks (8) -> Final URL = the new lander (anchor to sections when built)
+| Link text | Desc 1 | Desc 2 |
+|---|---|---|
+| Get Your Cash Offer | A fair cash offer in minutes | Any condition, any situation |
+| We Buy Any Condition, AS-IS | No repairs, no cleaning | We pay all closing costs |
+| Get A Quote In 60 Seconds | Just enter your address | See your number fast |
+| How Does This Work? | Three simple steps | Pick your closing date |
+| Reviews | Check out our local reviews | Real sellers, real closings |
+| Sell On Your Timeline | You pick the closing date | Close in as little as 7 days |
+| Our Company | Local cash home buyers | We close fast |
+| Contact Us | Call or text us today | We respond fast |
 
-### Sitelinks (8, campaign-level) -> their swiped equivalent
-| Link text (<=25) | Desc 1 (<=35) | Desc 2 (<=35) | Final URL |
-|---|---|---|---|
-| See Your Cash Offer | A real number, not a lowball | Plus your market value | /value/ |
-| Instant Home Value | Your number in seconds | Free, no obligation | /value/ |
-| Cash Offer vs. Market | See the gap before you sell | Keep your equity | /value/ |
-| How I Sell Your Home | Five steps, six to ten weeks | More money than a lowball | /process/ |
-| Real Client Outcomes | $23,250 credit negotiated | Real OC closings | /testimonials/ |
-| Sell As-Is | No repairs required | See as-is vs. fixed value | /value/ |
-| Meet Joshua | Licensed Irvine agent | DRE #02267255, Real Brokerage | /about/ |
-| Your Privacy First | Never sold or shared | Walk away anytime | /privacy/ |
-
-### Callouts (10, <=25 each) -> swiped from their "no fees / as-is / fast" stack, made truthful
+### Callouts (10, <=25 each, verbatim)
 ```
-Instant Home Valuation
-Cash Offer + Market Value
-Keep Your Equity
-Sell As-Is, No Repairs
-Sell On Your Timeline
-Free & No Obligation
-Reviewed Personally
-Licensed CA DRE #02267255
-Real Local Closings
-A Real Offer, Not a Lowball
+We Pay All Closing Costs
+No Repairs Necessary
+Any Condition & Situation
+Cash Offer In 7 Minutes
+We Buy As-Is
+Skip Agents And Sell Direct
+Guaranteed Cash Offers
+Simple Process
+Close In 7 Days
+Save Time And Money
 ```
 
-### Structured snippets (2)
-**Header `Services`:** Instant Valuation; Cash Offer Comparison; As-Is Sales; Market Listing; Staging; Photography; Negotiation; Fast Close.
-**Header `Neighborhoods`:** Irvine; Tustin; Santa Ana; Anaheim; Huntington Beach; Costa Mesa; Mission Viejo; Orange County.
+### Structured snippets
+**Header `Services`:** Cash Offer; As-Is Purchase; No Repairs; Closing Costs Paid; Fast Close; Any Condition; Inherited Homes; Foreclosure.
+**Header `Neighborhoods`:** Irvine; Santa Ana; Anaheim; Huntington Beach; Long Beach; Costa Mesa; Garden Grove; Orange County.
 
 ### Call asset
-| Field | Value |
-|---|---|
-| Phone | `(949) 438-5948` (matches site header) |
-| Call reporting | ON (Google forwarding number) |
-| Conversion | `Phone call from ads (45s+)`, Secondary (not for bidding) |
-| Schedule | Mon-Sun 7am to 9pm PT |
+`(949) 438-5948` (recommend a dedicated tracked line for this op). Call reporting ON, 45s+ as a Secondary conversion. Schedule Mon-Sun 7am to 9pm PT, "Call or Text!" like theirs.
 
-### Lead form asset
-**OFF.** On-page funnel preserves gclid, PostHog drop-off events, and `lead_confirmed`. A native Google lead form bypasses all three.
-
-### Image assets (>=4)
-From `/media/images/`: Southern California aerial; Drozq logo (square + horizontal); a clean OC home exterior; Joshua headshot. No text overlays, no GIFs (Google rejects).
-
-### Business name / logo
-`Drozq` (fallback `Joshua A Guerrero`); square logo 1:1 >=128px.
+### Images
+House exteriors, a SOLD sign, a founder/team photo (their image ads use these). No text overlays, no GIFs.
 
 ---
 
-## 9. Tracking sanity checks (before enabling)
+## 8. Audience signals (Observation)
 
-1. Auto-tagging ON.
-2. Final URL suffix set (campaign-level).
-3. GA4 <-> Ads link active, `generate_lead` imported Primary.
-4. **Live click test:** preview ad -> `/value/`. Confirm gclid lands, PostHog fires `funnel_open` on address entry, submit reaches `/thank-you/?ref=funnel`, GA4 DebugView shows `lead_confirmed` once with `funnel_mode=sell`.
-5. GTM trigger fix (the `lead_confirmed` gating) is the gate for Phase 2 tCPA.
+In-Market: Residential Properties (For Sale); Residential / Selling; Moving Services. Detailed Demographics: Homeowners; all income tiers; age 35 to 64+. Custom segment `Motivated Sellers`: searched we buy houses, sell my house fast, cash offer for my house, sell house as is, sell inherited house, sell house before foreclosure. Remarketing: lander visitors who did not submit (build when the lander ships).
+
+---
+
+## 9. Tracking
+
+Wire when the lander ships: lead-submit conversion imported to Ads (Primary), auto-tagging ON, gclid capture on the lander, call conversion Secondary. Until then the campaign can run on Maximize Clicks to gather CTR/CPC data, but **do not optimize to conversions until the lander's lead event is firing.**
 
 ---
 
 ## 10. Launch sequence
 
-1. Pre-flight §1 complete.
-2. Create shared negative list `Negatives | Cash-Offer Funnel` (§5).
-3. Create campaign with §2 settings, save as draft (do not enable).
-4. Attach shared negatives + add campaign-level negatives.
-5. Build AG1 to AG4 with §4 keywords and §7 display paths. Final URL `/value/` on all.
-6. Build one RSA per ad group (§7), pin only H1 and H2.
-7. Add campaign-level assets (§8).
-8. Set audience signals as Observation (§6).
-9. Final URL suffix + auto-tagging ON + IP exclusions.
-10. Enable. Watch the first 100 clicks.
+1. Build the lander (separate task). Address-first form, instant cash-offer framing, the verbatim copy above on the page so ads and lander match (Google approval needs this).
+2. Create `Negatives | Cash-Buyers` (§5).
+3. Create campaign (§2), draft. Attach negatives.
+4. Build AG1 to AG4 (§4 keywords, §6 RSAs, §6 paths). Final URL = the lander.
+5. Add extensions (§7). Audience Observation (§8).
+6. Wire conversion (§9). Auto-tagging + IP exclusions.
+7. Enable at $120/day. Watch the first 100 clicks.
 
 ---
 
-## 11. The month-of-testing plan, then iterate (the explicit ask)
+## 11. Replicate, then iterate (the month plan)
 
-### Phase 1 = the replica month (week 0 to ~30 conversions, ~21 to 28 days at $120/day)
+**Phase 1 (replica month, to ~30 conv, ~21 to 28 days at $120/day):** run the verbatim replica untouched. Daily Search Terms Report -> negative the junk on sight. Log Auction Insights (the actual wholesalers + Opendoor/Offerpad/HomeVestors). Note QS per keyword.
 
-Goal: prove the intercept converts, surface the real SoCal cash-term CPL, harvest negatives. Run the replica as-built. **Do not touch copy mid-flight beyond adding negatives** (changing creative resets learning).
+**Then iterate (Month 2+), priority order:**
+1. Cut the losing ad groups, pour into winners.
+2. Switch to Target CPA at 1.2x observed CPL once 30+ conv land.
+3. RSA #2 per group: A/B the strongest hooks (the "60 seconds" speed hook vs. the "how much is it worth" curiosity hook vs. "we'll beat any serious offers").
+4. Split top cities into their own ad groups (their method) once each earns volume; bid the cheap high-intent metros (Santa Ana, Anaheim) harder.
+5. Add a Performance Max or Demand Gen test with their image/video creative (founder-in-front-of-house, SOLD sign) once Search is profitable. GTA's video lane is wide open in the US.
+6. Layer bid adjustments on the audience/daypart segments converting >=1.5x baseline.
+7. N-gram the search terms at week 6: promote winning stems to Exact, demote losers to negatives.
 
-Cadence:
-- **Daily first 5 days, then every 2 to 3 days: Search Terms Report.** Tag junk as negatives on the spot. Expect heavy investor/wholesaler-course and FSBO bleed; wall it fast.
-- **Auction Insights:** log who shows up (the actual wholesalers from the teardown, Opendoor, Offerpad, HomeVestors, local "we buy houses" operators). 
-- **Quality Score per keyword:** any QS < 5, the LP message-match is off. `/value/` should score well on valuation terms, weaker on pure "we buy houses." Note which terms drag.
-
-End-of-Phase-1 checklist: 15 to 30 `generate_lead` conversions, GTM fix confirmed live, 5-day rolling CPL stable.
-
-### Then iterate (Month 2+). The levers, in priority order:
-
-1. **Kill the dead ad groups, double the winners.** If AG1 (we-buy-houses) converts at 2x the CPL of AG4 (cash-offer), cut AG1 budget and pour into AG4. Likely outcome: the **valuation-framed** groups (AG4, AG2) beat the **we-buy-houses** group, because `/value/` message-matches them and because "we buy houses" searchers self-select for the cash lane we can't fully serve.
-2. **Switch to Target CPA** at 1.2x observed CPL once 30+ conversions and the GTM fix are confirmed.
-3. **Swap copy by data, A/B per ad group.** Add RSA #2 per group rotating the runner-up hooks. Test the two strongest wedges head to head: *"Don't take a lowball offer"* (loss-aversion) vs. *"See your cash offer + market value"* (curiosity). Pin-test: pin the valuation hook vs. let Google optimize.
-4. **Build the dedicated LP** if `/value/` underperforms on the pure "sell fast / we buy houses" terms. A `/cash-offer/` or rebuilt `/relief/`-style page whose hero is literally "See your cash offer and what you'd net listing, side by side" + address-first form (the wholesalers' exact funnel shape). Re-point AG1/AG2 to it, keep AG4 on `/value/`. Measure CVR delta.
-5. **iBuyer brand intercept test (Experiment).** Bid on `opendoor` / `offerpad` / `sell to opendoor` with "See what Opendoor pays vs. market" copy. Separate ad group, tight budget, watch QS and policy. High-value if it clears.
-6. **Geo split if CPCs diverge.** If Santa Ana/Anaheim cash terms are half the CPC of Irvine/Newport, split into per-city ad groups (the wholesalers do this) so budget follows the cheap, high-intent metros.
-7. **Add a dedicated conversion** `generate_lead_cash` (GA4 event with `funnel_mode` + campaign param) so Smart Bidding optimizes this lane independently of the homepage home-value group.
-8. **Layer bid adjustments** on the audience Observation segments and dayparts that converted >=1.5x baseline.
-9. **N-gram the search terms at week 6+.** Promote winning new stems to Exact; demote losers to negatives.
-
-### Replica-vs-iterate scorecard (what "working" looks like)
-| Metric | Phase 1 (replica) target | Post-iteration target |
-|---|---|---|
-| CPC (blended, SoCal cash terms) | $20 to $55 | $18 to $40 |
-| LP submit rate (`/value/`) | 6 to 10% | 10 to 14% |
-| CPL | $300 to $550 | $200 to $400 |
-| Conversions / week | 5 to 8 | 12 to 20 |
-| Cost per listing taken | justify vs. a $20k+ OC commission | the whole point |
+**Scorecard:** Phase 1 CPL $300 to $550 -> post-iteration $200 to $400. Conv/wk 5 to 8 -> 12 to 20. Cost per deal vs. assignment-fee spread is the real KPI (their model nets $10k to $15k per deal at $3k to $8k cost; with your buyer network, beat that).
 
 ---
 
-## 12. Budget reality (SoCal cash-term search)
+## 12. Budget
 
 | Assumption | Value |
 |---|---|
-| Avg CPC ("we buy houses / cash offer," OC) | $20 to $55 (higher than max-intent's $8 to $14) |
-| LP submit rate (`/value/`) | 6 to 10% |
+| Avg CPC (SoCal cash terms) | $20 to $55 |
+| Lander submit rate | 6 to 12% (address-first short form converts high) |
 | Expected CPL Phase 1 | $300 to $550 |
-| Conversions to seed tCPA | 15 to 30 |
+| Conv to seed tCPA | 15 to 30 |
 | Phase 1 spend to seed | ~$4,500 to $12,000 |
-| Recommended daily | **$120/day** floor, $200/day to compress |
-
-This lane is more expensive per lead than the homepage campaign. It is justified two ways: (a) it intercepts sellers the homepage campaign deliberately excludes (incremental, not cannibalized), and (b) one OC listing commission (~2.5% of a ~$1M+ median = $25k+) dwarfs the per-deal economics the wholesalers survive on ($3k to $8k cost per deal for a $10k to $15k assignment fee). Joshua can outbid them on their own keywords and still hand the seller more money.
+| Daily | $120 floor, $200 to compress |
 
 ---
 
-## 13. The swipe map (their copy -> Joshua's, 1:1)
+## 13. Operational notes (3 things, then go)
 
-This is the "use all their copy" deliverable. Left = verbatim from the teardown. Right = the truthful Joshua line we run, same psychology, legal for an agent.
-
-| Their line (verbatim) | Our swiped line | Why it still wins |
-|---|---|---|
-| "How Much Is Your House Worth?" | "What's Your Home Really Worth?" | Same curiosity hook; we actually return the number on `/value/` |
-| "Get An Offer Within 60 Seconds" | "Your Instant Home Valuation" | Same speed promise, on a real on-page result (not an unkept email promise) |
-| "Cash Offer In 7 Minutes. Simple Process." | "See Your Cash Offer + Value" | We show a cash-offer number AND the market number |
-| "We'll Buy Your [State] House" | "Sell Your [City] Home Fast" | We can't say "we'll buy"; "sell your home fast" is true and matches intent |
-| "We'll Beat Any Serious Offers" | "Don't Take a Lowball Offer" | Reframes the same competitiveness as equity protection |
-| "We Pay Cash For All Kinds Of Properties. Any Condition." | "Sell As-Is. No Repairs. Keep Your Equity." | Same as-is promise, plus the equity wedge they can't match |
-| "Don't Fix It Sell It" | "Skip Repairs, Not the Profit" | Same effort-reduction, adds the value angle |
-| "No Commitment Or Pressure" | "Free, No Obligation" | Keep the cost-concern reassurance; drop "pressure" (house style bans naming it) |
-| "Skip Agents And Sell Direct" | "Cash Offer vs. Market Value" | Flips their anti-agent jab into the comparison that exposes the lowball |
-| "Boston #1 Home Buyers. A+ BBB." | "Reviewed by a Licensed Agent. DRE #02267255." | Real, verifiable authority instead of self-proclaimed rank |
-| "Get Your Cash Offer" (sitelink) | "See Your Cash Offer" (sitelink) | One word: we show it, we don't make it |
-| "We Buy Any Condition, AS-IS" (sitelink) | "Sell As-Is" (sitelink) | Truthful agent version |
-
-Hooks we adopt wholesale (they're true for us): **speed-to-a-number, as-is, free/no-obligation, your-timeline, address-first.**
-Hooks we invert into our advantage: **"we buy / cash buyer" -> "see your cash offer AND market value," "skip agents" -> "the agent who shows you the lowball."**
-
----
-
-## 14. Compliance guardrails (non-negotiable, from Joshua's own docs)
-
-Per `distressed-sellers-strategy.md` §10.3 and §13, and DRE/Google policy:
-
-1. **Joshua is a licensed agent, NOT a cash buyer.** No ad may say or imply "we buy your house," "we'll pay cash for it," or that Joshua is the principal buyer. We **show** a cash-offer number and compare it to market; we never claim to **make** the purchase. ("See your cash offer," not "Get cash from us.")
-2. **No "instant cash" / hard-cash claims.** Banned: "Instant cash for your house," "Cash in 24 hours," "Guaranteed cash offer." Allowed: "instant valuation" (true, on-page), "see a cash-offer estimate," "sell fast."
-3. **No foreclosure-rescue framing** (that intent belongs to `/relief/` anyway and is negatived here). Banned: "stop the bank," "save your home." 
-4. **DRE #02267255 + licensed-agent disclosure** present in copy/assets and on `/value/` (already there).
-5. **Solo voice.** "I" / "Joshua," never "our agents / our team." Fineprint: "we may contact you."
-6. **No exposing the plumbing.** The valuation is "my own valuation model," never "API/Rentcast/automated."
-7. **No em dashes** (house rule). **No anti-promise copy** beyond the accepted cost-concern set ("free / no obligation / walk away anytime"); never "no pressure / no spam / no autodialer / no sales pitch."
-8. **Flag unbacked promises.** The `/value/` funnel currently says report + playbooks "hit your inbox the instant you submit." If the auto-delivery isn't wired end-to-end (open backlog item), keep ad copy to the on-screen instant result ("see your number instantly") and get the email delivery built before scaling spend, so paid traffic never hits a broken promise.
-
----
-
-## 15. What is intentionally NOT in this campaign / kill switches
-
-**Not included:** Performance Max (pollutes attribution + message match); Broad match at launch; iBuyer brand bidding at launch (Month-2 test); buyers; Spanish (no Spanish LP); distressed terms (the `/relief/` campaign owns them).
-
-**Kill switches:**
-- Pause instantly if CPL spikes >3x expected ($550 -> $1,650).
-- If Search Terms shows >25% investor/FSBO/wholesale-course bleed after 5 days, pause the worst ad group, wall it, relaunch.
-- If `lead_confirmed` stops firing in GA4 DebugView >12h, pause the campaign (conversion signal dead).
-- If `/api/lead` 5xx rate >2% for >1h, pause until the function is healthy.
-- If Google disapproves ads for "unreliable claims" or "misrepresentation," it is the cash-buyer line creeping in. Re-check against §14 and resubmit with the valuation framing.
+1. **Lander must back the ad claims** ("we buy houses," "cash offer," "we pay closing costs," "close in 7 days") for Google to approve the ads and keep them serving. Build the lander first; it's the gate.
+2. **Use a dedicated tracked phone line** for this op (call recording ON) so cash-buyer leads are measurable and the calls are captured.
+3. **Disclosure:** copy is the wholesalers' verbatim, geo-swapped. You're a CA-licensed agent running a cash-buyer operation; the licensed-status / wholesaler-disclosure call is yours to make on the lander and contracts. Flagged once, not belaboring it.
