@@ -437,7 +437,7 @@ The non-homepage hero must be **split into two sibling sections inside a shared 
   </section>
 
   <!-- 2) PILL SECTION: own d_flex jc_center context, tabs jc_center above 700px pill, trust line below -->
-  <section aria-label="Compare agents" class="pos_relative z_1 pb_48px xs:pb_64px md:pb_80px">
+  <section aria-label="Start your home valuation" class="pos_relative z_1 pb_48px xs:pb_64px md:pb_80px">
     <div class="d_flex jc_center pl_32px pr_32px bx-s_border-box mb_24px">
       <div class="pos_relative w_100% max-w_700px">
         <div class="pos_relative" role="button" tabindex="0" aria-label="Property transaction type selector">
@@ -551,16 +551,16 @@ The portrait wrapper:
 Below the hero, the homepage runs a vertical rhythm of alternating bands. The pattern:
 
 ```
-[white hero]
-[light gray band #f2f0ef] — "The Hard Parts Are My Job, Not Yours" / agent profiles
-[white band] — review carousel #hpcar
-[white band max-w 972/1035] — content
-[wide centered div max-w 1035] — market trends map (self-hosted Irvine Google Map) + Irvine stats
-[light gray band #f2f0ef] — "Why work with an agent?" with mid-page tabs
-[white band] — content
-[max-w 1035 band] — content
-[centered div with margin] — content
-[light gray band #f2f0ef] — closing CTA
+[white hero: 2-col, tabs + pill left, image right]
+[light gray band #f2f0ef]: "The Hard Parts Are My Job, Not Yours" infographic
+[band]: playbook carousel, "Get my 5 playbooks (that sell your home), free.", 5 auto-advancing image slides (left image / right copy)
+[wide centered div max-w 1035]: market-trends map (self-hosted Irvine Google Map) + "real estate trends in Irvine, CA" stats
+[white band]: review carousel #hpcar, "Real reviews. Real outcomes."
+[light gray band #f2f0ef]: "My Home's Condition is..." condition switcher (Move-in ready / Needs work, both open Sell)
+[white band]: "What I owe you"
+[band]: brand wall, "Seen by every buyer, everywhere" (6 grayscale platform logos)
+[band]: FAQ, "Frequently asked: selling and buying in Irvine" (3 offer-aligned tabs)
+[light gray band #f2f0ef]: closing CTA, "Get started Today!"
 [dark footer #141f2a]
 ```
 
@@ -668,7 +668,7 @@ Standard h2:
 
 Examples observed:
 - "The Hard Parts Are My Job, Not Yours" — 32px / 800
-- "Why work with an agent?" — 32px / 800
+- "My Home's Condition is..." — 32px / 800
 - "Real reviews. Real outcomes." — 20px / 800
 
 ### Body copy
@@ -692,23 +692,30 @@ These section patterns are reused 2+ times across the migrated content pages. Tr
 | **Two-column portrait split** | `/meet-the-team/` Layer 01, `/about/` Backstory | Use the scoped `.drozq-portrait-split` class, NOT the Panda `md:grid-tc_280px_1fr` utility (the latter isn't compiled in the inline CSS soup and silently stacks at desktop). Single column + 32px gap on mobile, two columns `280px 1fr` + 48px gap at >=768px. Joshua's portrait (220px mobile, 280px desktop, 16px radius, soft shadow) on one side; eyebrow + h2 + 2-3 body paragraphs on the other. Full `<style>` block + markup in section 4 "Joshua's portrait placement." |
 | **Jump-nav pills + smooth scroll** | `/faq/` only | If a page has 4+ scrolled sections worth jumping between, add a sticky-ish band of `.faq-jump-pill` anchors at the top. Pair with the 30-line vanilla JS smooth-scroll snippet from `migrate_faq.py` (`SMOOTH_SCROLL_SCRIPT` const): 350ms easeOutCubic tween, 24px top offset, respects `prefers-reduced-motion`, replaces history hash without polluting back-button. Scope the JS to `.faq-jump-pill` so it doesn't interfere with header `/#tab-buy` style anchors. |
 
+### Homepage signature sections (playbook carousel + brand wall)
+
+Two homepage-only sections built during the seller rebuild. Both are page-specific (custom imagery + their own JS after `DROZQ_FUNNEL_JS_END`, NOT synced), but they are canonical homepage furniture: copy them when a new page wants the same beat.
+
+- **Playbook carousel** ("Get my 5 playbooks (that sell your home), free."). A left-image / right-copy block whose left image cycles 5 slides: THE SYSTEM, THE TIMELINE, THE FIVE LEVERS, DO NOT RISK, DO THIS TODAY. Each slide's text is baked into the image (desktop + mobile variants in `/media/images/playbook-*.{jpg,png}`), so the slide copy is not live HTML. Auto-advances every 8s and **starts on slide 5** (DO THIS TODAY, the address CTA), so a visitor who lands and reads it has already cycled back to slide 1 by the time they finish. Page-specific JS, not part of the synced funnel.
+- **Brand wall** ("Seen by every buyer, everywhere"). A single centered row of 6 grayscale platform logos (`brand_zillow`, `brand_redfin`, `brand_realtorcom`, `brand_google`, `brand_instagram`, `brand_youtube` in `/media/images/`), real official marks desaturated via CSS `filter: grayscale`. Container widens to ~1280px on desktop; logos render at 1.3x base. The promise: your listing is seen everywhere buyers look, no marketplace tax.
+
 ---
 
-## 6. Mid-page tabs ("I'm selling / I'm buying")
+## 6. Mid-page tabs (the condition switcher)
 
-Used inside a content section that needs to swap copy between seller and buyer messaging. Each tab opens a panel that contains its own See Plan form, which opens the funnel in the matching mode.
+A two-panel `[role="tab"]` switcher inside a content section, wired by the generic `wireTabs()` (no bespoke handler). Each panel holds its own See Plan landing form plus a left-image column. The homepage instance is **"My Home's Condition is..."**: the visitor self-selects by home condition (Move-in ready / Needs work) and **both panels open the Sell funnel**. There is no buyer panel here, the homepage speaks only to sellers in this section; Buy / Sell & Buy still live in the hero tab bar.
 
 ```html
-<div role="tablist">
-  <button id="sellTabBtn" role="tab" aria-controls="sellTab" aria-selected="true"  data-selected="true">I'm selling</button>
-  <button id="buyTabBtn"  role="tab" aria-controls="buyTab"  aria-selected="false" data-selected="false">I'm buying</button>
+<div role="tablist">                                <!-- ~360px white pill -->
+  <button id="sellTabBtn"  role="tab" aria-controls="sellTab"  aria-selected="true"  data-selected="true"  style="max-width:175px;white-space:nowrap">Move-in ready</button>
+  <button id="needsTabBtn" role="tab" aria-controls="needsTab" aria-selected="false" data-selected="false" style="max-width:175px;white-space:nowrap">Needs work</button>
 </div>
 
-<div id="sellTab" role="tabpanel" aria-labelledby="sellTabBtn">
-  <!-- seller-targeted copy + a landing form -->
+<div id="sellTab"  role="tabpanel" aria-labelledby="sellTabBtn">
+  <!-- left: cond-sold.webp (SOLD sign) | right: 3 cards + See Plan address pill -->
 </div>
-<div id="buyTab"  role="tabpanel" aria-labelledby="buyTabBtn"  class="d_none" hidden>
-  <!-- buyer-targeted copy + a landing form -->
+<div id="needsTab" role="tabpanel" aria-labelledby="needsTabBtn" class="d_none" hidden>
+  <!-- left: cond-reno.webp (before/after) | right: 3 cards + See Plan address pill -->
 </div>
 ```
 
@@ -717,18 +724,20 @@ Used inside a content section that needs to swap copy between seller and buyer m
 | Selected | `#2b2b2b` (charcoal) | `#fff` |
 | Unselected | `transparent` | `#2b2b2b` |
 
-Font: Roboto 700 16px. Padding 10px 16px. Border-radius `999px` (pill). The tab strip itself sits in a 251px-wide white pill container.
+Font: GalanoGrotesque 700 16px. Padding 10px 16px. Border-radius `999px` (pill). The two-button strip sits in a ~360px white pill container (`style="max-width:360px"`); each button is capped at 175px with `white-space:nowrap` so "Move-in ready" never wraps. (The old 251px container fit the narrower "I'm selling / I'm buying" labels.)
 
 `detectFunnelMode(form)` reads the form's `[role="tabpanel"]` ancestor (id + aria-labelledby) and substring-matches:
 - contains `"sell-buy"` / `"sellandbuy"` / `"sellbuy"` → `sellandbuy`
 - contains `"buy"` → `buy`
 - default → `sell`
 
-So `aria-labelledby="buyTabBtn"` on `#buyTab` resolves to buy mode. Renaming the IDs is safe as long as `buy` appears in the buy-mode IDs and not in the sell-mode IDs.
+Neither `sellTab`/`sellTabBtn` nor `needsTab`/`needsTabBtn` contains `buy`, so **every form in this section opens the Sell funnel**. The `needs*` naming is the canonical "second Sell panel" pattern: to add a panel that opens a different funnel, put `buy` (→ buy) or `sellbuy` (→ sell & buy) in its id/`aria-labelledby`; to keep a panel on Sell, keep `buy` out of its ids.
+
+**Left-image column.** Each panel carries a real photo in a responsive 3-`<img>` column (desktop near-square box / tablet + mobile banner), one file per panel reused across breakpoints. Move-in ready = `cond-sold.webp` (SOLD sign, `object-fit:cover` with focal-biased `object-position`); Needs work = `cond-reno.webp` (2:3 before/after, `object-fit:contain` on desktop so it letterboxes into the same ~465px box and the cards hold position on tab toggle, measured 5px). Arbitrary Panda `w_*` values no-op, so portrait sizes are set with inline `style`. Full spec in the `CLAUDE.md` "My Home's Condition is..." Done entry.
 
 ### Mid-page tab pill width (canonical)
 
-Inside each `#sellTab` / `#buyTab` tabpanel, the landing form pill MUST be wrapped in a 540px-max container — never full-width. A full-width pill at desktop reads as broken layout (the input + See Plan button stretch into ~780px of horizontal space and look wrong).
+Inside each `#sellTab` / `#needsTab` tabpanel, the landing form pill MUST be wrapped in a 540px-max container — never full-width. A full-width pill at desktop reads as broken layout (the input + See Plan button stretch into ~780px of horizontal space and look wrong).
 
 Both the heading and the pill container MUST be centered within the 780px tabpanel. The h4 uses `ta_center`, and the wrapper div carries `margin: 0 auto`. Earlier versions used `ta_left` with no auto margin on the wrapper, which pinned the heading and the 540px pill flush against the left edge of the tabpanel.
 

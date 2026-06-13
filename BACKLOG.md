@@ -45,7 +45,7 @@ These were tracked in the now-deleted `REALTOR_CLEANUP_AUDIT.md`. The Done items
 
 - **Inline CSS purge.** The inline `<style>` block is ~157KB of Panda CSS utilities. Probably ~80% unused. Tree-shake against actual class usage and inline only what is needed. Biggest remaining perf win.
 - **Header nav markup cleanup.** Dead `#top` links remain in the DOM even when the header is hidden for new visitors. Reduce DOM clutter by deleting the unused nav items (`Login`, dead "Reviews" link, etc.) rather than just hiding them.
-- **Orphan files on disk.** Delete: `/media/icons/realtor-com-logo.png` (0 refs in HTML). Delete: `/media/images/Joshua Guerrero - Transparent Headshot.png` (1.81MB, 0 refs).
+- **Orphan files on disk.** Delete: `/media/icons/realtor-com-logo.png` (0 refs in HTML). Delete: `/media/images/Joshua Guerrero - Transparent Headshot.png` (1.81MB, 0 refs). Delete: `/media/images/trust.webp`, `trust-sell-tablet.webp`, `trust-sell-mweb.webp` (0 refs after the condition-switcher real-image swap on 2026-06-12; replaced by `cond-sold.webp` / `cond-reno.webp`).
 - **6-tile partner-agent grid.** Tracked under "Conversion / strategy" above (item: "Our partner agents are…" section). Reflagged here because it is also a clone leftover.
 
 ---

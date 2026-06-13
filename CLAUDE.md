@@ -56,7 +56,7 @@ When asked to create a new page, follow this protocol:
 - Page-level `<style>` block (the Panda CSS utility-class soup at the top of the body line) — keep verbatim unless the page genuinely needs new styles.
 - Header (the realtor.com-clone nav with hamburger and More popup). Note: per `692fb46`, `a7fabbd`, `2cb191f`, the header for new visitors is hidden on desktop until they engage; this should carry across.
 - Hero: the 3-tab funnel CTA bar (Sell / Buy / Sell & Buy). Page-specific copy and imagery go here.
-- Mid-page tabs section ("I'm selling / I'm buying"): optional but encouraged. Same data attributes (`sellTabBtn` / `buyTabBtn` controlling `sellTab` / `buyTab`).
+- Mid-page tabs section (the "My Home's Condition is..." switcher): optional but encouraged. Two `[role="tab"]` panels wired by the generic `wireTabs()`; the homepage runs Move-in ready (`sellTabBtn` → `sellTab`) and Needs work (`needsTabBtn` → `needsTab`), and BOTH open the Sell funnel (neither id contains `buy`). Retitle per page, but keep `buy`/`sellbuy` out of any panel you want to stay on Sell.
 - FAQ accordion: optional, page-specific questions.
 - Footer: the minimal conversion-page footer (brand logo, identity line, DRE, phone, social, Privacy/Terms, copyright). Do not import the heavy legacy brand-mode footer.
 - Funnel overlay + funnel JS: inlined between the four `DROZQ_FUNNEL_*` markers. After scaffolding, register the page (see "Funnel sync registry" below).
@@ -115,7 +115,7 @@ The funnel exists in exactly one place: `/index.html`, between the markers `<!--
 
 ## Funnel architecture
 
-The homepage funnel is a paid-traffic conversion machine with **three parallel funnels** controlled by hero tabs and mid-page tabs:
+The homepage funnel is a paid-traffic conversion machine with **three parallel funnels**. The hero tab bar (Sell / Buy / Sell & Buy) selects among all three; the mid-page condition switcher ("My Home's Condition is...") feeds only the Sell funnel (both of its panels):
 
 | Funnel | `data-funnel` | Steps | Final CTA | Submitted intent |
 |---|---|---|---|---|
@@ -126,7 +126,7 @@ The homepage funnel is a paid-traffic conversion machine with **three parallel f
 Each step is a `<div class="funnel-step" data-funnel="…" data-step="N">` inside `<section id="funnel-overlay">`. The active funnel is `window.activeFunnel`, set via:
 
 - Hero tab clicks (`tab-sell` / `tab-buy` / `tab-sell-buy`) → swap the visible tabpanel; the panel's See Plan button opens its matching funnel.
-- Mid-page tab clicks (`sellTabBtn` / `buyTabBtn`) → swap copy in the "Why work with an agent?" section between `sellTab` and `buyTab` panels; their inner See Plan form opens the matching funnel.
+- Mid-page tab clicks (`sellTabBtn` / `needsTabBtn`) → swap the "My Home's Condition is..." section between the Move-in ready (`sellTab`) and Needs work (`needsTab`) panels; each panel's inner See Plan form opens the **Sell** funnel (neither id contains `buy`, so `detectFunnelMode` resolves both to `sell`).
 - Other CTAs in the body (e.g., footer or section forms) default to Sell mode.
 
 `detectFunnelMode(form)` reads the form's `[role="tabpanel"]` ancestor (id + aria-labelledby), lowercases, and substring-matches: `sell-buy` / `sellandbuy` / `sellbuy` → `"sellandbuy"`, then `buy` → `"buy"`, default `"sell"`. Used at landing-CTA click and inside the Places autocomplete `place_changed` callback.
@@ -464,7 +464,7 @@ The homepage was a clone of sell.realtor.com that has been incrementally cleaned
 - Drozq SEO/social meta installed (title, description, canonical, og:*, twitter:*, favicons).
 - Drozq social URLs: Facebook → `facebook.com/Drozq/`, Instagram → `instagram.com/drozq/`, YouTube → `youtube.com/@drozq`. Twitter stays `#top`.
 - Hero tabs (Sell / Buy / Sell & Buy) wired with switcher JS.
-- Mid-page "I'm selling / I'm buying" tabs wired (`sellTabBtn` / `buyTabBtn` controlling `sellTab` / `buyTab`).
+- Mid-page tabs converted from "I'm selling / I'm buying" to the "My Home's Condition is..." switcher (`sellTabBtn`/`sellTab` = Move-in ready, `needsTabBtn`/`needsTab` = Needs work); both panels open the Sell funnel, buyer panel removed.
 - FAQ accordion wired.
 - Three-funnel system built (Sell / Buy / Sell & Buy).
 - Geo autofill replacing "Columbus, OH" with detected city.
@@ -474,7 +474,7 @@ The homepage was a clone of sell.realtor.com that has been incrementally cleaned
 - DRE corrected to `02267255`, Indiana PLA removed.
 - Footer gutted: minimal conversion footer (brand logo, identity line, DRE, phone, social, Privacy/Terms, copyright).
 - Market-trends map self-hosted: the hotlinked `realtorqa.upnest.com` iframe (and its 170×34 white "Source: RealEstateSM" attribution overlay) replaced by a lazy, desktop-only Google Map of Irvine on the site's own Maps JS key. Heading month is live; the trends readout is pinned to Irvine via `data-geo-static`; days-on-market reads 45.
-- Tab IDs renamed (`sellUpnestTab` → `sellTabBtn`, `buyUpnestTab` → `buyTabBtn`).
+- Tab IDs renamed (`sellUpnestTab` → `sellTabBtn`, `buyUpnestTab` → `buyTabBtn`, later `needsTabBtn` when the section became the condition switcher).
 - 5 fake agent profile cards replaced with the "The Hard Parts Are My Job, Not Yours" infographic.
 - 5 fake out-of-state testimonials swapped for real case files.
 - "My Home's Condition is..." switcher images de-faked (2026-06-12): the UpNest "Grace C." agent-proposal card (`trust*.webp`, now 0 refs) replaced in both tabs by real photos. Move-in ready -> `cond-sold.webp` (SOLD sign, landscape, `object-fit:cover` with focal-biased `object-position`, filling the existing near-square/banner boxes). Needs work -> `cond-reno.webp` (before/after renovation, 2:3 portrait). On desktop the portrait reuses the same `w_593 h_490` box via `object-fit:contain` so it letterboxes into the same ~465px column and the cards don't shift on toggle (measured 5px); tablet/mobile use portrait inline sizes (Panda arbitrary `w_*` no-op, so px set via inline `style`), centered by the container's `ai_center`. One file per tab, reused across breakpoints.
