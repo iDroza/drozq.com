@@ -3351,6 +3351,18 @@
   margin-top: 12px;
   line-height: 1.5;
 }
+/* ---- loaded sell-funnel visuals (draft 1) ---- */
+#funnel-overlay .funnel-graphic { width: 100%; margin: 0 0 20px; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.10); }
+#funnel-overlay .funnel-graphic img { width: 100%; height: auto; display: block; }
+#funnel-overlay .funnel-promise { text-align: center; font-size: 19px; line-height: 1.3; font-weight: 800; color: #2b2b2b; letter-spacing: -0.2px; margin: 0 0 16px; }
+#funnel-overlay .funnel-covers { display: flex; justify-content: center; align-items: flex-end; gap: 6px; margin: 0 0 16px; }
+#funnel-overlay .funnel-covers img { width: 19%; max-width: 112px; height: auto; display: block; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.18)); }
+#funnel-overlay .funnel-checklist { list-style: none; padding: 0; margin: 0 auto 26px; max-width: 430px; text-align: left; }
+#funnel-overlay .funnel-checklist li { position: relative; padding: 10px 0 10px 34px; font-size: 16px; font-weight: 600; color: #2b2b2b; border-bottom: 1px solid #efece8; }
+#funnel-overlay .funnel-checklist li:last-child { border-bottom: none; }
+#funnel-overlay .funnel-checklist li.is-hero { font-weight: 800; }
+#funnel-overlay .funnel-checklist li::before { content: "\2713"; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 50%; background: #d92228; color: #fff; font-size: 12px; font-weight: 700; font-family: Arial, sans-serif; }
+@media (min-width: 768px) { #funnel-overlay .funnel-promise { font-size: 22px; } #funnel-overlay .funnel-covers { gap: 10px; } }
 @media (min-width: 768px) {
   #funnel-overlay h2 { font-size: 36px; }
   /* Buy submit-step header is the longest; at 36px it wrapped/stacked in the
@@ -3703,6 +3715,8 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
 <div id="funnel-step-container">
   <!-- ============ SELL FUNNEL ============ -->
   <div class="funnel-step active" data-funnel="sell" data-step="1">
+    <div class="funnel-graphic"><img src="/media/images/funnel-timeline.webp" alt="Listing timeline: live on the MLS by day 7, offers by week 5, sold by week 6" loading="lazy"></div>
+    <p class="funnel-promise">This is how I sell Irvine homes. About six weeks, start to SOLD.</p>
     <h2>When are you looking to sell?</h2>
     <div class="funnel-options funnel-options-1col">
       <button type="button" class="funnel-option" data-value="Right away">Right away</button>
@@ -3713,6 +3727,15 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   </div>
   <div class="funnel-step" data-funnel="sell" data-step="2">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <div class="funnel-covers">
+      <img src="/media/images/pb-pricing.webp" alt="Irvine Pricing Playbook" loading="lazy">
+      <img src="/media/images/pb-marketing.webp" alt="Irvine Marketing Playbook" loading="lazy">
+      <img src="/media/images/pb-negotiation.webp" alt="Irvine Negotiation Playbook" loading="lazy">
+      <img src="/media/images/pb-speed.webp" alt="Irvine Speed Playbook" loading="lazy">
+      <img src="/media/images/pb-concierge.webp" alt="Irvine Concierge Playbook" loading="lazy">
+    </div>
+    <p class="funnel-promise">Plus all 5 of my Irvine seller playbooks, free.</p>
+    <p class="funnel-subtitle">Pricing, marketing, negotiation, speed, concierge prep. Every system I run to win you more, faster.</p>
     <h2>What's your name?</h2>
     <input type="text" id="funnel-step5-name" name="full_name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
     <div class="funnel-error" role="alert" id="funnel-step5-name-error"></div>
@@ -3720,14 +3743,23 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   </div>
   <div class="funnel-step" data-funnel="sell" data-step="3">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <h2>Where should we send your report?</h2>
+    <p class="funnel-promise">Everything that lands the moment you finish:</p>
+    <ul class="funnel-checklist">
+      <li class="is-hero">Your instant Irvine home value report</li>
+      <li>The Irvine Pricing Playbook</li>
+      <li>The Irvine Marketing Playbook</li>
+      <li>The Irvine Negotiation Playbook</li>
+      <li>The Irvine Speed Playbook</li>
+      <li>The Irvine Concierge Playbook</li>
+    </ul>
+    <h2>Where should I send it all?</h2>
     <input type="email" id="funnel-step6-email" name="email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
     <div class="funnel-error" role="alert" id="funnel-step6-email-error"></div>
     <input type="tel" id="funnel-step6-phone" name="phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
     <div class="funnel-error" role="alert" id="funnel-step6-phone-error"></div>
-    <button type="button" id="funnel-step6-submit" class="funnel-cta">Send My Home Value Report</button>
+    <button type="button" id="funnel-step6-submit" class="funnel-cta">Send My Report + 5 Playbooks</button>
     <div class="funnel-error" role="alert" id="funnel-step6-submit-error"></div>
-    <div class="funnel-assurance"><strong>We personally review every request.</strong> Your valuation lands within 24 hours. Licensed in California, DRE #02267255.</div>
+    <div class="funnel-assurance"><strong>Your report and all 5 playbooks, on their way the moment you submit.</strong> Reviewed personally. Licensed in California, DRE #02267255.</div>
     <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your home value.</div>
   </div>
 
