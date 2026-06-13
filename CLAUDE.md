@@ -119,9 +119,11 @@ The homepage funnel is a paid-traffic conversion machine with **three parallel f
 
 | Funnel | `data-funnel` | Steps | Final CTA | Submitted intent |
 |---|---|---|---|---|
-| Sell | `sell` | 5 | "Send My CMA" | `Home Valuation` |
-| Buy | `buy` | 5 | "Send My Buyer's Strategy" | `Home Purchase` |
-| Sell & Buy | `sellandbuy` | 6 | "Send My Move Plan" | `Home Sale + Purchase` |
+| Sell | `sell` | 5 | "Send My Report + 5 Playbooks" | `Home Valuation` |
+| Buy | `buy` | 5 | "Send My Report + 5 Playbooks" | `Home Purchase` |
+| Sell & Buy | `sellandbuy` | 6 | "Send My Report + 5 Playbooks" | `Home Sale + Purchase` |
+
+Note: the **Final CTA is now identical across modes** (the unified funnel, see below); only the **Submitted intent** stays per-mode for the CRM.
 
 Each step is a `<div class="funnel-step" data-funnel="…" data-step="N">` inside `<section id="funnel-overlay">`. The active funnel is `window.activeFunnel`, set via:
 
@@ -134,6 +136,19 @@ Each step is a `<div class="funnel-step" data-funnel="…" data-step="N">` insid
 `showStep(n)` filters `.funnel-step` elements by `data-funnel === window.activeFunnel && data-step === String(n)`. `FUNNEL_TOTAL_STEPS = { sell: 5, buy: 5, sellandbuy: 6 }`.
 
 Submit is handled by a single `attachSubmitHandler(buttonId, mode, ids)` factory called three times (one per funnel). It validates email + phone (and name on Buy / Sell & Buy where the contact step is one combined step), builds a mode-specific `FormData`, posts to `/api/lead`, then redirects to `/thank-you/?ref=funnel`.
+
+### The unified value experience (THE STANDARD, 2026-06-13)
+
+Every mode renders the **same** value experience; only the qualifying questions differ. The funnel is a checkout-style split. Full spec + the canonical markup/classes live in `TEMPLATE.md` §9 ("The unified split funnel"); the summary:
+
+- **Layout.** `openFunnel` stamps `data-mode` on `#funnel-step-container`. At >=880px it becomes a centered, symmetric split (max-width 1080, two equal `1fr` white cards on a warm `#efe9e1` backdrop): the value panel (`#funnel-deliverable`) LEFT, `#funnel-form-col` (the active step + the timeline) RIGHT. Below 880px it stacks form-card-first / value-card-below so the form is instantly fillable.
+- **One value panel for all modes** (`dv.innerHTML = DELIVERABLE.sell`, not `[mode]`): the instant valuation (true market value, rebuild cost, same-day cash offer to the dollar, comps; framed as "my own valuation model, the same data investors and other buyers use" , proprietary, NEVER "API"/"Rentcast") + the 5-playbook bonus bundle (`pb-*.webp`) + a ⚡ "Delivered the instant you hit submit" statement (a bordered line, NOT a button).
+- **One value bar for all modes** (`vb.innerHTML = VALUEBAR.sell`): "Your instant home valuation + BONUS 5 seller playbooks. Free, delivered the moment you finish."
+- **Timeline.** "Your path to sold" (`funnel-timeline.webp`) sits under the form in `#funnel-form-col`, persistent across steps.
+- **Identical deliverable handoff.** All three submit buttons say "Send My Report + 5 Playbooks"; all three contact steps ask "Where should I send it all?" + "What's your full name?". Only the qualifying questions (timeline / budget / location / process) stay per-mode.
+- **Everything instant.** Valuebar, panel, badge, every `.funnel-assurance`. Fineprint: "we may contact you" (solo voice, never "our agents").
+- **Forms untouched** , field names, IDs, handlers, validation, POST, the per-mode `Submitted intent`, and redirect are exactly as before. Only what the visitor sees changed.
+- **Open follow-up:** the "instant" copy currently runs ahead of the backend (no auto-delivery of the report + playbook PDFs yet). The legacy per-mode `VALUEBAR.buy/sellandbuy` + `DELIVERABLE.buy/sellandbuy` + `DV_BODY` + `.funnel-dv-*` CSS are now dead (see `BACKLOG.md`).
 
 ### Funnel state shape
 

@@ -18,6 +18,7 @@ When something ships, remove the item from this file in the same commit. Don't l
 
 These move the needle the most. They are concentrated on `/index.html`.
 
+- **Wire instant delivery of the funnel deliverable.** The unified funnel (2026-06-13) promises the home valuation report + 5 playbook PDFs "the instant you submit" / "delivered the moment you finish," but `/api/lead` currently only emails the lead to Joshua; nothing auto-delivers to the visitor. Wire real instant delivery (auto-email the valuation + playbook PDFs, and/or render the valuation inline from `/api/valuation`) so the promise is backed. Until then the instant copy runs ahead of the backend.
 - **Headshot above the fold.** Joshua's `Waist.png` is referenced in JSON-LD schema but does not appear in the visible body. Add a hero block or aside that puts a face on the page.
 - **Stat callouts.** No specific Joshua stats on the homepage ("$43,250 in client savings so far," "7 days to MLS," etc.). Pull from case files. Three callouts max.
 - **"About Joshua" callout.** Short bio block somewhere on the homepage. Year started (2024), brokerage (Real Brokerage), DRE, one-line philosophy. Builds trust + EAT signal.
@@ -53,6 +54,7 @@ These were tracked in the now-deleted `REALTOR_CLEANUP_AUDIT.md`. The Done items
 ## Hygiene & polish
 
 - **`highlight-reviews.png` (204KB).** 1 ref on homepage. Convert to WebP or remove if the section is being rewritten.
+- **Prune dead funnel code.** Since the unified funnel (2026-06-13) always renders the sell entries, these are unused: `VALUEBAR.buy` / `VALUEBAR.sellandbuy`, `DELIVERABLE.buy` / `DELIVERABLE.sellandbuy`, the `DV_BODY` helper, and the `#funnel-overlay .funnel-dv-*` CSS block. Safe to delete from `/index.html` (between the funnel markers) and re-sync. Also unused: `funnel-timeline` is live but the never-referenced `trust*.webp` (tracked above) and the dead `.funnel-h2-fit` CSS rule (its only usage was removed) can go too.
 - **`/404.html`.** Not present. Cloudflare Pages currently serves index.html (or a generic 404) for missing paths, which can cause soft-404s in Google's index. Create a real 404 page following the homepage template (minimal funnel-equipped scaffold + "Page not found" hero copy).
 - **Skip-to-content link.** No `class="skip-link"` or skip-to-content anchor at the top of the body. Add for keyboard / screen-reader users.
 - **`<img>` width/height coverage.** Most images have explicit `width`/`height` attrs (good for CLS), but not 100%. Audit images that load without dimensions and add them.

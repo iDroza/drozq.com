@@ -3280,15 +3280,15 @@
 #funnel-overlay .funnel-timeline-sec { display: none; }
 #funnel-overlay .funnel-timeline-cap { font-size: 11.5px; font-weight: 800; letter-spacing: 0.7px; text-transform: uppercase; color: #8a857e; text-align: center; margin: 0 0 12px; }
 #funnel-overlay .funnel-timeline-sec img { width: 100%; height: auto; display: block; border-radius: 12px; }
-#funnel-overlay #funnel-step-container[data-mode="sell"] { gap: 20px; }
-#funnel-overlay #funnel-step-container[data-mode="sell"] .funnel-deliverable { flex-direction: column; gap: 0; }
-#funnel-overlay #funnel-step-container[data-mode="sell"] .funnel-timeline-sec { display: block; border-top: 1px solid #ece7e1; margin-top: 26px; padding-top: 24px; }
-#funnel-overlay #funnel-step-container[data-mode="sell"] .funnel-deliverable,
-#funnel-overlay #funnel-step-container[data-mode="sell"] #funnel-form-col { background: #ffffff; border: 1px solid #ece7e1; border-radius: 18px; padding: 28px; box-shadow: 0 10px 34px rgba(43,40,38,0.07); margin: 0; }
+#funnel-overlay #funnel-step-container[data-mode] { gap: 20px; }
+#funnel-overlay #funnel-step-container[data-mode] .funnel-deliverable { flex-direction: column; gap: 0; }
+#funnel-overlay #funnel-step-container[data-mode] .funnel-timeline-sec { display: block; border-top: 1px solid #ece7e1; margin-top: 26px; padding-top: 24px; }
+#funnel-overlay #funnel-step-container[data-mode] .funnel-deliverable,
+#funnel-overlay #funnel-step-container[data-mode] #funnel-form-col { background: #ffffff; border: 1px solid #ece7e1; border-radius: 18px; padding: 28px; box-shadow: 0 10px 34px rgba(43,40,38,0.07); margin: 0; }
 @media (min-width: 880px) {
-  #funnel-overlay #funnel-step-container[data-mode="sell"] { max-width: 1080px; flex-direction: row; align-items: flex-start; gap: 28px; padding-top: 44px; padding-bottom: 64px; }
-  #funnel-overlay #funnel-step-container[data-mode="sell"] #funnel-form-col { flex: 1 1 0; min-width: 0; order: 2; padding: 38px; }
-  #funnel-overlay #funnel-step-container[data-mode="sell"] .funnel-deliverable { flex: 1 1 0; min-width: 0; order: 1; padding: 38px; }
+  #funnel-overlay #funnel-step-container[data-mode] { max-width: 1080px; flex-direction: row; align-items: flex-start; gap: 28px; padding-top: 44px; padding-bottom: 64px; }
+  #funnel-overlay #funnel-step-container[data-mode] #funnel-form-col { flex: 1 1 0; min-width: 0; order: 2; padding: 38px; }
+  #funnel-overlay #funnel-step-container[data-mode] .funnel-deliverable { flex: 1 1 0; min-width: 0; order: 1; padding: 38px; }
 }
 @media (min-width: 768px) {
   #funnel-overlay h2 { font-size: 36px; }
@@ -3695,22 +3695,22 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
        removed from the final contact step (step 4). -->
   <div class="funnel-step" data-funnel="buy" data-step="3">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <h2>What's your name?</h2>
+    <h2>What's your full name?</h2>
     <input type="text" id="buy-step5-name" name="full_name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
     <div class="funnel-error" role="alert" id="buy-step5-name-error"></div>
     <button type="button" id="buy-name-continue" class="funnel-cta">Continue</button>
   </div>
   <div class="funnel-step" data-funnel="buy" data-step="4">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <h2 class="funnel-h2-fit">Where should I send your buyer's strategy?</h2>
+    <h2>Where should I send it all?</h2>
     <input type="email" id="buy-step5-email" name="email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
     <div class="funnel-error" role="alert" id="buy-step5-email-error"></div>
     <input type="tel" id="buy-step5-phone" name="phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
     <div class="funnel-error" role="alert" id="buy-step5-phone-error"></div>
-    <button type="button" id="buy-step5-submit" class="funnel-cta">Send My Buyer's Strategy</button>
+    <button type="button" id="buy-step5-submit" class="funnel-cta">Send My Report + 5 Playbooks</button>
     <div class="funnel-error" role="alert" id="buy-step5-submit-error"></div>
-    <div class="funnel-assurance"><strong>We personally review every request.</strong> Your market brief lands within 24 hours. Licensed in California, DRE #02267255.</div>
-    <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your home search.</div>
+    <div class="funnel-assurance"><strong>Your valuation and all 5 playbooks hit your inbox the instant you submit.</strong> Reviewed personally. Licensed in California, DRE #02267255.</div>
+    <div class="funnel-fineprint">By submitting you agree that we may contact you about your home search.</div>
   </div>
 
   <!-- ============ SELL & BUY FUNNEL ============ -->
@@ -3738,22 +3738,22 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   </div>
   <div class="funnel-step" data-funnel="sellandbuy" data-step="3">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <h2>What's your name?</h2>
+    <h2>What's your full name?</h2>
     <input type="text" id="sellandbuy-step6-name" name="full_name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
     <div class="funnel-error" role="alert" id="sellandbuy-step6-name-error"></div>
     <button type="button" id="sellandbuy-name-continue" class="funnel-cta">Continue</button>
   </div>
   <div class="funnel-step" data-funnel="sellandbuy" data-step="4">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <h2>Where should I send your move plan?</h2>
+    <h2>Where should I send it all?</h2>
     <input type="email" id="sellandbuy-step6-email" name="email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
     <div class="funnel-error" role="alert" id="sellandbuy-step6-email-error"></div>
     <input type="tel" id="sellandbuy-step6-phone" name="phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
     <div class="funnel-error" role="alert" id="sellandbuy-step6-phone-error"></div>
-    <button type="button" id="sellandbuy-step6-submit" class="funnel-cta">Send My Move Plan</button>
+    <button type="button" id="sellandbuy-step6-submit" class="funnel-cta">Send My Report + 5 Playbooks</button>
     <div class="funnel-error" role="alert" id="sellandbuy-step6-submit-error"></div>
-    <div class="funnel-assurance"><strong>We personally review every request.</strong> Your move playbook lands within 24 hours. Licensed in California, DRE #02267255.</div>
-    <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your sale and search.</div>
+    <div class="funnel-assurance"><strong>Your valuation and all 5 playbooks hit your inbox the instant you submit.</strong> Reviewed personally. Licensed in California, DRE #02267255.</div>
+    <div class="funnel-fineprint">By submitting you agree that we may contact you about your sale and search.</div>
   </div>
 <div class="funnel-timeline-sec"><div class="funnel-timeline-cap">Your path to sold</div><img src="/media/images/funnel-timeline.webp" alt="Listing timeline: live on the MLS by day 7, offers by week 5, sold by week 6" loading="lazy"></div>
   </div>
@@ -4049,7 +4049,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
         buy: "<strong>Your buyer's market brief.</strong> Free <span class=\"fv-dot\">·</span> in your inbox within 24 hours",
         sellandbuy: "<strong>Your move playbook.</strong> Free <span class=\"fv-dot\">·</span> in your inbox within 24 hours"
       };
-      vb.innerHTML = VALUEBAR[mode] || VALUEBAR.sell;
+      vb.innerHTML = VALUEBAR.sell; // unified funnel: one value bar for every mode
     }
 
     // Deliverable build-out: ONE shared card rendered just below the active
@@ -4092,7 +4092,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
             "The written fallback if one side slips, decided before it happens.",
             "Two closings on one calendar is the part most agents improvise. I do not.")
       };
-      dv.innerHTML = DELIVERABLE[mode] || DELIVERABLE.sell;
+      dv.innerHTML = DELIVERABLE.sell; // unified funnel: one value panel for every mode
     }
 
     if (mode === "buy") {

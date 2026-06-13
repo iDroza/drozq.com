@@ -864,7 +864,7 @@ Full structure lives between `DROZQ_FUNNEL_HTML_BEGIN/END` in `/index.html` and 
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: #ffffff;
+  background: #efe9e1;       /* warm backdrop; the white value + form cards sit on it */
   overflow-y: auto;
   flex-direction: column;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, ...;
@@ -878,9 +878,25 @@ Full structure lives between `DROZQ_FUNNEL_HTML_BEGIN/END` in `/index.html` and 
 |---|---|---|
 | Progress bar | `#funnel-progress` | 4px sticky top, `#f1efec` track, `#d92228` fill, width transitions over 250ms |
 | Valuebar (sticky) | `#funnel-valuebar` | One-line value reminder. Bg `#fbf8f4`, 12px text. Persists across steps. |
-| Step container | `#funnel-step-container` | `max-width: 720px`, padding `64px 24px 80px` (96px top desktop). |
+| Step container | `#funnel-step-container` | Mobile: flex column. Desktop (`[data-mode]`, >=880px): centered symmetric split, `max-width:1080px`, two equal `1fr` cards. |
+| Form column | `#funnel-form-col` | Wraps all step divs + the timeline. RIGHT card in the desktop split. |
 | Steps | `.funnel-step[data-funnel][data-step]` | One div per step per funnel. Active step gets `.active`. |
-| Deliverable card | `#funnel-deliverable` | Mode-specific "what you get" card, injected on every step. Hidden when empty. |
+| Value panel | `#funnel-deliverable` | The unified value panel, identical for every mode: instant valuation + 5-playbook bonus bundle + instant statement. LEFT card in the desktop split. See "unified split funnel" below. |
+| Timeline | `.funnel-timeline-sec` | "Your path to sold" graphic (`funnel-timeline.webp`) in its own section under the form, persistent across steps. |
+
+### The unified split funnel (THE STANDARD, 2026-06-13)
+
+Every funnel mode (Sell / Buy / Sell & Buy) renders the **same** value experience; only the form *questions* differ per mode (different data collected). The look is a checkout-style split.
+
+- **Layout.** `openFunnel` stamps `data-mode` on `#funnel-step-container`. At `>=880px` that container becomes a centered **symmetric split** (`max-width:1080px`, two equal `1fr` columns, measured ~502/502): the **value panel** (`#funnel-deliverable`) is the LEFT card (`order:-1`), `#funnel-form-col` (wraps the step divs + the timeline) is the RIGHT card. Below 880px it stacks **form card first, value card below** so the form is instantly fillable. Both are white cards (`border 1px #ece7e1`, `radius 18px`, soft shadow) on a warm `#efe9e1` backdrop.
+- **Value panel = ONE JS string for ALL modes** (`dv.innerHTML = DELIVERABLE.sell`, not `DELIVERABLE[mode]`). Top to bottom: red eyebrow "FREE, THE INSTANT YOU FINISH"; an **instant valuation** block (`.funnel-vp-title` "What your home is really worth, to the penny" + a 4-item `.funnel-vp-list`: true market value, rebuild cost, same-day cash offer to the dollar (if you want it), comps + a `.funnel-vp-note`: "Run through my own valuation model: the same data investors and other buyers use, tuned by me. Not a Zestimate guess." , proprietary framing, NEVER say "API"/"Rentcast"); a **bonus bundle** block at the same header size ("Every internal document I use to get a home sold" + the 5 covers `pb-*.webp` in `.funnel-vp-covers` + an upsell-then-free note); and a `.funnel-vp-badge` instant statement ("Delivered the instant you hit submit") , a bordered line with a red bolt, deliberately NOT a filled pill (a pill reads as a button).
+- **Valuebar = ONE bar for all modes** (`vb.innerHTML = VALUEBAR.sell`): "Your instant home valuation + BONUS 5 seller playbooks. Free, delivered the moment you finish."
+- **Everything is instant.** Valuebar, panel, badge, and every step's `.funnel-assurance` say "the instant you submit" (never "24 hours"). Fineprint says "we may contact you" (solo voice, never "our agents").
+- **Forms untouched.** Field names, IDs (`funnel-step5-name`, `funnel-step6-email/phone/submit`, etc.), handlers, validation, POST, redirect: all exactly as before. Only what the visitor SEES changed.
+- **Assets.** `/media/images/funnel-timeline.webp`; `/media/images/pb-{pricing,marketing,negotiation,speed,concierge}.webp` (trimmed 3D mockups).
+- **CSS classes** (in the synced funnel `<style>`): `.funnel-vp-head/-block/-eyebrow/-title/-list/-note/-covers/-badge`, `.funnel-timeline-sec/-cap`, and the `#funnel-step-container[data-mode]` / `#funnel-form-col` split rules at `>=880px`.
+- **Open follow-up:** the "instant" copy runs ahead of the backend (the form emails the lead; nothing auto-delivers the report + playbook PDFs yet). Wiring real instant delivery is pending.
+- **Dead code:** the legacy per-mode `VALUEBAR.buy/sellandbuy`, `DELIVERABLE.buy/sellandbuy`, the `DV_BODY` helper, and the `.funnel-dv-*` CSS are now unused (the funnel always uses the sell entries). Safe to prune; tracked in BACKLOG.
 
 ### Form elements (consistent across all steps)
 
@@ -903,7 +919,7 @@ Full structure lives between `DROZQ_FUNNEL_HTML_BEGIN/END` in `/index.html` and 
 
 | Funnel | `data-funnel` | Steps | Final CTA | Submitted intent |
 |---|---|---|---|---|
-| Sell | `sell` | 5 (3 in funnel, 2 captured pre-funnel via landing form) | "Send My Home Value Report" | `Home Valuation` |
+| Sell | `sell` | 5 (3 in funnel, 2 captured pre-funnel via landing form) | "Send My Report + 5 Playbooks" | `Home Valuation` |
 | Buy | `buy` | 5 (4 in funnel, 1 pre-funnel) | "Send My Buyer's Strategy" | `Home Purchase` |
 | Sell & Buy | `sellandbuy` | 6 | "Send My Move Plan" | `Home Sale + Purchase` |
 
