@@ -2808,18 +2808,25 @@
   margin-top: 12px;
   line-height: 1.5;
 }
-/* ---- loaded sell-funnel visuals (draft 1) ---- */
-#funnel-overlay .funnel-graphic { width: 100%; margin: 0 0 20px; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.10); }
-#funnel-overlay .funnel-graphic img { width: 100%; height: auto; display: block; }
-#funnel-overlay .funnel-promise { text-align: center; font-size: 19px; line-height: 1.3; font-weight: 800; color: #2b2b2b; letter-spacing: -0.2px; margin: 0 0 16px; }
-#funnel-overlay .funnel-covers { display: flex; justify-content: center; align-items: flex-end; gap: 6px; margin: 0 0 16px; }
-#funnel-overlay .funnel-covers img { width: 19%; max-width: 112px; height: auto; display: block; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.18)); }
-#funnel-overlay .funnel-checklist { list-style: none; padding: 0; margin: 0 auto 26px; max-width: 430px; text-align: left; }
-#funnel-overlay .funnel-checklist li { position: relative; padding: 10px 0 10px 34px; font-size: 16px; font-weight: 600; color: #2b2b2b; border-bottom: 1px solid #efece8; }
-#funnel-overlay .funnel-checklist li:last-child { border-bottom: none; }
-#funnel-overlay .funnel-checklist li.is-hero { font-weight: 800; }
-#funnel-overlay .funnel-checklist li::before { content: "\2713"; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 50%; background: #d92228; color: #fff; font-size: 12px; font-weight: 700; font-family: Arial, sans-serif; }
-@media (min-width: 768px) { #funnel-overlay .funnel-promise { font-size: 22px; } #funnel-overlay .funnel-covers { gap: 10px; } }
+/* ---- draft 2: split checkout layout + sell value panel ---- */
+#funnel-overlay .funnel-vp-head { font-size: 12px; font-weight: 800; letter-spacing: 0.7px; text-transform: uppercase; color: #d92228; margin: 0 0 14px; }
+#funnel-overlay .funnel-vp-block + .funnel-vp-block { padding-top: 16px; margin-top: 16px; border-top: 1px solid #ece7e1; }
+#funnel-overlay .funnel-vp-eyebrow { font-size: 11px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: #6b6864; margin: 0 0 6px; }
+#funnel-overlay .funnel-vp-title { font-size: 17px; line-height: 1.25; font-weight: 800; color: #2b2b2b; margin: 0 0 12px; }
+#funnel-overlay .funnel-vp-list { list-style: none; padding: 0; margin: 0 0 12px; }
+#funnel-overlay .funnel-vp-list li { position: relative; padding: 6px 0 6px 28px; font-size: 14px; line-height: 1.4; font-weight: 600; color: #2b2b2b; }
+#funnel-overlay .funnel-vp-list li::before { content: "\2713"; position: absolute; left: 0; top: 6px; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 50%; background: #d92228; color: #fff; font-size: 11px; font-weight: 700; font-family: Arial, sans-serif; }
+#funnel-overlay .funnel-vp-note { font-size: 12.5px; line-height: 1.5; color: #6b6864; margin: 0; }
+#funnel-overlay .funnel-vp-covers { display: flex; gap: 5px; margin: 0 0 12px; }
+#funnel-overlay .funnel-vp-covers img { width: 19%; height: auto; display: block; filter: drop-shadow(0 5px 12px rgba(0,0,0,0.20)); }
+#funnel-overlay .funnel-vp-badge { display: inline-flex; align-self: flex-start; align-items: center; gap: 7px; margin-top: 16px; background: #2b2b2b; color: #fff; font-size: 12px; font-weight: 700; padding: 8px 14px; border-radius: 999px; }
+#funnel-overlay .funnel-vp-badge::before { content: "\26A1"; font-family: Arial, sans-serif; }
+#funnel-overlay #funnel-step-container[data-mode="sell"] .funnel-deliverable { flex-direction: column; gap: 0; }
+@media (min-width: 900px) {
+  #funnel-overlay #funnel-step-container[data-mode="sell"] { max-width: 1040px; flex-direction: row; align-items: flex-start; gap: 40px; }
+  #funnel-overlay #funnel-step-container[data-mode="sell"] .funnel-step { flex: 1 1 0; min-width: 0; }
+  #funnel-overlay #funnel-step-container[data-mode="sell"] .funnel-deliverable { flex: 0 0 360px; order: -1; margin: 0; }
+}
 @media (min-width: 768px) {
   #funnel-overlay h2 { font-size: 36px; }
   /* Buy submit-step header is the longest; at 36px it wrapped/stacked in the
@@ -3172,8 +3179,6 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
 <div id="funnel-step-container">
   <!-- ============ SELL FUNNEL ============ -->
   <div class="funnel-step active" data-funnel="sell" data-step="1">
-    <div class="funnel-graphic"><img src="/media/images/funnel-timeline.webp" alt="Listing timeline: live on the MLS by day 7, offers by week 5, sold by week 6" loading="lazy"></div>
-    <p class="funnel-promise">This is how I sell Irvine homes. About six weeks, start to SOLD.</p>
     <h2>When are you looking to sell?</h2>
     <div class="funnel-options funnel-options-1col">
       <button type="button" class="funnel-option" data-value="Right away">Right away</button>
@@ -3184,15 +3189,6 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   </div>
   <div class="funnel-step" data-funnel="sell" data-step="2">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <div class="funnel-covers">
-      <img src="/media/images/pb-pricing.webp" alt="Irvine Pricing Playbook" loading="lazy">
-      <img src="/media/images/pb-marketing.webp" alt="Irvine Marketing Playbook" loading="lazy">
-      <img src="/media/images/pb-negotiation.webp" alt="Irvine Negotiation Playbook" loading="lazy">
-      <img src="/media/images/pb-speed.webp" alt="Irvine Speed Playbook" loading="lazy">
-      <img src="/media/images/pb-concierge.webp" alt="Irvine Concierge Playbook" loading="lazy">
-    </div>
-    <p class="funnel-promise">Plus all 5 of my Irvine seller playbooks, free.</p>
-    <p class="funnel-subtitle">Pricing, marketing, negotiation, speed, concierge prep. Every system I run to win you more, faster.</p>
     <h2>What's your name?</h2>
     <input type="text" id="funnel-step5-name" name="full_name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
     <div class="funnel-error" role="alert" id="funnel-step5-name-error"></div>
@@ -3200,15 +3196,6 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   </div>
   <div class="funnel-step" data-funnel="sell" data-step="3">
     <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
-    <p class="funnel-promise">Everything that lands the moment you finish:</p>
-    <ul class="funnel-checklist">
-      <li class="is-hero">Your instant Irvine home value report</li>
-      <li>The Irvine Pricing Playbook</li>
-      <li>The Irvine Marketing Playbook</li>
-      <li>The Irvine Negotiation Playbook</li>
-      <li>The Irvine Speed Playbook</li>
-      <li>The Irvine Concierge Playbook</li>
-    </ul>
     <h2>Where should I send it all?</h2>
     <input type="email" id="funnel-step6-email" name="email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
     <div class="funnel-error" role="alert" id="funnel-step6-email-error"></div>
@@ -3216,7 +3203,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <div class="funnel-error" role="alert" id="funnel-step6-phone-error"></div>
     <button type="button" id="funnel-step6-submit" class="funnel-cta">Send My Report + 5 Playbooks</button>
     <div class="funnel-error" role="alert" id="funnel-step6-submit-error"></div>
-    <div class="funnel-assurance"><strong>Your report and all 5 playbooks, on their way the moment you submit.</strong> Reviewed personally. Licensed in California, DRE #02267255.</div>
+    <div class="funnel-assurance"><strong>Your valuation and all 5 playbooks hit your inbox the instant you submit.</strong> Reviewed personally. Licensed in California, DRE #02267255.</div>
     <div class="funnel-fineprint">By submitting you agree that our agents may contact you about your home value.</div>
   </div>
 
@@ -3583,6 +3570,8 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
 
     mode = mode || "sell";
     window.activeFunnel = mode;
+    var __scEl = document.getElementById("funnel-step-container");
+    if (__scEl) __scEl.setAttribute("data-mode", mode);
 
     // Persistent value reminder (the "memory" thread): always on screen so the
     // user never forgets what they are working toward. Mode-specific deliverable
@@ -3590,7 +3579,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     var vb = document.getElementById("funnel-valuebar-text");
     if (vb) {
       var VALUEBAR = {
-        sell: "<strong>Your full home valuation.</strong> Free <span class=\"fv-dot\">·</span> in your inbox within 24 hours",
+        sell: "<strong>Your instant home valuation + 5 seller playbooks.</strong> Free <span class=\"fv-dot\">·</span> delivered the moment you finish",
         buy: "<strong>Your buyer's market brief.</strong> Free <span class=\"fv-dot\">·</span> in your inbox within 24 hours",
         sellandbuy: "<strong>Your move playbook.</strong> Free <span class=\"fv-dot\">·</span> in your inbox within 24 hours"
       };
@@ -3611,12 +3600,18 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
           '<p class="funnel-dv-proof">' + proof + '</p></div>';
       };
       var DELIVERABLE = {
-        sell: '<div class="funnel-dv-visual" aria-hidden="true"><div class="dv-bar"></div><div class="dv-line"></div><div class="dv-line s"></div><div class="dv-chart"><i></i><i class="m"></i><i class="t"></i><i class="m"></i><i></i></div><div class="dv-line"></div></div>' +
-          DV_BODY("What your home is actually worth, comp by comp",
-            "Every comparable on your street, adjusted line by line. Not a Zestimate.",
-            "The price a buyer will really pay, and the list price that gets you there.",
-            "What to fix, what to skip, and a path to MLS in about 7 days.",
-            "Clients have kept $43,250 they would have left on the table, so far. Receipts: Case File 001 and 002."),
+        sell: '<div class="funnel-vp-head">Free, the instant you finish</div>' +
+          '<div class="funnel-vp-block"><div class="funnel-vp-eyebrow">Your instant home valuation</div>' +
+          '<div class="funnel-vp-title">What your home is really worth, to the penny</div>' +
+          '<ul class="funnel-vp-list"><li>Its true market value today, the number a real buyer pays</li>' +
+          '<li>What it would cost to rebuild from the dirt up</li>' +
+          '<li>A same-day cash offer, calculated to the dollar</li>' +
+          '<li>Every comparable sale on your street, adjusted line by line</li></ul>' +
+          '<div class="funnel-vp-note">Run through my own valuation model: the same data the cash buyers use, tuned by me. Not a Zestimate guess.</div></div>' +
+          '<div class="funnel-vp-block"><div class="funnel-vp-eyebrow">Plus all 5 seller playbooks, free</div>' +
+          '<div class="funnel-vp-covers"><img src="/media/images/pb-pricing.webp" alt="Irvine Pricing Playbook" loading="lazy"><img src="/media/images/pb-marketing.webp" alt="Irvine Marketing Playbook" loading="lazy"><img src="/media/images/pb-negotiation.webp" alt="Irvine Negotiation Playbook" loading="lazy"><img src="/media/images/pb-speed.webp" alt="Irvine Speed Playbook" loading="lazy"><img src="/media/images/pb-concierge.webp" alt="Irvine Concierge Playbook" loading="lazy"></div>' +
+          '<div class="funnel-vp-note">Every system I use to get homes sold, yours to keep even if you never list with me. Enough to do it yourself if you wanted to.</div></div>' +
+          '<div class="funnel-vp-badge">Delivered the instant you hit submit</div>',
         buy: '<div class="funnel-dv-visual" aria-hidden="true"><div class="dv-bar"></div><div class="dv-row"><span></span><b></b></div><div class="dv-row"><span></span><b></b></div><div class="dv-row"><span></span><b></b></div><div class="dv-line s"></div></div>' +
           DV_BODY("The homes worth your money, before the crowd",
             "Active, coming soon, and quiet listings filtered to your criteria.",
