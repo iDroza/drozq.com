@@ -3414,6 +3414,28 @@
   margin-top: 12px;
   line-height: 1.5;
 }
+/* ---- In-funnel legal modal: privacy/terms shown in a scrollable popup, layered above the funnel so the visitor never leaves it ---- */
+#funnel-overlay .funnel-fineprint .funnel-legal-link { color: #3f4650; text-decoration: underline; cursor: pointer; }
+#funnel-overlay .funnel-fineprint .funnel-legal-link:hover { color: #1a1816; }
+.drozq-legal-modal { position: fixed; inset: 0; z-index: 100001; display: none; }
+.drozq-legal-modal.is-open { display: block; }
+.drozq-legal-backdrop { position: absolute; inset: 0; background: rgba(26,24,22,0.55); }
+.drozq-legal-panel { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: calc(100% - 32px); max-width: 640px; max-height: 82vh; background: #fff; border-radius: 14px; box-shadow: 0 24px 60px rgba(0,0,0,0.35); display: flex; flex-direction: column; overflow: hidden; }
+.drozq-legal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-bottom: 1px solid #ece7e1; flex: 0 0 auto; }
+.drozq-legal-title { font-size: 16px; font-weight: 800; color: #1a1816; margin: 0; }
+.drozq-legal-x { -webkit-appearance: none; appearance: none; border: 0; background: #f2f0ef; color: #1a1816; width: 34px; height: 34px; border-radius: 8px; font-size: 22px; line-height: 1; cursor: pointer; flex: 0 0 auto; }
+.drozq-legal-x:hover { background: #ece7e1; }
+.drozq-legal-body { padding: 18px; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; font-size: 12px; line-height: 1.6; color: #3f4650; }
+.drozq-legal-body h1, .drozq-legal-body h2, .drozq-legal-body h3 { font-size: 13px; font-weight: 800; color: #1a1816; margin: 18px 0 6px; }
+.drozq-legal-body > :first-child { margin-top: 0; }
+.drozq-legal-body section:first-child h2 { margin-top: 0; }
+.drozq-legal-body p { margin: 0 0 10px; }
+.drozq-legal-body a { color: #d92228; text-decoration: underline; }
+.drozq-legal-body strong { color: #1a1816; }
+.drozq-legal-body ul, .drozq-legal-body ol { margin: 0 0 10px; padding-left: 18px; }
+.drozq-legal-body li { margin: 0 0 4px; }
+.drozq-legal-body .drozq-legal-meta { font-size: 11px; color: #6b6864; margin: 0 0 14px; }
+.drozq-legal-loading { color: #6b6864; }
 /* ---- draft 3: symmetric split, breathing white cards, timeline under form (sell) ---- */
 #funnel-overlay .funnel-vp-head { font-size: 13px; font-weight: 800; letter-spacing: 0.7px; text-transform: uppercase; color: #d92228; margin: 0 0 18px; }
 #funnel-overlay .funnel-vp-block + .funnel-vp-block { padding-top: 22px; margin-top: 22px; border-top: 1px solid #ece7e1; }
@@ -3818,7 +3840,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <button type="button" id="funnel-step6-submit" class="funnel-cta">Send My Report + 5 Playbooks</button>
     <div class="funnel-error" role="alert" id="funnel-step6-submit-error"></div>
     <div class="funnel-assurance"><strong>Your valuation and all 5 playbooks hit your inbox the instant you submit.</strong> Reviewed personally. Licensed in California, DRE #02267255.</div>
-    <div class="funnel-fineprint">By submitting you agree that we may contact you about your home value.</div>
+    <div class="funnel-fineprint">By submitting, you agree that Joshua Guerrero may call and text you at the number provided, including by automated technology and prerecorded or artificial voice, about your home value and related real estate services. Consent is not a condition of any purchase. Message and data rates may apply; reply STOP to opt out. See our <a href="/privacy/" class="funnel-legal-link" data-legal="privacy">Privacy Policy</a> and <a href="/terms/" class="funnel-legal-link" data-legal="terms">Terms</a>.</div>
   </div>
 
   <!-- ============ BUY FUNNEL ============ -->
@@ -3860,7 +3882,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <button type="button" id="buy-step5-submit" class="funnel-cta">Send My Report + 5 Playbooks</button>
     <div class="funnel-error" role="alert" id="buy-step5-submit-error"></div>
     <div class="funnel-assurance"><strong>Your valuation and all 5 playbooks hit your inbox the instant you submit.</strong> Reviewed personally. Licensed in California, DRE #02267255.</div>
-    <div class="funnel-fineprint">By submitting you agree that we may contact you about your home search.</div>
+    <div class="funnel-fineprint">By submitting, you agree that Joshua Guerrero may call and text you at the number provided, including by automated technology and prerecorded or artificial voice, about your home search and related real estate services. Consent is not a condition of any purchase. Message and data rates may apply; reply STOP to opt out. See our <a href="/privacy/" class="funnel-legal-link" data-legal="privacy">Privacy Policy</a> and <a href="/terms/" class="funnel-legal-link" data-legal="terms">Terms</a>.</div>
   </div>
 
   <!-- ============ SELL & BUY FUNNEL ============ -->
@@ -3903,13 +3925,26 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     <button type="button" id="sellandbuy-step6-submit" class="funnel-cta">Send My Report + 5 Playbooks</button>
     <div class="funnel-error" role="alert" id="sellandbuy-step6-submit-error"></div>
     <div class="funnel-assurance"><strong>Your valuation and all 5 playbooks hit your inbox the instant you submit.</strong> Reviewed personally. Licensed in California, DRE #02267255.</div>
-    <div class="funnel-fineprint">By submitting you agree that we may contact you about your sale and search.</div>
+    <div class="funnel-fineprint">By submitting, you agree that Joshua Guerrero may call and text you at the number provided, including by automated technology and prerecorded or artificial voice, about your home sale, home search, and related real estate services. Consent is not a condition of any purchase. Message and data rates may apply; reply STOP to opt out. See our <a href="/privacy/" class="funnel-legal-link" data-legal="privacy">Privacy Policy</a> and <a href="/terms/" class="funnel-legal-link" data-legal="terms">Terms</a>.</div>
   </div>
 <div class="funnel-timeline-sec"><div class="funnel-timeline-cap">Your path to sold</div><img src="/media/images/funnel-timeline.webp" alt="Listing timeline: live on the MLS by day 7, offers by week 5, sold by week 6" loading="lazy"></div>
   </div>
 <div id="funnel-deliverable" class="funnel-deliverable"></div>
 </div>
 </section>
+<!-- In-funnel legal modal: shows /privacy/ and /terms/ content in a scrollable popup without leaving the funnel -->
+<div id="drozq-legal-modal" class="drozq-legal-modal" aria-hidden="true">
+  <div class="drozq-legal-backdrop" data-legal-close></div>
+  <div class="drozq-legal-panel" role="dialog" aria-modal="true" aria-labelledby="drozq-legal-title">
+    <div class="drozq-legal-head">
+      <h2 id="drozq-legal-title" class="drozq-legal-title">Privacy Policy</h2>
+      <button type="button" class="drozq-legal-x" data-legal-close aria-label="Close">&times;</button>
+    </div>
+    <div class="drozq-legal-body" id="drozq-legal-content" tabindex="0">
+      <p class="drozq-legal-loading">Loading&hellip;</p>
+    </div>
+  </div>
+</div>
 <!-- DROZQ_FUNNEL_HTML_END -->
 <!-- DROZQ_FUNNEL_JS_BEGIN: synced from /index.html by scripts/sync_funnels.py. Do not edit outside the source. -->
 <script>/* Funnel/Maps race guard: guarantee window.initFunnelPlaces exists before the async (possibly cached) Maps script can invoke it. The real implementation in the inline script below overwrites this stub and self-invokes if Maps already fired. Without this, a cached Maps callback racing ahead of the 40KB inline funnel script silently leaves the address autocomplete unattached. */window.initFunnelPlaces=function(){window.__funnelMapsReady=true;};</script>
@@ -5188,6 +5223,115 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   } else {
     wireLandingFunnelOpenOnAutofill();
   }
+})();
+</script>
+<script>
+/* In-funnel legal modal: privacy/terms content fetched from their own pages and shown in a
+   scrollable popup layered above the funnel (z-index 100001), so the visitor never leaves the
+   funnel. Single source of truth: /privacy/ and /terms/ stay canonical; this reads them live. */
+(function () {
+  var modal = document.getElementById("drozq-legal-modal");
+  if (!modal) return;
+  var titleEl = document.getElementById("drozq-legal-title");
+  var contentEl = document.getElementById("drozq-legal-content");
+  var DOCS = {
+    privacy: { url: "/privacy/", title: "Privacy Policy" },
+    terms: { url: "/terms/", title: "Terms" }
+  };
+  var cache = {};
+  var lastFocus = null;
+
+  function retargetLinks(root) {
+    var as = root.querySelectorAll("a[href]");
+    for (var i = 0; i < as.length; i++) {
+      var href = as[i].getAttribute("href") || "";
+      if (href.indexOf("mailto:") === 0 || href.indexOf("tel:") === 0) continue;
+      as[i].setAttribute("target", "_blank");
+      as[i].setAttribute("rel", "noopener noreferrer");
+    }
+  }
+
+  function render(key, html) {
+    var parsed = new DOMParser().parseFromString(html, "text/html");
+    var inner = parsed.querySelector(".legal-inner");
+    var hero = parsed.querySelector(".legal-hero");
+    var heroH1 = hero ? hero.querySelector("h1") : null;
+    var heroMeta = hero ? hero.querySelector(".meta") : null;
+    if (heroH1 && heroH1.textContent.trim()) titleEl.textContent = heroH1.textContent.trim();
+    var holder = document.createElement("div");
+    if (inner) {
+      var ctas = inner.querySelectorAll(".legal-cta");
+      for (var j = 0; j < ctas.length; j++) ctas[j].parentNode.removeChild(ctas[j]);
+      holder.innerHTML = inner.innerHTML;
+    } else {
+      holder.textContent = parsed.body ? parsed.body.textContent : "";
+    }
+    retargetLinks(holder);
+    contentEl.innerHTML = "";
+    if (heroMeta && heroMeta.textContent.trim()) {
+      var m = document.createElement("p");
+      m.className = "drozq-legal-meta";
+      m.textContent = heroMeta.textContent.trim();
+      contentEl.appendChild(m);
+    }
+    while (holder.firstChild) contentEl.appendChild(holder.firstChild);
+    cache[key] = { title: titleEl.textContent, html: contentEl.innerHTML };
+  }
+
+  function load(key) {
+    var d = DOCS[key];
+    if (!d) return;
+    titleEl.textContent = d.title;
+    if (cache[key]) {
+      titleEl.textContent = cache[key].title;
+      contentEl.innerHTML = cache[key].html;
+      contentEl.scrollTop = 0;
+      return;
+    }
+    contentEl.innerHTML = '<p class="drozq-legal-loading">Loading&hellip;</p>';
+    fetch(d.url, { credentials: "same-origin" })
+      .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })
+      .then(function (html) { render(key, html); contentEl.scrollTop = 0; })
+      .catch(function () {
+        contentEl.innerHTML = '<p class="drozq-legal-loading">Unable to load right now. <a href="' + d.url + '" target="_blank" rel="noopener noreferrer">Open the ' + d.title + ' in a new tab.</a></p>';
+      });
+  }
+
+  function openModal(key) {
+    lastFocus = document.activeElement;
+    load(key);
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.addEventListener("keydown", onKey);
+    var x = modal.querySelector(".drozq-legal-x");
+    if (x) x.focus();
+  }
+
+  function closeModal() {
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.removeEventListener("keydown", onKey);
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  function onKey(e) {
+    if (e.key === "Escape" || e.keyCode === 27) { e.preventDefault(); e.stopPropagation(); closeModal(); }
+  }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var link = t.closest("[data-legal]");
+    if (link) {
+      e.preventDefault();
+      openModal(link.getAttribute("data-legal"));
+      return;
+    }
+    if (t.closest("[data-legal-close]")) {
+      e.preventDefault();
+      closeModal();
+    }
+  });
 })();
 </script>
 <!-- DROZQ_FUNNEL_JS_END -->
