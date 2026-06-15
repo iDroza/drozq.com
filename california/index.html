@@ -5208,6 +5208,32 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     }
   }
 
+  function decodeCfEmail(hex) {
+    try {
+      var k = parseInt(hex.substr(0, 2), 16), s = "";
+      for (var i = 2; i < hex.length; i += 2) s += String.fromCharCode(parseInt(hex.substr(i, 2), 16) ^ k);
+      return s;
+    } catch (e) { return ""; }
+  }
+  function deobfuscateEmails(root) {
+    // Cloudflare edge email-protection: decode so the modal shows the real address (the page's
+    // own decoder script does not run on this fetched fragment).
+    var spans = root.querySelectorAll("[data-cfemail]");
+    for (var i = 0; i < spans.length; i++) {
+      var email = decodeCfEmail(spans[i].getAttribute("data-cfemail") || "");
+      if (!email) continue;
+      var a = spans[i].closest ? spans[i].closest("a") : null;
+      if (a) { a.setAttribute("href", "mailto:" + email); a.textContent = email; }
+      else { spans[i].textContent = email; }
+    }
+    var links = root.querySelectorAll('a[href*="/cdn-cgi/l/email-protection"]');
+    for (var j = 0; j < links.length; j++) {
+      var hx = (links[j].getAttribute("href") || "").split("#")[1] || "";
+      var em = decodeCfEmail(hx);
+      if (em) { links[j].setAttribute("href", "mailto:" + em); if (links[j].textContent.indexOf("[email") !== -1) links[j].textContent = em; }
+    }
+  }
+
   function render(key, html) {
     var parsed = new DOMParser().parseFromString(html, "text/html");
     var inner = parsed.querySelector(".legal-inner");
@@ -5223,6 +5249,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     } else {
       holder.textContent = parsed.body ? parsed.body.textContent : "";
     }
+    deobfuscateEmails(holder);
     retargetLinks(holder);
     contentEl.innerHTML = "";
     if (heroMeta && heroMeta.textContent.trim()) {
