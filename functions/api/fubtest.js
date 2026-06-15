@@ -40,6 +40,21 @@ export async function onRequestGet(context) {
     out.identityError = (e && e.message) || String(e);
   }
 
+  const find = url.searchParams.get("find");
+  if (find) {
+    try {
+      const r3 = await fetch("https://api.followupboss.com/v1/people?email=" + encodeURIComponent(find), {
+        headers: { "Authorization": auth, "Accept": "application/json" }
+      });
+      out.findStatus = r3.status;
+      let b3 = "";
+      try { b3 = await r3.text(); } catch (e) {}
+      out.findBody = b3.slice(0, 900);
+    } catch (e) {
+      out.findError = (e && e.message) || String(e);
+    }
+  }
+
   if (url.searchParams.get("send") === "1") {
     const event = {
       source: "Drozq.com",
