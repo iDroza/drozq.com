@@ -48,7 +48,7 @@ async function fetchWithTimeout(url, options, ms) {
 // it is still recoverable from Cloudflare's function logs — a lead is never
 // silently dropped.
 async function deliverLead(env, lead) {
-  const { emailContent, zapierPayload, logLine } = lead;
+  const { emailContent, zapierPayload, fubEvent, logLine } = lead;
   const tasks = [];
   let channels = 0;
 
@@ -98,6 +98,37 @@ async function deliverLead(env, lead) {
         if (!r.ok) console.error("LEAD_ZAPIER_FAILED status=" + r.status + " | " + logLine);
       }).catch((e) => {
         console.error("LEAD_ZAPIER_THREW " + ((e && e.message) || e) + " | " + logLine);
+      })
+    );
+  }
+
+  // FollowUpBoss CRM (best effort, optional). Gated on FOLLOWUPBOSS_API_KEY so the
+  // site behaves exactly as before until the key is set in Cloudflare. fubEvent is
+  // null for placeholder soft-saves (e.g. "Home Valuation View") so junk contacts
+  // never reach the CRM. Uses the FUB Events API: it creates-or-merges the person
+  // by email and logs a lead event that can trigger FUB action plans / lead routing.
+  // The FollowUpBoss Widget Tracker pixel already on the site then matches on-site
+  // activity to this person's record.
+  if (env.FOLLOWUPBOSS_API_KEY && fubEvent) {
+    channels++;
+    tasks.push(
+      fetchWithTimeout("https://api.followupboss.com/v1/events", {
+        method: "POST",
+        headers: {
+          "Authorization": "Basic " + btoa(env.FOLLOWUPBOSS_API_KEY + ":"),
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "X-System": "Drozq.com"
+        },
+        body: JSON.stringify(fubEvent)
+      }, 8000).then(async (r) => {
+        if (!r.ok) {
+          let body = "";
+          try { body = await r.text(); } catch (e) {}
+          console.error("LEAD_FUB_FAILED status=" + r.status + " body=" + body + " | " + logLine);
+        }
+      }).catch((e) => {
+        console.error("LEAD_FUB_THREW " + ((e && e.message) || e) + " | " + logLine);
       })
     );
   }
@@ -276,6 +307,53 @@ Consent: ${consent}
       user_agent: ua
     };
 
+    // FollowUpBoss CRM event payload. Built here where every field is in scope; sent
+    // (best effort) from deliverLead only when FOLLOWUPBOSS_API_KEY is set. Skipped
+    // for the valuation-view soft-save (placeholder identity) so the CRM stays clean.
+    const sellerIntent = /valuation|seller|sell|sale/i.test(safeIntent);
+    const buyerIntent = /purchase|buy/i.test(safeIntent);
+    const fubType = sellerIntent ? "Seller Inquiry" : (buyerIntent ? "Property Inquiry" : "Registration");
+    const fubTags = ["Drozq Website"];
+    if (sellerIntent) fubTags.push("Seller");
+    if (buyerIntent) fubTags.push("Buyer");
+    if (safeIntent === "Google One Tap Lead") fubTags.push("Google One Tap");
+
+    const nameTokens = name ? name.split(/\s+/) : [];
+    const fubPerson = {
+      firstName: firstName || nameTokens[0] || "Drozq",
+      lastName: lastName || (nameTokens.length > 1 ? nameTokens.slice(1).join(" ") : (name ? "" : "Website Lead")),
+      emails: [{ value: email }],
+      tags: fubTags,
+      source: "Drozq.com"
+    };
+    if (phoneNorm.valid) fubPerson.phones = [{ value: phoneNorm.pretty }];
+    if (streetAddress || city || state || zip) {
+      fubPerson.addresses = [{
+        type: "home",
+        street: streetAddress || fullAddress || "",
+        city: city || "",
+        state: state || "",
+        code: zip || ""
+      }];
+    }
+    const fubMessage =
+      "Lead via drozq.com (" + safeIntent + ")." +
+      (timeline ? " Timeline: " + timeline + "." : "") +
+      (fullAddress ? " Address: " + fullAddress + "." : "") +
+      (referralSource ? " Referral: " + referralSource + "." : "") +
+      (message ? " Notes: " + message + "." : "") +
+      (sourcePage ? " Page: " + sourcePage + "." : "") +
+      (gclid ? " gclid: " + gclid : "");
+    const fubEvent = (safeIntent === "Home Valuation View")
+      ? null
+      : {
+          source: "Drozq.com",
+          system: "Drozq.com",
+          type: fubType,
+          message: fubMessage,
+          person: fubPerson
+        };
+
     const logLine = JSON.stringify({
       name: safeName, email, phone, intent: safeIntent,
       city, state, source: sourcePage, gclid, submitted_at: submittedAt
@@ -283,7 +361,7 @@ Consent: ${consent}
 
     // 10) Accept now, deliver after. The visitor's 200 does not depend on email
     // or Zapier succeeding, so a delivery outage can never break the funnel.
-    context.waitUntil(deliverLead(env, { emailContent, zapierPayload, logLine }));
+    context.waitUntil(deliverLead(env, { emailContent, zapierPayload, fubEvent, logLine }));
 
     return json({ ok: true }, 200);
   } catch (err) {
