@@ -12,6 +12,7 @@ A new page passes the bar when all of these are true.
 
 - [ ] DOCTYPE, `<html lang="en-US">`, `<meta charset="utf-8">`
 - [ ] GTM head snippet + body noscript (container `GTM-KVV3R96P`)
+- [ ] FollowUpBoss Widget Tracker pixel (`WT-AETGAYMU`) in `<head>`, right after the GTM end comment
 - [ ] Standard meta (title, description, viewport, canonical, OG, Twitter card)
 - [ ] Favicon stack (PNG, SVG, ICO, apple-touch, manifest)
 - [ ] `noindex,follow` for paid-traffic landing pages, indexable otherwise
@@ -187,6 +188,15 @@ Standard container max-widths used on the homepage:
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-KVV3R96P');</script>
   <!-- End Google Tag Manager -->
+
+  <!-- begin Widget Tracker Code (FollowUpBoss pixel, required, do not modify) -->
+  <script>(function(w,i,d,g,e,t){w["WidgetTrackerObject"]=g;(w[g]=w[g]||function()
+  {(w[g].q=w[g].q||[]).push(arguments);}),(w[g].ds=1*new Date());(e="script"),
+  (t=d.createElement(e)),(e=d.getElementsByTagName(e)[0]);t.async=1;t.src=i;
+  e.parentNode.insertBefore(t,e);})
+  (window,"https://widgetbe.com/agent",document,"widgetTracker");
+  window.widgetTracker("create","WT-AETGAYMU");window.widgetTracker("send","pageview");</script>
+  <!-- end Widget Tracker Code -->
 
   <title>[Page title] | Joshua Guerrero, Real Brokerage</title>
   <meta name="description" content="[Page description, 140-160 chars]">
@@ -1003,6 +1013,7 @@ The mobile-nav IIFE (separate `<script>` tag, OUTSIDE the funnel JS markers) wir
 | Concern | Where it lives |
 |---|---|
 | GTM head snippet + body noscript | Every HTML page (container `GTM-KVV3R96P`) |
+| FollowUpBoss Widget Tracker (`WT-AETGAYMU`) | Direct `<script>` in `<head>` after the GTM end comment. Async, from `widgetbe.com/agent`. Not via GTM; not synced (re-apply/verify with `python scripts/add_fub_pixel.py`). |
 | PostHog | Loaded by GTM custom HTML tag, served from `t.drozq.com` reverse proxy |
 | GA4 (`G-XSP0L11QEY`) | Fires via GTM. No direct gtag on the site. |
 | Google Ads conversion tracking | Imports `generate_lead` from GA4. No AW-* tags on the site. |
@@ -1011,7 +1022,7 @@ The mobile-nav IIFE (separate `<script>` tag, OUTSIDE the funnel JS markers) wir
 | `sticky_cta_click` | Funnel IIFE sticky mobile CTA bar (mode always `sell`). Fires right before `funnel_open`. |
 | `lead_confirmed` event | Inline script at end of `/thank-you/index.html`. Gated by sessionStorage flag. |
 
-Do not install AW-* tags, direct gtag, additional pixels, or any tracking outside the GTM container.
+Do not install AW-* tags, direct gtag, or new pixels beyond the two sanctioned head scripts (the GTM container and the FollowUpBoss Widget Tracker `WT-AETGAYMU`). Any other tracking goes through the GTM container.
 
 ---
 
