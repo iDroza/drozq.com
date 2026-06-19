@@ -46,7 +46,7 @@ This is not one market. It is five markets with different search vocabulary, emo
 
 ### Why not the homepage
 - Hero ("Compare Agents. Find a Trusted Expert.") is the literal worst message for a homeowner 14 days from foreclosure auction. Distressed sellers want ONE expert, not a marketplace.
-- Funnel step 1 ("When are you looking to sell? Right away / 1 to 3 months / 4 or more months / Already listed") asks the wrong question. Distressed sellers think in "NTS dated 6/14" terms, not vague timelines.
+- Funnel step 1 ("Are you looking to sell? No, just curious / Yes, immediately / Yes, in 1-3 months / Yes, 4 or more months out") asks the wrong question. Distressed sellers think in "NTS dated 6/14" terms, not vague timelines.
 - "It's a seller's market in Irvine, median $1.48M" is tone-deaf for someone losing equity.
 - The 5-card "agent-matching" proof block contradicts the message of "one specialist who picks up the phone."
 
