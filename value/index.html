@@ -3696,10 +3696,10 @@ body[data-view="after"] .value-loading { display: none; }
           trackEvent("valuation_error", { error: (res.data && res.data.error) || "no_data", status: res.status });
           return;
         }
-        // Safety net: the address is captured immediately (placeholder identity,
-        // intent "Home Valuation View", not pushed to FUB) so a lead is never
-        // lost even if the visitor closes the tab on the gate below.
-        softLeadSave(address, res.data);
+        // NO lead is created here. A lead is captured ONLY when the visitor
+        // submits the gate form below (real name + email + phone). The old
+        // placeholder soft-save was removed so anonymous valuations never
+        // generate a lead notification.
         trackEvent("valuation_success", {
           address: res.data.address.formatted,
           market_avm: res.data.systems && res.data.systems.marketAVM ? res.data.systems.marketAVM.value : null
@@ -3729,24 +3729,6 @@ body[data-view="after"] .value-loading { display: none; }
         showError("Something went wrong. Try again, or call Joshua direct at (949) 438-5948.");
         trackEvent("valuation_error", { error: "network" });
       });
-  }
-
-  function softLeadSave(address, data) {
-    try {
-      var fd = new FormData();
-      fd.append("name", "Valuation visitor");
-      fd.append("email", "valuation-view@drozq.com");
-      fd.append("phone", "0000000000");
-      fd.append("intent", "Home Valuation View");
-      fd.append("full_address", address);
-      fd.append("source_page", "/value/");
-      fd.append("page_url", window.location.href);
-      fd.append("consent", "yes");
-      fd.append("submitted_at", new Date().toISOString());
-      var avmVal = data && data.systems && data.systems.marketAVM ? data.systems.marketAVM.value : "n/a";
-      fd.append("message", "Soft-captured from /value/ before email/phone gated. Market AVM: " + avmVal);
-      fetch("/api/lead", { method: "POST", body: fd }).catch(function(){});
-    } catch (e) {}
   }
 
   function renderCard(num, title, system, highlight) {

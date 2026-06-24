@@ -359,6 +359,16 @@ Consent: ${consent}
       city, state, source: sourcePage, gclid, submitted_at: submittedAt
     });
 
+    // Backstop: the placeholder "Home Valuation View" soft-save was retired (the
+    // /value/ page no longer creates anonymous leads). If a stale cached page
+    // still posts it, accept the request but DELIVER NOTHING, so Joshua never
+    // gets an empty-lead notification. Only real, contact-bearing submissions
+    // are delivered.
+    if (safeIntent === "Home Valuation View") {
+      console.log("LEAD_SOFT_SKIPPED " + logLine);
+      return json({ ok: true }, 200);
+    }
+
     // 10) Accept now, deliver after. The visitor's 200 does not depend on email
     // or Zapier succeeding, so a delivery outage can never break the funnel.
     context.waitUntil(deliverLead(env, { emailContent, zapierPayload, fubEvent, logLine }));
