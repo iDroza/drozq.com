@@ -3302,19 +3302,6 @@ body[data-view="after"] .value-loading { display: none; }
   transition: background 0.15s ease;
 }
 .value-gate-submit:hover { background: #a92e2a; }
-.value-gate-skip {
-  display: inline-block;
-  margin: 14px auto 0;
-  padding: 6px 10px;
-  border: none;
-  background: transparent;
-  color: #757575;
-  font-family: inherit;
-  font-size: 14px;
-  text-decoration: underline;
-  cursor: pointer;
-}
-.value-gate-skip:hover { color: #1a1816; }
 .value-gate-fineprint {
   color: #9a948c;
   font-size: 11px;
@@ -3392,7 +3379,6 @@ body[data-view="after"] .value-loading { display: none; }
       <p id="value-gate-error" class="value-gate-error" role="alert"></p>
       <button type="submit" id="value-gate-submit" class="value-gate-submit">Show my valuation</button>
     </form>
-    <button type="button" id="value-gate-skip" class="value-gate-skip">Skip, just show me the numbers</button>
     <p class="value-gate-fineprint">By submitting you agree Joshua Guerrero may call and text you about your home, including by automated means, at the number provided. Consent is not a condition of any purchase. Msg &amp; data rates may apply. <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a>.</p>
   </div>
 </div>
@@ -4075,7 +4061,6 @@ body[data-view="after"] .value-loading { display: none; }
   var gatePhone    = document.getElementById("value-gate-phone");
   var gateError    = document.getElementById("value-gate-error");
   var gateClose    = document.getElementById("value-gate-close");
-  var gateSkip     = document.getElementById("value-gate-skip");
   var gateAddrSpan = document.getElementById("value-gate-address");
   var pendingData  = null;
   var pendingAddr  = "";
@@ -4137,20 +4122,27 @@ body[data-view="after"] .value-loading { display: none; }
     renderResults(d);
   }
 
-  function dismissGate(method) {
+  // Hard gate: closing the popup ABANDONS the valuation and returns to the
+  // address form. It NEVER reveals the numbers; the only path to the numbers is
+  // submitting the lead form. pendingData is discarded and lastQuery reset so
+  // the same address re-runs (and re-gates) if it is entered again.
+  function abandonGate(method) {
     if (!gateOpen) return;
     trackEvent("valuation_gate_dismiss", { address: pendingAddr, method: method || "close" });
+    pendingData = null;
+    lastQuery = null;
     hideGate();
-    revealResults();
+    setView(BEFORE);
   }
 
   function onGateKey(e) {
-    if (e.key === "Escape" || e.keyCode === 27) dismissGate("esc");
+    if (e.key === "Escape" || e.keyCode === 27) abandonGate("esc");
   }
 
-  if (gateClose) gateClose.addEventListener("click", function(){ dismissGate("close"); });
-  if (gateSkip)  gateSkip.addEventListener("click",  function(){ dismissGate("skip"); });
-  if (gate) gate.addEventListener("click", function(e){ if (e.target === gate) dismissGate("backdrop"); });
+  // Only the X (and Esc) back out, and backing out returns to the address form
+  // without the numbers. Backdrop clicks do nothing, so an accidental
+  // tap-outside can't drop the visitor out of the required form.
+  if (gateClose) gateClose.addEventListener("click", function(){ abandonGate("close"); });
 
   if (gateForm) {
     gateForm.addEventListener("submit", function(e) {
