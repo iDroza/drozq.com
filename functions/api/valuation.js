@@ -386,6 +386,42 @@ async function lookupRent(address, property, apiKey) {
   return { data: result.data };
 }
 
+// Save the valuation lead by POSTing to our own /api/lead (same deployment), so
+// all delivery (email, Zapier, FollowUpBoss, phone normalization) stays in one
+// place. intent "Home Valuation Lead" maps to a FollowUpBoss Seller Inquiry.
+// Best-effort: a failure logs but never affects the valuation response.
+async function saveValuationLead(request, contact, addr) {
+  try {
+    const form = new URLSearchParams();
+    form.set("name", contact.name || "");
+    form.set("email", contact.email);
+    form.set("phone", contact.phone);
+    form.set("consent", "yes");
+    form.set("intent", "Home Valuation Lead");
+    form.set("referral_source", "Home Valuation Gate");
+    form.set("source_page", contact.sourcePage || "/value/");
+    if (contact.pageUrl) form.set("page_url", contact.pageUrl);
+    if (addr.fullAddress) form.set("full_address", addr.fullAddress);
+    if (addr.street) form.set("street_address", addr.street);
+    if (addr.city)   form.set("city", addr.city);
+    if (addr.state)  form.set("state", addr.state);
+    if (addr.zip)    form.set("zip", addr.zip);
+    if (addr.lat != null) form.set("lat", String(addr.lat));
+    if (addr.lng != null) form.set("lng", String(addr.lng));
+    if (contact.gclid) form.set("gclid", contact.gclid);
+    form.set("submitted_at", new Date().toISOString());
+    form.set("message", "Lead generated from the /value/ gate (contact collected before the valuation was computed or returned).");
+    const leadUrl = new URL("/api/lead", request.url).toString();
+    await fetch(leadUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: form.toString()
+    });
+  } catch (e) {
+    console.error("VALUATION_LEAD_SAVE_FAILED " + ((e && e.message) || e));
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Utilities
 
@@ -421,9 +457,13 @@ export async function onRequest(context) {
     }, 503);
   }
 
-  // Accept GET (?address=...) and POST (form or JSON).
+  // Accept GET (?address=...) and POST (form or JSON). Contact (name/email/phone/
+  // consent) is read ONLY from POST bodies, never from the URL: both for privacy
+  // and because the contact gate below requires a POST. A bare GET can never
+  // carry contact, so it can never get the numbers.
   let address = "";
   let lat = null, lng = null;
+  let contact = { name: "", email: "", phone: "", consent: "", gclid: "", sourcePage: "", pageUrl: "" };
 
   try {
     if (request.method === "POST") {
@@ -433,11 +473,25 @@ export async function onRequest(context) {
         address = (body?.address || "").toString().trim();
         lat = numberOrNull(body?.lat ?? body?.latitude);
         lng = numberOrNull(body?.lng ?? body?.longitude);
+        contact.name       = (body?.name ?? body?.full_name ?? "").toString().trim();
+        contact.email      = (body?.email ?? "").toString().trim();
+        contact.phone      = (body?.phone ?? "").toString().trim();
+        contact.consent    = (body?.consent ?? "").toString().trim();
+        contact.gclid      = (body?.gclid ?? "").toString().trim();
+        contact.sourcePage = (body?.source_page ?? "").toString().trim();
+        contact.pageUrl    = (body?.page_url ?? "").toString().trim();
       } else if (ctype.includes("application/x-www-form-urlencoded") || ctype.includes("multipart/form-data")) {
         const form = await request.formData();
         address = normalizeAddressInput(form);
         lat = numberOrNull(form.get("lat") ?? form.get("latitude"));
         lng = numberOrNull(form.get("lng") ?? form.get("longitude"));
+        contact.name       = (form.get("name") || form.get("full_name") || "").toString().trim();
+        contact.email      = (form.get("email") || "").toString().trim();
+        contact.phone      = (form.get("phone") || "").toString().trim();
+        contact.consent    = (form.get("consent") || "").toString().trim();
+        contact.gclid      = (form.get("gclid") || "").toString().trim();
+        contact.sourcePage = (form.get("source_page") || "").toString().trim();
+        contact.pageUrl    = (form.get("page_url") || "").toString().trim();
       }
     } else {
       const u = new URL(request.url);
@@ -451,6 +505,23 @@ export async function onRequest(context) {
 
   if (!address) {
     return json({ ok: false, error: "missing_address", message: "Provide an `address` (string) or lat/lng pair." }, 400);
+  }
+
+  // ---- Contact gate: the server-side lock behind the /value/ popup ----
+  // The valuation (dollar values, comps, investor metrics) is delivered ONLY to
+  // a contact-bearing POST. No email + phone + consent => no compute, no data,
+  // 403. This is what actually gates the numbers: the page popup is just the UI;
+  // THIS is the enforcement. It cannot be bypassed by hitting the API directly,
+  // reading the network tab, or replaying the request, because nothing is ever
+  // computed or returned without contact, and obtaining the numbers always saves
+  // the lead (below).
+  const hasContact = !!(contact.email && contact.phone && contact.consent === "yes");
+  if (!hasContact) {
+    return json({
+      ok: false,
+      error: "contact_required",
+      message: "Submit your name, email, and phone to generate the valuation."
+    }, 403);
   }
 
   // Fan out: property lookup first (need attributes for the comp-targeted AVM
@@ -480,6 +551,19 @@ export async function onRequest(context) {
   const wholesale    = computeWholesaleOffer(arv?.value, subjectSqft);
   const comps        = trimComps(avm);
   const subjectPsf   = (marketValue && subjectSqft) ? Math.round(marketValue / subjectSqft) : null;
+
+  // Getting the valuation IS submitting the lead. Every contact-bearing request
+  // that reaches this point saves the lead (with the Rentcast-parsed address
+  // components), so there is no way to obtain the numbers without Joshua getting
+  // the lead. Best-effort + decoupled: it never blocks or fails the response.
+  context.waitUntil(saveValuationLead(request, contact, {
+    fullAddress: property?.formattedAddress || address,
+    street: property?.addressLine1 || "",
+    city:   property?.city || "",
+    state:  property?.state || "",
+    zip:    property?.zipCode || "",
+    lat, lng
+  }));
 
   const anyData = marketValue || replacement?.value || arv?.value || assessor?.value;
 

@@ -3363,9 +3363,9 @@ body[data-view="after"] .value-loading { display: none; }
 <div id="value-gate" class="value-gate-overlay" aria-hidden="true">
   <div class="value-gate-card" role="dialog" aria-modal="true" aria-labelledby="value-gate-title" aria-describedby="value-gate-sub">
     <button type="button" id="value-gate-close" class="value-gate-close" aria-label="Close and show my valuation">&times;</button>
-    <p class="value-gate-eyebrow">&#10003; Your valuation is ready</p>
+    <p class="value-gate-eyebrow">Last step</p>
     <h2 id="value-gate-title" class="value-gate-title">Where should I send it?</h2>
-    <p id="value-gate-sub" class="value-gate-sub">Your 5-system valuation for <span id="value-gate-address" class="value-gate-addr-em">your home</span> is done. Tell me where to send the full report and I'll open it for you now.</p>
+    <p id="value-gate-sub" class="value-gate-sub">Tell me where to send your 5-system valuation for <span id="value-gate-address" class="value-gate-addr-em">your home</span> and I'll generate it now.</p>
     <form id="value-gate-form" novalidate>
       <div class="value-gate-field">
         <input type="text" id="value-gate-name" name="full_name" class="value-gate-input" placeholder="Full name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="Full name">
@@ -3666,69 +3666,21 @@ body[data-view="after"] .value-loading { display: none; }
   }
 
   function runValuation(address, lat, lng) {
-    if (lastQuery === address) {
-      // Re-render cached if user resubmits same address
+    // If this exact address was already generated (contact already submitted and
+    // results rendered), just re-show them instead of re-gating.
+    if (lastQuery === address && resultsRoot && resultsRoot.innerHTML) {
       setView(AFTER);
       if (anchor) anchor.scrollIntoView({ behavior: "smooth", block: "start" });
       return;
     }
-    lastQuery = address;
-
-    setView(LOADING);
-    if (submitBtn) submitBtn.disabled = true;
+    clearError();
     trackEvent("valuation_submit", { address: address });
-
-    var url = "/api/valuation?address=" + encodeURIComponent(address);
-    if (lat != null) url += "&lat=" + encodeURIComponent(lat);
-    if (lng != null) url += "&lng=" + encodeURIComponent(lng);
-
-    fetch(url, { method: "GET", headers: { "Accept": "application/json" } })
-      .then(function(resp) {
-        return resp.json().then(function(data) { return { status: resp.status, ok: resp.ok, data: data }; });
-      })
-      .then(function(res) {
-        if (submitBtn) submitBtn.disabled = false;
-        if (!res.ok || !res.data || !res.data.ok) {
-          setView(BEFORE);
-          lastQuery = null; // allow an immediate retry of the same (failed) address
-          var msg = (res.data && res.data.message) || "We couldn't find a valuation for that address. Try a more specific street address, or call Joshua direct at (949) 438-5948.";
-          showError(msg);
-          trackEvent("valuation_error", { error: (res.data && res.data.error) || "no_data", status: res.status });
-          return;
-        }
-        // NO lead is created here. A lead is captured ONLY when the visitor
-        // submits the gate form below (real name + email + phone). The old
-        // placeholder soft-save was removed so anonymous valuations never
-        // generate a lead notification.
-        trackEvent("valuation_success", {
-          address: res.data.address.formatted,
-          market_avm: res.data.systems && res.data.systems.marketAVM ? res.data.systems.marketAVM.value : null
-        });
-        try {
-          if (window.funnelState && res.data.address) {
-            window.funnelState.address = {
-              street:    res.data.address.street    || "",
-              city:      res.data.address.city      || "",
-              state:     res.data.address.state     || "",
-              zip:       res.data.address.zip       || "",
-              lat:       res.data.address.lat,
-              lng:       res.data.address.lng,
-              formatted: res.data.address.formatted
-            };
-          }
-        } catch (e) {}
-        // Gate the numbers behind a quick "where should I send it?" capture.
-        // openGate holds the data; the numbers render when the visitor submits
-        // (a real lead -> FUB) or dismisses (X / backdrop / Esc / skip). Because
-        // the address is already soft-saved above, dismissing never loses a lead.
-        openGate(res.data, address);
-      })
-      .catch(function(err) {
-        if (submitBtn) submitBtn.disabled = false;
-        setView(BEFORE);
-        showError("Something went wrong. Try again, or call Joshua direct at (949) 438-5948.");
-        trackEvent("valuation_error", { error: "network" });
-      });
+    // Gate FIRST. No valuation is fetched here, and the API refuses to compute
+    // or return the numbers without a contact-bearing POST (see
+    // generateValuation + /functions/api/valuation.js). So the numbers never
+    // enter the browser, and there is no way to reach them without submitting
+    // contact info.
+    openGate(address, lat, lng);
   }
 
   function renderCard(num, title, system, highlight) {
@@ -4036,17 +3988,20 @@ body[data-view="after"] .value-loading { display: none; }
   // address was already soft-saved in runValuation. A real submit posts a
   // richer lead (intent "Home Valuation Lead" -> FollowUpBoss Seller Inquiry)
   // first, but the reveal never waits on that POST.
-  var gate         = document.getElementById("value-gate");
-  var gateForm     = document.getElementById("value-gate-form");
-  var gateName     = document.getElementById("value-gate-name");
-  var gateEmail    = document.getElementById("value-gate-email");
-  var gatePhone    = document.getElementById("value-gate-phone");
-  var gateError    = document.getElementById("value-gate-error");
-  var gateClose    = document.getElementById("value-gate-close");
-  var gateAddrSpan = document.getElementById("value-gate-address");
-  var pendingData  = null;
-  var pendingAddr  = "";
-  var gateOpen     = false;
+  var gate          = document.getElementById("value-gate");
+  var gateForm      = document.getElementById("value-gate-form");
+  var gateName      = document.getElementById("value-gate-name");
+  var gateEmail     = document.getElementById("value-gate-email");
+  var gatePhone     = document.getElementById("value-gate-phone");
+  var gateError     = document.getElementById("value-gate-error");
+  var gateClose     = document.getElementById("value-gate-close");
+  var gateSubmitBtn = document.getElementById("value-gate-submit");
+  var gateAddrSpan  = document.getElementById("value-gate-address");
+  var pendingAddr   = "";
+  var pendingLat    = null;
+  var pendingLng    = null;
+  var gateOpen      = false;
+  var generating    = false;
 
   // Mirror the funnel's normalizeUsDigits: drop a leaked +1 country code, then
   // cap at 10 digits. NANP area codes never start with 1, so a leading 1 on an
@@ -4075,11 +4030,14 @@ body[data-view="after"] .value-loading { display: none; }
     if (badEl) { badEl.classList.add("is-error"); try { badEl.focus(); } catch (e) {} }
   }
 
-  function openGate(data, address) {
-    pendingData = data;
-    pendingAddr = (data && data.address && data.address.formatted) || address || "";
+  // Gate-FIRST: opened the moment an address is submitted, BEFORE any valuation
+  // is fetched. Holds only the address; no numbers exist client-side yet.
+  function openGate(address, lat, lng) {
+    pendingAddr = address || "";
+    pendingLat  = (lat != null) ? lat : null;
+    pendingLng  = (lng != null) ? lng : null;
     if (gateAddrSpan) gateAddrSpan.textContent = pendingAddr || "your home";
-    if (!gate) { revealResults(); return; } // fail open: if the gate is missing, just show the numbers
+    if (!gate) return; // no gate element -> numbers stay gated, never auto-revealed
     clearGateError();
     gate.classList.add("is-open");
     gate.setAttribute("aria-hidden", "false");
@@ -4097,21 +4055,13 @@ body[data-view="after"] .value-loading { display: none; }
     document.removeEventListener("keydown", onGateKey);
   }
 
-  function revealResults() {
-    if (!pendingData) return;
-    var d = pendingData;
-    pendingData = null; // guard against a double render
-    renderResults(d);
-  }
-
-  // Hard gate: closing the popup ABANDONS the valuation and returns to the
-  // address form. It NEVER reveals the numbers; the only path to the numbers is
-  // submitting the lead form. pendingData is discarded and lastQuery reset so
-  // the same address re-runs (and re-gates) if it is entered again.
+  // Hard gate: closing the popup ABANDONS the lookup and returns to the address
+  // form. No numbers were ever fetched, so nothing is revealed; the only path to
+  // the numbers is submitting the form (which generates and returns them).
+  // Disabled mid-generate so a stray Esc can't cancel an in-flight submit.
   function abandonGate(method) {
-    if (!gateOpen) return;
+    if (!gateOpen || generating) return;
     trackEvent("valuation_gate_dismiss", { address: pendingAddr, method: method || "close" });
-    pendingData = null;
     lastQuery = null;
     hideGate();
     setView(BEFORE);
@@ -4129,6 +4079,7 @@ body[data-view="after"] .value-loading { display: none; }
   if (gateForm) {
     gateForm.addEventListener("submit", function(e) {
       e.preventDefault();
+      if (generating) return;
       clearGateError();
       var nameV  = (gateName  && gateName.value  || "").trim();
       var emailV = (gateEmail && gateEmail.value || "").trim();
@@ -4140,45 +4091,78 @@ body[data-view="after"] .value-loading { display: none; }
       if (digits.length < 10) { showGateError("Please enter a 10-digit phone number.", gatePhone); return; }
 
       var phonePretty = "(" + digits.slice(0,3) + ") " + digits.slice(3,6) + "-" + digits.slice(6,10);
-      submitGateLead(nameV, emailV, phonePretty);
       trackEvent("valuation_gate_submit", { address: pendingAddr });
-
-      // Reveal immediately; the lead POST is best-effort and must never block.
-      hideGate();
-      revealResults();
+      generateValuation(nameV, emailV, phonePretty);
     });
   }
 
-  // Posts the real lead (name + email + phone) to /api/lead. intent
-  // "Home Valuation Lead" matches /valuation/ -> FollowUpBoss "Seller Inquiry"
-  // (and, unlike the "Home Valuation View" soft-save, IS pushed to FUB).
-  function submitGateLead(name, email, phone) {
-    try {
-      var fd = new FormData();
-      var a = (pendingData && pendingData.address) || {};
-      fd.append("name", name);
-      fd.append("email", email);
-      fd.append("phone", phone);
-      fd.append("intent", "Home Valuation Lead");
-      fd.append("full_address", a.formatted || pendingAddr || "");
-      if (a.street) fd.append("street_address", a.street);
-      if (a.city)   fd.append("city", a.city);
-      if (a.state)  fd.append("state", a.state);
-      if (a.zip)    fd.append("zip", a.zip);
-      if (a.lat != null) fd.append("lat", a.lat);
-      if (a.lng != null) fd.append("lng", a.lng);
-      fd.append("source_page", "/value/");
-      fd.append("page_url", window.location.href);
-      fd.append("referral_source", "Home Valuation Gate");
-      fd.append("consent", "yes");
-      fd.append("submitted_at", new Date().toISOString());
-      var gc = (window.funnelState && window.funnelState.gclid) || "";
-      if (!gc) { try { gc = sessionStorage.getItem("drozq_gclid") || ""; } catch (e) {} }
-      if (gc) fd.append("gclid", gc);
-      var avmVal = pendingData && pendingData.systems && pendingData.systems.marketAVM ? pendingData.systems.marketAVM.value : "n/a";
-      fd.append("message", "Lead captured from the /value/ gate (name + email + phone collected before the numbers rendered). Market AVM: " + avmVal);
-      fetch("/api/lead", { method: "POST", body: fd }).catch(function(){});
-    } catch (e) {}
+  // The ONLY call that returns the numbers. POSTs contact + address to
+  // /api/valuation, which (server-side) refuses to compute or return anything
+  // without valid contact AND saves the lead itself (intent "Home Valuation
+  // Lead" -> FollowUpBoss Seller Inquiry). Getting the numbers and submitting
+  // the lead are therefore the same atomic act: neither happens without the
+  // other. The gate stays up (button shows progress) until the numbers return,
+  // so a transient error never loses the visitor's typed input.
+  function generateValuation(name, email, phone) {
+    generating = true;
+    if (gateSubmitBtn) { gateSubmitBtn.disabled = true; gateSubmitBtn.textContent = "Generating your report..."; }
+    var gc = (window.funnelState && window.funnelState.gclid) || "";
+    if (!gc) { try { gc = sessionStorage.getItem("drozq_gclid") || ""; } catch (e) {} }
+    var payload = {
+      address: pendingAddr,
+      lat: pendingLat, lng: pendingLng,
+      name: name, full_name: name, email: email, phone: phone,
+      consent: "yes", gclid: gc,
+      source_page: "/value/", page_url: window.location.href
+    };
+    function resetBtn() {
+      generating = false;
+      if (gateSubmitBtn) { gateSubmitBtn.disabled = false; gateSubmitBtn.textContent = "Show my valuation"; }
+    }
+    fetch("/api/valuation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload)
+    })
+      .then(function(resp){ return resp.json().then(function(data){ return { ok: resp.ok, status: resp.status, data: data }; }); })
+      .then(function(res){
+        resetBtn();
+        if (!res.ok || !res.data || !res.data.ok) {
+          // The lead is still captured server-side, so a no-data address is not
+          // a lost lead; tell them Joshua will follow up by hand.
+          hideGate();
+          setView(BEFORE);
+          var msg = (res.data && res.data.message) || "Thanks, I've got your details. I couldn't auto-generate a full valuation for that address, but I'll build one by hand and send it over. Or call me direct at (949) 438-5948.";
+          showError(msg);
+          trackEvent("valuation_error", { error: (res.data && res.data.error) || "no_data", status: res.status });
+          return;
+        }
+        lastQuery = pendingAddr;
+        try {
+          if (window.funnelState && res.data.address) {
+            window.funnelState.address = {
+              street:    res.data.address.street    || "",
+              city:      res.data.address.city      || "",
+              state:     res.data.address.state     || "",
+              zip:       res.data.address.zip       || "",
+              lat:       res.data.address.lat,
+              lng:       res.data.address.lng,
+              formatted: res.data.address.formatted
+            };
+          }
+        } catch (e) {}
+        hideGate();
+        renderResults(res.data); // flips the view to AFTER and scrolls to results
+        trackEvent("valuation_submit_success", {
+          address: res.data.address ? res.data.address.formatted : pendingAddr,
+          market_avm: res.data.systems && res.data.systems.marketAVM ? res.data.systems.marketAVM.value : null
+        });
+      })
+      .catch(function(){
+        resetBtn();
+        showGateError("Something went wrong generating your report. Try again, or call (949) 438-5948.");
+        trackEvent("valuation_error", { error: "network" });
+      });
   }
 
   // Allow ?address=... in the URL to auto-run a valuation. Useful for nav links
