@@ -3184,6 +3184,148 @@ body[data-view="after"] .value-loading { display: none; }
   .value-card--highlight .value-card-range, .value-card--highlight .value-card-note { color: #3f4650 !important; }
   .value-card, .value-spread, .value-comps, .value-chip, .value-insight-band, .value-investor-panel, .value-comp-row { break-inside: avoid; }
 }
+
+/* ---- Lead-capture gate -------------------------------------------------
+   Shown the instant a valuation succeeds, BEFORE the numbers render:
+   "Where should I send it?" (name + email + phone). Built to be easy to
+   escape (X, backdrop tap, Esc, or the skip link); escaping still reveals
+   the numbers. Scoped to .value-gate-* so it never collides with the
+   inherited Panda soup or the synced .funnel-* classes. */
+.value-gate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(26,24,22,0.72);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.value-gate-overlay.is-open { display: flex; opacity: 1; }
+.value-gate-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 18px;
+  padding: 34px 24px 24px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.32);
+  text-align: center;
+  transform: translateY(14px);
+  transition: transform 0.2s ease;
+}
+.value-gate-overlay.is-open .value-gate-card { transform: translateY(0); }
+.value-gate-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  color: #757575;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 9999px;
+}
+.value-gate-close:hover { color: #1a1816; background: #f2efea; }
+.value-gate-eyebrow {
+  display: inline-block;
+  color: #1f7a44;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0 0 10px;
+}
+.value-gate-title {
+  color: #1a1816;
+  font-size: 26px;
+  line-height: 32px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+.value-gate-sub {
+  color: #5c5650;
+  font-size: 15px;
+  line-height: 22px;
+  margin: 0 auto 20px;
+  max-width: 360px;
+}
+.value-gate-addr-em { font-weight: 700; color: #1a1816; }
+.value-gate-field { margin: 0 0 12px; }
+.value-gate-input {
+  width: 100%;
+  height: 52px;
+  box-sizing: border-box;
+  padding: 0 16px;
+  border: 1.5px solid #d8d2c8;
+  border-radius: 10px;
+  background: #fff;
+  color: #1a1816;
+  font-family: inherit;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.value-gate-input::placeholder { color: #9a948c; }
+.value-gate-input:focus { border-color: #d92228; }
+.value-gate-input.is-error { border-color: #d92228; background: #fdf3f3; }
+.value-gate-error {
+  display: none;
+  color: #d92228;
+  font-size: 13px;
+  line-height: 18px;
+  margin: 0 0 12px;
+  text-align: left;
+}
+.value-gate-error.is-shown { display: block; }
+.value-gate-submit {
+  width: 100%;
+  height: 54px;
+  border: none;
+  border-radius: 9999px;
+  background: #d92228;
+  color: #fff;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.value-gate-submit:hover { background: #a92e2a; }
+.value-gate-skip {
+  display: inline-block;
+  margin: 14px auto 0;
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  color: #757575;
+  font-family: inherit;
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.value-gate-skip:hover { color: #1a1816; }
+.value-gate-fineprint {
+  color: #9a948c;
+  font-size: 11px;
+  line-height: 16px;
+  margin: 16px 0 0;
+}
+.value-gate-fineprint a { color: #757575; text-decoration: underline; }
+@media (min-width: 768px) {
+  .value-gate-card { padding: 40px 36px 28px; }
+  .value-gate-title { font-size: 30px; line-height: 36px; }
+}
 </style>
 
 <div class="pos_relative ov_hidden value-hero-wrap">
@@ -3228,6 +3370,32 @@ body[data-view="after"] .value-loading { display: none; }
 </section>
 
 <div id="value-results-root" class="value-results-root" role="region" aria-label="Your home valuation results" tabindex="-1"></div>
+
+<!-- Lead-capture gate: appears the instant a valuation succeeds, before the numbers render.
+     Easy to dismiss (X / backdrop / Esc / skip link); dismissing still reveals the numbers. -->
+<div id="value-gate" class="value-gate-overlay" aria-hidden="true">
+  <div class="value-gate-card" role="dialog" aria-modal="true" aria-labelledby="value-gate-title" aria-describedby="value-gate-sub">
+    <button type="button" id="value-gate-close" class="value-gate-close" aria-label="Close and show my valuation">&times;</button>
+    <p class="value-gate-eyebrow">&#10003; Your valuation is ready</p>
+    <h2 id="value-gate-title" class="value-gate-title">Where should I send it?</h2>
+    <p id="value-gate-sub" class="value-gate-sub">Your 5-system valuation for <span id="value-gate-address" class="value-gate-addr-em">your home</span> is done. Tell me where to send the full report and I'll open it for you now.</p>
+    <form id="value-gate-form" novalidate>
+      <div class="value-gate-field">
+        <input type="text" id="value-gate-name" name="full_name" class="value-gate-input" placeholder="Full name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="Full name">
+      </div>
+      <div class="value-gate-field">
+        <input type="email" id="value-gate-email" name="email" class="value-gate-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
+      </div>
+      <div class="value-gate-field">
+        <input type="tel" id="value-gate-phone" name="phone" class="value-gate-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
+      </div>
+      <p id="value-gate-error" class="value-gate-error" role="alert"></p>
+      <button type="submit" id="value-gate-submit" class="value-gate-submit">Show my valuation</button>
+    </form>
+    <button type="button" id="value-gate-skip" class="value-gate-skip">Skip, just show me the numbers</button>
+    <p class="value-gate-fineprint">By submitting you agree Joshua Guerrero may call and text you about your home, including by automated means, at the number provided. Consent is not a condition of any purchase. Msg &amp; data rates may apply. <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a>.</p>
+  </div>
+</div>
 
 <div class="value-before">
 
@@ -3536,13 +3704,16 @@ body[data-view="after"] .value-loading { display: none; }
         if (submitBtn) submitBtn.disabled = false;
         if (!res.ok || !res.data || !res.data.ok) {
           setView(BEFORE);
+          lastQuery = null; // allow an immediate retry of the same (failed) address
           var msg = (res.data && res.data.message) || "We couldn't find a valuation for that address. Try a more specific street address, or call Joshua direct at (949) 438-5948.";
           showError(msg);
           trackEvent("valuation_error", { error: (res.data && res.data.error) || "no_data", status: res.status });
           return;
         }
+        // Safety net: the address is captured immediately (placeholder identity,
+        // intent "Home Valuation View", not pushed to FUB) so a lead is never
+        // lost even if the visitor closes the tab on the gate below.
         softLeadSave(address, res.data);
-        renderResults(res.data);
         trackEvent("valuation_success", {
           address: res.data.address.formatted,
           market_avm: res.data.systems && res.data.systems.marketAVM ? res.data.systems.marketAVM.value : null
@@ -3560,6 +3731,11 @@ body[data-view="after"] .value-loading { display: none; }
             };
           }
         } catch (e) {}
+        // Gate the numbers behind a quick "where should I send it?" capture.
+        // openGate holds the data; the numbers render when the visitor submits
+        // (a real lead -> FUB) or dismisses (X / backdrop / Esc / skip). Because
+        // the address is already soft-saved above, dismissing never loses a lead.
+        openGate(res.data, address);
       })
       .catch(function(err) {
         if (submitBtn) submitBtn.disabled = false;
@@ -3883,6 +4059,152 @@ body[data-view="after"] .value-loading { display: none; }
         try { resultsRoot.focus({ preventScroll: true }); } catch (e) { try { resultsRoot.focus(); } catch (e2) {} }
       }, 80);
     }
+  }
+
+  // ---- Lead-capture gate -------------------------------------------------
+  // Shown the instant a valuation succeeds, BEFORE the numbers render: "Where
+  // should I send it?" (name + email + phone). Easy to escape (X, backdrop,
+  // Esc, or the skip link); escaping still reveals the numbers because the
+  // address was already soft-saved in runValuation. A real submit posts a
+  // richer lead (intent "Home Valuation Lead" -> FollowUpBoss Seller Inquiry)
+  // first, but the reveal never waits on that POST.
+  var gate         = document.getElementById("value-gate");
+  var gateForm     = document.getElementById("value-gate-form");
+  var gateName     = document.getElementById("value-gate-name");
+  var gateEmail    = document.getElementById("value-gate-email");
+  var gatePhone    = document.getElementById("value-gate-phone");
+  var gateError    = document.getElementById("value-gate-error");
+  var gateClose    = document.getElementById("value-gate-close");
+  var gateSkip     = document.getElementById("value-gate-skip");
+  var gateAddrSpan = document.getElementById("value-gate-address");
+  var pendingData  = null;
+  var pendingAddr  = "";
+  var gateOpen     = false;
+
+  // Mirror the funnel's normalizeUsDigits: drop a leaked +1 country code, then
+  // cap at 10 digits. NANP area codes never start with 1, so a leading 1 on an
+  // 11-digit string is always the country code (the Mary Morris fix).
+  function gateNormalizeDigits(v) {
+    var d = String(v == null ? "" : v).replace(/\D/g, "");
+    if (d.length === 11 && d.charAt(0) === "1") d = d.slice(1);
+    return d.slice(0, 10);
+  }
+  if (gatePhone) {
+    gatePhone.addEventListener("input", function() {
+      var d = gateNormalizeDigits(this.value), out = "";
+      if (d.length > 0) out = "(" + d.slice(0, 3);
+      if (d.length >= 4) out += ") " + d.slice(3, 6);
+      if (d.length >= 7) out += "-" + d.slice(6, 10);
+      this.value = out;
+    });
+  }
+
+  function clearGateError() {
+    if (gateError) { gateError.textContent = ""; gateError.classList.remove("is-shown"); }
+    [gateName, gateEmail, gatePhone].forEach(function(el){ if (el) el.classList.remove("is-error"); });
+  }
+  function showGateError(msg, badEl) {
+    if (gateError) { gateError.textContent = msg; gateError.classList.add("is-shown"); }
+    if (badEl) { badEl.classList.add("is-error"); try { badEl.focus(); } catch (e) {} }
+  }
+
+  function openGate(data, address) {
+    pendingData = data;
+    pendingAddr = (data && data.address && data.address.formatted) || address || "";
+    if (gateAddrSpan) gateAddrSpan.textContent = pendingAddr || "your home";
+    if (!gate) { revealResults(); return; } // fail open: if the gate is missing, just show the numbers
+    clearGateError();
+    gate.classList.add("is-open");
+    gate.setAttribute("aria-hidden", "false");
+    gateOpen = true;
+    try { document.documentElement.style.overflow = "hidden"; document.body.style.overflow = "hidden"; } catch (e) {}
+    document.addEventListener("keydown", onGateKey);
+    setTimeout(function(){ try { if (gateName) gateName.focus(); } catch (e) {} }, 60);
+    trackEvent("valuation_gate_shown", { address: pendingAddr });
+  }
+
+  function hideGate() {
+    if (gate) { gate.classList.remove("is-open"); gate.setAttribute("aria-hidden", "true"); }
+    gateOpen = false;
+    try { document.documentElement.style.overflow = ""; document.body.style.overflow = ""; } catch (e) {}
+    document.removeEventListener("keydown", onGateKey);
+  }
+
+  function revealResults() {
+    if (!pendingData) return;
+    var d = pendingData;
+    pendingData = null; // guard against a double render
+    renderResults(d);
+  }
+
+  function dismissGate(method) {
+    if (!gateOpen) return;
+    trackEvent("valuation_gate_dismiss", { address: pendingAddr, method: method || "close" });
+    hideGate();
+    revealResults();
+  }
+
+  function onGateKey(e) {
+    if (e.key === "Escape" || e.keyCode === 27) dismissGate("esc");
+  }
+
+  if (gateClose) gateClose.addEventListener("click", function(){ dismissGate("close"); });
+  if (gateSkip)  gateSkip.addEventListener("click",  function(){ dismissGate("skip"); });
+  if (gate) gate.addEventListener("click", function(e){ if (e.target === gate) dismissGate("backdrop"); });
+
+  if (gateForm) {
+    gateForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      clearGateError();
+      var nameV  = (gateName  && gateName.value  || "").trim();
+      var emailV = (gateEmail && gateEmail.value || "").trim();
+      var digits = gateNormalizeDigits(gatePhone && gatePhone.value);
+      if (!nameV) { showGateError("Please enter your name.", gateName); return; }
+      if (!emailV || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailV)) {
+        showGateError("Please enter a valid email so I can send the report.", gateEmail); return;
+      }
+      if (digits.length < 10) { showGateError("Please enter a 10-digit phone number.", gatePhone); return; }
+
+      var phonePretty = "(" + digits.slice(0,3) + ") " + digits.slice(3,6) + "-" + digits.slice(6,10);
+      submitGateLead(nameV, emailV, phonePretty);
+      trackEvent("valuation_gate_submit", { address: pendingAddr });
+
+      // Reveal immediately; the lead POST is best-effort and must never block.
+      hideGate();
+      revealResults();
+    });
+  }
+
+  // Posts the real lead (name + email + phone) to /api/lead. intent
+  // "Home Valuation Lead" matches /valuation/ -> FollowUpBoss "Seller Inquiry"
+  // (and, unlike the "Home Valuation View" soft-save, IS pushed to FUB).
+  function submitGateLead(name, email, phone) {
+    try {
+      var fd = new FormData();
+      var a = (pendingData && pendingData.address) || {};
+      fd.append("name", name);
+      fd.append("email", email);
+      fd.append("phone", phone);
+      fd.append("intent", "Home Valuation Lead");
+      fd.append("full_address", a.formatted || pendingAddr || "");
+      if (a.street) fd.append("street_address", a.street);
+      if (a.city)   fd.append("city", a.city);
+      if (a.state)  fd.append("state", a.state);
+      if (a.zip)    fd.append("zip", a.zip);
+      if (a.lat != null) fd.append("lat", a.lat);
+      if (a.lng != null) fd.append("lng", a.lng);
+      fd.append("source_page", "/value/");
+      fd.append("page_url", window.location.href);
+      fd.append("referral_source", "Home Valuation Gate");
+      fd.append("consent", "yes");
+      fd.append("submitted_at", new Date().toISOString());
+      var gc = (window.funnelState && window.funnelState.gclid) || "";
+      if (!gc) { try { gc = sessionStorage.getItem("drozq_gclid") || ""; } catch (e) {} }
+      if (gc) fd.append("gclid", gc);
+      var avmVal = pendingData && pendingData.systems && pendingData.systems.marketAVM ? pendingData.systems.marketAVM.value : "n/a";
+      fd.append("message", "Lead captured from the /value/ gate (name + email + phone collected before the numbers rendered). Market AVM: " + avmVal);
+      fetch("/api/lead", { method: "POST", body: fd }).catch(function(){});
+    } catch (e) {}
   }
 
   // Allow ?address=... in the URL to auto-run a valuation. Useful for nav links
