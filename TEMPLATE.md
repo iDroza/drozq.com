@@ -430,10 +430,10 @@ Do not change these widths. The pill is the most-clicked element on the page; re
 The non-homepage hero must be **split into two sibling sections inside a shared background wrapper**. The text section and the pill section each have their own centering context, so the pill is centered as a true block in the viewport and doesn't inherit any layout pull from the text container above it.
 
 ```html
-<div class="pos_relative ov_hidden">                          <!-- shared bg wrapper -->
-  <div class="pos_absolute inset_0 z_-1 ov_hidden [&_img]:pos_absolute [&_img]:inset_0 [&_img]:w_100% [&_img]:h_100% [&_img]:d_block [&_img]:obj-f_cover [&_img]:obj-p_100%_60% [&_img]:[@media_(max-width:_480px)]:obj-p_left">
-    <img src="/media/images/coastal-modern-home.webp" alt="..." width="1672" height="941" fetchpriority="high">
-    <div class="pos_absolute top_0 w_100% h_100% z_2" style="background:rgba(26,24,22,0.4)"></div>
+<div class="pos_relative ov_hidden d_flex flex-d_column jc_center" style="min-height:100vh;min-height:100svh">                          <!-- shared bg wrapper -->
+  <div class="pos_absolute inset_0 z_-1 ov_hidden [&_img]:pos_absolute [&_img]:inset_0 [&_img]:w_100% [&_img]:h_100% [&_img]:d_block [&_img]:obj-f_cover [&_img]:obj-p_100%_60% [&_img]:[@media_(max-width:_480px)]:obj-p_right">
+    <img src="/media/images/coastal-modern.webp" alt="..." width="1672" height="941" fetchpriority="high">
+    <div class="pos_absolute top_0 w_100% h_100% z_2" style="background:rgba(26,24,22,0)"></div>
   </div>
 
   <!-- 1) TEXT SECTION: h1 + subhead only, simple block layout, ta_center.
@@ -478,13 +478,13 @@ Why two sections instead of one:
 
 1. **Independent centering contexts.** Earlier hero versions used a single `d_flex flex-d_column ai_center` parent for eyebrow + h1 + subhead + pill + trust. Because flex-column `ai_center` doesn't stretch children, the pill wrapper would shrink-to-content and the tab row above the pill would inherit a left-leaning alignment from the text container's shrink behavior. The pill ended up visually pulled to the left even when its computed center matched the viewport center.
 2. **Pill is unambiguously centered.** The pill section uses `d_flex jc_center` on its outer wrapper, so the 700px pill block is centered in the viewport with no inheritance from anything above it. Tabs (`jc_center`) sit directly above the pill's geometric center.
-3. **Background remains cohesive.** The image is on a shared wrapper that contains BOTH sections, with `inset: 0` so it spans the entire hero block. The 0.4 dark tint overlay also spans both. Visually it reads as one hero with one background image, even though it's structurally two sections.
+3. **Background remains cohesive.** The image is on a shared wrapper that contains BOTH sections, with `inset: 0` so it spans the entire hero block. The overlay div (now transparent, no tint) also spans both. Visually it reads as one hero with one background image, even though it's structurally two sections.
 
 Do **NOT** revert this to a single section. Three prior fix attempts (`md:jc_left`, `jc_center md:jc_center`, `md:jc_flex-start md:pl_28px`) all kept the single-section layout and all produced different visible regressions. The two-section split is the structural fix.
 
 ### Hero (homepage exception)
 
-The homepage hero is a different layout — a 2-column block where the tabs+pill sit on the left and an image sits on the right. It uses the original `max-w_772px` + `md:jc_left` + `md:pl_28px` pattern and is **not** subject to the split-hero rule. Treat the homepage hero as exempt; all other pages follow the two-section pattern above.
+The homepage hero uses a single-section layout: the same full-bleed coastal splash and image as every other page, but its headline and funnel pill sit in one `<section>` centered via `d_flex flex-d_column jc_center`, instead of the two-section wrapper split, and is **not** subject to the split-hero rule. Treat the homepage hero as exempt; all other pages follow the two-section pattern above.
 
 ### Hero typography
 
@@ -509,9 +509,9 @@ The homepage hero (a different layout entirely) is the exception. The rule binds
 
 ### Hero background
 
-The hero background is a full-bleed image on every page, including the homepage. The site-wide default is **`/media/images/coastal-modern-home.webp`** (a modern hillside home overlooking the Southern California coast at sunset, 1672x941), rendered as an `<img>` with `obj-f_cover` + `fetchpriority="high"` inside the `inset_0 z_-1` wrapper.
+The hero background is a full-bleed image that fills the **entire viewport** on both desktop and mobile (a full-screen splash: `min-height:100svh` with a `100vh` fallback), so the first screen is all image with the headline and funnel pill centered over it and the rest of the page below the fold. The site-wide image is **`/media/images/coastal-modern.webp`** (a modern hillside home overlooking the Southern California coast at sunset, 1672x941), an `<img>` with `obj-f_cover` + `fetchpriority="high"` inside the `inset_0 z_-1` wrapper, cropped to the house: `obj-p_100%_60%` on desktop, `obj-p_right` on mobile.
 
-For non-homepage pages on the new template, the default hero background is **`/media/images/coastal-modern-home.webp`** (a Southern California coastal shot) with a 0.4 dark tint overlay so the white hero copy stays readable. Used site-wide: the homepage and every page on the new template. Swap to a page-specific image only when there's a real reason (e.g., `/faq/` uses `outside-home-pic1.webp` to signal "home interior" rather than coastline). Always lazy-load any background image that isn't the hero's `fetchpriority="high"` element, always include a meaningful `alt` text, and always carry the dark tint overlay (`<div class="pos_absolute top_0 w_100% h_100% z_2" style="background:rgba(26,24,22,0.4)"></div>`) so hero copy contrast survives the image swap.
+Every page on the new template carries this same full-screen hero with **no tint**: the overlay div is kept but transparent (`rgba(26,24,22,0)`), so a dark tint can be reintroduced later by raising its alpha if a future image needs contrast help. Used site-wide on the homepage and every template page, except `/value/` (its coastal hero is `display:none`; that page shows the valuation tool instead). Swap to a page-specific image only when there's a real reason (e.g., `/faq/` uses `outside-home-pic1.webp` to signal "home interior" rather than coastline). Always lazy-load any background image that isn't the hero's `fetchpriority="high"` element, always include a meaningful `alt`, and crop to the house (`obj-p_100%_60%` desktop, `obj-p_right` mobile).
 
 ### Joshua's portrait placement (Waist.png)
 
