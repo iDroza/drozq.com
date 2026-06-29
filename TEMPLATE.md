@@ -430,8 +430,8 @@ Do not change these widths. The pill is the most-clicked element on the page; re
 The non-homepage hero must be **split into two sibling sections inside a shared background wrapper**. The text section and the pill section each have their own centering context, so the pill is centered as a true block in the viewport and doesn't inherit any layout pull from the text container above it.
 
 ```html
-<div class="pos_relative ov_hidden d_flex flex-d_column jc_center" style="min-height:100vh;min-height:100svh">                          <!-- shared bg wrapper -->
-  <div class="pos_absolute inset_0 z_-1 ov_hidden [&_img]:pos_absolute [&_img]:inset_0 [&_img]:w_100% [&_img]:h_100% [&_img]:d_block [&_img]:obj-f_cover [&_img]:obj-p_100%_60% [&_img]:[@media_(max-width:_480px)]:obj-p_right">
+<div class="pos_relative ov_hidden">                          <!-- shared bg wrapper -->
+  <div class="pos_absolute inset_0 z_-1 ov_hidden [&_img]:pos_absolute [&_img]:inset_0 [&_img]:w_100% [&_img]:h_100% [&_img]:d_block [&_img]:obj-f_cover [&_img]:obj-p_100%_60% [&_img]:[@media_(max-width:_480px)]:obj-p_left">
     <img src="/media/images/crystal-cove.webp" alt="..." width="1280" height="640" fetchpriority="high">
     <div class="pos_absolute top_0 w_100% h_100% z_2" style="background:rgba(26,24,22,0.4)"></div>
   </div>
@@ -484,7 +484,7 @@ Do **NOT** revert this to a single section. Three prior fix attempts (`md:jc_lef
 
 ### Hero (homepage exception)
 
-The homepage hero uses a single-section layout: the same full-bleed coastal splash and image as every other page, but its headline and funnel pill sit in one `<section>` centered via `d_flex flex-d_column jc_center`, instead of the two-section wrapper split, and is **not** subject to the split-hero rule. Treat the homepage hero as exempt; all other pages follow the two-section pattern above.
+The homepage hero is a different layout — a 2-column block where the tabs+pill sit on the left and an image sits on the right. It uses the original `max-w_772px` + `md:jc_left` + `md:pl_28px` pattern and is **not** subject to the split-hero rule. Treat the homepage hero as exempt; all other pages follow the two-section pattern above.
 
 ### Hero typography
 
@@ -509,9 +509,9 @@ The homepage hero (a different layout entirely) is the exception. The rule binds
 
 ### Hero background
 
-The hero background is a full-bleed image that fills the **entire viewport** on both desktop and mobile (a full-screen splash: `min-height:100svh` with a `100vh` fallback), so the first screen is all image with the headline and funnel pill centered over it and the rest of the page below the fold. The site-wide image is **`/media/images/crystal-cove.webp`** (the Crystal Cove coastline along the Newport Coast, 1280x640), an `<img>` with `obj-f_cover` + `fetchpriority="high"` inside the `inset_0 z_-1` wrapper, framed right-of-center: `obj-p_100%_60%` on desktop, `obj-p_right` on mobile.
+The homepage hero uses a flat light background. Hero imagery is not currently part of the homepage (it was deferred). If a new page wants a hero image, treat it as additive on top of the existing scaffolding rather than replacing the structure.
 
-Every page on the new template carries this same full-screen hero with a **0.4 dark tint** overlay (`rgba(26,24,22,0.4)`) so the white hero copy stays readable. Used site-wide on the homepage and every template page, except `/value/` (its coastal hero is `display:none`; that page shows the valuation tool instead). Swap to a page-specific image only when there's a real reason (e.g., `/faq/` uses `outside-home-pic1.webp` to signal "home interior" rather than coastline). Always lazy-load any background image that isn't the hero's `fetchpriority="high"` element, always include a meaningful `alt`, and frame it right-of-center (`obj-p_100%_60%` desktop, `obj-p_right` mobile).
+For non-homepage pages on the new template, the default hero background is **`/media/images/crystal-cove.webp`** (a Southern California coastal shot) with a 0.4 dark tint overlay so the white hero copy stays readable. Used on `/california/`, `/los-angeles/`, `/where-we-help/`, `/meet-the-team/`, `/contact/`. Swap to a page-specific image only when there's a real reason (e.g., `/faq/` uses `outside-home-pic1.webp` to signal "home interior" rather than coastline). Always lazy-load any background image that isn't the hero's `fetchpriority="high"` element, always include a meaningful `alt` text, and always carry the dark tint overlay (`<div class="pos_absolute top_0 w_100% h_100% z_2" style="background:rgba(26,24,22,0.4)"></div>`) so hero copy contrast survives the image swap.
 
 ### Joshua's portrait placement (Waist.png)
 
