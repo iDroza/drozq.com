@@ -78,8 +78,8 @@ def landing_form_pill(placeholder: str, value: str = "") -> str:
 HERO = f"""
 <div class="pos_relative ov_hidden d_flex flex-d_column jc_center" style="min-height:100vh;min-height:100svh">
   <div class="pos_absolute inset_0 z_-1 ov_hidden [&_img]:pos_absolute [&_img]:inset_0 [&_img]:w_100% [&_img]:h_100% [&_img]:d_block [&_img]:obj-f_cover [&_img]:obj-p_100%_60% [&_img]:[@media_(max-width:_480px)]:obj-p_right">
-    <img src="/media/images/coastal-modern.webp" alt="Modern hillside home overlooking the Southern California coast at sunset" width="1672" height="941" fetchpriority="high">
-    <div class="pos_absolute top_0 w_100% h_100% z_2" style="background:rgba(26,24,22,0)"></div>
+    <img src="/media/images/crystal-cove.webp" alt="Southern California coastline at Crystal Cove" width="1280" height="640" fetchpriority="high">
+    <div class="pos_absolute top_0 w_100% h_100% z_2" style="background:rgba(26,24,22,0.4)"></div>
   </div>
 
   <section aria-labelledby="rates-hero-title" class="pos_relative z_1 c_textBody pt_48px xs:pt_80px pb_24px md:pb_32px">
