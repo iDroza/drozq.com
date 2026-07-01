@@ -2737,6 +2737,19 @@ body[data-view="after"] .value-loading { display: none; }
   .value-pill input { height: 60px; padding: 0 8px 0 32px; font-size: 18px; }
   .value-pill button { height: 54px; padding: 0 28px; font-size: 18px; }
 }
+/* When the Google Places dropdown is open, flatten the pill's bottom so it merges
+   flush with the suggestions below (pill = rounded top, .pac-container = rounded
+   bottom = one seamless container), matching the homepage hero. The .is-pac-open
+   class is toggled by the page JS in bindPlaces().
+   Base/mobile: the input is its own full-width pill, so flatten BOTH bottom corners.
+   >=480px: the pill wraps input + button; the dropdown spans the input portion and
+   stops before the red button, so flatten only the bottom-LEFT of the pill + input
+   (the button stays fully round). */
+.value-pill.is-pac-open { border-bottom-left-radius: 0 !important; }
+.value-pill.is-pac-open input {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
 
 .value-form-error {
   display: none;
@@ -3615,6 +3628,80 @@ body[data-view="after"] .value-loading { display: none; }
         if (!place || !place.geometry) return;
         selectedPlace = place;
       });
+
+      // --- Dropdown polish (matches the homepage hero pill) --------------------
+      // This bespoke address input has its OWN Autocomplete (separate from the
+      // synced funnel), so it needs its own copy of the homepage "input-pill-
+      // flattens" pattern: when the suggestions open, snap .pac-container flush
+      // to the input and add .is-pac-open so the pill flattens its bottom corners
+      // (pill = rounded top, dropdown = rounded bottom = one seamless container).
+      var pill = input.closest(".value-pill");
+      var pacActive = false;   // true only while THIS input owns the visible dropdown
+      var pacObserver = null;
+      var rafId = null;
+
+      // The synced funnel aligner (initFunnelPlaces) also repositions
+      // .pac-container elements, but only once a landing pill input
+      // (form.pos_relative input[name="location"], e.g. the closing CTA) has been
+      // focused. If that has happened, two repositioners would ping-pong over the
+      // same dropdown, so once armed we cede POSITION to the synced one and only
+      // keep toggling the flatten class here (which it never touches).
+      var syncedArmed = false;
+      var landingInputs = document.querySelectorAll('form.pos_relative input[name="location"]');
+      for (var li = 0; li < landingInputs.length; li++) {
+        landingInputs[li].addEventListener("focus", function() { syncedArmed = true; }, true);
+      }
+
+      function alignValuePac() {
+        if (!pacActive || !pill) return;
+        var pacs = document.querySelectorAll(".pac-container");
+        if (!pacs.length) return;
+        var rect = input.getBoundingClientRect();
+        var leftPx  = (rect.left + window.scrollX) + "px";
+        var topPx   = (rect.bottom + window.scrollY) + "px";
+        var widthPx = rect.width + "px";
+        var anyOpen = false;
+        for (var i = 0; i < pacs.length; i++) {
+          var pac = pacs[i];
+          if (pac.style.display === "none") continue;
+          anyOpen = true;
+          if (!syncedArmed) {
+            if (pac.style.left  !== leftPx)  pac.style.left  = leftPx;
+            if (pac.style.top   !== topPx)   pac.style.top   = topPx;
+            if (pac.style.width !== widthPx) pac.style.width = widthPx;
+          }
+        }
+        pill.classList.toggle("is-pac-open", anyOpen);
+      }
+
+      function ensureValuePacObserver() {
+        if (pacObserver) return;
+        var pacs = document.querySelectorAll(".pac-container");
+        if (!pacs.length) return;
+        pacObserver = new MutationObserver(alignValuePac);
+        for (var i = 0; i < pacs.length; i++) {
+          pacObserver.observe(pacs[i], { attributes: true, attributeFilter: ["style"] });
+        }
+      }
+
+      function scheduleAlign() {
+        if (rafId) return;
+        rafId = requestAnimationFrame(function() { rafId = null; alignValuePac(); });
+      }
+
+      input.addEventListener("focus", function() {
+        pacActive = true;
+        setTimeout(function() { ensureValuePacObserver(); alignValuePac(); }, 0);
+      });
+      input.addEventListener("input", scheduleAlign);
+      input.addEventListener("blur", function() {
+        setTimeout(function() {
+          pacActive = false;
+          if (pill) pill.classList.remove("is-pac-open");
+        }, 150);
+      });
+      window.addEventListener("resize", scheduleAlign);
+      window.addEventListener("scroll", scheduleAlign, true);
     } catch (e) {}
   }
 
