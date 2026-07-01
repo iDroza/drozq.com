@@ -414,6 +414,18 @@ Placeholders by mode:
 
 Google Places Autocomplete is bound to every landing `input[name="location"]` for Sell + Sell&Buy modes; Buy mode is free-text.
 
+### Places dropdown polish (the input-pill-flattens pattern, no exceptions)
+
+The Google Places suggestions box (`.pac-container`) must merge into the pill as one seamless container: the pill supplies the rounded **top**, the dropdown supplies the rounded **bottom** (`.pac-container { border-radius: 0 0 16px 16px }`). If the pill keeps its full rounding while the dropdown opens, the square-topped dropdown reads as "cut off" below the rounded pill (the exact bug fixed on `/value/`, 2026-06-30).
+
+The fix is a class, `is-pac-open`, added to the pill while the dropdown is visible, which flattens the pill's bottom corners:
+- **Mobile** (input is its own full-width pill): flatten **both** bottom corners of the input.
+- **>=480px** (input + button share one pill, dropdown spans the input portion only and stops before the button): flatten the **bottom-left** of the pill wrapper + input; the button keeps `border-radius: 9999px`.
+
+The synced funnel JS (`alignVisiblePac` inside `initFunnelPlaces`) owns this for every landing `form.pos_relative input[name="location"]`: on focus it snaps `.pac-container`'s `left`/`top`/`width` to the input (killing Google's default gap/inset) and toggles `is-pac-open` on the parent `form.pos_relative`. You get it for free by scaffolding the standard hero pill; do not hand-wire it.
+
+**Bespoke address inputs carry their own copy.** A page-specific address field with its **own** `google.maps.places.Autocomplete` (not a `form.pos_relative input[name="location"]`) is invisible to the synced aligner, so it needs the pattern re-implemented locally: the flatten CSS on its own pill class + a focus/observer aligner that toggles the class and snaps its `.pac-container`. The only instance today is `/value/`'s `#value-address-input` (`.value-pill.is-pac-open` CSS + the aligner in `bindPlaces()`), gated so it only touches its own dropdown and cedes repositioning to the synced aligner once a landing pill has been focused (so the two never ping-pong). Any future bespoke address input must copy that.
+
 ### Hero pill width (canonical)
 
 The hero pill on the homepage uses a two-layer width scaffold. Reuse it verbatim on every page that ships a hero with the 3-tab CTA.
