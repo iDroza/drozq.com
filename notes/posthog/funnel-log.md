@@ -4,6 +4,31 @@ Chronological observations from PostHog about the homepage funnel. Newest at top
 
 ---
 
+## 2026-07-01: paid ramp is live; sell funnel converting at ~10% open-to-submit; lead_confirmed is GTM-only (never a PostHog event)
+
+Weekly health read (raw HogQL, internal traffic counted). Week of 6/24-7/01 vs
+6/17-6/24: pageviews 63 -> 278, funnel_open 24 -> 97 (12 -> 55 sessions),
+submit_success 1 -> 9 (7 sessions). The jump is the Google Ads ramp: ads.py
+daily trend shows spend going from ~$0-10/day mid-June to $47-67/day the last
+week, all on "Home Sellers - Agent Locator Lander" (tCPA, $50/day cap). 5 of 7
+converting sessions carry a gclid; 1 came from the Instagram link-in-bio.
+
+Open-to-submit by mode, last 7d: sell 88 opens -> 9 submits (10.2%), buy 7 -> 0,
+sellandbuy 2 -> 0. Buy/S&B volume is too small to judge.
+
+/value/ gate, last 7d: valuation_gate_shown 10 (3 sessions), gate_submit 2,
+gate_dismiss 6. Small sample; watch the dismiss rate as volume grows.
+
+Zero funnel_submit_error and zero funnel_submit_retry all week. The 5/31 submit
+hardening is holding.
+
+Querying gotcha, recorded so nobody chases this ghost again: `lead_confirmed`
+has NEVER existed in PostHog (all-time count 0). It is pushed to dataLayer only
+on /thank-you/ and consumed by GTM -> GA4 -> Ads import; the funnel `track()`
+helper never captures it. Ads shows 6 imported conversions in 30d, matching
+submit days, so the conversion pipe is healthy. For PostHog analysis, the
+conversion event is `funnel_submit_success`.
+
 ## 2026-05-31: sell-funnel "something went wrong" on submit (network dead-end) fixed
 
 Joshua reported a visitor who got "Something went wrong" after submitting the

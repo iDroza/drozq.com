@@ -80,7 +80,7 @@ The script paginates, converts micros to USD, and derives CPC / CPL / CVR itself
 
 If `ads.py` prints `invalid_grant`, the refresh token was revoked (someone hit "Remove access" on the Google account, or the app slipped back to Testing and aged out). Re-run step 2; if it recurs, confirm the app is still **In production** in step 1.
 
-**Endpoint (what ads.py calls):** `POST https://googleads.googleapis.com/v20/customers/3351363652/googleAds:search` with headers `Authorization: Bearer <access_token>`, `developer-token: <token>`, `login-customer-id: 1975174499`.
+**Endpoint (what ads.py calls):** `POST https://googleads.googleapis.com/<API_VERSION>/customers/3351363652/googleAds:search` with headers `Authorization: Bearer <access_token>`, `developer-token: <token>`, `login-customer-id: 1975174499`. The version is pinned in `ads.py` (`API_VERSION`, default `v24` as of 2026-07-01; override with the `GOOGLE_ADS_API_VERSION` env var). Google hard-blocks deprecated versions (`UNSUPPORTED_VERSION` on every query, seen 2026-07-01 when v20 died); when that happens, probe upward (`$env:GOOGLE_ADS_API_VERSION='v25'; python scripts/ads.py "SELECT customer.id FROM customer LIMIT 1"`) and bump the default in `ads.py`.
 
 ### Useful resources
 

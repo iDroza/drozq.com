@@ -51,7 +51,8 @@ def access_token():
 
 
 TOKEN = access_token()
-URL = f"https://googleads.googleapis.com/v20/customers/{CID}/googleAds:search"
+API_VERSION = os.environ.get("GOOGLE_ADS_API_VERSION", "v24")
+URL = f"https://googleads.googleapis.com/{API_VERSION}/customers/{CID}/googleAds:search"
 
 
 def gaql(q):
@@ -114,7 +115,7 @@ else:
 # ---------- 2. CAMPAIGN CONFIG / BIDDING ----------
 block("2. CAMPAIGN CONFIG + BIDDING STRATEGY")
 r = gaql("SELECT campaign.id, campaign.name, campaign.status, campaign.advertising_channel_type, "
-         "campaign.bidding_strategy_type, campaign.start_date, campaign_budget.amount_micros, "
+         "campaign.bidding_strategy_type, campaign_budget.amount_micros, "
          "campaign.maximize_conversions.target_cpa_micros, campaign.target_cpa.target_cpa_micros, "
          "campaign.target_spend.cpc_bid_ceiling_micros, campaign.manual_cpc.enhanced_cpc_enabled "
          "FROM campaign WHERE campaign.status != 'REMOVED'")
@@ -124,7 +125,7 @@ else:
     for row in r:
         c = row.get("campaign", {}); b = row.get("campaignBudget", {})
         print(f"\n[{c.get('status')}] {c.get('name')}  (id {c.get('id')})")
-        print(f"   channel={c.get('advertisingChannelType')}  start={c.get('startDate')}")
+        print(f"   channel={c.get('advertisingChannelType')}")
         print(f"   bidStrategy={c.get('biddingStrategyType')}  dailyBudget=${usd(b.get('amountMicros')):.2f}")
         mc = g(c, 'maximizeConversions', 'targetCpaMicros'); tc = g(c, 'targetCpa', 'targetCpaMicros')
         ceil = g(c, 'targetSpend', 'cpcBidCeilingMicros'); ecpc = g(c, 'manualCpc', 'enhancedCpcEnabled')
@@ -186,7 +187,7 @@ else:
 block("5. AD GROUP PERFORMANCE (LAST 30 DAYS)")
 r = gaql("SELECT campaign.name, ad_group.name, ad_group.cpc_bid_micros, metrics.impressions, "
          "metrics.clicks, metrics.cost_micros, metrics.conversions, metrics.search_impression_share, "
-         "metrics.search_rank_lost_impression_share, metrics.search_budget_lost_impression_share "
+         "metrics.search_rank_lost_impression_share "
          "FROM ad_group WHERE segments.date DURING LAST_30_DAYS AND ad_group.status != 'REMOVED' "
          "AND campaign.status != 'REMOVED' ORDER BY metrics.cost_micros DESC")
 if isinstance(r, dict):
