@@ -458,7 +458,7 @@ The non-homepage hero must be **split into two sibling sections inside a shared 
     </div>
   </section>
 
-  <!-- 2) PILL SECTION: own d_flex jc_center context, tabs jc_center above 700px pill, trust line below -->
+  <!-- 2) PILL SECTION: own d_flex jc_center context, tabs jc_center above 700px pill -->
   <section aria-label="Start your home valuation" class="pos_relative z_1 pb_48px xs:pb_64px md:pb_80px">
     <div class="d_flex jc_center pl_32px pr_32px bx-s_border-box mb_24px">
       <div class="pos_relative w_100% max-w_700px">
@@ -481,10 +481,11 @@ The non-homepage hero must be **split into two sibling sections inside a shared 
         </div>
       </div>
     </div>
-    <p class="ta_center op_0.85 c_#fff fs_12px md:fs_13px ls_1.5px fw_700" style="text-transform:uppercase">Trust line (DRE, etc).</p>
   </section>
 </div>
 ```
+
+**No identity trust line under the pill.** The `Joshua Guerrero &middot; Real Brokerage &middot; DRE` strip is redundant: the footer on every page already carries the full identity block (brand, DRE, phone). Ruled redundant and purged sitewide 2026-07-09 (the `/value/` hero and `/404.html` carried it); do not add it to new heroes. The funnel's own "Reviewed personally. Licensed in California, DRE #02267255." assurance and the legal/JSON-LD occurrences are unaffected.
 
 Why two sections instead of one:
 

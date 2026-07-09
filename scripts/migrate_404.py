@@ -15,7 +15,8 @@ DESIGN:
   THE WORLD IS YOURS, in brand red: outlined strokes with YOURS solid.
   Stacks one word per line at mobile, two lines at md+. Pure CSS text, no
   image weight. Foreground is the canonical two-section hero: H1 blurb +
-  one-sentence subhead, then the 3-tab funnel pill + trust line.
+  one-sentence subhead, then the 3-tab funnel pill. No trust line under the
+  pill: identity + DRE already live in the footer (ruled redundant 2026-07-09).
 - Purpose switcher: the mid-page tabs pattern reframed as "what this site
   does" (I'm selling / I'm buying), each panel 3 numbered value points + the
   540px address pill.
@@ -107,12 +108,6 @@ NF_STYLE = """
 }
 .nf-solid { color: #d92228; opacity: 0.9; }
 .nf-hero-copy { text-shadow: 0 2px 24px rgba(26, 24, 22, 0.85), 0 1px 6px rgba(26, 24, 22, 0.9); }
-/* Mobile pill: the See Plan button is absolutely positioned ~108px deep while
-   the form only flows ~64px, so the trust line below needs explicit clearance. */
-.nf-trust { margin-top: 48px; }
-@media (min-width: 480px) {
-  .nf-trust { margin-top: 0; }
-}
 @media (min-width: 768px) {
   .nf-hero { justify-content: center; }
   .nf-sec-text, .nf-sec-pill { margin-top: 0; margin-bottom: 0; }
@@ -194,7 +189,6 @@ HERO = f"""
         </div>
       </div>
     </div>
-    <p class="ta_center op_0.85 c_#fff fs_12px md:fs_13px ls_1.5px fw_700 nf-hero-copy nf-trust" style="text-transform:uppercase">Joshua Guerrero &middot; Real Brokerage &middot; CA DRE #02267255</p>
   </section>
 
   <div class="nf-row nf-row-bottom" aria-hidden="true"><span class="nf-outline">Is</span><span class="nf-solid">Yours</span></div>
