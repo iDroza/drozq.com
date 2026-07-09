@@ -48,10 +48,11 @@ MARKER = "WT-AETGAYMU"
 
 
 def pages():
-    """Every real page: an index.html that carries the GTM container."""
+    """Every real page: an index.html (plus the root 404.html) carrying the GTM container."""
     out = []
-    for p in ROOT.rglob("index.html"):
-        if ANCHOR in p.read_text(encoding="utf-8"):
+    candidates = list(ROOT.rglob("index.html")) + [ROOT / "404.html"]
+    for p in candidates:
+        if p.exists() and ANCHOR in p.read_text(encoding="utf-8"):
             out.append(p)
     return sorted(out)
 
