@@ -405,7 +405,7 @@ Modern pattern, used on every page:
 <link rel="manifest" href="/site.webmanifest">
 ```
 
-Files at repo root: `favicon-96x96.png`, `favicon.svg`, `favicon.ico`, `favicon.png`, `apple-touch-icon.png`, `site.webmanifest`. Do not modify, rename, or remove these. Do not use absolute URLs with spaces in filenames.
+Files at repo root: `favicon-96x96.png`, `favicon.svg`, `favicon.ico`, `apple-touch-icon.png`, `web-app-manifest-192x192.png`, `web-app-manifest-512x512.png`, `site.webmanifest`, plus `preview.png` (the sitewide og:image / twitter:image). Do not modify, rename, or remove these. Do not use absolute URLs with spaces in filenames.
 
 ## Deployment
 
@@ -418,6 +418,13 @@ This site auto-deploys to production via Cloudflare Pages on every push to main.
 When paid ad campaigns are running, high-risk changes (hero rewrites, funnel restructures, navigation changes, tracking modifications) should be committed with clear messages, verified on live site immediately, checked for JS errors in the console, and rolled back if anything breaks.
 
 Per the auto-commit rule, push directly to main. No feature branches unless explicitly requested.
+
+## Repo hygiene (what gets committed)
+
+There is no build step: the repo root IS the deploy root, so **every tracked file is publicly fetchable** at its drozq.com path (`scripts/`, `notes/`, and every `*.md` included; only `functions/` is special-cased). Two rules follow:
+
+1. **Never commit anything that cannot be public**: credentials, lead exports, scraped or extracted third-party content. Secrets live in Cloudflare Pages env vars or gitignored files (`scripts/.google_ads.json`).
+2. **QA screenshots never enter the repo.** Save captures to the Claude scratchpad or `C:\Users\guerr\Downloads`. Root-level images are gitignored wholesale except the favicon/OG whitelist (`apple-touch-icon.png`, `favicon-96x96.png`, `preview.png`, `web-app-manifest-*.png`). Context: a 2026-07-09 purge removed ~40 orphaned session screenshots that had been deploying to production URLs.
 
 ## Conversion copy principles
 

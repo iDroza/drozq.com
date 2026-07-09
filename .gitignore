@@ -11,11 +11,24 @@ Thumbs.db
 *.swo
 *~
 
-# Local audit screenshots (drop here when capturing comps)
+# Screenshots and QA captures NEVER belong in the repo: every tracked file is
+# publicly served by Cloudflare Pages. Save captures to the Claude scratchpad
+# or Downloads instead. Root-level images are blocked wholesale; only the
+# favicon/OG whitelist below is allowed at root.
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.gif
+!/apple-touch-icon.png
+!/favicon-96x96.png
+!/preview.png
+!/web-app-manifest-192x192.png
+!/web-app-manifest-512x512.png
+
+# Legacy screenshot name patterns (kept for subdirectory coverage)
 drozq-la-*.png
 sellersadvantage-la-*.png
-
-# Local verification screenshots (claude live-checks; never deploy these)
 verify-*.png
 
 # Python bytecode

@@ -48,7 +48,6 @@ These were tracked in the now-deleted `REALTOR_CLEANUP_AUDIT.md`. The Done items
 
 - **Inline CSS purge.** The inline `<style>` block is ~157KB of Panda CSS utilities. Probably ~80% unused. Tree-shake against actual class usage and inline only what is needed. Biggest remaining perf win.
 - **Header nav markup cleanup.** Dead `#top` links remain in the DOM even when the header is hidden for new visitors. Reduce DOM clutter by deleting the unused nav items (`Login`, dead "Reviews" link, etc.) rather than just hiding them.
-- **Orphan files on disk.** Delete: `/media/icons/realtor-com-logo.png` (0 refs in HTML). Delete: `/media/images/Joshua Guerrero - Transparent Headshot.png` (1.81MB, 0 refs). Delete: `/media/images/trust.webp`, `trust-sell-tablet.webp`, `trust-sell-mweb.webp` (0 refs after the condition-switcher real-image swap on 2026-06-12; replaced by `cond-sold.webp` / `cond-reno.webp`).
 - **6-tile partner-agent grid.** Tracked under "Conversion / strategy" above (item: "Our partner agents are…" section). Reflagged here because it is also a clone leftover.
 
 ---
@@ -56,12 +55,13 @@ These were tracked in the now-deleted `REALTOR_CLEANUP_AUDIT.md`. The Done items
 ## Hygiene & polish
 
 - **`highlight-reviews.png` (204KB).** 1 ref on homepage. Convert to WebP or remove if the section is being rewritten.
-- **Prune dead funnel code.** Since the unified funnel (2026-06-13) always renders the sell entries, these are unused: `VALUEBAR.buy` / `VALUEBAR.sellandbuy`, `DELIVERABLE.buy` / `DELIVERABLE.sellandbuy`, the `DV_BODY` helper, and the `#funnel-overlay .funnel-dv-*` CSS block. Safe to delete from `/index.html` (between the funnel markers) and re-sync. Also unused: `funnel-timeline` is live but the never-referenced `trust*.webp` (tracked above) and the dead `.funnel-h2-fit` CSS rule (its only usage was removed) can go too.
+- **Prune dead funnel code.** Since the unified funnel (2026-06-13) always renders the sell entries, these are unused: `VALUEBAR.buy` / `VALUEBAR.sellandbuy`, `DELIVERABLE.buy` / `DELIVERABLE.sellandbuy`, the `DV_BODY` helper, and the `#funnel-overlay .funnel-dv-*` CSS block. Safe to delete from `/index.html` (between the funnel markers) and re-sync. Also unused: the dead `.funnel-h2-fit` CSS rule (its only usage was removed) can go too. (The never-referenced `trust*.webp` files were deleted in the 2026-07-09 declutter.)
 - **`/404.html`.** Not present. Cloudflare Pages currently serves index.html (or a generic 404) for missing paths, which can cause soft-404s in Google's index. Create a real 404 page following the homepage template (minimal funnel-equipped scaffold + "Page not found" hero copy).
 - **Skip-to-content link.** No `class="skip-link"` or skip-to-content anchor at the top of the body. Add for keyboard / screen-reader users.
 - **`<img>` width/height coverage.** Most images have explicit `width`/`height` attrs (good for CLS), but not 100%. Audit images that load without dimensions and add them.
 - **12px body font on sub-tiles.** Some content sub-tiles still render at 12px, below the recommended 14px floor for body text. Bump to 14px.
 - **CLAUDE.md "Realtor.com clone state" section.** Currently flags `BRE #01928572` and Indiana PLA as deferred. Both are already DONE. Refresh that section to match current state when this backlog is acted on.
+- **Internal docs are publicly served.** No build step means everything tracked deploys: `CLAUDE.md`, `TEMPLATE.md`, `BACKLOG.md`, `notes/` (including the ad-strategy docs), and `scripts/*.py` are all fetchable at their drozq.com paths. No secrets are exposed (keys live in Cloudflare env vars / gitignored files), but the campaign strategy notes are competitive intel sitting on public URLs. Decide: accept as-is, or add a deploy exclusion (a build step or output-dir restructure that strips `notes/`, `scripts/`, and root `*.md` from the published site).
 
 ---
 

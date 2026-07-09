@@ -3,9 +3,8 @@
 every Drozq page, immediately after the GTM container snippet.
 
 The pixel is part of the tracking stack: it ships on every real page (each is an
-index.html that carries the GTM container). Partials with no <head>
-(header.html / footer.html) are excluded automatically because they lack the GTM
-anchor.
+index.html that carries the GTM container). Any HTML file without the GTM
+anchor is excluded automatically.
 
 Idempotent, count-guarded, BOM-preserving:
   - the GTM end comment is a unique per-page anchor, so the pixel lands in exactly
