@@ -68,25 +68,17 @@ NF_STYLE = """
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
-/* The words frame the content: THE WORLD pinned to the top of the hero,
-   IS YOURS pinned to the bottom, foreground copy in the clear middle zone. */
-.nf-backdrop {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 58px 0 10px;
-  overflow: hidden;
-  pointer-events: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
+/* The words frame the content: THE WORLD above it, IS YOURS below it.
+   MOBILE: the two word rows sit in NORMAL FLOW (row, copy, pill, row) so no
+   viewport height can ever collide them with the foreground; the auto
+   margins on the two content sections center the copy block between the
+   rows when there is room and collapse to plain flow when there isn't.
+   DESKTOP (min-width 768px): the rows pin absolutely to the hero's top and
+   bottom edges, the original poster composition. */
 .nf-row {
+  position: relative;
+  z-index: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -97,7 +89,15 @@ NF_STYLE = """
   letter-spacing: 0.02em;
   white-space: nowrap;
   font-size: clamp(56px, 20vw, 110px);
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
+.nf-row-top { padding-top: 60px; }
+.nf-row-bottom { padding-bottom: 8px; }
+.nf-sec-text { margin-top: auto; }
+.nf-sec-pill { margin-bottom: auto; }
 .nf-outline {
   color: transparent;
   -webkit-text-stroke: 2px rgba(217, 34, 40, 0.75);
@@ -114,8 +114,19 @@ NF_STYLE = """
   .nf-trust { margin-top: 0; }
 }
 @media (min-width: 768px) {
-  .nf-backdrop { padding: 76px 0 16px; }
-  .nf-row { flex-direction: row; gap: 0.24em; font-size: clamp(110px, 14.5vw, 210px); }
+  .nf-hero { justify-content: center; }
+  .nf-sec-text, .nf-sec-pill { margin-top: 0; margin-bottom: 0; }
+  .nf-row {
+    position: absolute;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.24em;
+    font-size: clamp(110px, 14.5vw, 210px);
+  }
+  .nf-row-top { top: 76px; padding-top: 0; }
+  .nf-row-bottom { bottom: 16px; padding-bottom: 0; }
   .nf-outline { -webkit-text-stroke-width: 3px; }
 }
 .nf-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
@@ -145,19 +156,16 @@ NF_STYLE = """
 
 HERO = f"""
 <div class="pos_relative ov_hidden nf-hero">
-  <div class="nf-backdrop" aria-hidden="true">
-    <div class="nf-row"><span class="nf-outline">The</span><span class="nf-outline">World</span></div>
-    <div class="nf-row"><span class="nf-outline">Is</span><span class="nf-solid">Yours</span></div>
-  </div>
+  <div class="nf-row nf-row-top" aria-hidden="true"><span class="nf-outline">The</span><span class="nf-outline">World</span></div>
 
-  <section aria-labelledby="nf-hero-title" class="pos_relative z_1 c_textBody pt_48px xs:pt_80px pb_24px md:pb_32px">
+  <section aria-labelledby="nf-hero-title" class="pos_relative z_1 c_textBody pt_48px xs:pt_80px pb_24px md:pb_32px nf-sec-text">
     <div class="w_100% max-w_860px pl_32px pr_32px bx-s_border-box mx_auto ta_center">
       <h1 id="nf-hero-title" class="fw_700 ls_1.5px c_#fff lh_40px md:lh_64px fs_32px md:fs_56px mb_16px nf-hero-copy">This page doesn't exist.</h1>
       <p class="op_0.9 c_#fff ls_.5px fs_14px md:fs_16px lg:fs_20px m_0 nf-hero-copy">Your home's value does, so drop the address and leave with the number.</p>
     </div>
   </section>
 
-  <section aria-label="Start your home valuation" class="pos_relative z_1 pb_48px xs:pb_64px md:pb_80px">
+  <section aria-label="Start your home valuation" class="pos_relative z_1 pb_48px xs:pb_64px md:pb_80px nf-sec-pill">
     <div class="d_flex jc_center pl_32px pr_32px bx-s_border-box mb_24px">
       <div class="pos_relative w_100% max-w_700px">
         <div class="pos_relative" role="button" tabindex="0" aria-label="Property transaction type selector">
@@ -188,6 +196,8 @@ HERO = f"""
     </div>
     <p class="ta_center op_0.85 c_#fff fs_12px md:fs_13px ls_1.5px fw_700 nf-hero-copy nf-trust" style="text-transform:uppercase">Joshua Guerrero &middot; Real Brokerage &middot; CA DRE #02267255</p>
   </section>
+
+  <div class="nf-row nf-row-bottom" aria-hidden="true"><span class="nf-outline">Is</span><span class="nf-solid">Yours</span></div>
 </div>
 """
 
