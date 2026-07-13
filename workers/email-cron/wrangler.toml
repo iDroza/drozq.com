@@ -1,0 +1,16 @@
+# Standalone Worker: the clock for the email platform. Pages Functions cannot
+# run cron triggers, so this 12-line Worker POSTs /api/email/tick every 10
+# minutes. Deploy once from this directory:
+#
+#   npx wrangler deploy
+#   npx wrangler secret put EMAIL_SECRET   (same value as the Pages env var)
+#
+# This wrangler.toml lives in a subdirectory on purpose: Cloudflare Pages only
+# reads a repo-root wrangler.toml, so this file cannot affect the site build.
+
+name = "drozq-email-cron"
+main = "src/index.js"
+compatibility_date = "2026-06-01"
+
+[triggers]
+crons = ["*/10 * * * *"]

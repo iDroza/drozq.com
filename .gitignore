@@ -37,3 +37,9 @@ __pycache__/
 
 # Google Ads API credentials (OAuth refresh token) - NEVER commit
 scripts/.google_ads.json
+
+# Email platform shared secret (mirrors the EMAIL_SECRET Cloudflare env var) - NEVER commit
+scripts/.email_secret
+
+# Wrangler local state (from `npx wrangler pages dev` test runs)
+.wrangler/

@@ -1,3 +1,5 @@
+import { enrollSubscriber } from "../_lib/enroll.js";
+
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -137,6 +139,19 @@ async function deliverLead(env, lead) {
     // No delivery channel at all: log the full lead so Joshua can recover it
     // from the Cloudflare Pages function logs. The visitor still got a 200.
     console.error("LEAD_NOT_DELIVERED no channel configured; recoverable lead below | " + logLine);
+  }
+
+  // Email platform enrollment (best effort, additive, NOT a delivery channel:
+  // it never affects the channels gauge above). Gated on the EMAIL_DB D1
+  // binding + EMAIL_SECRET, so behavior is byte-identical until those exist.
+  // New addresses get sequence step 0 instantly; existing or unsubscribed
+  // addresses are never touched. See functions/_lib/enroll.js.
+  if (env.EMAIL_DB && env.EMAIL_SECRET && lead.subscriberSeed) {
+    tasks.push(
+      enrollSubscriber(env, lead.subscriberSeed).catch((e) => {
+        console.error("LEAD_ENROLL_THREW " + ((e && e.message) || e) + " | " + logLine);
+      })
+    );
   }
 
   await Promise.allSettled(tasks);
@@ -359,6 +374,21 @@ Consent: ${consent}
       city, state, source: sourcePage, gclid, submitted_at: submittedAt
     });
 
+    // Email-platform enrollment seed. Field Notes subscribers are newsletter
+    // members (welcome email only, per the /field-notes/ page promise); every
+    // other intent enters the lead-response sequence. Delivered best-effort in
+    // deliverLead, only when the email platform env is configured.
+    const subscriberSeed = {
+      email,
+      first_name: firstName || nameTokens[0] || null,
+      name: safeName,
+      intent: safeIntent,
+      city: city || null,
+      source: safeIntent === "Field Notes Subscribe" ? "newsletter" : "lead",
+      gclid: gclid || null,
+      page_url: pageUrl || sourcePage || null
+    };
+
     // Backstop: the placeholder "Home Valuation View" soft-save was retired (the
     // /value/ page no longer creates anonymous leads). If a stale cached page
     // still posts it, accept the request but DELIVER NOTHING, so Joshua never
@@ -371,7 +401,7 @@ Consent: ${consent}
 
     // 10) Accept now, deliver after. The visitor's 200 does not depend on email
     // or Zapier succeeding, so a delivery outage can never break the funnel.
-    context.waitUntil(deliverLead(env, { emailContent, zapierPayload, fubEvent, logLine }));
+    context.waitUntil(deliverLead(env, { emailContent, zapierPayload, fubEvent, logLine, subscriberSeed }));
 
     return json({ ok: true }, 200);
   } catch (err) {

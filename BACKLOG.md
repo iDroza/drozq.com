@@ -36,6 +36,16 @@ These move the needle the most. They are concentrated on `/index.html`.
 
 ---
 
+## Email platform (shipped 2026-07-13; remaining)
+
+- **One-time infra activation.** The code is live but inert until the Cloudflare resources exist: create D1 `drozq-email`, bind as `EMAIL_DB`, set `EMAIL_SECRET` + `DKIM_PRIVATE_KEY` env vars, add the `mc1._domainkey` DKIM TXT record, deploy `workers/email-cron`, run `python scripts/email.py init`, then `backfill --live`. Exact values + steps: `C:\Users\guerr\Downloads\drozq-email-platform-setup.md`.
+- **Set `EMAIL_POSTAL_ADDRESS`.** CAN-SPAM wants a physical postal address on marketing email. The footer falls back to "Real Broker, Irvine, California" until the env var carries the real office address line.
+- **Reply-detection auto-pause.** Today a reply requires a manual `python scripts/email.py pause <email>`. Wire the josh@drozq.com mailbox (Google Workspace) to auto-pause: Apps Script or Gmail filter webhook that POSTs `/api/email/pause`.
+- **Restyle the lead-alert email to Joshua.** `/api/lead` still sends the internal alert as plaintext. Optionally re-render it through `renderEmail()` so the inbox matches the platform. Deliberately deferred: touching the alert path is sacred-flow work.
+- **First note-drop broadcast.** When the first Field Note publishes, send it with `python scripts/email.py broadcast --segment newsletter --subject ... --cta-url https://drozq.com/field-notes/...`.
+
+---
+
 ## Tracking & measurement
 
 - **UTM parameter capture.** The funnel IIFE captures `gclid` but not `utm_source` / `utm_medium` / `utm_campaign` / `utm_content` / `utm_term`. Mirror the gclid pattern: read from URL → cookie → sessionStorage, persist to 90-day cookies, push to dataLayer, forward to `/api/lead` as hidden fields.

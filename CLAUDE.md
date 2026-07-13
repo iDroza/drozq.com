@@ -364,6 +364,38 @@ Accepts JSON or form POST. Returns `{ok, email, name, lead_saved}`. Optional env
 
 **Gating:** the homepage One Tap block is inert until a real client ID replaces the `PASTE_YOUR_GOOGLE_CLIENT_ID_HERE...` placeholder. With the placeholder, no Google script loads and live behavior is unchanged. One Tap is the one sanctioned exception to the "no new external dependencies" rule (rule #8): it requires Google's `accounts.google.com/gsi/client` library, loaded dynamically only after a real client ID is set. To roll site-wide, copy the `ONE_TAP` block from `/index.html` into other pages (it does not sync); skip `/thank-you/`, `/privacy/`, `/terms/`.
 
+## Email platform (updates@drozq.com)
+
+Shipped 2026-07-13. Outbound email to visitors and clients: the branded HTML template, the living subscriber list, instant drip sequences, 1:1 progress updates, campaign broadcasts, and open/click/unsubscribe tracking. Runs entirely on the existing stack (Pages Functions + MailChannels + D1 + PostHog); no new vendors. Mail sends from `updates@drozq.com` (Joshua Guerrero), replies land in `josh@drozq.com`.
+
+**Where it lives:**
+
+- `functions/_lib/email.js`: the engine. MailChannels sender (DKIM-signed once `DKIM_PRIVATE_KEY` is set), the branded `renderEmail()` template (warm `#efe9e1` backdrop, white 16px-radius card, `#1a1816`/`#2b2b2b` text, `#d92228` CTA button, system font stack on purpose: that stack IS the Apple/Cloudflare email look and renders everywhere), HMAC-bound unsubscribe/open/click URL builders, subscriber upsert, the 9:30am-7pm PT send-window scheduler, server-side PostHog capture.
+- `functions/_lib/sequence.js`: **THE DRIP COPY.** Editing an email = edit this file, commit, push (live in 60s). Two sequences: `lead-response-v1` (4 steps: instant confirmation ending in a reply-bait question, day-2 rates/prices value drop, day-5 case-file receipt, day-10 nine-word email) and `newsletter-welcome-v1` (welcome only: the `/field-notes/` page promises "no marketing sequences, just the post," and the platform honors that promise; note drops go out as broadcasts). `{first}` / `{city}` personalize per subscriber with "there" / "Orange County" fallbacks. All conversion copy rules apply in full.
+- `functions/_lib/enroll.js`: enrollment orchestration (instant step-0 send, scheduled backfill stagger, or idle import).
+- `functions/api/subscribe.js`: public subscribe endpoint (form or JSON POST; honeypot `company_website`; instant welcome via `waitUntil`).
+- `functions/api/email/*.js`: admin endpoints, all requiring `Authorization: Bearer EMAIL_SECRET`: `init` (schema bootstrap), `tick` (queue drain, hit by cron), `send` (1:1 branded email), `broadcast` (queue a campaign to a segment on a stagger), `backfill` (import FollowUpBoss people; dry-run by default), `list` (subscriber list + stats; `?format=csv`, `?view=log` for the send log incl. failures), `pause` (pause/resume one person). Public by design: `unsubscribe` (HMAC token, RFC 8058 one-click), `open` (pixel), `click` (tracked redirect, HMAC-bound so it is not an open redirect), `preview` (renders any email in the browser; no auth, no DB).
+- `workers/email-cron/`: standalone Worker that POSTs `/api/email/tick` every 10 minutes. Its `wrangler.toml` lives in the subdirectory ON PURPOSE: a repo-root wrangler.toml would hijack the Pages git build. Deploy: `cd workers/email-cron && npx wrangler deploy && npx wrangler secret put EMAIL_SECRET`.
+- `scripts/email.py`: the daily-driver CLI (list / log / send / broadcast / backfill / pause / resume / preview / init / tick). Secret lives in gitignored `scripts/.email_secret`.
+
+**Enrollment paths (all instant):** every accepted `/api/lead` submission (funnel, One Tap, valuation gate, field-notes form) enrolls via the `subscriberSeed` built in `onRequestPost` and delivered best-effort in `deliverLead`. Fully gated on `EMAIL_DB` + `EMAIL_SECRET`: with either unset, `/api/lead` behavior is byte-identical to before. Existing and unsubscribed addresses are NEVER touched by re-submits (insert-or-ignore). `@drozq.com` addresses are skipped. The `"Home Valuation View"` soft-save never enrolls (it short-circuits earlier). Intent `"Field Notes Subscribe"` maps to `newsletter-welcome-v1`; everything else enters `lead-response-v1`.
+
+**Data:** D1 database `drozq-email`, tables `subscribers` (one row per address; `status` active/paused/unsubscribed; `sequence_step` + `next_send_at` drive the drip), `campaigns`, `email_log` (every send with status, error text, opened_at, clicked_at). The list is queryable any time: `python scripts/email.py list --csv` drops the full CSV in Downloads.
+
+**Env (Cloudflare Pages > Settings):** `EMAIL_DB` (D1 binding), `EMAIL_SECRET` (admin auth + token HMAC), `DKIM_PRIVATE_KEY` + `DKIM_SELECTOR` (default `mc1`), optional `EMAIL_FROM` (default `updates@drozq.com`), `EMAIL_FROM_NAME` (default `Joshua Guerrero`), `EMAIL_REPLY_TO` (default `josh@drozq.com`), `EMAIL_POSTAL_ADDRESS` (CAN-SPAM postal line in the footer). Test knobs, never set in prod: `EMAIL_DRY_RUN`, `EMAIL_TEST_FAST`. The cron Worker needs its own `EMAIL_SECRET` secret (same value).
+
+**Deliverability posture:** SPF already includes `relay.mailchannels.net`, the MailChannels Domain Lockdown TXT (`_mailchannels`, `v=mc1 auth=drozq`) exists, DMARC (`p=none` + Cloudflare rua) exists. DKIM (`mc1._domainkey` TXT + the private key env var) is the remaining piece; add it before real volume. Marketing sends carry List-Unsubscribe + one-click headers automatically.
+
+**Hard rules:**
+
+- The moment a lead REPLIES to a drip email, pause them: `python scripts/email.py pause <email>`. A sequence email landing mid-conversation reads robotic.
+- Sequence and broadcast sends respect the 9:30am-7pm PT window; step 0 is instant by design (a confirmation is expected instantly).
+- Field-notes subscribers stay welcome-only unless the promise copy on `/field-notes/` changes first.
+- Never put `EMAIL_SECRET`, the DKIM private key, or subscriber exports in the repo (everything tracked is public). Secret file convention: `scripts/.email_secret` (gitignored).
+- The lead-alert email to Joshua stays plaintext for now (grep-able, forwardable); only visitor-facing mail uses the template.
+
+**Debugging:** Cloudflare dashboard > Workers & Pages > the Pages project > Functions > Real-time logs. Log markers: `EMAIL_SEND_FAILED` / `EMAIL_TICK` / `EMAIL_BACKFILL` / `LEAD_ENROLL_THREW` / `SUBSCRIBE_*` / `EMAIL_CRON`. Per-send outcomes (including MailChannels error bodies): `python scripts/email.py log`. PostHog events: `email_subscriber_enrolled`, `email_sent`, `email_send_failed`, `email_opened`, `email_link_clicked`, `email_unsubscribed` (distinct_id = subscriber email).
+
 ## Geo personalization
 
 On every homepage pageview (and every synced page's pageview, since geo autofill is part of the synced JS), JS fetches `/api/geo` and:
