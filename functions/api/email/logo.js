@@ -8,9 +8,12 @@
 
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
-  const file = url.searchParams.get("v") === "white"
-    ? "brand-logo-white.png"   // dark-mode variant
-    : "brand-header-logo.png";
+  const v = url.searchParams.get("v");
+  const file = v === "dark"
+    ? "brand-logo-red-white.png"  // dark-mode email variant: red house, white text
+    : v === "white"
+      ? "brand-logo-white.png"    // all-white variant
+      : "brand-header-logo.png";
   const asset = await context.env.ASSETS.fetch("https://drozq.com/media/images/" + file);
   if (!asset.ok) return new Response("logo unavailable", { status: 502 });
   return new Response(asset.body, {
