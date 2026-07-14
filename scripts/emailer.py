@@ -125,6 +125,7 @@ def main():
     p.add_argument("--live", action="store_true", help="actually enroll (default is dry run)")
     p.add_argument("--no-enroll", action="store_true", help="import to list only, no sequence")
     p.add_argument("--stagger", type=int, default=240)
+    p.add_argument("--file", help="JSON file with a people list to import (instead of the FollowUpBoss pull)")
 
     for name in ("pause", "resume"):
         p = sub.add_parser(name)
@@ -194,6 +195,10 @@ def main():
         pretty(call(a.base, "/api/email/broadcast", payload=payload))
     elif a.cmd == "backfill":
         payload = {"dry_run": not a.live, "enroll": not a.no_enroll, "stagger_seconds": a.stagger}
+        if a.file:
+            with open(a.file, encoding="utf-8") as f:
+                data = json.load(f)
+            payload["people"] = data["people"] if isinstance(data, dict) else data
         pretty(call(a.base, "/api/email/backfill", payload=payload))
     elif a.cmd in ("pause", "resume"):
         pretty(call(a.base, "/api/email/pause", payload={"email": a.email, "action": a.cmd}))

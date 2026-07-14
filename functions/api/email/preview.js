@@ -38,6 +38,7 @@ export async function onRequestGet(context) {
     city: url.searchParams.get("city") || "Irvine",
     street: url.searchParams.get("street") ?? "214 Cedarwood Ln",
     timeline: url.searchParams.get("timeline") ?? "Yes, in 1-3 months",
+    source: url.searchParams.get("source") || "lead",
     intent: MODES[url.searchParams.get("mode") || "sell"] ?? ""
   };
 

@@ -57,6 +57,9 @@ export const SEQUENCES = {
         subject(sub) {
           const k = intentKind(sub.intent);
           const street = cleanStreet(sub.street);
+          if (sub.source === "backfill") {
+            return street ? street + ": worth a fresh look" : "Worth a fresh look at your numbers";
+          }
           if (street && k !== "buy") return street + ": I'm on it";
           if (k === "sell") return "Your home report request is in";
           if (k === "buy") return "Your {city} buyer plan is in";
@@ -65,15 +68,23 @@ export const SEQUENCES = {
         render(sub) {
           const k = intentKind(sub.intent);
           const street = cleanStreet(sub.street);
-          const opener = street
-            ? "Your request for **" + street + "** just came through drozq.com. I'm Joshua Guerrero, and I work every request personally."
-            : "Your request just came through drozq.com. I'm Joshua Guerrero, and I work every request personally.";
+          // Backfilled leads asked weeks ago; "just came through" would read
+          // false. The honest version: acknowledge the gap, lead with what
+          // changed since.
+          const backfill = sub.source === "backfill";
+          const opener = backfill
+            ? (street
+                ? "A while back you asked drozq.com about **" + street + "**. It's still on my list, and the market has moved since you asked. I'm Joshua Guerrero, and I work every request personally."
+                : "A while back you asked drozq.com about your home. It's still on my list, and the market has moved since you asked. I'm Joshua Guerrero, and I work every request personally.")
+            : street
+              ? "Your request for **" + street + "** just came through drozq.com. I'm Joshua Guerrero, and I work every request personally."
+              : "Your request just came through drozq.com. I'm Joshua Guerrero, and I work every request personally.";
           const nextStep = k === "buy"
             ? "Here's what happens next: I map your target against what homes like it are actually closing for in {city} right now. You get the real price to expect, where sellers are bending, and the move that wins the house without overpaying."
             : street
               ? "Here's what happens next: I pull the numbers on " + street + " and check them against what is actually closing around it right now. You get your real number, what would push it higher, and a straight answer on whether now is the time to sell."
               : "Here's what happens next: I pull your property's numbers and check them against what is actually closing near you right now. You get your real number, what would push it higher, and a straight answer on whether now is the time to sell.";
-          const timelineLine = k === "buy" ? "" : timelineRead(sub.timeline);
+          const timelineLine = (k === "buy" || backfill) ? "" : timelineRead(sub.timeline);
           const question = k === "buy"
             ? "One question so I get this right: **what monthly payment would feel comfortable?** That one number tells me more than any wishlist."
             : k === "sell"
