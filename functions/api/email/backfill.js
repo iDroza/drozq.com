@@ -46,7 +46,10 @@ export async function onRequestPost(context) {
       );
       if (!r.ok) {
         const t = await r.text().catch(() => "");
-        return json({ ok: false, error: "fub_fetch_failed", status: r.status, body: t.slice(0, 300) }, 502);
+        // 503, not 502: Cloudflare's edge replaces 502 bodies with its generic
+        // error page, which hides this diagnostic from the caller.
+        console.error("EMAIL_BACKFILL_FUB_FETCH_FAILED status=" + r.status + " body=" + t.slice(0, 300));
+        return json({ ok: false, error: "fub_fetch_failed", status: r.status, body: t.slice(0, 300) }, 503);
       }
       const data = await r.json();
       const batch = (data && data.people) || [];
