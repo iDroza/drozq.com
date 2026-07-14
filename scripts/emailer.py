@@ -55,7 +55,9 @@ def get_secret():
 
 def call(base, path, method="POST", payload=None, auth=True, raw=False):
     url = base.rstrip("/") + path
-    headers = {"Content-Type": "application/json"}
+    # Cloudflare Browser Integrity Check 403s (error 1010) the default
+    # python-urllib user agent; a named tool UA passes.
+    headers = {"Content-Type": "application/json", "User-Agent": "drozq-emailer/1.0"}
     if auth:
         headers["Authorization"] = "Bearer " + get_secret()
     data = json.dumps(payload).encode() if payload is not None else None
