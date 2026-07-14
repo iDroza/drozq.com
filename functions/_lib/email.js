@@ -161,8 +161,8 @@ export function paragraphsToHtml(paragraphs) {
     let s = escapeHtml(p);
     s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
     s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-      '<a href="$2" style="color:#d92228;font-weight:700;text-decoration:underline;">$1</a>');
-    return '<p style="margin:0 0 18px;font-size:16px;line-height:1.65;color:#2b2b2b;">' + s + "</p>";
+      '<a href="$2" class="dz-a" style="color:#d92228;font-weight:700;text-decoration:underline;">$1</a>');
+    return '<p class="dz-p" style="margin:0 0 18px;font-size:16px;line-height:1.65;color:#2b2b2b;">' + s + "</p>";
   }).join("");
 }
 
@@ -211,19 +211,19 @@ export function renderEmail(opts) {
   ) : "";
 
   const sig = signature ? (
-    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:30px;border-top:1px solid #ece8e2;width:100%;">' +
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" class="dz-divider" style="margin-top:30px;border-top:1px solid #ece8e2;width:100%;">' +
       '<tr><td style="padding-top:22px;font-family:' + FONT + ';">' +
-        '<p style="margin:0;font-size:16px;font-weight:800;color:#1a1816;">Joshua Guerrero</p>' +
-        '<p style="margin:4px 0 0;font-size:13px;line-height:1.6;color:#757575;">Active Realty &middot; California DRE #02267255<br>' +
-          '<a href="tel:9494385948" style="color:#2b2b2b;text-decoration:none;font-weight:700;">(949) 438-5948</a>' +
-          ' &nbsp;&middot;&nbsp; <a href="https://drozq.com" style="color:#d92228;text-decoration:none;font-weight:700;">drozq.com</a></p>' +
+        '<p class="dz-h1" style="margin:0;font-size:16px;font-weight:800;color:#1a1816;">Joshua Guerrero</p>' +
+        '<p class="dz-muted" style="margin:4px 0 0;font-size:13px;line-height:1.6;color:#757575;">Active Realty &middot; California DRE #02267255<br>' +
+          '<a href="tel:9494385948" class="dz-p" style="color:#2b2b2b;text-decoration:none;font-weight:700;">(949) 438-5948</a>' +
+          ' &nbsp;&middot;&nbsp; <a href="https://drozq.com" class="dz-a" style="color:#d92228;text-decoration:none;font-weight:700;">drozq.com</a></p>' +
       "</td></tr></table>"
   ) : "";
 
   const footerLinks = [
-    unsubUrl ? '<a href="' + escapeHtml(unsubUrl) + '" style="color:#8a8378;text-decoration:underline;">Unsubscribe</a>' : "",
-    '<a href="https://drozq.com/privacy/" style="color:#8a8378;text-decoration:underline;">Privacy</a>',
-    '<a href="https://drozq.com/terms/" style="color:#8a8378;text-decoration:underline;">Terms</a>'
+    unsubUrl ? '<a href="' + escapeHtml(unsubUrl) + '" class="dz-muted" style="color:#8a8378;text-decoration:underline;">Unsubscribe</a>' : "",
+    '<a href="https://drozq.com/privacy/" class="dz-muted" style="color:#8a8378;text-decoration:underline;">Privacy</a>',
+    '<a href="https://drozq.com/terms/" class="dz-muted" style="color:#8a8378;text-decoration:underline;">Terms</a>'
   ].filter(Boolean).join(" &nbsp;&middot;&nbsp; ");
 
   const postalLine = postal ? escapeHtml(postal) : "Active Realty &middot; 17875 Von Karman Ave Suite 150, Irvine, CA 92614";
@@ -232,25 +232,43 @@ export function renderEmail(opts) {
 '<html lang="en"><head>' +
 '<meta charset="utf-8">' +
 '<meta name="viewport" content="width=device-width,initial-scale=1">' +
-'<meta name="color-scheme" content="light">' +
-'<meta name="supported-color-schemes" content="light">' +
+'<meta name="color-scheme" content="light dark">' +
+'<meta name="supported-color-schemes" content="light dark">' +
 "<title>" + escapeHtml(subject) + "</title>" +
 "<style>" +
+":root{color-scheme:light dark;supported-color-schemes:light dark;}" +
 "body{margin:0;padding:0;background:#efe9e1;-webkit-text-size-adjust:100%;}" +
+".dz-logo-dark{display:none;}" +
 "@media only screen and (max-width:620px){.dz-card{padding:30px 22px !important;border-radius:14px !important;}.dz-h1{font-size:24px !important;line-height:1.3 !important;}.dz-wrap{padding:20px 12px !important;}}" +
+// Dark theme: same token family as the site. Page #1a1816 (the dark-block
+// token), card #2b2b2b, warm-white text #f2f0ef, taupe muted #beb8b0, light-red
+// links #f7d3d4, slate dividers #3f4650. CTA stays #d92228 with white text.
+"@media (prefers-color-scheme:dark){" +
+  "body,.dz-bg{background:#1a1816 !important;}" +
+  ".dz-card{background:#2b2b2b !important;border-color:#3f4650 !important;}" +
+  ".dz-h1{color:#ffffff !important;}" +
+  ".dz-p{color:#f2f0ef !important;}" +
+  ".dz-a{color:#f7d3d4 !important;}" +
+  ".dz-muted,.dz-muted a{color:#beb8b0 !important;}" +
+  ".dz-divider{border-top-color:#3f4650 !important;}" +
+  ".dz-logo-light{display:none !important;}" +
+  ".dz-logo-dark{display:block !important;}" +
+"}" +
 "</style>" +
 "</head>" +
-'<body style="margin:0;padding:0;background:#efe9e1;">' +
+'<body class="dz-bg" style="margin:0;padding:0;background:#efe9e1;">' +
 '<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">' + escapeHtml(preheader) +
   "&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>" +
-'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#efe9e1;">' +
+'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="dz-bg" style="background:#efe9e1;">' +
 '<tr><td align="center" class="dz-wrap" style="padding:36px 16px;">' +
   '<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">' +
 
     '<tr><td style="padding:0 6px 18px;" align="left">' +
       '<a href="https://drozq.com" target="_blank" style="text-decoration:none;">' +
-        '<img src="https://drozq.com/api/email/logo" width="170" height="24" alt="drozq.com" ' +
+        '<img src="https://drozq.com/api/email/logo" width="170" height="24" alt="drozq.com" class="dz-logo-light" ' +
              'style="display:block;border:0;outline:none;font-family:' + FONT + ';font-size:16px;font-weight:800;color:#1a1816;">' +
+        '<img src="https://drozq.com/api/email/logo?v=white" width="170" height="24" alt="drozq.com" class="dz-logo-dark" ' +
+             'style="display:none;border:0;outline:none;font-family:' + FONT + ';font-size:16px;font-weight:800;color:#f2f0ef;">' +
       "</a>" +
     "</td></tr>" +
 
@@ -261,7 +279,7 @@ export function renderEmail(opts) {
       sig +
     "</td></tr>" +
 
-    '<tr><td style="padding:26px 8px 8px;font-family:' + FONT + ';font-size:12px;line-height:1.7;color:#8a8378;" align="center">' +
+    '<tr><td class="dz-muted" style="padding:26px 8px 8px;font-family:' + FONT + ';font-size:12px;line-height:1.7;color:#8a8378;" align="center">' +
       "Joshua Guerrero &middot; " + postalLine + "<br>" +
       footerLinks +
     "</td></tr>" +

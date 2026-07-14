@@ -36,11 +36,21 @@ function page(title, body) {
   return new Response(
     "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">" +
     "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">" +
-    "<meta name=\"robots\" content=\"noindex\"><title>" + title + "</title></head>" +
+    "<meta name=\"color-scheme\" content=\"light dark\">" +
+    "<meta name=\"robots\" content=\"noindex\"><title>" + title + "</title>" +
+    "<style>.uz-logo-dark{display:none;}" +
+    "@media (prefers-color-scheme:dark){" +
+    "body{background:#1a1816 !important;}" +
+    ".uz-card{background:#2b2b2b !important;border-color:#3f4650 !important;}" +
+    ".uz-card h1{color:#ffffff !important;}.uz-card p{color:#f2f0ef !important;}" +
+    ".uz-card strong{color:#ffffff !important;}" +
+    ".uz-logo-light{display:none !important;}.uz-logo-dark{display:block !important;}" +
+    "}</style></head>" +
     "<body style=\"margin:0;background:#efe9e1;font-family:" + FONT + ";\">" +
     "<div style=\"max-width:520px;margin:64px auto;padding:0 16px;\">" +
-    "<img src=\"https://drozq.com/api/email/logo\" width=\"142\" height=\"20\" alt=\"drozq.com\" style=\"display:block;border:0;margin:0 0 14px;\">" +
-    "<div style=\"background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:36px 32px;\">" + body + "</div>" +
+    "<img src=\"https://drozq.com/api/email/logo\" class=\"uz-logo-light\" width=\"142\" height=\"20\" alt=\"drozq.com\" style=\"display:block;border:0;margin:0 0 14px;\">" +
+    "<img src=\"https://drozq.com/api/email/logo?v=white\" class=\"uz-logo-dark\" width=\"142\" height=\"20\" alt=\"drozq.com\" style=\"border:0;margin:0 0 14px;\">" +
+    "<div class=\"uz-card\" style=\"background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:36px 32px;\">" + body + "</div>" +
     "</div></body></html>",
     { status: 200, headers: { "content-type": "text/html; charset=UTF-8", "cache-control": "no-store" } }
   );

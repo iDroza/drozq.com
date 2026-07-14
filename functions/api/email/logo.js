@@ -7,7 +7,11 @@
 // inside an email template.
 
 export async function onRequestGet(context) {
-  const asset = await context.env.ASSETS.fetch("https://drozq.com/media/images/brand-header-logo.png");
+  const url = new URL(context.request.url);
+  const file = url.searchParams.get("v") === "white"
+    ? "brand-logo-white.png"   // dark-mode variant
+    : "brand-header-logo.png";
+  const asset = await context.env.ASSETS.fetch("https://drozq.com/media/images/" + file);
   if (!asset.ok) return new Response("logo unavailable", { status: 502 });
   return new Response(asset.body, {
     status: 200,
