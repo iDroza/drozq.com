@@ -39,7 +39,7 @@ function page(title, body) {
     "<meta name=\"robots\" content=\"noindex\"><title>" + title + "</title></head>" +
     "<body style=\"margin:0;background:#efe9e1;font-family:" + FONT + ";\">" +
     "<div style=\"max-width:520px;margin:64px auto;padding:0 16px;\">" +
-    "<p style=\"font-size:15px;font-weight:800;letter-spacing:3px;color:#1a1816;\">DROZQ</p>" +
+    "<img src=\"https://drozq.com/api/email/logo\" width=\"142\" height=\"20\" alt=\"drozq.com\" style=\"display:block;border:0;margin:0 0 14px;\">" +
     "<div style=\"background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:36px 32px;\">" + body + "</div>" +
     "</div></body></html>",
     { status: 200, headers: { "content-type": "text/html; charset=UTF-8", "cache-control": "no-store" } }

@@ -214,7 +214,7 @@ export function renderEmail(opts) {
     '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:30px;border-top:1px solid #ece8e2;width:100%;">' +
       '<tr><td style="padding-top:22px;font-family:' + FONT + ';">' +
         '<p style="margin:0;font-size:16px;font-weight:800;color:#1a1816;">Joshua Guerrero</p>' +
-        '<p style="margin:4px 0 0;font-size:13px;line-height:1.6;color:#757575;">Real Brokerage &middot; California DRE #02267255<br>' +
+        '<p style="margin:4px 0 0;font-size:13px;line-height:1.6;color:#757575;">Active Realty &middot; California DRE #02267255<br>' +
           '<a href="tel:9494385948" style="color:#2b2b2b;text-decoration:none;font-weight:700;">(949) 438-5948</a>' +
           ' &nbsp;&middot;&nbsp; <a href="https://drozq.com" style="color:#d92228;text-decoration:none;font-weight:700;">drozq.com</a></p>' +
       "</td></tr></table>"
@@ -226,7 +226,7 @@ export function renderEmail(opts) {
     '<a href="https://drozq.com/terms/" style="color:#8a8378;text-decoration:underline;">Terms</a>'
   ].filter(Boolean).join(" &nbsp;&middot;&nbsp; ");
 
-  const postalLine = postal ? escapeHtml(postal) : "Real Broker &middot; Irvine, California";
+  const postalLine = postal ? escapeHtml(postal) : "Active Realty &middot; 17875 Von Karman Ave Suite 150, Irvine, CA 92614";
 
   return "<!doctype html>" +
 '<html lang="en"><head>' +
@@ -247,9 +247,11 @@ export function renderEmail(opts) {
 '<tr><td align="center" class="dz-wrap" style="padding:36px 16px;">' +
   '<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">' +
 
-    '<tr><td style="padding:0 6px 18px;font-family:' + FONT + ';" align="left">' +
-      '<span style="font-size:17px;font-weight:800;letter-spacing:3px;color:#1a1816;">DROZQ</span>' +
-      '<span style="font-size:12px;color:#8a8378;letter-spacing:0.4px;"> &nbsp;&middot;&nbsp; Joshua Guerrero, Real Brokerage</span>' +
+    '<tr><td style="padding:0 6px 18px;" align="left">' +
+      '<a href="https://drozq.com" target="_blank" style="text-decoration:none;">' +
+        '<img src="https://drozq.com/api/email/logo" width="170" height="24" alt="drozq.com" ' +
+             'style="display:block;border:0;outline:none;font-family:' + FONT + ';font-size:16px;font-weight:800;color:#1a1816;">' +
+      "</a>" +
     "</td></tr>" +
 
     '<tr><td class="dz-card" style="background:#ffffff;border:1px solid #e5e5e5;border-radius:16px;padding:42px 44px;font-family:' + FONT + ';" align="left">' +
@@ -403,7 +405,7 @@ export async function sendPayloadTo(env, sub, logId, payload) {
   });
   const text = paragraphsToText(paragraphs) +
     (payload.ctaUrl ? "\n\n" + (payload.ctaLabel || "Link") + ": " + personalize(payload.ctaUrl, sub) : "") +
-    "\n\nJoshua Guerrero\nReal Brokerage, California DRE #02267255\n(949) 438-5948" +
+    "\n\nJoshua Guerrero\nActive Realty, California DRE #02267255\n(949) 438-5948" +
     (unsub ? "\n\nUnsubscribe: " + unsub : "");
 
   return sendEmail(env, { to: sub.email, toName: first || sub.name || "", subject, html, text, unsubUrl: unsub });
@@ -438,7 +440,7 @@ export async function sendSequenceStep(env, sub, step) {
     });
     const text = paragraphsToText(r.paragraphs.map((p) => personalize(p, sub))) +
       (r.ctaUrl ? "\n\n" + (r.ctaLabel || "Link") + ": " + personalize(r.ctaUrl, sub) : "") +
-      "\n\nJoshua Guerrero\nReal Brokerage, California DRE #02267255\n(949) 438-5948\n\nUnsubscribe: " + unsub;
+      "\n\nJoshua Guerrero\nActive Realty, California DRE #02267255\n(949) 438-5948\n\nUnsubscribe: " + unsub;
 
     const sent = await sendEmail(env, { to: sub.email, toName: first || sub.name || "", subject, html, text, unsubUrl: unsub });
 

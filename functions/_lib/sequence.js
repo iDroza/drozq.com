@@ -39,8 +39,8 @@ export const SEQUENCES = {
               ? "One question so I get this right: **what would the number have to be for you to seriously consider selling?**"
               : "One question so I get this right: **are you thinking about buying, selling, or both?**";
           const nextStep = k === "buy"
-            ? "Here's what happens next: I look at what you're trying to buy, what homes like it are actually closing for right now, and where your leverage is."
-            : "Here's what happens next: I pull your property's numbers, check them against what is actually closing near you right now, and follow up with a read you can act on.";
+            ? "Here's what happens next: I map your target against what homes like it are actually closing for right now. You get the real price to expect, where sellers are bending, and the move that wins the house without overpaying."
+            : "Here's what happens next: I pull your property's numbers and check them against what is actually closing near you right now. You get your real number, what would push it higher, and a straight answer on whether now is the time to sell.";
           return {
             preheader: "Your request hit my desk. One quick question and I get to work.",
             headline: "I'm on it, {first}.",
@@ -48,7 +48,7 @@ export const SEQUENCES = {
               "Your request just came through drozq.com. I'm Joshua Guerrero, and I work every request personally.",
               nextStep,
               question,
-              "Hit reply. I read every response, usually within the hour."
+              "Hit reply. I read every response."
             ]
           };
         }
