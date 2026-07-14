@@ -239,7 +239,7 @@ export function renderEmail(opts) {
 ":root{color-scheme:light dark;supported-color-schemes:light dark;}" +
 "body{margin:0;padding:0;background:#efe9e1;-webkit-text-size-adjust:100%;}" +
 ".dz-logo-dark{display:none;}" +
-"@media only screen and (max-width:620px){.dz-card{padding:30px 22px !important;border-radius:14px !important;}.dz-h1{font-size:24px !important;line-height:1.3 !important;}.dz-wrap{padding:20px 12px !important;}}" +
+"@media only screen and (max-width:620px){.dz-card{border-radius:14px !important;}.dz-card-pad{padding:26px 22px 30px !important;}.dz-topbar{border-radius:13px 13px 0 0 !important;}.dz-h1{font-size:24px !important;line-height:1.3 !important;}.dz-wrap{padding:20px 12px !important;}}" +
 // Dark theme: same token family as the site. Page #1a1816 (the dark-block
 // token), card #2b2b2b, warm-white text #f2f0ef, taupe muted #beb8b0, light-red
 // links #f7d3d4, slate dividers #3f4650. CTA stays #d92228 with white text.
@@ -248,7 +248,8 @@ export function renderEmail(opts) {
   ".dz-card{background:#2b2b2b !important;border-color:#3f4650 !important;}" +
   ".dz-h1{color:#ffffff !important;}" +
   ".dz-p{color:#f2f0ef !important;}" +
-  ".dz-a{color:#f7d3d4 !important;}" +
+  ".dz-a{color:#e04a4f !important;}" +
+  ".dz-topbar,.dz-rule{background:#e04a4f !important;}" +
   ".dz-muted,.dz-muted a{color:#beb8b0 !important;}" +
   ".dz-divider{border-top-color:#3f4650 !important;}" +
   ".dz-logo-light{display:none !important;}" +
@@ -272,11 +273,19 @@ export function renderEmail(opts) {
       "</a>" +
     "</td></tr>" +
 
-    '<tr><td class="dz-card" style="background:#ffffff;border:1px solid #e5e5e5;border-radius:16px;padding:42px 44px;font-family:' + FONT + ';" align="left">' +
-      (headline ? '<h1 class="dz-h1" style="margin:0 0 18px;font-size:27px;line-height:1.28;letter-spacing:-0.4px;font-weight:800;color:#1a1816;">' + headline + "</h1>" : "") +
-      bodyHtml +
-      cta +
-      sig +
+    '<tr><td class="dz-card" style="background:#ffffff;border:1px solid #e5e5e5;border-radius:16px;padding:0;" align="left">' +
+      '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">' +
+        '<tr><td class="dz-topbar" style="height:4px;line-height:4px;font-size:2px;background:#d92228;border-radius:15px 15px 0 0;">&nbsp;</td></tr>' +
+        '<tr><td class="dz-card-pad" style="padding:38px 44px 42px;font-family:' + FONT + ';" align="left">' +
+          (headline
+            ? '<h1 class="dz-h1" style="margin:0 0 14px;font-size:27px;line-height:1.28;letter-spacing:-0.4px;font-weight:800;color:#1a1816;">' + headline + "</h1>" +
+              '<div class="dz-rule" style="width:44px;height:3px;background:#d92228;border-radius:2px;margin:0 0 20px;font-size:0;line-height:0;">&nbsp;</div>'
+            : "") +
+          bodyHtml +
+          cta +
+          sig +
+        "</td></tr>" +
+      "</table>" +
     "</td></tr>" +
 
     '<tr><td class="dz-muted" style="padding:26px 8px 8px;font-family:' + FONT + ';font-size:12px;line-height:1.7;color:#8a8378;" align="center">' +
