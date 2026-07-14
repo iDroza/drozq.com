@@ -21,7 +21,9 @@ export async function onRequestGet(context) {
         ).bind(Number(id)).run();
         if (res.meta && res.meta.changes > 0) {
           const row = await env.EMAIL_DB.prepare("SELECT email, kind, ref FROM email_log WHERE id = ?1").bind(Number(id)).first();
-          if (row) phCapture("email_opened", row.email, { kind: row.kind, ref: row.ref, log_id: Number(id) });
+          // waitUntil, not fire-and-forget: this handler returns immediately
+          // and the runtime cancels in-flight fetches at that point.
+          if (row) context.waitUntil(phCapture("email_opened", row.email, { kind: row.kind, ref: row.ref, log_id: Number(id) }));
         }
       }
     }

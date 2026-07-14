@@ -30,7 +30,8 @@ export async function onRequestGet(context) {
       ).bind(Number(id)).run();
       if (res.meta && res.meta.changes > 0) {
         const row = await env.EMAIL_DB.prepare("SELECT email, kind, ref FROM email_log WHERE id = ?1").bind(Number(id)).first();
-        if (row) phCapture("email_link_clicked", row.email, { kind: row.kind, ref: row.ref, url: target, log_id: Number(id) });
+        // waitUntil: the redirect returns immediately and would cancel the capture.
+        if (row) context.waitUntil(phCapture("email_link_clicked", row.email, { kind: row.kind, ref: row.ref, url: target, log_id: Number(id) }));
       }
     }
   } catch (e) {
