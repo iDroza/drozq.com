@@ -38,12 +38,12 @@ export async function onRequestGet(context) {
     const whereSql = where.length ? " WHERE " + where.join(" AND ") : "";
 
     const rows = await env.EMAIL_DB.prepare(
-      "SELECT id, email, first_name, name, source, intent, city, status, sequence_id, sequence_step, next_send_at, created_at " +
+      "SELECT id, email, first_name, name, source, intent, city, street, timeline, status, sequence_id, sequence_step, next_send_at, created_at " +
       "FROM subscribers" + whereSql + " ORDER BY created_at DESC LIMIT " + limit
     ).bind(...binds).all();
 
     if (format === "csv") {
-      const cols = ["id", "email", "first_name", "name", "source", "intent", "city", "status", "sequence_id", "sequence_step", "next_send_at", "created_at"];
+      const cols = ["id", "email", "first_name", "name", "source", "intent", "city", "street", "timeline", "status", "sequence_id", "sequence_step", "next_send_at", "created_at"];
       const esc = (v) => {
         const s = v == null ? "" : String(v);
         return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
