@@ -376,11 +376,11 @@ Shipped 2026-07-13. Outbound email to visitors and clients: the branded HTML tem
 - `functions/api/subscribe.js`: public subscribe endpoint (form or JSON POST; honeypot `company_website`; instant welcome via `waitUntil`).
 - `functions/api/email/*.js`: admin endpoints, all requiring `Authorization: Bearer EMAIL_SECRET`: `init` (schema bootstrap), `tick` (queue drain, hit by cron), `send` (1:1 branded email), `broadcast` (queue a campaign to a segment on a stagger), `backfill` (import FollowUpBoss people; dry-run by default), `list` (subscriber list + stats; `?format=csv`, `?view=log` for the send log incl. failures), `pause` (pause/resume one person). Public by design: `unsubscribe` (HMAC token, RFC 8058 one-click), `open` (pixel), `click` (tracked redirect, HMAC-bound so it is not an open redirect), `preview` (renders any email in the browser; no auth, no DB).
 - `workers/email-cron/`: standalone Worker that POSTs `/api/email/tick` every 10 minutes. Its `wrangler.toml` lives in the subdirectory ON PURPOSE: a repo-root wrangler.toml would hijack the Pages git build. Deploy: `cd workers/email-cron && npx wrangler deploy && npx wrangler secret put EMAIL_SECRET`.
-- `scripts/email.py`: the daily-driver CLI (list / log / send / broadcast / backfill / pause / resume / preview / init / tick). Secret lives in gitignored `scripts/.email_secret`.
+- `scripts/emailer.py`: the daily-driver CLI (list / log / send / broadcast / backfill / pause / resume / preview / init / tick). Secret lives in gitignored `scripts/.email_secret`.
 
 **Enrollment paths (all instant):** every accepted `/api/lead` submission (funnel, One Tap, valuation gate, field-notes form) enrolls via the `subscriberSeed` built in `onRequestPost` and delivered best-effort in `deliverLead`. Fully gated on `EMAIL_DB` + `EMAIL_SECRET`: with either unset, `/api/lead` behavior is byte-identical to before. Existing and unsubscribed addresses are NEVER touched by re-submits (insert-or-ignore). `@drozq.com` addresses are skipped. The `"Home Valuation View"` soft-save never enrolls (it short-circuits earlier). Intent `"Field Notes Subscribe"` maps to `newsletter-welcome-v1`; everything else enters `lead-response-v1`.
 
-**Data:** D1 database `drozq-email`, tables `subscribers` (one row per address; `status` active/paused/unsubscribed; `sequence_step` + `next_send_at` drive the drip), `campaigns`, `email_log` (every send with status, error text, opened_at, clicked_at). The list is queryable any time: `python scripts/email.py list --csv` drops the full CSV in Downloads.
+**Data:** D1 database `drozq-email`, tables `subscribers` (one row per address; `status` active/paused/unsubscribed; `sequence_step` + `next_send_at` drive the drip), `campaigns`, `email_log` (every send with status, error text, opened_at, clicked_at). The list is queryable any time: `python scripts/emailer.py list --csv` drops the full CSV in Downloads.
 
 **Env (Cloudflare Pages > Settings):** `EMAIL_DB` (D1 binding), `EMAIL_SECRET` (admin auth + token HMAC), `DKIM_PRIVATE_KEY` + `DKIM_SELECTOR` (default `mc1`), optional `EMAIL_FROM` (default `updates@drozq.com`), `EMAIL_FROM_NAME` (default `Joshua Guerrero`), `EMAIL_REPLY_TO` (default `josh@drozq.com`), `EMAIL_POSTAL_ADDRESS` (CAN-SPAM postal line in the footer). Test knobs, never set in prod: `EMAIL_DRY_RUN`, `EMAIL_TEST_FAST`. The cron Worker needs its own `EMAIL_SECRET` secret (same value).
 
@@ -388,13 +388,13 @@ Shipped 2026-07-13. Outbound email to visitors and clients: the branded HTML tem
 
 **Hard rules:**
 
-- The moment a lead REPLIES to a drip email, pause them: `python scripts/email.py pause <email>`. A sequence email landing mid-conversation reads robotic.
+- The moment a lead REPLIES to a drip email, pause them: `python scripts/emailer.py pause <email>`. A sequence email landing mid-conversation reads robotic.
 - Sequence and broadcast sends respect the 9:30am-7pm PT window; step 0 is instant by design (a confirmation is expected instantly).
 - Field-notes subscribers stay welcome-only unless the promise copy on `/field-notes/` changes first.
 - Never put `EMAIL_SECRET`, the DKIM private key, or subscriber exports in the repo (everything tracked is public). Secret file convention: `scripts/.email_secret` (gitignored).
 - The lead-alert email to Joshua stays plaintext for now (grep-able, forwardable); only visitor-facing mail uses the template.
 
-**Debugging:** Cloudflare dashboard > Workers & Pages > the Pages project > Functions > Real-time logs. Log markers: `EMAIL_SEND_FAILED` / `EMAIL_TICK` / `EMAIL_BACKFILL` / `LEAD_ENROLL_THREW` / `SUBSCRIBE_*` / `EMAIL_CRON`. Per-send outcomes (including MailChannels error bodies): `python scripts/email.py log`. PostHog events: `email_subscriber_enrolled`, `email_sent`, `email_send_failed`, `email_opened`, `email_link_clicked`, `email_unsubscribed` (distinct_id = subscriber email).
+**Debugging:** Cloudflare dashboard > Workers & Pages > the Pages project > Functions > Real-time logs. Log markers: `EMAIL_SEND_FAILED` / `EMAIL_TICK` / `EMAIL_BACKFILL` / `LEAD_ENROLL_THREW` / `SUBSCRIBE_*` / `EMAIL_CRON`. Per-send outcomes (including MailChannels error bodies): `python scripts/emailer.py log`. PostHog events: `email_subscriber_enrolled`, `email_sent`, `email_send_failed`, `email_opened`, `email_link_clicked`, `email_unsubscribed` (distinct_id = subscriber email).
 
 ## Geo personalization
 

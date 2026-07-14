@@ -38,11 +38,11 @@ These move the needle the most. They are concentrated on `/index.html`.
 
 ## Email platform (shipped 2026-07-13; remaining)
 
-- **One-time infra activation.** The code is live but inert until the Cloudflare resources exist: create D1 `drozq-email`, bind as `EMAIL_DB`, set `EMAIL_SECRET` + `DKIM_PRIVATE_KEY` env vars, add the `mc1._domainkey` DKIM TXT record, deploy `workers/email-cron`, run `python scripts/email.py init`, then `backfill --live`. Exact values + steps: `C:\Users\guerr\Downloads\drozq-email-platform-setup.md`.
+- **One-time infra activation.** The code is live but inert until the Cloudflare resources exist: create D1 `drozq-email`, bind as `EMAIL_DB`, set `EMAIL_SECRET` + `DKIM_PRIVATE_KEY` env vars, add the `mc1._domainkey` DKIM TXT record, deploy `workers/email-cron`, run `python scripts/emailer.py init`, then `backfill --live`. Exact values + steps: `C:\Users\guerr\Downloads\drozq-email-platform-setup.md`.
 - **Confirm the footer postal address.** The footer now defaults to "Active Realty, 17875 Von Karman Ave Suite 150, Irvine, CA 92614" (per Joshua's 2026-07-13 "Active Realty for now" direction). Confirm that address is current; `EMAIL_POSTAL_ADDRESS` overrides without a code change.
-- **Reply-detection auto-pause.** Today a reply requires a manual `python scripts/email.py pause <email>`. Wire the josh@drozq.com mailbox (Google Workspace) to auto-pause: Apps Script or Gmail filter webhook that POSTs `/api/email/pause`.
+- **Reply-detection auto-pause.** Today a reply requires a manual `python scripts/emailer.py pause <email>`. Wire the josh@drozq.com mailbox (Google Workspace) to auto-pause: Apps Script or Gmail filter webhook that POSTs `/api/email/pause`.
 - **Restyle the lead-alert email to Joshua.** `/api/lead` still sends the internal alert as plaintext. Optionally re-render it through `renderEmail()` so the inbox matches the platform. Deliberately deferred: touching the alert path is sacred-flow work.
-- **First note-drop broadcast.** When the first Field Note publishes, send it with `python scripts/email.py broadcast --segment newsletter --subject ... --cta-url https://drozq.com/field-notes/...`.
+- **First note-drop broadcast.** When the first Field Note publishes, send it with `python scripts/emailer.py broadcast --segment newsletter --subject ... --cta-url https://drozq.com/field-notes/...`.
 
 ---
 
