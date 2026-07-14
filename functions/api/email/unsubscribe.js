@@ -50,7 +50,7 @@ function page(title, body) {
     "<div style=\"max-width:520px;margin:64px auto;padding:0 16px;\">" +
     "<img src=\"https://drozq.com/api/email/logo\" class=\"uz-logo-light\" width=\"142\" height=\"20\" alt=\"drozq.com\" style=\"display:block;border:0;margin:0 0 14px;\">" +
     "<img src=\"https://drozq.com/api/email/logo?v=dark\" class=\"uz-logo-dark\" width=\"142\" height=\"20\" alt=\"drozq.com\" style=\"border:0;margin:0 0 14px;\">" +
-    "<div class=\"uz-card\" style=\"background:#fff;border:1px solid #e5e5e5;border-top:4px solid #d92228;border-radius:16px;padding:36px 32px;\">" + body + "</div>" +
+    "<div class=\"uz-card\" style=\"background:#fff;border:1px solid #e5e5e5;border-top:4px solid #d9222a;border-radius:16px;padding:36px 32px;\">" + body + "</div>" +
     "</div></body></html>",
     { status: 200, headers: { "content-type": "text/html; charset=UTF-8", "cache-control": "no-store" } }
   );
@@ -59,12 +59,12 @@ function page(title, body) {
 export async function onRequestGet(context) {
   const email = await resolveEmail(context);
   if (!email) {
-    return page("Link expired", "<h1 style=\"margin:0 0 12px;font-size:24px;color:#1a1816;\">That link didn't check out.</h1><p style=\"margin:0;font-size:16px;line-height:1.6;color:#2b2b2b;\">Email <a href=\"mailto:josh@drozq.com\" style=\"color:#d92228;font-weight:700;\">josh@drozq.com</a> and I'll remove you by hand, same day.</p>");
+    return page("Link expired", "<h1 style=\"margin:0 0 12px;font-size:24px;color:#1a1816;\">That link didn't check out.</h1><p style=\"margin:0;font-size:16px;line-height:1.6;color:#2b2b2b;\">Email <a href=\"mailto:josh@drozq.com\" style=\"color:#d9222a;font-weight:700;\">josh@drozq.com</a> and I'll remove you by hand, same day.</p>");
   }
   await unsubscribe(context.env, email);
   return page("Unsubscribed",
     "<h1 style=\"margin:0 0 12px;font-size:24px;color:#1a1816;\">You're unsubscribed.</h1>" +
-    "<p style=\"margin:0;font-size:16px;line-height:1.6;color:#2b2b2b;\">No more emails to <strong>" + email.replace(/</g, "&lt;") + "</strong>. If you ever want a straight read on the market, <a href=\"https://drozq.com\" style=\"color:#d92228;font-weight:700;\">drozq.com</a> is always open.</p>");
+    "<p style=\"margin:0;font-size:16px;line-height:1.6;color:#2b2b2b;\">No more emails to <strong>" + email.replace(/</g, "&lt;") + "</strong>. If you ever want a straight read on the market, <a href=\"https://drozq.com\" style=\"color:#d9222a;font-weight:700;\">drozq.com</a> is always open.</p>");
 }
 
 export async function onRequestPost(context) {

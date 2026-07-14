@@ -161,7 +161,7 @@ export function paragraphsToHtml(paragraphs) {
     let s = escapeHtml(p);
     s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
     s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-      '<a href="$2" class="dz-a" style="color:#d92228;font-weight:700;text-decoration:underline;">$1</a>');
+      '<a href="$2" class="dz-a" style="color:#d9222a;font-weight:700;text-decoration:underline;">$1</a>');
     return '<p class="dz-p" style="margin:0 0 18px;font-size:16px;line-height:1.65;color:#2b2b2b;">' + s + "</p>";
   }).join("");
 }
@@ -180,7 +180,7 @@ export function personalize(s, sub) {
 
 // ---------------------------------------------------------------------------
 // The branded template. Same design system as the site: warm #efe9e1 backdrop,
-// white card, #1a1816 headings, #2b2b2b body, #d92228 CTA. System font stack
+// white card, #1a1816 headings, #2b2b2b body, #d9222a CTA. System font stack
 // on purpose: it is what renders in Apple Mail and Gmail, and it is the reason
 // Apple and Cloudflare emails look the way they do.
 // ---------------------------------------------------------------------------
@@ -203,7 +203,7 @@ export function renderEmail(opts) {
 
   const cta = (ctaLabel && ctaUrl) ? (
     '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0 6px;">' +
-      '<tr><td style="border-radius:10px;background:#d92228;">' +
+      '<tr><td style="border-radius:10px;background:#d9222a;">' +
         '<a href="' + escapeHtml(ctaUrl) + '" target="_blank" ' +
            'style="display:inline-block;padding:14px 28px;font-family:' + FONT + ';font-size:16px;font-weight:700;' +
            'color:#ffffff;text-decoration:none;border-radius:10px;">' + escapeHtml(ctaLabel) + "</a>" +
@@ -216,7 +216,7 @@ export function renderEmail(opts) {
         '<p class="dz-h1" style="margin:0;font-size:16px;font-weight:800;color:#1a1816;">Joshua Guerrero</p>' +
         '<p class="dz-muted" style="margin:4px 0 0;font-size:13px;line-height:1.6;color:#757575;">Active Realty &middot; California DRE #02267255<br>' +
           '<a href="tel:9494385948" class="dz-p" style="color:#2b2b2b;text-decoration:none;font-weight:700;">(949) 438-5948</a>' +
-          ' &nbsp;&middot;&nbsp; <a href="https://drozq.com" class="dz-a" style="color:#d92228;text-decoration:none;font-weight:700;">drozq.com</a></p>' +
+          ' &nbsp;&middot;&nbsp; <a href="https://drozq.com" class="dz-a" style="color:#d9222a;text-decoration:none;font-weight:700;">drozq.com</a></p>' +
       "</td></tr></table>"
   ) : "";
 
@@ -242,7 +242,7 @@ export function renderEmail(opts) {
 "@media only screen and (max-width:620px){.dz-card{padding:26px 22px 30px !important;border-radius:14px !important;}.dz-h1{font-size:24px !important;line-height:1.3 !important;}.dz-wrap{padding:20px 12px !important;}}" +
 // Dark theme: same token family as the site. Page #1a1816 (the dark-block
 // token), card #2b2b2b, warm-white text #f2f0ef, taupe muted #beb8b0, light-red
-// links #f7d3d4, slate dividers #3f4650. CTA stays #d92228 with white text.
+// links #f7d3d4, slate dividers #3f4650. CTA stays #d9222a with white text.
 "@media (prefers-color-scheme:dark){" +
   "body,.dz-bg{background:#1a1816 !important;}" +
   ".dz-card{background:#2b2b2b !important;border-color:#3f4650 !important;border-top-color:#d9222a !important;}" +
@@ -273,10 +273,10 @@ export function renderEmail(opts) {
       "</a>" +
     "</td></tr>" +
 
-    '<tr><td class="dz-card" style="background:#ffffff;border:1px solid #e5e5e5;border-top:4px solid #d92228;border-radius:16px;padding:38px 44px 42px;font-family:' + FONT + ';" align="left">' +
+    '<tr><td class="dz-card" style="background:#ffffff;border:1px solid #e5e5e5;border-top:4px solid #d9222a;border-radius:16px;padding:38px 44px 42px;font-family:' + FONT + ';" align="left">' +
       (headline
         ? '<h1 class="dz-h1" style="margin:0 0 14px;font-size:27px;line-height:1.28;letter-spacing:-0.4px;font-weight:800;color:#1a1816;">' + headline + "</h1>" +
-          '<div class="dz-rule" style="width:44px;height:3px;background:#d92228;border-radius:2px;margin:0 0 20px;font-size:0;line-height:0;">&nbsp;</div>'
+          '<div class="dz-rule" style="width:44px;height:3px;background:#d9222a;border-radius:2px;margin:0 0 20px;font-size:0;line-height:0;">&nbsp;</div>'
         : "") +
       bodyHtml +
       cta +
@@ -308,7 +308,7 @@ export function renderLeadAlert(a) {
     '<td class="dz-p" style="padding:7px 0;font-family:' + FONT + ';font-size:15px;line-height:1.5;color:#2b2b2b;" width="100%">' + valueHtml + "</td></tr>";
 
   const link = (href, text) =>
-    '<a href="' + escapeHtml(href) + '" class="dz-a" style="color:#d92228;font-weight:700;text-decoration:none;">' + escapeHtml(text) + "</a>";
+    '<a href="' + escapeHtml(href) + '" class="dz-a" style="color:#d9222a;font-weight:700;text-decoration:none;">' + escapeHtml(text) + "</a>";
 
   const rows = [];
   rows.push(row("Intent", "<strong>" + escapeHtml(a.intent) + "</strong>" + (a.timeline ? ' &nbsp;&middot;&nbsp; ' + escapeHtml(a.timeline) : "")));
