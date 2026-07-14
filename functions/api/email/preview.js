@@ -11,7 +11,7 @@
 //                                               pass street= (empty) to preview
 //                                               the no-address fallback copy
 
-import { renderEmail, paragraphsToHtml, personalize, escapeHtml } from "../../_lib/email.js";
+import { renderEmail, renderLeadAlert, paragraphsToHtml, personalize, escapeHtml } from "../../_lib/email.js";
 import { getSequence } from "../../_lib/sequence.js";
 
 const MODES = { sell: "Home Valuation", buy: "Home Purchase", neutral: "" };
@@ -41,6 +41,35 @@ export async function onRequestGet(context) {
     source: url.searchParams.get("source") || "lead",
     intent: MODES[url.searchParams.get("mode") || "sell"] ?? ""
   };
+
+  // ?kind=alert : the internal lead-alert email (what lands in Joshua's inbox)
+  if (url.searchParams.get("kind") === "alert") {
+    const html = renderLeadAlert({
+      subject: "🏠 New Lead (Home Valuation): Mary Morris · Coto de Caza, CA",
+      name: "Mary Morris",
+      firstName: "Mary",
+      intent: "Home Valuation",
+      city: "Coto de Caza",
+      email: "marymorrishomes@gmail.com",
+      phone: "+1 (949) 555-0114",
+      phoneValid: true,
+      phoneE164: "+19495550114",
+      addressHtml: "50 Spoon Lane<br>Coto de Caza, CA, 92679",
+      timeline: "Yes, in 1-3 months",
+      referral: "Google search",
+      message: "We are also weighing a remodel instead of selling. Open to advice.",
+      sourcePage: "homepage-funnel",
+      pageUrl: "https://drozq.com/",
+      gclid: "Cj0KCQ-sample",
+      ip: "203.0.113.7",
+      consent: "yes",
+      submittedAt: "2026-07-13T18:40:00Z"
+    });
+    return new Response(html, {
+      status: 200,
+      headers: { "content-type": "text/html; charset=UTF-8", "cache-control": "no-store" }
+    });
+  }
 
   let subject, r;
   if (url.searchParams.get("kind") === "update") {

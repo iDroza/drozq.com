@@ -41,7 +41,6 @@ These move the needle the most. They are concentrated on `/index.html`.
 - **Personal FollowUpBoss account is cancelled/expired.** Discovered 2026-07-13: the FUB API returns 403 "Account cancelled or expired", so the `/api/lead` CRM push (`FOLLOWUPBOSS_API_KEY`) has been failing silently since it lapsed and the email-platform FUB backfill path is dead (the lead-alert emails in Gmail were used as the backfill source instead). Decide: reactivate the personal FUB subscription (push resumes automatically, key unchanged) or remove the channel + env var.
 - **Confirm the footer postal address.** The footer now defaults to "Active Realty, 17875 Von Karman Ave Suite 150, Irvine, CA 92614" (per Joshua's 2026-07-13 "Active Realty for now" direction). Confirm that address is current; `EMAIL_POSTAL_ADDRESS` overrides without a code change.
 - **Reply-detection auto-pause.** Today a reply requires a manual `python scripts/emailer.py pause <email>`. Wire the josh@drozq.com mailbox (Google Workspace) to auto-pause: Apps Script or Gmail filter webhook that POSTs `/api/email/pause`.
-- **Restyle the lead-alert email to Joshua.** `/api/lead` still sends the internal alert as plaintext. Optionally re-render it through `renderEmail()` so the inbox matches the platform. Deliberately deferred: touching the alert path is sacred-flow work.
 - **First note-drop broadcast.** When the first Field Note publishes, send it with `python scripts/emailer.py broadcast --segment newsletter --subject ... --cta-url https://drozq.com/field-notes/...`.
 
 ---

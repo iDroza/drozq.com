@@ -295,6 +295,57 @@ export function renderEmail(opts) {
 }
 
 // ---------------------------------------------------------------------------
+// The internal lead-alert email (to Joshua). Same v2.1 template as every
+// other email; the plaintext body stays as the text/plain part in lead.js,
+// so alerts remain grep-able and forwardable. No signature, no unsubscribe:
+// this is internal transactional mail. CTA is a tap-to-call button when the
+// lead's phone validated.
+// ---------------------------------------------------------------------------
+
+export function renderLeadAlert(a) {
+  const row = (label, valueHtml) =>
+    '<tr><td class="dz-muted" style="padding:7px 16px 7px 0;font-family:' + FONT + ';font-size:11px;letter-spacing:0.8px;text-transform:uppercase;color:#757575;vertical-align:top;white-space:nowrap;">' + label + "</td>" +
+    '<td class="dz-p" style="padding:7px 0;font-family:' + FONT + ';font-size:15px;line-height:1.5;color:#2b2b2b;" width="100%">' + valueHtml + "</td></tr>";
+
+  const link = (href, text) =>
+    '<a href="' + escapeHtml(href) + '" class="dz-a" style="color:#d92228;font-weight:700;text-decoration:none;">' + escapeHtml(text) + "</a>";
+
+  const rows = [];
+  rows.push(row("Intent", "<strong>" + escapeHtml(a.intent) + "</strong>" + (a.timeline ? ' &nbsp;&middot;&nbsp; ' + escapeHtml(a.timeline) : "")));
+  rows.push(row("Email", link("mailto:" + a.email, a.email)));
+  rows.push(row("Phone", a.phoneValid ? link("tel:" + a.phoneE164, a.phone) : escapeHtml(a.phone || "-")));
+  if (a.addressHtml) rows.push(row("Address", a.addressHtml));
+  if (a.referral) rows.push(row("Referral", escapeHtml(a.referral)));
+  if (a.message) rows.push(row("Notes", escapeHtml(a.message)));
+
+  const meta = [
+    a.sourcePage ? "source: " + escapeHtml(a.sourcePage) : "",
+    a.pageUrl ? "page: " + escapeHtml(a.pageUrl) : "",
+    a.gclid ? "gclid: " + escapeHtml(a.gclid) : "",
+    a.ip ? "ip: " + escapeHtml(a.ip) : "",
+    "consent: " + escapeHtml(a.consent || "-"),
+    a.submittedAt ? "submitted: " + escapeHtml(a.submittedAt) : ""
+  ].filter(Boolean).join(" &nbsp;&middot;&nbsp; ");
+
+  const bodyHtml =
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:2px 0 6px;">' + rows.join("") + "</table>" +
+    '<p class="dz-muted" style="margin:18px 0 0;font-family:' + FONT + ';font-size:11.5px;line-height:1.7;color:#8a8378;">' + meta + "</p>";
+
+  return renderEmail({
+    subject: a.subject,
+    preheader: a.intent + (a.city ? " in " + a.city : "") + ". Reply goes straight to the lead.",
+    headline: escapeHtml(a.name),
+    bodyHtml,
+    ctaLabel: a.phoneValid ? "Call " + (a.firstName || a.name) : "",
+    ctaUrl: a.phoneValid ? "tel:" + a.phoneE164 : "",
+    signature: false,
+    unsubUrl: "",
+    pixelUrl: "",
+    postal: ""
+  });
+}
+
+// ---------------------------------------------------------------------------
 // MailChannels send. Mirrors the proven /api/lead call, plus an HTML part,
 // DKIM fields when configured, and RFC 8058 one-click unsubscribe headers.
 // ---------------------------------------------------------------------------

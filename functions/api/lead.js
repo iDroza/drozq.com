@@ -1,4 +1,5 @@
 import { enrollSubscriber } from "../_lib/enroll.js";
+import { renderLeadAlert, escapeHtml } from "../_lib/email.js";
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -8,7 +9,7 @@ const json = (data, status = 200) =>
 
 // Normalize a US/Canada phone to a clean national + E.164 form. Defense in depth
 // behind the client formatter: drops a leaked "+1" country code (an 11-digit
-// string starting with 1 — NANP area codes never start with 1) so the number is
+// string starting with 1, NANP area codes never start with 1) so the number is
 // never truncated or mis-bucketed, and stamps "+1" on every real lead's phone
 // (the email Joshua reads + the Zapier/CRM payload), per the "capture the +1 on
 // every lead" rule. Anything that isn't a recognizable 10-digit NANP number
@@ -47,7 +48,7 @@ async function fetchWithTimeout(url, options, ms) {
 // so a slow or misconfigured delivery channel can never surface as "something
 // went wrong" in the funnel again. Each channel is independent; a failure is
 // logged, never thrown. If NO channel is configured, the full lead is logged so
-// it is still recoverable from Cloudflare's function logs — a lead is never
+// it is still recoverable from Cloudflare's function logs, a lead is never
 // silently dropped.
 async function deliverLead(env, lead) {
   const { emailContent, zapierPayload, fubEvent, logLine } = lead;
@@ -60,6 +61,17 @@ async function deliverLead(env, lead) {
 
   if (TO_EMAIL && FROM_EMAIL && MAILCHANNELS_API_KEY) {
     channels++;
+    // DKIM-sign the alert when the platform key exists (same domain key as
+    // updates@); the HTML part is the branded v2.1 template, the plaintext
+    // part is unchanged so alerts stay grep-able and forwardable.
+    const alertPersonalization = { to: [{ email: TO_EMAIL }] };
+    if (env.DKIM_PRIVATE_KEY) {
+      alertPersonalization.dkim_domain = "drozq.com";
+      alertPersonalization.dkim_selector = env.DKIM_SELECTOR || "mc1";
+      alertPersonalization.dkim_private_key = env.DKIM_PRIVATE_KEY;
+    }
+    const alertContent = [{ type: "text/plain", value: emailContent.body }];
+    if (emailContent.html) alertContent.push({ type: "text/html", value: emailContent.html });
     tasks.push(
       fetchWithTimeout("https://api.mailchannels.net/tx/v1/send", {
         method: "POST",
@@ -69,11 +81,11 @@ async function deliverLead(env, lead) {
           "Accept": "application/json"
         },
         body: JSON.stringify({
-          personalizations: [{ to: [{ email: TO_EMAIL }] }],
+          personalizations: [alertPersonalization],
           from: { email: FROM_EMAIL, name: "drozq.com Lead Form" },
           reply_to: { email: emailContent.replyToEmail, name: emailContent.replyToName },
           subject: emailContent.subject,
-          content: [{ type: "text/plain", value: emailContent.body }]
+          content: alertContent
         })
       }, 8000).then(async (r) => {
         if (!r.ok) {
@@ -211,7 +223,7 @@ export async function onRequestPost(context) {
 
     // 4) Validation. Email + phone + consent are the hard requirements: they are
     // what makes a lead contactable and compliant. Name is captured when present
-    // but NEVER blocks a lead — a client-side gap in name capture must not cost a
+    // but NEVER blocks a lead, a client-side gap in name capture must not cost a
     // conversion, so a missing name falls back to a placeholder instead of a 400
     // (which the funnel surfaces to the visitor as "something went wrong"). Same
     // for intent: default it rather than reject.
@@ -265,36 +277,61 @@ Email: ${email}
 Phone: ${phone}
 
 ADDRESS
-${addressBlock || fullAddress || "—"}
-Full (Google): ${fullAddress || "—"}
-Lat/Lng: ${lat || "—"}, ${lng || "—"}
+${addressBlock || fullAddress || "-"}
+Full (Google): ${fullAddress || "-"}
+Lat/Lng: ${lat || "-"}, ${lng || "-"}
 
 INQUIRY
 Type: ${safeIntent}
-Timeline: ${timeline || "—"}
-Referral Source: ${referralSource || "—"}
+Timeline: ${timeline || "-"}
+Referral Source: ${referralSource || "-"}
 
 NOTES
-${message || "—"}
+${message || "-"}
 
 META
-Source: ${sourcePage || "—"}
-Page URL: ${pageUrl || "—"}
-Submitted: ${submittedAt || "—"}
-GCLID: ${gclid || "—"}
+Source: ${sourcePage || "-"}
+Page URL: ${pageUrl || "-"}
+Submitted: ${submittedAt || "-"}
+GCLID: ${gclid || "-"}
 Endpoint: ${url.pathname}
-IP: ${ip || "—"}
-User-Agent: ${ua || "—"}
+IP: ${ip || "-"}
+User-Agent: ${ua || "-"}
 Consent: ${consent}
 `;
 
     // 9) Build channel payloads + a compact recoverable log line
     const emailContent = {
-      subject: `🏠 New Lead (${safeIntent}): ${safeName} — ${city || "Unknown City"}, ${state || "CA"}`,
+      subject: `🏠 New Lead (${safeIntent}): ${safeName} · ${city || "Unknown City"}, ${state || "CA"}`,
       body: emailBody,
       replyToEmail: email,
       replyToName: safeName
     };
+
+    // Branded HTML part for the alert (v2.1 template, 2026-07-13). The
+    // plaintext body above remains the text/plain part, so alerts stay
+    // grep-able and forwardable; this only changes what the inbox displays.
+    emailContent.html = renderLeadAlert({
+      subject: emailContent.subject,
+      name: safeName,
+      firstName: firstName || (name ? name.split(/\s+/)[0] : ""),
+      intent: safeIntent,
+      city,
+      email,
+      phone,
+      phoneValid: phoneNorm.valid,
+      phoneE164: phoneNorm.e164,
+      addressHtml: escapeHtml(addressBlock || fullAddress || "-").replace(/\n/g, "<br>"),
+      timeline,
+      referral: referralSource,
+      message,
+      sourcePage,
+      pageUrl,
+      gclid,
+      ip,
+      consent,
+      submittedAt
+    });
 
     const zapierPayload = {
       first_name: firstName,

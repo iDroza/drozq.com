@@ -392,7 +392,7 @@ Shipped 2026-07-13. Outbound email to visitors and clients: the branded HTML tem
 - Sequence and broadcast sends respect the 9:30am-7pm PT window; step 0 is instant by design (a confirmation is expected instantly).
 - Field-notes subscribers stay welcome-only unless the promise copy on `/field-notes/` changes first.
 - Never put `EMAIL_SECRET`, the DKIM private key, or subscriber exports in the repo (everything tracked is public). Secret file convention: `scripts/.email_secret` (gitignored).
-- The lead-alert email to Joshua stays plaintext for now (grep-able, forwardable); only visitor-facing mail uses the template.
+- The lead-alert email to Joshua is dual-part (2026-07-13 rollout): the branded v2.1 HTML (`renderLeadAlert()` in `_lib/email.js`: lead name headline, field rows, tap-to-call CTA, no signature/unsubscribe) is what the inbox displays, and the ORIGINAL plaintext body ships unchanged as the text/plain part, so alerts stay grep-able and forwardable. The alert is DKIM-signed whenever `DKIM_PRIVATE_KEY` is set. Preview: `/api/email/preview?kind=alert`. Never remove the plaintext part.
 
 **Debugging:** Cloudflare dashboard > Workers & Pages > the Pages project > Functions > Real-time logs. Log markers: `EMAIL_SEND_FAILED` / `EMAIL_TICK` / `EMAIL_BACKFILL` / `LEAD_ENROLL_THREW` / `SUBSCRIBE_*` / `EMAIL_CRON`. Per-send outcomes (including MailChannels error bodies): `python scripts/emailer.py log`. PostHog events: `email_subscriber_enrolled`, `email_sent`, `email_send_failed`, `email_opened`, `email_link_clicked`, `email_unsubscribed` (distinct_id = subscriber email).
 
