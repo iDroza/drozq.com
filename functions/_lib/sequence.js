@@ -19,6 +19,35 @@ function intentKind(intent) {
   return "neutral";
 }
 
+// The funnel's Places-confirmed street address ("214 Cedarwood Ln"). Naming
+// the actual property is the strongest personalization signal we have; every
+// use falls back gracefully when it is absent (buy leads, newsletter, backfill).
+function cleanStreet(street) {
+  const s = String(street || "").trim().replace(/,+$/, "").slice(0, 80);
+  return s.length >= 4 ? s : "";
+}
+
+// One line keyed off the funnel's timeline answer, so the email proves it
+// heard them. Exact option strings: "Yes, immediately" / "Yes, in 1-3 months"
+// / "Yes, 4 or more months out" / "No, just curious". Unknown values get no
+// line rather than a wrong one.
+function timelineRead(timeline) {
+  const s = String(timeline || "").toLowerCase();
+  if (s.includes("immediately")) {
+    return "You're moving now, so I'll lead with what it can close for in the next 30 days.";
+  }
+  if (s.includes("1-3")) {
+    return "A 1 to 3 month window is real leverage: enough time to price at the top of the range instead of racing a deadline.";
+  }
+  if (s.includes("4 or more")) {
+    return "With four or more months of runway, we time the market instead of taking it as it comes. I'll flag the window worth hitting.";
+  }
+  if (s.includes("curious")) {
+    return "Curious is exactly the right time to get a real number: you move when the number says move, not when a deadline does.";
+  }
+  return "";
+}
+
 export const SEQUENCES = {
   "lead-response-v1": {
     steps: [
@@ -27,29 +56,41 @@ export const SEQUENCES = {
         offsetDays: 0,
         subject(sub) {
           const k = intentKind(sub.intent);
+          const street = cleanStreet(sub.street);
+          if (street && k !== "buy") return street + ": I'm on it";
           if (k === "sell") return "Your home report request is in";
-          if (k === "buy") return "Your buyer plan request is in";
+          if (k === "buy") return "Your {city} buyer plan is in";
           return "Got your request";
         },
         render(sub) {
           const k = intentKind(sub.intent);
+          const street = cleanStreet(sub.street);
+          const opener = street
+            ? "Your request for **" + street + "** just came through drozq.com. I'm Joshua Guerrero, and I work every request personally."
+            : "Your request just came through drozq.com. I'm Joshua Guerrero, and I work every request personally.";
+          const nextStep = k === "buy"
+            ? "Here's what happens next: I map your target against what homes like it are actually closing for in {city} right now. You get the real price to expect, where sellers are bending, and the move that wins the house without overpaying."
+            : street
+              ? "Here's what happens next: I pull the numbers on " + street + " and check them against what is actually closing around it right now. You get your real number, what would push it higher, and a straight answer on whether now is the time to sell."
+              : "Here's what happens next: I pull your property's numbers and check them against what is actually closing near you right now. You get your real number, what would push it higher, and a straight answer on whether now is the time to sell.";
+          const timelineLine = k === "buy" ? "" : timelineRead(sub.timeline);
           const question = k === "buy"
             ? "One question so I get this right: **what monthly payment would feel comfortable?** That one number tells me more than any wishlist."
             : k === "sell"
               ? "One question so I get this right: **what would the number have to be for you to seriously consider selling?**"
               : "One question so I get this right: **are you thinking about buying, selling, or both?**";
-          const nextStep = k === "buy"
-            ? "Here's what happens next: I map your target against what homes like it are actually closing for right now. You get the real price to expect, where sellers are bending, and the move that wins the house without overpaying."
-            : "Here's what happens next: I pull your property's numbers and check them against what is actually closing near you right now. You get your real number, what would push it higher, and a straight answer on whether now is the time to sell.";
           return {
-            preheader: "Your request hit my desk. One quick question and I get to work.",
+            preheader: street
+              ? street + " hit my desk. One quick question and I get to work."
+              : "Your request hit my desk. One quick question and I get to work.",
             headline: "I'm on it, {first}.",
             paragraphs: [
-              "Your request just came through drozq.com. I'm Joshua Guerrero, and I work every request personally.",
+              opener,
               nextStep,
+              timelineLine,
               question,
               "Hit reply. I read every response."
-            ]
+            ].filter(Boolean)
           };
         }
       },
@@ -95,11 +136,14 @@ export const SEQUENCES = {
         subject() { return "{first}, quick question"; },
         render(sub) {
           const k = intentKind(sub.intent);
+          const street = cleanStreet(sub.street);
           const q = k === "buy"
             ? "Are you still looking at homes in {city}?"
-            : k === "sell"
-              ? "Are you still thinking about selling your home in {city}?"
-              : "Are you still planning a move in {city}?";
+            : street
+              ? "Are you still thinking about selling " + street + "?"
+              : k === "sell"
+                ? "Are you still thinking about selling your home in {city}?"
+                : "Are you still planning a move in {city}?";
           return {
             preheader: "One-word replies are fine.",
             headline: "",

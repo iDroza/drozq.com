@@ -355,8 +355,8 @@ export async function upsertSubscriber(env, seed) {
   if (/@drozq\.com$/i.test(email)) return { inserted: false, row: null, reason: "internal" };
 
   const res = await env.EMAIL_DB.prepare(
-    "INSERT INTO subscribers (email, first_name, name, source, intent, city, status, sequence_id, sequence_step, next_send_at, gclid, page_url) " +
-    "VALUES (?1, ?2, ?3, ?4, ?5, ?6, 'active', ?7, 0, ?8, ?9, ?10) " +
+    "INSERT INTO subscribers (email, first_name, name, source, intent, city, street, timeline, status, sequence_id, sequence_step, next_send_at, gclid, page_url) " +
+    "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, 'active', ?9, 0, ?10, ?11, ?12) " +
     "ON CONFLICT(email) DO NOTHING"
   ).bind(
     email,
@@ -365,6 +365,8 @@ export async function upsertSubscriber(env, seed) {
     seed.source || "newsletter",
     seed.intent || null,
     seed.city || null,
+    seed.street || null,
+    seed.timeline || null,
     seed.sequence_id,
     seed.next_send_at || null,
     seed.gclid || null,

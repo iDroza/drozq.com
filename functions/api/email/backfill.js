@@ -63,6 +63,7 @@ export async function onRequestPost(context) {
         first_name: p.firstName || null,
         name: p.name || [p.firstName, p.lastName].filter(Boolean).join(" ") || null,
         city: (((p.addresses || [])[0] || {}).city) || null,
+        street: (((p.addresses || [])[0] || {}).street) || null,
         intent: intentFromTags(p.tags),
         source: "backfill"
       });

@@ -13,6 +13,8 @@ const STATEMENTS = [
     source TEXT NOT NULL DEFAULT 'newsletter',
     intent TEXT,
     city TEXT,
+    street TEXT,
+    timeline TEXT,
     status TEXT NOT NULL DEFAULT 'active',
     sequence_id TEXT,
     sequence_step INTEGER NOT NULL DEFAULT 0,
@@ -51,11 +53,22 @@ const STATEMENTS = [
   `CREATE INDEX IF NOT EXISTS idx_email_log_queue ON email_log(status, send_after)`
 ];
 
+// Columns added after the original schema. Applied best-effort on every init
+// run so an already-created database picks them up; the "duplicate column"
+// error on re-runs is expected and swallowed.
+const MIGRATIONS = [
+  "ALTER TABLE subscribers ADD COLUMN street TEXT",
+  "ALTER TABLE subscribers ADD COLUMN timeline TEXT"
+];
+
 export async function onRequestPost(context) {
   const gate = adminGate(context);
   if (gate) return gate;
   try {
     await context.env.EMAIL_DB.batch(STATEMENTS.map((s) => context.env.EMAIL_DB.prepare(s)));
+    for (const m of MIGRATIONS) {
+      try { await context.env.EMAIL_DB.prepare(m).run(); } catch (e) {}
+    }
     return json({ ok: true, tables: ["subscribers", "campaigns", "email_log"] });
   } catch (e) {
     console.error("EMAIL_INIT_FAILED " + ((e && e.message) || e));

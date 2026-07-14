@@ -7,6 +7,9 @@
 //   /api/email/preview?seq=newsletter-welcome-v1
 //   /api/email/preview?kind=update              sample 1:1 buyer progress update
 //   &first=Sam&city=Irvine                      personalization overrides
+//   &street=...&timeline=...                    property + timeline overrides;
+//                                               pass street= (empty) to preview
+//                                               the no-address fallback copy
 
 import { renderEmail, paragraphsToHtml, personalize, escapeHtml } from "../../_lib/email.js";
 import { getSequence } from "../../_lib/sequence.js";
@@ -33,6 +36,8 @@ export async function onRequestGet(context) {
   const sub = {
     first_name: url.searchParams.get("first") || "Sam",
     city: url.searchParams.get("city") || "Irvine",
+    street: url.searchParams.get("street") ?? "214 Cedarwood Ln",
+    timeline: url.searchParams.get("timeline") ?? "Yes, in 1-3 months",
     intent: MODES[url.searchParams.get("mode") || "sell"] ?? ""
   };
 

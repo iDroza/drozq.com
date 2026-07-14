@@ -384,6 +384,8 @@ Consent: ${consent}
       name: safeName,
       intent: safeIntent,
       city: city || null,
+      street: streetAddress || null,
+      timeline: timeline || null,
       source: safeIntent === "Field Notes Subscribe" ? "newsletter" : "lead",
       gclid: gclid || null,
       page_url: pageUrl || sourcePage || null

@@ -49,6 +49,8 @@ export async function onRequestPost(context) {
         source: String(fields.source || "newsletter").trim().slice(0, 60) || "newsletter",
         intent: String(fields.intent || "").trim().slice(0, 80) || null,
         city: String(fields.city || "").trim().slice(0, 100) || null,
+        street: String(fields.street || "").trim().slice(0, 120) || null,
+        timeline: String(fields.timeline || "").trim().slice(0, 80) || null,
         gclid: String(fields.gclid || "").trim().slice(0, 200) || null,
         page_url: String(fields.page_url || request.headers.get("referer") || "").slice(0, 300) || null
       }).catch((e) => console.error("SUBSCRIBE_ENROLL_THREW " + ((e && e.message) || e)))
