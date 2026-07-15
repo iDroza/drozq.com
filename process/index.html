@@ -2759,84 +2759,132 @@
     <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px max-w_640px m_0_auto">A clear path. No improvised steps, no surprises. Here is what working with me actually looks like.</p>
   </div>
 
-  <div class="d_flex flex-d_column gap_24px md:gap_32px max-w_860px m_0_auto">
+  <style id="proc-steps-css">
+  /* Five-steps timeline: scoped CSS on purpose. The original build styled the
+     step cards with arbitrary Panda utilities (bd_1px_solid_#e5e5e5 etc.) that
+     are not in the compiled stylesheet and silently no-op; every visual rule
+     for this section therefore lives here, where it cannot vanish. */
+  .proc-tl-wrap { max-width: 900px; margin: 0 auto; background: #efe9e1; border-radius: 24px; padding: 20px 14px; }
+  .proc-tl { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 24px; }
+  .proc-tl-item { position: relative; display: grid; grid-template-columns: 36px 1fr; column-gap: 12px; align-items: start; }
+  .proc-tl-item::before { content: ""; position: absolute; left: 18px; top: 56px; bottom: -20px; width: 2px; margin-left: -1px; background: rgba(26,24,22,0.14); }
+  .proc-tl-item:last-child::before { display: none; }
+  .proc-tl-node { width: 36px; height: 36px; margin-top: 12px; border-radius: 9999px; background: #d92228; color: #fff; font-weight: 800; font-size: 14px; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 5px #efe9e1; position: relative; z-index: 1; }
+  .proc-tl-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 20px; min-width: 0; }
+  .proc-tl-head { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+  .proc-tl-head h3 { margin: 0; font-weight: 700; font-size: 20px; line-height: 28px; color: #1a1816; }
+  .proc-tl-chip { display: inline-flex; align-items: center; gap: 6px; background: #fbe9ea; color: #d92228; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border-radius: 9999px; padding: 5px 12px; white-space: nowrap; }
+  .proc-tl-chip svg { flex-shrink: 0; }
+  .proc-tl-card > p { margin: 0; color: #3f4650; font-size: 15px; line-height: 24px; }
+  .proc-tl-card > p strong { color: #1a1816; font-weight: 700; }
+  .proc-tl-card > p a { color: #d92228; font-weight: 700; text-decoration: none; }
+  .proc-tl-card--total { background: #1a1816; border-color: #1a1816; box-shadow: 0 8px 24px rgba(26,24,22,0.25); text-align: left; }
+  .proc-tl-card--total .proc-tl-total-eyebrow { margin: 0 0 8px; color: #d92228; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+  .proc-tl-card--total .proc-tl-total-h { margin: 0 0 8px; color: #fff; font-size: 22px; line-height: 30px; font-weight: 800; }
+  .proc-tl-card--total .proc-tl-total-p { margin: 0; color: #fff; opacity: 0.78; font-size: 15px; line-height: 24px; }
+  @media (min-width: 768px) {
+    .proc-tl-wrap { padding: 40px 36px; }
+    .proc-tl { gap: 28px; }
+    .proc-tl-item { grid-template-columns: 48px 1fr; column-gap: 24px; }
+    .proc-tl-item::before { left: 24px; top: 76px; bottom: -24px; }
+    .proc-tl-node { width: 48px; height: 48px; margin-top: 18px; font-size: 17px; box-shadow: 0 0 0 6px #efe9e1; }
+    .proc-tl-card { padding: 26px 30px; transition: transform 0.18s ease, box-shadow 0.18s ease; }
+    .proc-tl-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(26,24,22,0.10); }
+    .proc-tl-card--total:hover { box-shadow: 0 12px 28px rgba(26,24,22,0.30); }
+    .proc-tl-head { flex-direction: row; align-items: center; gap: 14px; margin-bottom: 12px; }
+    .proc-tl-head h3 { font-size: 24px; line-height: 32px; }
+    .proc-tl-chip { font-size: 12px; }
+    .proc-tl-card > p { font-size: 17px; line-height: 28px; }
+    .proc-tl-card--total .proc-tl-total-h { font-size: 30px; line-height: 38px; }
+    .proc-tl-card--total .proc-tl-total-p { font-size: 16px; }
+  }
+</style>
 
-    <article class="d_flex flex-d_row gap_20px md:gap_32px ai_flex-start p_24px md:p_32px bg-c_#fff bdr_16px bd_1px_solid_#e5e5e5 bx-sh_0_2px_8px_rgba(0,0,0,.04)">
-      <div class="flex-sh_0 d_flex ai_center jc_center w_56px h_56px md:w_72px md:h_72px bdr_full bg-c_#d92228 c_#fff fw_700 fs_18px md:fs_24px ls_0.5px">01</div>
-      <div class="flex_1">
-        <div class="d_flex flex-d_column md:flex-d_row md:ai_baseline gap_4px md:gap_12px mb_8px">
-          <h3 class="fw_700 fs_20px md:fs_24px lh_28px md:lh_32px c_#1a1816 m_0">First call</h3>
-          <span class="d_inline-flex ai_center gap_6px c_#d92228 fs_12px md:fs_13px fw_700 ls_1px" style="text-transform:uppercase">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            15 minutes
-          </span>
+  <div class="proc-tl-wrap">
+    <ol class="proc-tl">
+
+      <li class="proc-tl-item">
+        <div class="proc-tl-node" aria-hidden="true">01</div>
+        <article class="proc-tl-card">
+          <div class="proc-tl-head">
+            <h3>First call</h3>
+            <span class="proc-tl-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              15 minutes
+            </span>
+          </div>
+          <p>Fill out the form or call me at <a href="tel:9494385948"><strong>(949) 438-5948</strong></a>. We spend 15 minutes on the phone so I can understand your home, your timeline, and your goals. <strong>A real conversation.</strong></p>
+        </article>
+      </li>
+
+      <li class="proc-tl-item">
+        <div class="proc-tl-node" aria-hidden="true">02</div>
+        <article class="proc-tl-card">
+          <div class="proc-tl-head">
+            <h3>The walk-through</h3>
+            <span class="proc-tl-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              At your home
+            </span>
+          </div>
+          <p>I meet you at your home and walk every room. I tell you honestly what helps the sale and what hurts it. Most agents flatter you to win the listing. <strong>I don't.</strong></p>
+        </article>
+      </li>
+
+      <li class="proc-tl-item">
+        <div class="proc-tl-node" aria-hidden="true">03</div>
+        <article class="proc-tl-card">
+          <div class="proc-tl-head">
+            <h3>Your market analysis</h3>
+            <span class="proc-tl-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              Within 24 hours
+            </span>
+          </div>
+          <p>Within 24 hours, you get a real comparative market analysis. Recent comps, active competition, recommended price, and a clear pricing strategy. <strong>You decide if and when to list.</strong></p>
+        </article>
+      </li>
+
+      <li class="proc-tl-item">
+        <div class="proc-tl-node" aria-hidden="true">04</div>
+        <article class="proc-tl-card">
+          <div class="proc-tl-head">
+            <h3>Launch</h3>
+            <span class="proc-tl-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
+              48 to 72 hours
+            </span>
+          </div>
+          <p>Once you sign, your home is on the market in 48 to 72 hours. Professional photography, drone, walk-through video, MLS syndication, social campaigns, and a dedicated property page. All on a fixed timeline you can hold me to.</p>
+        </article>
+      </li>
+
+      <li class="proc-tl-item">
+        <div class="proc-tl-node" aria-hidden="true">05</div>
+        <article class="proc-tl-card">
+          <div class="proc-tl-head">
+            <h3>Negotiate and close</h3>
+            <span class="proc-tl-chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              30 to 45 days
+            </span>
+          </div>
+          <p>Offers come in. I walk you through each one so the trade-offs are clear. Then I manage every inspection, contingency, and milestone through close. <strong>30 to 45 days later, the wire hits your account.</strong></p>
+        </article>
+      </li>
+
+      <li class="proc-tl-item">
+        <div class="proc-tl-node" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
-        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">Fill out the form or call me at <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a>. We spend 15 minutes on the phone so I can understand your home, your timeline, and your goals. <strong class="c_#1a1816 fw_700">A real conversation.</strong></p>
-      </div>
-    </article>
+        <article class="proc-tl-card proc-tl-card--total">
+          <p class="proc-tl-total-eyebrow">Total timeline</p>
+          <p class="proc-tl-total-h">Six to ten weeks from listing to keys.</p>
+          <p class="proc-tl-total-p">In Orange County, a well-priced home typically goes under contract in 14 to 30 days, followed by 30 to 45 days of escrow. I build a specific timeline for your situation on the first call.</p>
+        </article>
+      </li>
 
-    <article class="d_flex flex-d_row gap_20px md:gap_32px ai_flex-start p_24px md:p_32px bg-c_#fff bdr_16px bd_1px_solid_#e5e5e5 bx-sh_0_2px_8px_rgba(0,0,0,.04)">
-      <div class="flex-sh_0 d_flex ai_center jc_center w_56px h_56px md:w_72px md:h_72px bdr_full bg-c_#d92228 c_#fff fw_700 fs_18px md:fs_24px ls_0.5px">02</div>
-      <div class="flex_1">
-        <div class="d_flex flex-d_column md:flex-d_row md:ai_baseline gap_4px md:gap_12px mb_8px">
-          <h3 class="fw_700 fs_20px md:fs_24px lh_28px md:lh_32px c_#1a1816 m_0">The walk-through</h3>
-          <span class="d_inline-flex ai_center gap_6px c_#d92228 fs_12px md:fs_13px fw_700 ls_1px" style="text-transform:uppercase">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            At your home
-          </span>
-        </div>
-        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">I meet you at your home and walk every room. I tell you honestly what helps the sale and what hurts it. Most agents flatter you to win the listing. <strong class="c_#1a1816 fw_700">I don't.</strong></p>
-      </div>
-    </article>
-
-    <article class="d_flex flex-d_row gap_20px md:gap_32px ai_flex-start p_24px md:p_32px bg-c_#fff bdr_16px bd_1px_solid_#e5e5e5 bx-sh_0_2px_8px_rgba(0,0,0,.04)">
-      <div class="flex-sh_0 d_flex ai_center jc_center w_56px h_56px md:w_72px md:h_72px bdr_full bg-c_#d92228 c_#fff fw_700 fs_18px md:fs_24px ls_0.5px">03</div>
-      <div class="flex_1">
-        <div class="d_flex flex-d_column md:flex-d_row md:ai_baseline gap_4px md:gap_12px mb_8px">
-          <h3 class="fw_700 fs_20px md:fs_24px lh_28px md:lh_32px c_#1a1816 m_0">Your market analysis</h3>
-          <span class="d_inline-flex ai_center gap_6px c_#d92228 fs_12px md:fs_13px fw_700 ls_1px" style="text-transform:uppercase">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            Within 24 hours
-          </span>
-        </div>
-        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">Within 24 hours, you get a real comparative market analysis. Recent comps, active competition, recommended price, and a clear pricing strategy. <strong class="c_#1a1816 fw_700">You decide if and when to list.</strong></p>
-      </div>
-    </article>
-
-    <article class="d_flex flex-d_row gap_20px md:gap_32px ai_flex-start p_24px md:p_32px bg-c_#fff bdr_16px bd_1px_solid_#e5e5e5 bx-sh_0_2px_8px_rgba(0,0,0,.04)">
-      <div class="flex-sh_0 d_flex ai_center jc_center w_56px h_56px md:w_72px md:h_72px bdr_full bg-c_#d92228 c_#fff fw_700 fs_18px md:fs_24px ls_0.5px">04</div>
-      <div class="flex_1">
-        <div class="d_flex flex-d_column md:flex-d_row md:ai_baseline gap_4px md:gap_12px mb_8px">
-          <h3 class="fw_700 fs_20px md:fs_24px lh_28px md:lh_32px c_#1a1816 m_0">Launch</h3>
-          <span class="d_inline-flex ai_center gap_6px c_#d92228 fs_12px md:fs_13px fw_700 ls_1px" style="text-transform:uppercase">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
-            48 to 72 hours
-          </span>
-        </div>
-        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">Once you sign, your home is on the market in 48 to 72 hours. Professional photography, drone, walk-through video, MLS syndication, social campaigns, and a dedicated property page. All on a fixed timeline you can hold me to.</p>
-      </div>
-    </article>
-
-    <article class="d_flex flex-d_row gap_20px md:gap_32px ai_flex-start p_24px md:p_32px bg-c_#fff bdr_16px bd_1px_solid_#e5e5e5 bx-sh_0_2px_8px_rgba(0,0,0,.04)">
-      <div class="flex-sh_0 d_flex ai_center jc_center w_56px h_56px md:w_72px md:h_72px bdr_full bg-c_#d92228 c_#fff fw_700 fs_18px md:fs_24px ls_0.5px">05</div>
-      <div class="flex_1">
-        <div class="d_flex flex-d_column md:flex-d_row md:ai_baseline gap_4px md:gap_12px mb_8px">
-          <h3 class="fw_700 fs_20px md:fs_24px lh_28px md:lh_32px c_#1a1816 m_0">Negotiate and close</h3>
-          <span class="d_inline-flex ai_center gap_6px c_#d92228 fs_12px md:fs_13px fw_700 ls_1px" style="text-transform:uppercase">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-            30 to 45 days
-          </span>
-        </div>
-        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">Offers come in. I walk you through each one so the trade-offs are clear. Then I manage every inspection, contingency, and milestone through close. <strong class="c_#1a1816 fw_700">30 to 45 days later, the wire hits your account.</strong></p>
-      </div>
-    </article>
-
-  </div>
-
-  <div class="mt_40px md:mt_56px max-w_860px m_0_auto p_24px md:p_32px bg-c_#fbf8f4 bdr_16px ta_center">
-    <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_8px" style="text-transform:uppercase">Total timeline</p>
-    <p class="c_#1a1816 fs_24px md:fs_32px fw_800 lh_32px md:lh_40px mb_8px">Six to ten weeks from listing to keys.</p>
-    <p class="c_#3f4650 fs_15px md:fs_16px lh_24px m_0">In Orange County, a well-priced home typically goes under contract in 14 to 30 days, followed by 30 to 45 days of escrow. I build a specific timeline for your situation on the first call.</p>
+    </ol>
   </div>
 
 </section>
