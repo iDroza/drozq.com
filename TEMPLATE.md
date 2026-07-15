@@ -39,7 +39,7 @@ These tokens are declared in the inline `<style>` block at the top of `/index.ht
 
 | Token | Hex | Use |
 |---|---|---|
-| `--colors-primary` | `#d92228` | Primary CTA red. Hero tabs (selected fg), See Plan button bg, funnel CTA bg, funnel progress fill, focus borders, accent strokes. |
+| `--colors-primary` | `#d92228` | Primary CTA red. Hero tabs (selected fg), Run my Valuation button bg, funnel CTA bg, funnel progress fill, focus borders, accent strokes. |
 | `--colors-primary-hover` | `#a92e2a` | Primary CTA hover state. |
 | `--colors-secondary` | `#d41f24` | Secondary red, near-identical to primary; rarely used. |
 | `--colors-light-primary` | `#f7d3d4` | Light red tint. |
@@ -139,7 +139,7 @@ Hard rules:
 
 - **Base styles are mobile.** Use `min-width` media queries (Panda's `md:` / `lg:` / `xl:` prefixes) to add complexity for larger screens. Never use `max-width` queries to subtract from a desktop-first design.
 - **Mobile wins ties.** When mobile and desktop disagree on a layout, copy length, image crop, grid column count, type scale, CTA placement, or tap-target size — mobile is correct. Desktop is the variant.
-- **Hero must be pristine at 375px.** The 3-tab CTA, address input, and See Plan button are the conversion engine. They must look intentional at 375px before any tablet/desktop polish.
+- **Hero must be pristine at 375px.** The 3-tab CTA, address input, and Run my Valuation button are the conversion engine. They must look intentional at 375px before any tablet/desktop polish.
 - **Tap targets ≥ 44 × 44 px.** Apple HIG / Material both. CTAs, tabs, accordion toggles, mobile drawer items all comply.
 - **No horizontal scroll at 375px, ever.** A scrollbar at mobile width is a regression. Constrain widths, wrap long URLs, audit `min-width` declarations.
 - **Type scale must read on a phone.** Body ≥ 16px (no iOS zoom on input focus), section headlines ≥ 24px, hero ≥ 32px at 375px.
@@ -350,7 +350,7 @@ Header carries a phone CTA on desktop showing `(949) 438-5948` (paid-traffic lin
 
 ## 4. Hero
 
-The hero is the top of every page. It contains three things, top to bottom: the **transaction-type tab bar**, the **landing form pill** (address/location + See Plan button), and the **hero copy/visual**.
+The hero is the top of every page. It contains three things, top to bottom: the **transaction-type tab bar**, the **landing form pill** (address/location + Run my Valuation button), and the **hero copy/visual**.
 
 ### Tab bar (Sell / Buy / Sell & Buy)
 
@@ -376,7 +376,7 @@ Font: Roboto 700 13px / 16px. The selected tab pops up because of the 4px taller
 
 Each tab has a sibling `<div role="tabpanel" id="tabpanel-{sell|buy|sell-buy}">` whose visibility is toggled by `wireTabs()` (sets `aria-selected` + `data-selected` + adds/removes `d_none` class + `hidden` attribute).
 
-Inside each tabpanel: a `<form>` with the landing input + See Plan submit button.
+Inside each tabpanel: a `<form>` with the landing input + Run my Valuation submit button.
 
 ### Landing form pill
 
@@ -385,7 +385,7 @@ Inside each tabpanel: a `<form>` with the landing input + See Plan submit button
   <div class="...">  <!-- white pill wrapper -->
     <input type="text" name="location" placeholder="Enter the address you are selling"
            value="" autocomplete="off" ...>
-    <button type="submit" class="...">See Plan</button>
+    <button type="submit" class="...">Run my Valuation<span class="d_none md:d_inline-flex ai_center"><!-- 20x20 white arrow svg --></span></button>
   </div>
   <input type="hidden" name="gclid" value="">
 </form>
@@ -402,10 +402,10 @@ Style:
 | Input | Background | transparent (sits in white pill wrapper) |
 | Button | Background | `#d92228` |
 | Button | Color | `#fff` |
-| Button | Font | Roboto 700 18px |
+| Button | Font | 700 18px (the site font stack: Galano Grotesque Alt) |
 | Button | Height | `54px` |
 | Button | Border-radius | `9999px` (right pill cap) |
-| Button | Text | "See Plan" |
+| Button | Text | "Run my Valuation" + a trailing arrow `<span class="d_none md:d_inline-flex ai_center">` holding a 20x20 white arrow svg (arrow hidden below `md`). Renamed from "See Plan" on the homepage 2026-06-13 (the unified-offer day); rolled to every template page 2026-07-14. The bespoke scoped pills (`legal-cta__pill`, `cf-cta-pill`, `ty-cta__pill` on /privacy/, /terms/, /testimonials/*, /thank-you/) carry the same label without the arrow span. |
 
 Placeholders by mode:
 - Sell: "Enter the address you are selling"
@@ -600,12 +600,12 @@ Standard section conventions:
 
 Two button styles exist on the site. **No third style is authorized.** Do not introduce new button variants without first updating this section.
 
-**1. Primary CTA pill** — only ever used for the inline funnel ("See Plan" or equivalent action that opens the funnel overlay). Filled red. This is the conversion mechanism; reserve it.
+**1. Primary CTA pill** — only ever used for the inline funnel ("Run my Valuation" or equivalent action that opens the funnel overlay). Filled red. This is the conversion mechanism; reserve it.
 
 ```html
 <button type="submit"
         class="bg_primary c_white cursor_pointer w_100% xs:w_145px md:w_auto h_48px md:h_54px fs_13px md:fs_18px fw_bold bdr_full px_0px md:px_28px ls_0.5px d_block md:d_inline-flex ai_center gap_0px md:gap_10px hover:bg_primaryHover">
-  See Plan
+  Run my Valuation<span class="d_none md:d_inline-flex ai_center"><!-- 20x20 white arrow svg --></span>
 </button>
 ```
 
@@ -656,7 +656,7 @@ Use cases that warrant the secondary outlined style:
 - "See more data" or "Read the full X" linking from a summary section to a deeper page.
 - "Read the full Los Angeles listing playbook →" on `/where-we-help/`.
 
-Do **NOT** use the primary red filled pill for navigation. It visually competes with the funnel CTA and tells the user "this is the conversion action" when it isn't. A nav link that looks like a See Plan pill steals attention from the actual lead-capture button on the page.
+Do **NOT** use the primary red filled pill for navigation. It visually competes with the funnel CTA and tells the user "this is the conversion action" when it isn't. A nav link that looks like a Run my Valuation pill steals attention from the actual lead-capture button on the page.
 
 ### Closing CTA pill width (canonical)
 
@@ -726,7 +726,7 @@ Two homepage-only sections built during the seller rebuild. Both are page-specif
 
 ## 6. Mid-page tabs (the condition switcher)
 
-A two-panel `[role="tab"]` switcher inside a content section, wired by the generic `wireTabs()` (no bespoke handler). Each panel holds its own See Plan landing form plus a left-image column. The homepage instance is **"My Home's Condition is..."**: the visitor self-selects by home condition (Move-in ready / Needs work) and **both panels open the Sell funnel**. There is no buyer panel here, the homepage speaks only to sellers in this section; Buy / Sell & Buy still live in the hero tab bar.
+A two-panel `[role="tab"]` switcher inside a content section, wired by the generic `wireTabs()` (no bespoke handler). Each panel holds its own Run my Valuation landing form plus a left-image column. The homepage instance is **"My Home's Condition is..."**: the visitor self-selects by home condition (Move-in ready / Needs work) and **both panels open the Sell funnel**. There is no buyer panel here, the homepage speaks only to sellers in this section; Buy / Sell & Buy still live in the hero tab bar.
 
 ```html
 <div role="tablist">                                <!-- ~360px white pill -->
@@ -735,10 +735,10 @@ A two-panel `[role="tab"]` switcher inside a content section, wired by the gener
 </div>
 
 <div id="sellTab"  role="tabpanel" aria-labelledby="sellTabBtn">
-  <!-- left: cond-sold.webp (SOLD sign) | right: 3 cards + See Plan address pill -->
+  <!-- left: cond-sold.webp (SOLD sign) | right: 3 cards + Run my Valuation address pill -->
 </div>
 <div id="needsTab" role="tabpanel" aria-labelledby="needsTabBtn" class="d_none" hidden>
-  <!-- left: cond-reno.webp (before/after) | right: 3 cards + See Plan address pill -->
+  <!-- left: cond-reno.webp (before/after) | right: 3 cards + Run my Valuation address pill -->
 </div>
 ```
 
@@ -760,7 +760,7 @@ Neither `sellTab`/`sellTabBtn` nor `needsTab`/`needsTabBtn` contains `buy`, so *
 
 ### Mid-page tab pill width (canonical)
 
-Inside each `#sellTab` / `#needsTab` tabpanel, the landing form pill MUST be wrapped in a 540px-max container — never full-width. A full-width pill at desktop reads as broken layout (the input + See Plan button stretch into ~780px of horizontal space and look wrong).
+Inside each `#sellTab` / `#needsTab` tabpanel, the landing form pill MUST be wrapped in a 540px-max container — never full-width. A full-width pill at desktop reads as broken layout (the input + Run my Valuation button stretch into ~780px of horizontal space and look wrong).
 
 Both the heading and the pill container MUST be centered within the 780px tabpanel. The h4 uses `ta_center`, and the wrapper div carries `margin: 0 auto`. Earlier versions used `ta_left` with no auto margin on the wrapper, which pinned the heading and the 540px pill flush against the left edge of the tabpanel.
 

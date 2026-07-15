@@ -128,8 +128,8 @@ Note: the **Final CTA is now identical across modes** (the unified funnel, see b
 
 Each step is a `<div class="funnel-step" data-funnel="…" data-step="N">` inside `<section id="funnel-overlay">`. The active funnel is `window.activeFunnel`, set via:
 
-- Hero tab clicks (`tab-sell` / `tab-buy` / `tab-sell-buy`) → swap the visible tabpanel; the panel's See Plan button opens its matching funnel.
-- Mid-page tab clicks (`sellTabBtn` / `needsTabBtn`) → swap the "My Home's Condition is..." section between the Move-in ready (`sellTab`) and Needs work (`needsTab`) panels; each panel's inner See Plan form opens the **Sell** funnel (neither id contains `buy`, so `detectFunnelMode` resolves both to `sell`).
+- Hero tab clicks (`tab-sell` / `tab-buy` / `tab-sell-buy`) → swap the visible tabpanel; the panel's Run my Valuation button opens its matching funnel. ("Run my Valuation" is the site-wide landing-CTA label since 2026-06-13 on the homepage, rolled to all template pages 2026-07-14; "See Plan" is the legacy label.)
+- Mid-page tab clicks (`sellTabBtn` / `needsTabBtn`) → swap the "My Home's Condition is..." section between the Move-in ready (`sellTab`) and Needs work (`needsTab`) panels; each panel's inner Run my Valuation form opens the **Sell** funnel (neither id contains `buy`, so `detectFunnelMode` resolves both to `sell`).
 - Other CTAs in the body (e.g., footer or section forms) default to Sell mode.
 
 `detectFunnelMode(form)` reads the form's `[role="tabpanel"]` ancestor (id + aria-labelledby), lowercases, and substring-matches: `sell-buy` / `sellandbuy` / `sellbuy` → `"sellandbuy"`, then `buy` → `"buy"`, default `"sell"`. Used at landing-CTA click and inside the Places autocomplete `place_changed` callback.
