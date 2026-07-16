@@ -13,7 +13,10 @@
 //   5) Triangulated price    - weighted blend; what Joshua would list at by default
 //
 // Plus a small investor panel (cap rate, GRM, 70% wholesale offer, monthly cash
-// flow at current 30y from our own /api/rates).
+// flow at current 30y from our own /api/rates), and the comp study (`cma`):
+// the three buckets of a real CMA (recorded closings, active competition,
+// came-off-unsold listings), similarity-ranked with size-adjusted values,
+// sale-to-list ratios, and radius-level months-of-inventory. See assembleCMA.
 //
 // Env var required:
 //   RENTCAST_API_KEY  - get one at https://app.rentcast.io/app/api
@@ -261,6 +264,365 @@ function trimComps(avm, limit) {
     return 0;
   });
   return mapped.slice(0, limit);
+}
+
+// ---------------------------------------------------------------------------
+// The comp study (pseudo-CMA). A real CMA weighs three sets of comps, and this
+// builds all three the way an agent would for a listing appointment:
+//
+//   sold    - recorded closings nearby (the evidence). Deed data from property
+//             records (real closed prices), enriched with the matching listing
+//             record when one exists so we can show list price, sale-to-list,
+//             and days on market for the sale.
+//   active  - live listings nearby (the competition the seller lists against).
+//   expired - listings that sat and came off the market unsold at an ask above
+//             the sold band (the ceiling: the price the market refused).
+//
+// Selection follows standard CMA practice: same property type, tight radius,
+// recent window, distressed listing types excluded, then similarity-ranked on
+// size, distance, beds, baths, and age. Everything here is additive to the
+// response (`cma`) and best-effort: any upstream failure degrades to the
+// legacy `comps` list, never breaks the valuation.
+const CMA = {
+  RADIUS_MI: 1.0,                 // tight comp radius (standard suburban CMA range)
+  SOLD_WINDOW_DAYS: 270,          // recorded closings from the last ~9 months
+  LISTING_WINDOW_DAYS: 540,       // how far back the delisted pool reaches (listed date)
+  EXPIRED_MIN_DOM: 45,            // shorter delistings are usually sales going pending
+  EXPIRED_MIN_REMOVED_DAYS: 30,   // very recent delistings may be pending closings
+  EXPIRED_MAX_REMOVED_DAYS: 365,  // older failures stop being market evidence
+  SOLD_SHOWN: 6,
+  ACTIVE_SHOWN: 5,
+  EXPIRED_SHOWN: 4,
+  POOL_LIMIT: 50                  // upstream fetch size per bucket before ranking
+};
+
+// Distressed listing types are excluded from every bucket, per standard comp
+// practice (they price the seller's situation, not the home).
+const CMA_EXCLUDED_LISTING_TYPES = ["Foreclosure", "Short Sale"];
+
+function addressKey(s) {
+  return (s || "").toString().toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function haversineMiles(lat1, lng1, lat2, lng2) {
+  if (lat1 == null || lng1 == null || lat2 == null || lng2 == null) return null;
+  const toRad = d => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.pow(Math.sin(dLat / 2), 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.pow(Math.sin(dLng / 2), 2);
+  return 3958.8 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function daysSince(dateStr) {
+  if (!dateStr) return null;
+  const t = Date.parse(dateStr);
+  if (!Number.isFinite(t)) return null;
+  return Math.max(0, Math.round((Date.now() - t) / 86400000));
+}
+
+function medianOf(nums) {
+  const v = (nums || []).filter(n => Number.isFinite(n)).sort((a, b) => a - b);
+  if (!v.length) return null;
+  const mid = Math.floor(v.length / 2);
+  return v.length % 2 ? v[mid] : (v[mid - 1] + v[mid]) / 2;
+}
+
+function quantileOf(nums, q) {
+  const v = (nums || []).filter(n => Number.isFinite(n)).sort((a, b) => a - b);
+  if (!v.length) return null;
+  const pos = (v.length - 1) * q;
+  const lo = Math.floor(pos), hi = Math.ceil(pos);
+  return v[lo] + (v[hi] - v[lo]) * (pos - lo);
+}
+
+// Similarity ranking, 0-100. Encodes the comp-selection instinct: closest in
+// size first, then distance, bed/bath count, and age; different property type
+// is heavily penalized. Deterministic and disclosed ("matched on size,
+// distance, beds, baths, and age").
+function similarityScore(subject, cand) {
+  let score = 100;
+  const sSqft = numberOrNull(subject?.squareFootage);
+  const cSqft = numberOrNull(cand?.squareFootage);
+  if (sSqft && cSqft) score -= Math.min(Math.abs(cSqft - sSqft) / sSqft, 0.5) * 60;
+  else score -= 8;
+  if (cand?.distanceMi != null) score -= (Math.min(cand.distanceMi, 1.5) / 1.5) * 25;
+  const sb = numberOrNull(subject?.bedrooms), cb = numberOrNull(cand?.bedrooms);
+  if (sb && cb) score -= Math.min(Math.abs(cb - sb) * 6, 12);
+  const sba = numberOrNull(subject?.bathrooms), cba = numberOrNull(cand?.bathrooms);
+  if (sba && cba) score -= Math.min(Math.abs(cba - sba) * 4, 8);
+  const sy = numberOrNull(subject?.yearBuilt), cy = numberOrNull(cand?.yearBuilt);
+  if (sy && cy) score -= (Math.min(Math.abs(cy - sy), 40) / 40) * 10;
+  if (subject?.propertyType && cand?.propertyType && subject.propertyType !== cand.propertyType) score -= 15;
+  return Math.max(0, Math.round(score));
+}
+
+// Recorded closings near the subject (deed data -> real closed prices).
+async function lookupSoldRecords(lat, lng, propertyType, apiKey) {
+  const params = {
+    latitude: lat, longitude: lng, radius: CMA.RADIUS_MI,
+    saleDateRange: `*:${CMA.SOLD_WINDOW_DAYS}`, limit: CMA.POOL_LIMIT
+  };
+  if (propertyType) params.propertyType = propertyType;
+  const result = await rcFetch("/properties", params, apiKey);
+  if (!result.ok) return { error: result.error, data: [] };
+  return { error: null, data: Array.isArray(result.data) ? result.data : [] };
+}
+
+// Sale listings near the subject. status "Active" = the live competition;
+// status "Inactive" = the delisted pool (expired/withdrawn candidates + the
+// listing records that let us enrich solds with list price and DOM).
+async function lookupSaleListings(lat, lng, propertyType, status, apiKey) {
+  const params = {
+    latitude: lat, longitude: lng, radius: CMA.RADIUS_MI,
+    status, limit: CMA.POOL_LIMIT
+  };
+  if (status === "Inactive") params.daysOld = `1:${CMA.LISTING_WINDOW_DAYS}`;
+  if (propertyType) params.propertyType = propertyType;
+  const result = await rcFetch("/listings/sale", params, apiKey);
+  if (!result.ok) return { error: result.error, data: [] };
+  return { error: null, data: Array.isArray(result.data) ? result.data : [] };
+}
+
+// Hard similarity bound: comps within +/-25% of the subject's living area
+// (the appraiser outer guideline). Applied only when it leaves enough sample;
+// otherwise fall back to the unfiltered pool (standard practice: expand
+// criteria only when the tight net comes up short).
+function sqftTolerancePool(list, subjSqft, keepMin) {
+  if (!subjSqft) return list;
+  const tight = list.filter(n => !n.squareFootage || Math.abs(n.squareFootage - subjSqft) / subjSqft <= 0.25);
+  return tight.length >= keepMin ? tight : list;
+}
+
+// Pure assembly of the three buckets + roll-up stats from the raw pools.
+// Never throws: any surprise in upstream shapes degrades to null (the page
+// falls back to the legacy flat comp list).
+function assembleCMA(property, subjLat, subjLng, subjAddressKey, avm, soldPool, activePool, inactivePool) {
+  try {
+    const subject = {
+      squareFootage: numberOrNull(property?.squareFootage),
+      bedrooms:      numberOrNull(property?.bedrooms),
+      bathrooms:     numberOrNull(property?.bathrooms),
+      yearBuilt:     numberOrNull(property?.yearBuilt),
+      propertyType:  property?.propertyType || null
+    };
+    const subjSqft = subject.squareFootage;
+
+    const normalize = (r) => {
+      const price = numberOrNull(r?.price);
+      const sqft  = numberOrNull(r?.squareFootage);
+      const distanceMi = haversineMiles(subjLat, subjLng, numberOrNull(r?.latitude), numberOrNull(r?.longitude));
+      return {
+        key: addressKey(r?.formattedAddress || r?.id),
+        address: r?.formattedAddress || null,
+        propertyType: r?.propertyType || null,
+        bedrooms:  numberOrNull(r?.bedrooms),
+        bathrooms: numberOrNull(r?.bathrooms),
+        squareFootage: sqft,
+        yearBuilt: numberOrNull(r?.yearBuilt),
+        price,
+        rawPsf: (price > 0 && sqft > 0) ? price / sqft : null,
+        distanceMi: distanceMi != null ? Number(distanceMi.toFixed(2)) : null,
+        listingType: r?.listingType || null,
+        listedDate: r?.listedDate || null,
+        removedDate: r?.removedDate || null,
+        daysOnMarket: numberOrNull(r?.daysOnMarket),
+        history: r?.history || null
+      };
+    };
+
+    const isDistressed = (n) => n.listingType && CMA_EXCLUDED_LISTING_TYPES.indexOf(n.listingType) !== -1;
+
+    // --- Sold bucket: deed-recorded closings, enriched from the delisted pool.
+    const inactiveNorm = (inactivePool || []).map(normalize);
+    const inactiveByKey = {};
+    for (const n of inactiveNorm) { if (n.key && !inactiveByKey[n.key]) inactiveByKey[n.key] = n; }
+
+    const soldSeen = {};
+    let soldNorm = [];
+    for (const r of (soldPool || [])) {
+      const soldPrice = numberOrNull(r?.lastSalePrice);
+      if (!(soldPrice > 0) || !r?.lastSaleDate) continue;
+      const n = normalize(r);
+      if (!n.key || n.key === subjAddressKey || soldSeen[n.key]) continue;
+      soldSeen[n.key] = true;
+      n.soldPrice = soldPrice;
+      n.soldDate = r.lastSaleDate;
+      n.soldAgeDays = daysSince(r.lastSaleDate);
+      soldNorm.push(n);
+    }
+    // Similarity first, then recency tiering: 90-180 day sales are the
+    // professional standard and the 9-month window is the thin-market
+    // fallback, but the window only tightens when enough SIMILAR comps
+    // remain (tolerance-filtered pool), never on raw counts.
+    soldNorm = sqftTolerancePool(soldNorm, subjSqft, 3);
+    const recentSolds = soldNorm.filter(n => n.soldAgeDays != null && n.soldAgeDays <= 180);
+    if (recentSolds.length >= 4) soldNorm = recentSolds;
+
+    // Sold-band $/sqft from the filtered pool: the reference for adjusted
+    // values, the expired-overpricing test, and the subject's comp band.
+    const soldPsfList = soldNorm.map(n => (n.squareFootage > 0) ? n.soldPrice / n.squareFootage : null).filter(v => v != null);
+    const soldPsfMedian = medianOf(soldPsfList);
+    // Marginal $/sqft for size adjustments: one third of the local $/sqft
+    // (full $/sqft embeds land + kitchens/baths; marginal living area does
+    // not, so appraiser practice adjusts size gaps at roughly a third).
+    const marginalPsf = soldPsfMedian ? soldPsfMedian / 3 : null;
+
+    const soldAll = soldNorm.map(n => {
+      const psfRaw = (n.squareFootage > 0) ? n.soldPrice / n.squareFootage : null;
+      const entry = {
+        address: n.address,
+        distanceMi: n.distanceMi,
+        bedrooms: n.bedrooms,
+        bathrooms: n.bathrooms,
+        squareFootage: n.squareFootage,
+        yearBuilt: n.yearBuilt,
+        soldPrice: n.soldPrice,
+        soldDate: n.soldDate,
+        psf: psfRaw ? Math.round(psfRaw) : null,
+        // Size-adjusted value: what this comp says the SUBJECT would have
+        // closed at, adjusting the size gap at the marginal (not full) $/sqft.
+        adjustedValue: (marginalPsf && subjSqft && n.squareFootage)
+          ? Math.round(n.soldPrice + (subjSqft - n.squareFootage) * marginalPsf)
+          : null,
+        listPrice: null, saleToListPct: null, domAtSale: null,
+        matchScore: 0
+      };
+      // Enrich with the listing episode that produced this sale, when the
+      // delisted pool has it and the dates line up (removed within ~6 months
+      // of the recorded closing).
+      const listing = inactiveByKey[n.key];
+      if (listing && listing.price > 0 && listing.removedDate) {
+        const gapDays = Math.abs((Date.parse(n.soldDate) - Date.parse(listing.removedDate)) / 86400000);
+        if (Number.isFinite(gapDays) && gapDays <= 180) {
+          entry.listPrice = listing.price;
+          entry.saleToListPct = Math.round((n.soldPrice / listing.price) * 1000) / 10;
+          entry.domAtSale = listing.daysOnMarket;
+        }
+      }
+      let score = similarityScore(subject, n);
+      if (n.soldAgeDays != null) score -= (Math.min(n.soldAgeDays, CMA.SOLD_WINDOW_DAYS) / CMA.SOLD_WINDOW_DAYS) * 8;
+      entry.matchScore = Math.max(0, Math.round(score));
+      return entry;
+    });
+    soldAll.sort((a, b) => b.matchScore - a.matchScore);
+    const soldKeys = soldSeen;
+
+    // --- Active bucket: the live competition.
+    let activeNorm = [];
+    const activeSeen = {};
+    for (const n of (activePool || []).map(normalize)) {
+      if (!(n.price > 0) || !n.key || n.key === subjAddressKey || activeSeen[n.key] || isDistressed(n)) continue;
+      activeSeen[n.key] = true;
+      activeNorm.push(n);
+    }
+    activeNorm = sqftTolerancePool(activeNorm, subjSqft, 2);
+    const activeAll = activeNorm.map(n => ({
+      address: n.address,
+      distanceMi: n.distanceMi,
+      bedrooms: n.bedrooms,
+      bathrooms: n.bathrooms,
+      squareFootage: n.squareFootage,
+      yearBuilt: n.yearBuilt,
+      askPrice: n.price,
+      psf: n.rawPsf ? Math.round(n.rawPsf) : null,
+      dom: n.daysOnMarket,
+      listedDate: n.listedDate,
+      matchScore: similarityScore(subject, n)
+    }));
+    activeAll.sort((a, b) => b.matchScore - a.matchScore);
+
+    // --- Expired bucket: sat, came off unsold, asked at/above the sold band.
+    // Guards against mislabeling a pending sale as a failure: minimum days on
+    // market, minimum days since removal, and no recorded closing at that
+    // address in the sold pool (nor treatment as sale evidence by the model).
+    const avmComps = Array.isArray(avm?.comparables) ? avm.comparables : [];
+    const avmSoldKeys = {};
+    for (const c of avmComps) { if (c?.removedDate) avmSoldKeys[addressKey(c?.formattedAddress || c?.id)] = true; }
+
+    const expiredAll = [];
+    for (const n of sqftTolerancePool(inactiveNorm, subjSqft, 2)) {
+      if (!(n.price > 0) || !n.key || n.key === subjAddressKey || isDistressed(n)) continue;
+      if (soldKeys[n.key] || avmSoldKeys[n.key]) continue;
+      const removedAgo = daysSince(n.removedDate);
+      if (removedAgo == null || removedAgo < CMA.EXPIRED_MIN_REMOVED_DAYS || removedAgo > CMA.EXPIRED_MAX_REMOVED_DAYS) continue;
+      if (!(n.daysOnMarket >= CMA.EXPIRED_MIN_DOM)) continue;
+      if (soldPsfMedian && n.rawPsf && n.rawPsf < soldPsfMedian * 0.98) continue;
+      // Price-cut evidence from the listing history, when present.
+      let priceCutPct = null;
+      if (n.history && typeof n.history === "object") {
+        const histPrices = Object.keys(n.history).map(k => numberOrNull(n.history[k]?.price)).filter(v => v > 0);
+        const maxHist = histPrices.length ? Math.max.apply(null, histPrices) : null;
+        if (maxHist && maxHist > n.price * 1.02) priceCutPct = Math.round((1 - n.price / maxHist) * 100);
+      }
+      expiredAll.push({
+        address: n.address,
+        distanceMi: n.distanceMi,
+        bedrooms: n.bedrooms,
+        bathrooms: n.bathrooms,
+        squareFootage: n.squareFootage,
+        yearBuilt: n.yearBuilt,
+        lastAsk: n.price,
+        psf: n.rawPsf ? Math.round(n.rawPsf) : null,
+        dom: n.daysOnMarket,
+        removedDate: n.removedDate,
+        priceCutPct,
+        vsSoldMedianPct: (soldPsfMedian && n.rawPsf) ? Math.round((n.rawPsf / soldPsfMedian - 1) * 100) : null,
+        matchScore: similarityScore(subject, n)
+      });
+    }
+    expiredAll.sort((a, b) => b.matchScore - a.matchScore);
+
+    const sold    = soldAll.slice(0, CMA.SOLD_SHOWN);
+    const active  = activeAll.slice(0, CMA.ACTIVE_SHOWN);
+    const expired = expiredAll.slice(0, CMA.EXPIRED_SHOWN);
+    if (!sold.length && !active.length && !expired.length) return null;
+
+    // Roll-up stats across the full pools (what the section's read-outs show).
+    const psfLow  = soldPsfList.length >= 4 ? quantileOf(soldPsfList, 0.25) : (soldPsfList.length ? Math.min.apply(null, soldPsfList) : null);
+    const psfHigh = soldPsfList.length >= 4 ? quantileOf(soldPsfList, 0.75) : (soldPsfList.length ? Math.max.apply(null, soldPsfList) : null);
+    // Months of inventory inside the comp radius: actives divided by the
+    // monthly closed-sale pace of the sold window. <5 leans seller, 5-6
+    // balanced, >6 leans buyer (standard absorption thresholds).
+    const windowMonths = Math.round(CMA.SOLD_WINDOW_DAYS / 30);
+    const monthlySoldPace = soldAll.length ? soldAll.length / windowMonths : null;
+    const monthsOfInventory = (monthlySoldPace && activeAll.length)
+      ? Number((activeAll.length / monthlySoldPace).toFixed(1))
+      : null;
+    const stats = {
+      soldCount: soldAll.length,
+      soldMedian: medianOf(soldAll.map(s => s.soldPrice)),
+      soldPsfMedian: soldPsfMedian != null ? Math.round(soldPsfMedian) : null,
+      soldWindowMonths: windowMonths,
+      saleToListMedianPct: medianOf(soldAll.map(s => s.saleToListPct).filter(v => v != null)),
+      subjectPsfBand: (psfLow != null && psfHigh != null && subjSqft)
+        ? { low: Math.round(psfLow * subjSqft), high: Math.round(psfHigh * subjSqft) }
+        : null,
+      activeCount: activeAll.length,
+      activeMedianAsk: medianOf(activeAll.map(a => a.askPrice)),
+      activeMedianDom: medianOf(activeAll.map(a => a.dom).filter(v => v != null)),
+      monthsOfInventory,
+      marketLean: monthsOfInventory == null ? null
+        : (monthsOfInventory < 5 ? "seller" : (monthsOfInventory <= 6 ? "balanced" : "buyer")),
+      expiredCount: expiredAll.length,
+      expiredMedianAsk: medianOf(expiredAll.map(e => e.lastAsk)),
+      expiredMedianDom: medianOf(expiredAll.map(e => e.dom).filter(v => v != null)),
+      expiredPremiumPct: medianOf(expiredAll.map(e => e.vsSoldMedianPct).filter(v => v != null))
+    };
+
+    return {
+      criteria: {
+        radiusMi: CMA.RADIUS_MI,
+        soldWindowMonths: stats.soldWindowMonths,
+        sameType: !!subject.propertyType,
+        ranking: "size, distance, beds, baths, age"
+      },
+      sold, active, expired, stats,
+      methodology: "Comps matched on property type, size (within 25% of living area), distance, and age within " + CMA.RADIUS_MI + " mi, most recent closings preferred. Sold set comes from recorded closings; the competition and came-off-unsold sets come from live listing records, with distressed listing types excluded. Adjusted values move each closing to the subject's square footage at the marginal (one-third) local $/sqft, the standard size-adjustment method."
+    };
+  } catch (err) {
+    return null;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -524,14 +886,24 @@ export async function onRequest(context) {
     }, 403);
   }
 
-  // Fan out: property lookup first (need attributes for the comp-targeted AVM
-  // and rent calls), then AVM + rent in parallel.
+  // Fan out: property lookup first (need attributes + coordinates for the
+  // comp-targeted AVM, rent, and comp-study calls), then everything else in
+  // parallel: AVM + rent + the three comp-study pools (recorded closings,
+  // active competition, delisted listings).
   const propertyResult = await lookupProperty(address, apiKey);
   const property = propertyResult?.data || null;
 
-  const [avmResult, rentResult] = await Promise.all([
+  const subjLat = numberOrNull(property?.latitude)  ?? lat;
+  const subjLng = numberOrNull(property?.longitude) ?? lng;
+  const canComps = subjLat != null && subjLng != null;
+  const noCoords = Promise.resolve({ error: "no_coordinates", data: [] });
+
+  const [avmResult, rentResult, soldResult, activeResult, inactiveResult] = await Promise.all([
     lookupAVM(address, property, apiKey),
-    lookupRent(address, property, apiKey)
+    lookupRent(address, property, apiKey),
+    canComps ? lookupSoldRecords(subjLat, subjLng, property?.propertyType, apiKey)               : noCoords,
+    canComps ? lookupSaleListings(subjLat, subjLng, property?.propertyType, "Active", apiKey)    : noCoords,
+    canComps ? lookupSaleListings(subjLat, subjLng, property?.propertyType, "Inactive", apiKey)  : noCoords
   ]);
   const avm  = avmResult?.data  || null;
   const rent = rentResult?.data || null;
@@ -551,6 +923,11 @@ export async function onRequest(context) {
   const wholesale    = computeWholesaleOffer(arv?.value, subjectSqft);
   const comps        = trimComps(avm);
   const subjectPsf   = (marketValue && subjectSqft) ? Math.round(marketValue / subjectSqft) : null;
+  const cma          = assembleCMA(
+    property, subjLat, subjLng,
+    addressKey(property?.formattedAddress || address),
+    avm, soldResult.data, activeResult.data, inactiveResult.data
+  );
 
   // Getting the valuation IS submitting the lead. Every contact-bearing request
   // that reaches this point saves the lead (with the Rentcast-parsed address
@@ -603,7 +980,7 @@ export async function onRequest(context) {
       assessor: assessor ? { label: "Tax assessor value", ...assessor } : null,
       replacementCost: replacement ? { label: "Replacement cost", ...replacement } : null,
       arv: arv ? { label: "Investor ARV (after repair value)", ...arv } : null,
-      triangulated: triangulated ? { label: "Joshua's triangulated price", ...triangulated } : null
+      triangulated: triangulated ? { label: "True Market Value", ...triangulated } : null
     },
     investor: investor ? {
       ...investor,
@@ -617,10 +994,14 @@ export async function onRequest(context) {
     } : null,
     comps,
     compMedian,
+    cma,
     diagnostics: {
       propertyError: propertyResult?.error || null,
       avmError:      avmResult?.error || null,
-      rentError:     rentResult?.error || null
+      rentError:     rentResult?.error || null,
+      soldError:     soldResult?.error || null,
+      activeError:   activeResult?.error || null,
+      inactiveError: inactiveResult?.error || null
     },
     source: "Rentcast Property API + Drozq replacement cost model",
     sourceUrl: "https://www.rentcast.io/api",
