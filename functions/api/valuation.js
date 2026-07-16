@@ -908,15 +908,38 @@ export async function onRequest(context) {
   const avm  = avmResult?.data  || null;
   const rent = rentResult?.data || null;
 
+  // Property-record fallback: when /properties has no record for the address
+  // (a coverage gap, seen live 2026-07-16), the AVM response's subjectProperty
+  // carries the same attribute set (address parts, coordinates, type, beds,
+  // baths, sqft, lot, year). Use it so the replacement-cost and ARV lenses,
+  // the report header, the lead's address components, and the comp study all
+  // survive a missing record instead of silently degrading.
+  const subjectRecord = property || (avm && avm.subjectProperty) || null;
+
+  let soldR = soldResult, activeR = activeResult, inactiveR = inactiveResult;
+  if (!canComps) {
+    const fbLat = numberOrNull(subjectRecord?.latitude);
+    const fbLng = numberOrNull(subjectRecord?.longitude);
+    if (fbLat != null && fbLng != null) {
+      [soldR, activeR, inactiveR] = await Promise.all([
+        lookupSoldRecords(fbLat, fbLng, subjectRecord?.propertyType, apiKey),
+        lookupSaleListings(fbLat, fbLng, subjectRecord?.propertyType, "Active", apiKey),
+        lookupSaleListings(fbLat, fbLng, subjectRecord?.propertyType, "Inactive", apiKey)
+      ]);
+    }
+  }
+  const cmaLat = numberOrNull(subjectRecord?.latitude)  ?? lat;
+  const cmaLng = numberOrNull(subjectRecord?.longitude) ?? lng;
+
   const marketValue  = numberOrNull(avm?.price);
   const marketLow    = numberOrNull(avm?.priceRangeLow);
   const marketHigh   = numberOrNull(avm?.priceRangeHigh);
   const monthlyRent  = numberOrNull(rent?.rent);
 
-  const subjectSqft  = numberOrNull(property?.squareFootage);
-  const replacement  = computeReplacementCost(property, marketValue);
-  const arv          = computeARV(avm, property);
-  const assessor     = pickAssessorValue(property);
+  const subjectSqft  = numberOrNull(subjectRecord?.squareFootage);
+  const replacement  = computeReplacementCost(subjectRecord, marketValue);
+  const arv          = computeARV(avm, subjectRecord);
+  const assessor     = pickAssessorValue(subjectRecord);
   const compMedian   = compMedianPrice(avm);
   const triangulated = computeTriangulated(marketValue, arv?.value, compMedian);
   const investor     = await computeInvestorMetrics(marketValue, monthlyRent, request.url);
@@ -924,9 +947,9 @@ export async function onRequest(context) {
   const comps        = trimComps(avm);
   const subjectPsf   = (marketValue && subjectSqft) ? Math.round(marketValue / subjectSqft) : null;
   const cma          = assembleCMA(
-    property, subjLat, subjLng,
-    addressKey(property?.formattedAddress || address),
-    avm, soldResult.data, activeResult.data, inactiveResult.data
+    subjectRecord, cmaLat, cmaLng,
+    addressKey(subjectRecord?.formattedAddress || address),
+    avm, soldR.data, activeR.data, inactiveR.data
   );
 
   // Getting the valuation IS submitting the lead. Every contact-bearing request
@@ -934,11 +957,11 @@ export async function onRequest(context) {
   // components), so there is no way to obtain the numbers without Joshua getting
   // the lead. Best-effort + decoupled: it never blocks or fails the response.
   context.waitUntil(saveValuationLead(request, contact, {
-    fullAddress: property?.formattedAddress || address,
-    street: property?.addressLine1 || "",
-    city:   property?.city || "",
-    state:  property?.state || "",
-    zip:    property?.zipCode || "",
+    fullAddress: subjectRecord?.formattedAddress || address,
+    street: subjectRecord?.addressLine1 || "",
+    city:   subjectRecord?.city || "",
+    state:  subjectRecord?.state || "",
+    zip:    subjectRecord?.zipCode || "",
     lat, lng
   }));
 
@@ -949,22 +972,22 @@ export async function onRequest(context) {
     address: {
       input: address,
       lat, lng,
-      formatted: property?.formattedAddress || address,
-      street:    property?.addressLine1 || null,
-      city:      property?.city || null,
-      state:     property?.state || null,
-      zip:       property?.zipCode || null,
-      county:    property?.county || null
+      formatted: subjectRecord?.formattedAddress || address,
+      street:    subjectRecord?.addressLine1 || null,
+      city:      subjectRecord?.city || null,
+      state:     subjectRecord?.state || null,
+      zip:       subjectRecord?.zipCode || null,
+      county:    subjectRecord?.county || null
     },
-    property: property ? {
-      propertyType:  property.propertyType || null,
-      bedrooms:      numberOrNull(property.bedrooms),
-      bathrooms:     numberOrNull(property.bathrooms),
-      squareFootage: numberOrNull(property.squareFootage),
-      lotSize:       numberOrNull(property.lotSize),
-      yearBuilt:     numberOrNull(property.yearBuilt),
-      lastSalePrice: numberOrNull(property.lastSalePrice),
-      lastSaleDate:  property.lastSaleDate || null
+    property: subjectRecord ? {
+      propertyType:  subjectRecord.propertyType || null,
+      bedrooms:      numberOrNull(subjectRecord.bedrooms),
+      bathrooms:     numberOrNull(subjectRecord.bathrooms),
+      squareFootage: numberOrNull(subjectRecord.squareFootage),
+      lotSize:       numberOrNull(subjectRecord.lotSize),
+      yearBuilt:     numberOrNull(subjectRecord.yearBuilt),
+      lastSalePrice: numberOrNull(subjectRecord.lastSalePrice),
+      lastSaleDate:  subjectRecord.lastSaleDate || null
     } : null,
     systems: {
       marketAVM: marketValue ? {
@@ -999,9 +1022,9 @@ export async function onRequest(context) {
       propertyError: propertyResult?.error || null,
       avmError:      avmResult?.error || null,
       rentError:     rentResult?.error || null,
-      soldError:     soldResult?.error || null,
-      activeError:   activeResult?.error || null,
-      inactiveError: inactiveResult?.error || null
+      soldError:     soldR?.error || null,
+      activeError:   activeR?.error || null,
+      inactiveError: inactiveR?.error || null
     },
     source: "Rentcast Property API + Drozq replacement cost model",
     sourceUrl: "https://www.rentcast.io/api",
