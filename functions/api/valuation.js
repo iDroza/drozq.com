@@ -494,7 +494,7 @@ function assembleCMA(property, subjLat, subjLng, subjAddressKey, avm, soldPool, 
       const listing = inactiveByKey[n.key];
       if (listing && listing.price > 0 && listing.removedDate) {
         const gapDays = Math.abs((Date.parse(n.soldDate) - Date.parse(listing.removedDate)) / 86400000);
-        if (Number.isFinite(gapDays) && gapDays <= 180) {
+        if (Number.isFinite(gapDays) && gapDays <= 120) {
           entry.listPrice = listing.price;
           entry.saleToListPct = Math.round((n.soldPrice / listing.price) * 1000) / 10;
           entry.domAtSale = listing.daysOnMarket;
@@ -583,18 +583,28 @@ function assembleCMA(property, subjLat, subjLng, subjAddressKey, avm, soldPool, 
     const psfHigh = soldPsfList.length >= 4 ? quantileOf(soldPsfList, 0.75) : (soldPsfList.length ? Math.max.apply(null, soldPsfList) : null);
     // Months of inventory inside the comp radius: actives divided by the
     // monthly closed-sale pace of the sold window. <5 leans seller, 5-6
-    // balanced, >6 leans buyer (standard absorption thresholds).
+    // balanced, >6 leans buyer (standard absorption thresholds). Guarded:
+    // deed-record sales coverage runs much thinner than listing coverage, so
+    // with a thin sold pool (or an implausible ratio) the number measures
+    // data coverage, not the market; suppress it rather than mislead (seen
+    // live 2026-07-16: 18 recorded solds vs 46 actives read as "23 months").
     const windowMonths = Math.round(CMA.SOLD_WINDOW_DAYS / 30);
     const monthlySoldPace = soldAll.length ? soldAll.length / windowMonths : null;
-    const monthsOfInventory = (monthlySoldPace && activeAll.length)
+    let monthsOfInventory = (monthlySoldPace && activeAll.length)
       ? Number((activeAll.length / monthlySoldPace).toFixed(1))
       : null;
+    if (monthsOfInventory != null && (soldAll.length < 8 || monthsOfInventory > 12)) monthsOfInventory = null;
     const stats = {
       soldCount: soldAll.length,
       soldMedian: medianOf(soldAll.map(s => s.soldPrice)),
       soldPsfMedian: soldPsfMedian != null ? Math.round(soldPsfMedian) : null,
       soldWindowMonths: windowMonths,
-      saleToListMedianPct: medianOf(soldAll.map(s => s.saleToListPct).filter(v => v != null)),
+      // Needs a real sample: a median of 1-2 matched list/sold pairs reads as
+      // a market fact but is noise; per-comp rows still show their own ratio.
+      saleToListMedianPct: (() => {
+        const v = soldAll.map(s => s.saleToListPct).filter(x => x != null);
+        return v.length >= 3 ? medianOf(v) : null;
+      })(),
       subjectPsfBand: (psfLow != null && psfHigh != null && subjSqft)
         ? { low: Math.round(psfLow * subjSqft), high: Math.round(psfHigh * subjSqft) }
         : null,
