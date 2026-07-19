@@ -46,6 +46,7 @@ new_footer = (
     '<div class="d_flex flex-d_column gap_8px fs_14px lh_2">'
     '<div>Drozq.com &middot; Real Brokerage</div>'
     '<div>California DRE #02267255</div>'
+    '<div>17875 Von Karman Ave, Suite 150, Irvine, CA 92614</div>'
     '<div><a href="tel:9494385948" class="fw_bold">(949) 438-5948</a></div>'
     '</div>'
     # Social icons (Facebook, Instagram, YouTube)

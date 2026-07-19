@@ -58,7 +58,7 @@ When asked to create a new page, follow this protocol:
 - Hero: the 3-tab funnel CTA bar (Sell / Buy / Sell & Buy). Page-specific copy and imagery go here.
 - Mid-page tabs section (the "My Home's Condition is..." switcher): optional but encouraged. Two `[role="tab"]` panels wired by the generic `wireTabs()`; the homepage runs Move-in ready (`sellTabBtn` → `sellTab`) and Needs work (`needsTabBtn` → `needsTab`), and BOTH open the Sell funnel (neither id contains `buy`). Retitle per page, but keep `buy`/`sellbuy` out of any panel you want to stay on Sell.
 - FAQ accordion: optional, page-specific questions.
-- Footer: the minimal conversion-page footer (brand logo, identity line, DRE, phone, social, Privacy/Terms, copyright). Do not import the heavy legacy brand-mode footer.
+- Footer: the minimal conversion-page footer (brand logo, identity line, DRE, office address, phone, social, Privacy/Terms, copyright). Do not import the heavy legacy brand-mode footer.
 - Funnel overlay + funnel JS: inlined between the four `DROZQ_FUNNEL_*` markers. After scaffolding, register the page (see "Funnel sync registry" below).
 
 ### 2. Register the page in funnels.json
@@ -549,7 +549,7 @@ The homepage was a clone of sell.realtor.com that has been incrementally cleaned
 - gclid pushed to dataLayer on page load.
 - `generate_lead` gated via sessionStorage flag + `?ref=funnel` redirect.
 - DRE corrected to `02267255`, Indiana PLA removed.
-- Footer gutted: minimal conversion footer (brand logo, identity line, DRE, phone, social, Privacy/Terms, copyright).
+- Footer gutted: minimal conversion footer (brand logo, identity line, DRE, office address (17875 Von Karman Ave, Suite 150, Irvine, CA 92614, added 2026-07-18), phone, social, Privacy/Terms, copyright).
 - Market-trends map self-hosted: the hotlinked `realtorqa.upnest.com` iframe (and its 170×34 white "Source: RealEstateSM" attribution overlay) replaced by a lazy, desktop-only Google Map of Irvine on the site's own Maps JS key. Heading month is live; the trends readout is pinned to Irvine via `data-geo-static`; the readout stats are hand-refreshed from the Redfin Irvine read (last: July 2026, median $1,524,088, days-on-market 42).
 - Tab IDs renamed (`sellUpnestTab` → `sellTabBtn`, `buyUpnestTab` → `buyTabBtn`, later `needsTabBtn` when the section became the condition switcher).
 - 5 fake agent profile cards replaced with the "The Hard Parts Are My Job, Not Yours" infographic.
