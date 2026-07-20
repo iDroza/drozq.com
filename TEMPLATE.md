@@ -290,6 +290,10 @@ Standard container max-widths used on the homepage:
 | Font | Roboto 14px / 1.5 |
 | Padding | `0` |
 
+**The `@layer base` position trap (found 2026-07-20).** The compiled Panda base layer ships `header { display: block !important; position: relative !important; }`, and layered importants beat unlayered ones, so the `pos_absolute` utility on the header never actually applies: on every page the header silently renders as an in-flow white block that pushes the hero down. Any override of the header's `position` must be appended INSIDE `@layer base`, later in source (same mechanism as the `/value/` print-stylesheet rule). The homepage does exactly this in its `#drozq-hero-rotate-css` block: `@layer base{#__next>header{position:fixed !important;top:0;left:0;right:0}}`.
+
+**Homepage exception (2026-07-20).** On `/index.html` only, the header is a scroll-revealed fixed bar: fully invisible at the top of the page (`opacity:0; visibility:hidden; pointer-events:none`), fading in as the standard white bar (plus a `0 1px 5px rgba(0,0,0,.11)` shadow) once the visitor scrolls past 64px (class `drozq-hdr-on`, toggled by the scroll listener in `#drozq-hero-rotate-js`). It pairs with the full-screen rotating hero (section 4). Template pages keep the header spec above until Joshua approves the rollout.
+
 ### Logo (header and footer)
 
 **The Drozq logo, wherever it appears, is wrapped in `<a href="/" aria-label="Drozq home">`.** This applies to both the header logo (`brand-header-logo.png`) and the footer logo (`brand-logo-white.png`). On the homepage itself the link is a no-op (it scrolls to top); on every other page it is the universal escape hatch back to the conversion-first homepage. Shipping an unlinked logo is a regression.
@@ -523,7 +527,9 @@ The homepage hero (a different layout entirely) is the exception. The rule binds
 
 ### Hero background
 
-The homepage hero uses a flat light background. Hero imagery is not currently part of the homepage (it was deferred). If a new page wants a hero image, treat it as additive on top of the existing scaffolding rather than replacing the structure.
+**Homepage (2026-07-20): full-screen rotating photo hero.** The homepage hero is viewport-filling (`min-height:100dvh`, `100vh` fallback) over `crystal-cove.webp`, with a one-way photo rotation layered under the tint: coastal, then `/media/images/hero-giem/giem-01..10.webp` in order, then back to coastal, where it stops. First swap at 1.5s, each following swap every 3.5s, 0.9s crossfades, no visitor controls (cannot move back or forward), `prefers-reduced-motion` skips the rotation entirely. Implemented by the `#drozq-hero-rotate-css` + `#drozq-hero-rotate-js` block at the end of `<body>` (outside the funnel markers, NOT synced): two absolutely positioned layers injected under `[data-testid="hero-tint"]`, so the 0.4 dark tint and the hero copy contrast survive every slide, and the natural DOM (the crystal-cove `<img>`) is both the first and the final state. Homepage-only until Joshua approves the rollout.
+
+If a new page wants a hero image, treat it as additive on top of the existing scaffolding rather than replacing the structure.
 
 For non-homepage pages on the new template, the default hero background is **`/media/images/crystal-cove.webp`** (a Southern California coastal shot) with a 0.4 dark tint overlay so the white hero copy stays readable. Used on `/california/`, `/los-angeles/`, `/where-we-help/`, `/meet-the-team/`, `/contact/`. Swap to a page-specific image only when there's a real reason (e.g., `/faq/` uses `outside-home-pic1.webp` to signal "home interior" rather than coastline). Always lazy-load any background image that isn't the hero's `fetchpriority="high"` element, always include a meaningful `alt` text, and always carry the dark tint overlay (`<div class="pos_absolute top_0 w_100% h_100% z_2" style="background:rgba(26,24,22,0.4)"></div>`) so hero copy contrast survives the image swap.
 
