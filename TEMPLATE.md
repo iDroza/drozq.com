@@ -581,11 +581,11 @@ The portrait wrapper:
 Below the hero, the homepage runs a vertical rhythm of alternating bands. The pattern:
 
 ```
-[white hero: 2-col, tabs + pill left, image right]
+[full-screen photo hero: min-height 100dvh, rotating photo ring, centered copy + tabs + pill]
+[white band + #d3cfca divider]: Five Steps timeline ("From first call to closing day.", verbatim /process/ proc-steps section)
+[white band]: 3-step strip ("Enter your selling address / Get your home's value / I handle the rest")
 [light gray band #f2f0ef]: "The Hard Parts Are My Job, Not Yours" infographic
-[band]: playbook carousel, "Get my 5 playbooks (that sell your home), free.", 5 auto-advancing image slides (left image / right copy)
 [wide centered div max-w 1035]: market-trends map (self-hosted Irvine Google Map) + "real estate trends in Irvine, CA" stats
-[white band]: review carousel #hpcar, "Real reviews. Real outcomes."
 [light gray band #f2f0ef]: "My Home's Condition is..." condition switcher (Move-in ready / Needs work, both open Sell)
 [white band]: "What I owe you"
 [band]: brand wall, "Seen by every buyer, everywhere" (6 grayscale platform logos)
@@ -661,7 +661,7 @@ The inherited Panda CSS soup does **not** ship rules like `.bd_1px_solid_#d92228
 Use cases that warrant the secondary outlined style:
 - Cross-page nav from a related-content section (e.g., "Read more case files →" linking to `/testimonials/`).
 - "See more data" or "Read the full X" linking from a summary section to a deeper page.
-- "Read the full Los Angeles listing playbook →" on `/where-we-help/`.
+- "See how I sell in Los Angeles →" on `/where-we-help/`.
 
 Do **NOT** use the primary red filled pill for navigation. It visually competes with the funnel CTA and tells the user "this is the conversion action" when it isn't. A nav link that looks like a Run my Valuation pill steals attention from the actual lead-capture button on the page.
 
@@ -722,7 +722,7 @@ These section patterns are reused 2+ times across the migrated content pages. Tr
 | **Two-column portrait split** | `/meet-the-team/` Layer 01, `/about/` Backstory | Use the scoped `.drozq-portrait-split` class, NOT the Panda `md:grid-tc_280px_1fr` utility (the latter isn't compiled in the inline CSS soup and silently stacks at desktop). Single column + 32px gap on mobile, two columns `280px 1fr` + 48px gap at >=768px. Joshua's portrait (220px mobile, 280px desktop, 16px radius, soft shadow) on one side; eyebrow + h2 + 2-3 body paragraphs on the other. Full `<style>` block + markup in section 4 "Joshua's portrait placement." |
 | **Jump-nav pills + smooth scroll** | `/faq/` only | If a page has 4+ scrolled sections worth jumping between, add a sticky-ish band of `.faq-jump-pill` anchors at the top. Pair with the 30-line vanilla JS smooth-scroll snippet from `migrate_faq.py` (`SMOOTH_SCROLL_SCRIPT` const): 350ms easeOutCubic tween, 24px top offset, respects `prefers-reduced-motion`, replaces history hash without polluting back-button. Scope the JS to `.faq-jump-pill` so it doesn't interfere with header `/#tab-buy` style anchors. |
 
-### Homepage signature sections (playbook carousel + brand wall)
+### Homepage signature sections (Five Steps + brand wall)
 
 Two homepage-only sections built during the seller rebuild. Both are page-specific (custom imagery + their own JS after `DROZQ_FUNNEL_JS_END`, NOT synced), but they are canonical homepage furniture: copy them when a new page wants the same beat.
 
@@ -917,22 +917,21 @@ Full structure lives between `DROZQ_FUNNEL_HTML_BEGIN/END` in `/index.html` and 
 | Step container | `#funnel-step-container` | Mobile: flex column. Desktop (`[data-mode]`, >=880px): centered symmetric split, `max-width:1080px`, two equal `1fr` cards. |
 | Form column | `#funnel-form-col` | Wraps all step divs + the timeline. RIGHT card in the desktop split. |
 | Steps | `.funnel-step[data-funnel][data-step]` | One div per step per funnel. Active step gets `.active`. |
-| Value panel | `#funnel-deliverable` | The unified value panel, identical for every mode: instant valuation + 5-playbook bonus bundle + instant statement. LEFT card in the desktop split. See "unified split funnel" below. |
-| Timeline | `.funnel-timeline-sec` | "Your path to sold" graphic (`funnel-timeline.webp`) in its own section under the form, persistent across steps. |
+| Value panel | `#funnel-deliverable` | The unified value panel, identical for every mode: the instant-valuation block + the instant-delivery badge. LEFT card in the desktop split. See "unified split funnel" below. |
 
 ### The unified split funnel (THE STANDARD, 2026-06-13)
 
 Every funnel mode (Sell / Buy / Sell & Buy) renders the **same** value experience; only the form *questions* differ per mode (different data collected). The look is a checkout-style split.
 
 - **Layout.** `openFunnel` stamps `data-mode` on `#funnel-step-container`. At `>=880px` that container becomes a centered **symmetric split** (`max-width:1080px`, two equal `1fr` columns, measured ~502/502): the **value panel** (`#funnel-deliverable`) is the LEFT card (`order:-1`), `#funnel-form-col` (wraps the step divs + the timeline) is the RIGHT card. Below 880px it stacks **form card first, value card below** so the form is instantly fillable. Both are white cards (`border 1px #ece7e1`, `radius 18px`, soft shadow) on a warm `#efe9e1` backdrop.
-- **Value panel = ONE JS string for ALL modes** (`dv.innerHTML = DELIVERABLE.sell`, not `DELIVERABLE[mode]`). Top to bottom: red eyebrow "FREE, THE INSTANT YOU FINISH"; an **instant valuation** block (`.funnel-vp-title` "What your home is really worth, to the penny" + a 4-item `.funnel-vp-list`: true market value, rebuild cost, same-day cash offer to the dollar (if you want it), comps + a `.funnel-vp-note`: "Run through my own valuation model: the same data investors and other buyers use, tuned by me. Not a Zestimate guess." , proprietary framing, NEVER say "API"/"Rentcast"); a **bonus bundle** block at the same header size ("Every internal document I use to get a home sold" + the 5 covers `pb-*.webp` in `.funnel-vp-covers` + an upsell-then-free note); and a `.funnel-vp-badge` instant statement ("Delivered the instant you hit submit") , a bordered line with a red bolt, deliberately NOT a filled pill (a pill reads as a button).
-- **Valuebar = ONE bar for all modes** (`vb.innerHTML = VALUEBAR.sell`): "Your instant home valuation + BONUS 5 seller playbooks. Free, delivered the moment you finish."
+- **Value panel = ONE JS string for ALL modes** (`dv.innerHTML = DELIVERABLE.sell`, not `DELIVERABLE[mode]`). Top to bottom: red eyebrow "FREE, THE INSTANT YOU FINISH"; an **instant valuation** block (`.funnel-vp-title` "What your home is really worth, to the penny" + a 4-item `.funnel-vp-list`: true market value, rebuild cost, same-day cash offer to the dollar (if you want it), comps + a `.funnel-vp-note`: "Run through my own valuation model: the same data investors and other buyers use, tuned by me. Not a Zestimate guess." , proprietary framing, NEVER say "API"/"Rentcast"); and a `.funnel-vp-badge` instant statement ("Delivered the instant you hit submit") , a bordered line with a red bolt, deliberately NOT a filled pill (a pill reads as a button). The former "bonus bundle" playbook block was killed 2026-07-20 with the rest of the playbook framing; do not add a second block back.
+- **Valuebar = ONE bar for all modes** (`vb.innerHTML = VALUEBAR.sell`): "Your instant home valuation. Free, delivered the moment you finish."
 - **Everything is instant.** Valuebar, panel, badge, and every step's `.funnel-assurance` say "the instant you submit" (never "24 hours"). Fineprint is the TCPA consent line (see "TCPA consent fineprint + in-funnel legal modal" below).
 - **Forms untouched.** Field names, IDs (`funnel-step5-name`, `funnel-step6-email/phone/submit`, etc.), handlers, validation, POST, redirect: all exactly as before. Only what the visitor SEES changed.
-- **Assets.** `/media/images/funnel-timeline.webp`; `/media/images/pb-{pricing,marketing,negotiation,speed,concierge}.webp` (trimmed 3D mockups).
-- **CSS classes** (in the synced funnel `<style>`): `.funnel-vp-head/-block/-eyebrow/-title/-list/-note/-covers/-badge`, `.funnel-timeline-sec/-cap`, and the `#funnel-step-container[data-mode]` / `#funnel-form-col` split rules at `>=880px`.
-- **Open follow-up:** the "instant" copy runs ahead of the backend (the form emails the lead; nothing auto-delivers the report + playbook PDFs yet). Wiring real instant delivery is pending.
-- **Dead code:** the legacy per-mode `VALUEBAR.buy/sellandbuy`, `DELIVERABLE.buy/sellandbuy`, the `DV_BODY` helper, and the `.funnel-dv-*` CSS are now unused (the funnel always uses the sell entries). Safe to prune; tracked in BACKLOG.
+- **Assets.** None. The old `funnel-timeline.webp` + `pb-*.webp` covers were deleted 2026-07-20 with the playbook kill (the timeline graphic carried the six-weeks-guarantee framing baked into the raster).
+- **CSS classes** (in the synced funnel `<style>`): `.funnel-vp-head/-block/-eyebrow/-title/-list/-note/-badge`, and the `#funnel-step-container[data-mode]` / `#funnel-form-col` split rules at `>=880px`. (`.funnel-timeline-*` rules were removed with the timeline block.)
+- **Open follow-up:** the "instant" copy runs ahead of the backend (the form emails the lead; nothing auto-delivers the valuation report yet). Wiring real instant delivery is pending.
+- **Dead code:** the legacy per-mode `VALUEBAR.buy/sellandbuy`, `DELIVERABLE.buy/sellandbuy`, the `DV_BODY` helper, the `.funnel-dv-*` CSS, and (since the 2026-07-20 playbook kill) the `.funnel-vp-covers` CSS rule are now unused (the funnel always uses the sell entries). Safe to prune; tracked in BACKLOG.
 
 ### TCPA consent fineprint + in-funnel legal modal (2026-06-15)
 
@@ -961,9 +960,9 @@ The `.funnel-fineprint` under each mode's submit button is the **consent disclos
 
 | Funnel | `data-funnel` | Steps | Final CTA | Submitted intent |
 |---|---|---|---|---|
-| Sell | `sell` | 5 (3 in funnel, 2 captured pre-funnel via landing form) | "Send My Report + 5 Playbooks" | `Home Valuation` |
-| Buy | `buy` | 5 (4 in funnel, 1 pre-funnel) | "Send My Buyer's Strategy" | `Home Purchase` |
-| Sell & Buy | `sellandbuy` | 6 | "Send My Move Plan" | `Home Sale + Purchase` |
+| Sell | `sell` | 5 (3 in funnel, 2 captured pre-funnel via landing form) | "Send My Report" | `Home Valuation` |
+| Buy | `buy` | 5 (4 in funnel, 1 pre-funnel) | "Send My Report" | `Home Purchase` |
+| Sell & Buy | `sellandbuy` | 6 | "Send My Report" | `Home Sale + Purchase` |
 
 Sell funnel steps (in-funnel): timeline → name → email/phone+submit.
 Buy funnel steps (in-funnel): timeline → buying process → name → email/phone+submit.

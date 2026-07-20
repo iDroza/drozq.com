@@ -203,7 +203,7 @@ PURPOSE_TABS = f"""
     <div class="ta_center">
       <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">Error 404 &middot; Page not found</p>
       <h2 class="fw_800 op_0.87 c_#2b2b2b lh_40px fs_32px ls_1px pb_16px ta_center">The page is gone. What I do isn't.</h2>
-      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px max-w_640px m_0_auto pb_8px">This site turns Southern California homes into sold signs: instant valuation, five seller playbooks, one agent running every hard part personally. Pick your side.</p>
+      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px max-w_640px m_0_auto pb_8px">This site turns Southern California homes into sold signs: instant valuation, one agent running every hard part personally. Pick your side.</p>
     </div>
 
     <div role="tablist" keyboard-select-mode="focus"
@@ -226,14 +226,14 @@ PURPOSE_TABS = f"""
         <li class="d_flex ai_flex-start gap_16px">
           <span class="flex-sh_0 d_inline-flex ai_center jc_center w_40px h_40px bdr_full bg-c_#fbe9ea c_#d92228 fw_700" aria-hidden="true">2</span>
           <div>
-            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">Five seller playbooks, free.</h3>
-            <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">Pricing, marketing, negotiation, speed, concierge: the exact internal documents I run on every listing, sent the instant you finish.</p>
+            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">An honest read within 24 hours.</h3>
+            <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">A real comparative market analysis after the walk-through: recent comps, active competition, recommended price, and whether listing now makes sense.</p>
           </div>
         </li>
         <li class="d_flex ai_flex-start gap_16px">
           <span class="flex-sh_0 d_inline-flex ai_center jc_center w_40px h_40px bdr_full bg-c_#fbe9ea c_#d92228 fw_700" aria-hidden="true">3</span>
           <div>
-            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">Sold in about six weeks.</h3>
+            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">A five-step listing system.</h3>
             <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">A five-step listing system where the hard parts land on my desk, not yours.</p>
           </div>
         </li>
@@ -404,10 +404,10 @@ if __name__ == "__main__":
     scaffold_page(
         target="404.html",
         title="Page Not Found | Joshua Guerrero, Real Brokerage",
-        description="That link is dead. What this site does isn't: instant home valuation, five free seller playbooks, and a listing system that sells Southern California homes in about six weeks.",
+        description="That link is dead. What this site does isn't: instant home valuation and a listing system that runs every hard part for you.",
         canonical="/404.html",
         main_body_html=MAIN_BODY,
         og_title="Page Not Found | Drozq",
-        og_description="The page is gone. The world is yours: instant home valuation, five free seller playbooks, one agent.",
+        og_description="The page is gone. The world is yours: instant home valuation, one agent.",
         noindex=True,
     )

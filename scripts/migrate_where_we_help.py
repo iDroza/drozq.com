@@ -26,7 +26,7 @@ PRESERVED + reframed:
   the site-wide 949-438-5948.
 - LA County cities (LA, Pasadena, Long Beach, Santa Monica, Torrance,
   Redondo Beach, Burbank, Glendale, Malibu) preserve their secondary
-  link to /los-angeles/ via a "Read the LA listing playbook" sub-CTA
+  link to /los-angeles/ via a "See how I sell in Los Angeles" sub-CTA
   surfaced below the LA County county header.
 """
 from pathlib import Path
@@ -195,7 +195,7 @@ def tier_section(tier: int, anchor: str) -> str:
     if tier == 2:
         extra_la_link = (
             '<div class="ta_center mt_24px">'
-            '<a href="/los-angeles/" class="btn-secondary-outline">Read the full Los Angeles listing playbook &rarr;</a>'
+            '<a href="/los-angeles/" class="btn-secondary-outline">See how I sell in Los Angeles &rarr;</a>'
             '</div>'
         )
     return f"""
