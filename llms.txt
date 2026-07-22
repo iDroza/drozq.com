@@ -5,6 +5,7 @@
 ## Sell-side resources
 
 - [Cost to sell a house in Orange County](https://drozq.com/cost-to-sell/): every 2026 line item (commission, escrow, title, $1.10/$1,000 county transfer tax), a worked $1,200,000 example netting $726,930, capital gains exclusion, and Prop 19 tax-base transfer.
+- [Selling an inherited house in Orange County](https://drozq.com/inherited-house/): probate vs trust timelines (30-60 days from a trust, 4-9 months in probate), the step-up in basis, Prop 19 reassessment after 2021, sibling buyouts, and the five-step estate sale process.
 - [For sellers](https://drozq.com/sellers/): the live net-proceeds calculator plus how pricing, prep, and negotiation actually run.
 - [Instant home valuation](https://drozq.com/value/): true market value, rebuild cost, renovated ceiling, and comparable sales for any address, delivered instantly.
 - [The five-step process](https://drozq.com/process/): first call to closing day, with a written CMA in 24 hours and launch in 48 to 72.
