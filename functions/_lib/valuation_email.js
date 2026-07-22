@@ -115,7 +115,7 @@ export function renderValuationReport(d) {
     marketBits.push("investor read: rents about " + money(d.rentMonthly) + "/mo" + (d.capRate != null ? " at a " + d.capRate + "% cap" : ""));
   }
   const marketHtml = marketBits.length
-    ? '<p class="dz-p" style="margin:22px 0 0;font-family:' + FONT + ';font-size:14px;line-height:1.65;color:#2b2b2b;">' + escapeHtml(marketBits.join(". ").replace(/&#?\w+;/g, (m) => m)) + '.</p>'
+    ? '<p class="dz-p" style="margin:22px 0 0;font-family:' + FONT + ';font-size:14px;line-height:1.65;color:#2b2b2b;">' + escapeHtml(marketBits.map((b) => b.charAt(0).toUpperCase() + b.slice(1)).join(". ")) + '.</p>'
     : "";
 
   const range = (money(d.avmLow) && money(d.avmHigh))
