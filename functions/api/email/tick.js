@@ -70,7 +70,15 @@ export async function onRequestPost(context) {
           out.broadcast_failed++;
           continue;
         }
-        payload = Object.assign({ subject: c.subject }, JSON.parse(c.payload));
+        try {
+          payload = Object.assign({ subject: c.subject }, JSON.parse(c.payload));
+        } catch (e) {
+          // A malformed payload must fail ITS rows, not 500 the whole tick and
+          // jam every campaign behind it forever.
+          await env.EMAIL_DB.prepare("UPDATE email_log SET status = 'failed', error = 'payload_parse' WHERE id = ?1").bind(row.log_id).run();
+          out.broadcast_failed++;
+          continue;
+        }
         campaignCache.set(row.campaign_id, payload);
       }
 
@@ -84,7 +92,7 @@ export async function onRequestPost(context) {
         "UPDATE email_log SET status = ?1, error = ?2, sent_at = CASE WHEN ?1 = 'sent' THEN datetime('now') ELSE NULL END WHERE id = ?3"
       ).bind(sent.ok ? "sent" : "failed", sent.ok ? null : String(sent.error || sent.status), row.log_id).run();
 
-      phCapture(sent.ok ? "email_sent" : "email_send_failed", row.email, { kind: "broadcast", ref: row.ref });
+      await phCapture(sent.ok ? "email_sent" : "email_send_failed", row.email, { kind: "broadcast", ref: row.ref });
       if (sent.ok) out.broadcast_sent++; else out.broadcast_failed++;
     }
 

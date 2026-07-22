@@ -23,7 +23,10 @@ function intentKind(intent) {
 // the actual property is the strongest personalization signal we have; every
 // use falls back gracefully when it is absent (buy leads, newsletter, backfill).
 function cleanStreet(street) {
-  const s = String(street || "").trim().replace(/,+$/, "").slice(0, 80);
+  // Markdown-active characters are scrubbed: street is attacker-controlled on
+  // the public endpoints, and the [label](url) transform runs after it is
+  // spliced into the paragraphs.
+  const s = String(street || "").trim().replace(/[\[\]()*]/g, "").replace(/,+$/, "").slice(0, 80);
   return s.length >= 4 ? s : "";
 }
 
@@ -125,7 +128,7 @@ export const SEQUENCES = {
       },
       {
         id: "case-file",
-        offsetDays: 5,
+        offsetDays: 3, // gap from the previous send: lands day 5 from enrollment
         subject() { return "How $23,250 in seller credit actually happened"; },
         render() {
           return {
@@ -143,7 +146,7 @@ export const SEQUENCES = {
       },
       {
         id: "nine-word",
-        offsetDays: 10,
+        offsetDays: 5, // gap from the previous send: lands day 10 from enrollment
         subject() { return "{first}, quick question"; },
         render(sub) {
           const k = intentKind(sub.intent);

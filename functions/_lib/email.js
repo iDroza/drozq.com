@@ -112,14 +112,22 @@ function laClock(ms) {
 
 export function windowedISO(baseMs, env) {
   if (env && env.EMAIL_TEST_FAST === "1") return new Date(baseMs).toISOString();
+  const OPEN = 9 * 60 + 30, CLOSE = 19 * 60; // 9:30am-7pm LA, minutes-of-day
   let ms = baseMs;
-  const { h, min } = laClock(ms);
-  if (h < 9) {
-    ms += (((9 - h) * 60) - min + 30) * 60000;
-  } else if (h >= 19) {
-    ms += (((24 - h + 9) * 60) - min + 30) * 60000;
+  let { h, min } = laClock(ms);
+  let mins = h * 60 + min;
+  if (mins < OPEN) {
+    ms += (OPEN - mins) * 60000;
+  } else if (mins >= CLOSE) {
+    ms += ((24 * 60 - mins) + OPEN) * 60000;
   }
   ms += Math.floor(Math.random() * 40) * 60000; // up to 40min jitter, never robotic
+  // Re-clamp: jitter near the close (or a 9:00-9:29 base, which the old code
+  // let through) must never land outside the window.
+  ({ h, min } = laClock(ms));
+  mins = h * 60 + min;
+  if (mins >= CLOSE) ms += ((24 * 60 - mins) + OPEN) * 60000;
+  else if (mins < OPEN) ms += (OPEN - mins) * 60000;
   return new Date(ms).toISOString();
 }
 
@@ -173,8 +181,13 @@ export function paragraphsToText(paragraphs) {
 }
 
 export function personalize(s, sub) {
-  const first = firstNameOf(sub) || "there";
-  const city = (sub && sub.city) || "Orange County";
+  // Subscriber-supplied values are scrubbed of markdown-active characters so
+  // a hostile street/city/name posted to the public endpoints can never
+  // inject a link or bold span into a DKIM-signed email (the [label](url)
+  // transform runs AFTER interpolation).
+  const scrub = (v) => String(v == null ? "" : v).replace(/[\[\]()*]/g, "");
+  const first = scrub(firstNameOf(sub) || "there");
+  const city = scrub((sub && sub.city) || "Orange County");
   return String(s == null ? "" : s).replace(/\{first\}/g, first).replace(/\{city\}/g, city);
 }
 
@@ -523,7 +536,7 @@ export async function sendSequenceStep(env, sub, step) {
       "UPDATE email_log SET status = ?1, error = ?2, sent_at = CASE WHEN ?1 = 'sent' THEN datetime('now') ELSE NULL END WHERE id = ?3"
     ).bind(sent.ok ? "sent" : "failed", sent.ok ? null : String(sent.error || sent.status), logId).run();
 
-    phCapture(sent.ok ? "email_sent" : "email_send_failed", sub.email, {
+    await phCapture(sent.ok ? "email_sent" : "email_send_failed", sub.email, {
       kind: "sequence", ref: step.id, subject, sequence_id: sub.sequence_id
     });
     return sent.ok;

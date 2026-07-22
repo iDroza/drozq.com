@@ -63,14 +63,22 @@ export async function onRequestGet(context) {
   if (!email) {
     return page("Link expired", "<h1 style=\"margin:0 0 12px;font-size:24px;color:#1a1816;\">That link didn't check out.</h1><p style=\"margin:0;font-size:16px;line-height:1.6;color:#2b2b2b;\">Email <a href=\"mailto:josh@drozq.com\" style=\"color:#d9222a;font-weight:700;\">josh@drozq.com</a> and I'll remove you by hand, same day.</p>");
   }
-  await unsubscribe(context, email);
-  return page("Unsubscribed",
-    "<h1 style=\"margin:0 0 12px;font-size:24px;color:#1a1816;\">You're unsubscribed.</h1>" +
-    "<p style=\"margin:0;font-size:16px;line-height:1.6;color:#2b2b2b;\">No more emails to <strong>" + email.replace(/</g, "&lt;") + "</strong>. If you ever want a straight read on the market, <a href=\"https://drozq.com\" style=\"color:#d9222a;font-weight:700;\">drozq.com</a> is always open.</p>");
+  // GET must NOT unsubscribe: corporate mail scanners (SafeLinks, Barracuda)
+  // prefetch every link with GET and were silently unsubscribing real leads
+  // the moment step 0 landed. Render a one-button confirm instead; the POST
+  // below (which is also the RFC 8058 one-click path) does the actual work.
+  return page("Unsubscribe",
+    "<h1 style=\"margin:0 0 12px;font-size:24px;color:#1a1816;\">Unsubscribe this address?</h1>" +
+    "<p style=\"margin:0;font-size:16px;line-height:1.6;color:#2b2b2b;\">One click and <strong>" + email.replace(/</g, "&lt;") + "</strong> never hears from me again.</p>" +
+    "<form method=\"post\" style=\"margin:20px 0 0;\"><button type=\"submit\" style=\"background:#d9222a;color:#fff;border:none;border-radius:9999px;font-weight:700;font-size:16px;height:48px;padding:0 26px;cursor:pointer;font-family:inherit;\">Unsubscribe</button></form>");
 }
 
 export async function onRequestPost(context) {
   const email = await resolveEmail(context);
   if (email) await unsubscribe(context, email);
-  return new Response("OK", { status: 200 });
+  // Mail clients calling the one-click header ignore the body; a human landing
+  // here from the confirm button gets the branded confirmation.
+  return page("Unsubscribed",
+    "<h1 style=\"margin:0 0 12px;font-size:24px;color:#1a1816;\">You're unsubscribed.</h1>" +
+    "<p style=\"margin:0;font-size:16px;line-height:1.6;color:#2b2b2b;\">No more emails" + (email ? " to <strong>" + email.replace(/</g, "&lt;") + "</strong>" : "") + ". If you ever want a straight read on the market, <a href=\"https://drozq.com\" style=\"color:#d9222a;font-weight:700;\">drozq.com</a> is always open.</p>");
 }

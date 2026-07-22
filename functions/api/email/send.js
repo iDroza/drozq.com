@@ -26,6 +26,9 @@ export async function onRequestPost(context) {
     }
 
     const existing = await env.EMAIL_DB.prepare("SELECT * FROM subscribers WHERE email = ?1").bind(to).first();
+    if (existing && existing.status === "unsubscribed" && body.force !== true) {
+      return json({ ok: false, error: "recipient_unsubscribed", note: "This address opted out. Pass force:true only for transactional mail the person explicitly asked for." }, 409);
+    }
     const sub = {
       id: existing ? existing.id : null,
       email: to,

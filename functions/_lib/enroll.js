@@ -18,7 +18,7 @@ export async function enrollSubscriber(env, seed, opts) {
       sequence_id: sequenceId,
       next_send_at: null
     }));
-    if (inserted) phCapture("email_subscriber_enrolled", seed.email, { source: seed.source, sequence_id: sequenceId, mode: "idle" });
+    if (inserted) await phCapture("email_subscriber_enrolled", seed.email, { source: seed.source, sequence_id: sequenceId, mode: "idle" });
     return { inserted, row, sent: false };
   }
 
@@ -28,7 +28,7 @@ export async function enrollSubscriber(env, seed, opts) {
       sequence_id: sequenceId,
       next_send_at: windowedISO(options.startAtMs, env)
     }));
-    if (inserted) phCapture("email_subscriber_enrolled", seed.email, { source: seed.source, sequence_id: sequenceId, mode: "scheduled" });
+    if (inserted) await phCapture("email_subscriber_enrolled", seed.email, { source: seed.source, sequence_id: sequenceId, mode: "scheduled" });
     return { inserted, row, sent: false };
   }
 
@@ -40,7 +40,7 @@ export async function enrollSubscriber(env, seed, opts) {
   }));
   if (!inserted || !row) return { inserted: false, row, sent: false };
 
-  phCapture("email_subscriber_enrolled", row.email, { source: seed.source, sequence_id: sequenceId, mode: "instant" });
+  await phCapture("email_subscriber_enrolled", row.email, { source: seed.source, sequence_id: sequenceId, mode: "instant" });
 
   const ok = await sendSequenceStep(env, row, seq.steps[0]);
 

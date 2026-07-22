@@ -46,7 +46,11 @@ export async function onRequestPost(context) {
         email,
         name: name || null,
         first_name: firstName || null,
-        source: String(fields.source || "newsletter").trim().slice(0, 60) || "newsletter",
+        // Public endpoint: the caller must NOT be able to self-select the
+        // 4-email lead-response drip (or the leads broadcast segment) for an
+        // arbitrary address. Everything through here is newsletter-only;
+        // leads enter exclusively via /api/lead.
+        source: "newsletter",
         intent: String(fields.intent || "").trim().slice(0, 80) || null,
         city: String(fields.city || "").trim().slice(0, 100) || null,
         street: String(fields.street || "").trim().slice(0, 120) || null,

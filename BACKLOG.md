@@ -46,6 +46,15 @@ These move the needle the most. They are concentrated on `/index.html`.
 
 ---
 
+## Code review 2026-07-22: flagged for Joshua's call (not auto-fixed)
+
+- **The funnel overlay has no close path.** No X, no Escape, no backdrop dismiss; only submit, browser-back, or reload exit it. May be deliberate hard-commit design, but combined with the autofill-open listener below an accidental open traps a paid visitor. Decide: add a quiet X / Escape handler, or keep the hard commit.
+- **The landing input's change-listener opens the funnel on any edit + blur.** Typing one character and clicking anywhere opens the full-screen funnel with an unvalidated address 60ms later, bypassing the Places gate (junk sell-lead addresses; the funnel re-asks nothing). Decide: restrict the auto-open to real autofill signals, or accept the aggressive open as a conversion play.
+- **Duplicate-lead retries are by design.** The funnel retries a submit up to 3x on network/5xx; a processed-but-unacknowledged request delivers the lead 2-3x (email/Zapier/FUB). An idempotency key (client-generated UUID deduped in lead.js) would end it; noting since the code comment accepts duplicates deliberately.
+- **Email rows stuck in 'sending' have no reaper** if an isolate dies mid-send, and a failed sequence send skips that step permanently (claim-before-send has no retry queue). Both rare; add a reaper/requeue if send failures ever show up in `emailer.py log`.
+
+---
+
 ## Tracking & measurement
 
 - **UTM parameter capture.** The funnel IIFE captures `gclid` but not `utm_source` / `utm_medium` / `utm_campaign` / `utm_content` / `utm_term`. Mirror the gclid pattern: read from URL → cookie → sessionStorage, persist to 90-day cookies, push to dataLayer, forward to `/api/lead` as hidden fields.

@@ -115,6 +115,7 @@ def main() -> int:
         return 0
 
     any_drift = False
+    any_missing = False
     per_page = {}
     for rel in pages:
         target_path = ROOT / rel
@@ -131,6 +132,7 @@ def main() -> int:
             except ValueError as e:
                 print(f"ERROR in {rel} [{name}]: {e}", file=sys.stderr)
                 drift.append(name + ":missing-markers")
+                any_missing = True
                 continue
             if target_inner != source_blocks[name]:
                 drift.append(name)
@@ -154,6 +156,9 @@ def main() -> int:
     reg["pageSync"] = {**reg.get("pageSync", {}), **{k: v for k, v in per_page.items() if v}}
     reg["sourceHashes"] = {n: sha(v) for n, v in source_blocks.items()}
     save_registry(reg)
+    if any_missing:
+        print("ERROR: pages above with :missing-markers were NOT synced; restore their marker comments.", file=sys.stderr)
+        return 2
     return 0
 
 

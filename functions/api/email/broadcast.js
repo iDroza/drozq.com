@@ -10,6 +10,7 @@
 // {first} and {city} in subject/paragraphs personalize per subscriber.
 
 import { json, adminGate } from "../../_lib/admin.js";
+import { windowedISO } from "../../_lib/email.js";
 
 const SEGMENT_WHERE = {
   all: "status = 'active'",
@@ -60,7 +61,7 @@ export async function onRequestPost(context) {
     const inserts = rows.map((r, i) =>
       env.EMAIL_DB.prepare(
         "INSERT INTO email_log (subscriber_id, campaign_id, email, kind, ref, subject, status, send_after) VALUES (?1, ?2, ?3, 'broadcast', ?4, ?5, 'queued', ?6)"
-      ).bind(r.id, campaign.id, r.email, slug, String(body.subject), new Date(start + i * stagger * 1000).toISOString())
+      ).bind(r.id, campaign.id, r.email, slug, String(body.subject), windowedISO(start + i * stagger * 1000, env))
     );
     for (let i = 0; i < inserts.length; i += 50) {
       await env.EMAIL_DB.batch(inserts.slice(i, i + 50));
