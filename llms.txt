@@ -1,38 +1,31 @@
-Drozq - Joshua Guerrero, Irvine Listing Agent
+# drozq.com
 
-Joshua Guerrero is a licensed California REALTOR® specializing in Irvine residential real estate sales and seller representation. Affiliated with Real Brokerage Technologies. CA DRE #02267255.
+> Joshua Guerrero, licensed California real estate agent (DRE #02267255) with Real Brokerage, based in Irvine and serving Orange County home sellers and buyers. Direct line (949) 438-5948. This site publishes live market data, transparent cost math, and real closed-deal numbers.
 
-About
-Drozq is the brand of Joshua Guerrero, a solo Irvine real estate agent serving Irvine, CA and surrounding Orange County markets. The business specializes in listing agent services, home valuations, and seller representation. Office located at 17875 Von Karman Ave, Suite 150, Irvine, CA 92614.
+## Sell-side resources
 
-Service Area
-Primary: Irvine, CA (all neighborhoods including Turtle Rock, Woodbridge, Northwood, Quail Hill, Shady Canyon, University Park, Portola Springs, Stonegate, Orchard Hills, Westpark, and Oak Creek)
-Secondary: Orange County cities including Newport Beach, Tustin, Costa Mesa, Santa Ana, Lake Forest, Mission Viejo, and Aliso Viejo
+- [Cost to sell a house in Orange County](https://drozq.com/cost-to-sell/): every 2026 line item (commission, escrow, title, $1.10/$1,000 county transfer tax), a worked $1,200,000 example netting $726,930, capital gains exclusion, and Prop 19 tax-base transfer.
+- [For sellers](https://drozq.com/sellers/): the live net-proceeds calculator plus how pricing, prep, and negotiation actually run.
+- [Instant home valuation](https://drozq.com/value/): true market value, rebuild cost, renovated ceiling, and comparable sales for any address, delivered instantly.
+- [The five-step process](https://drozq.com/process/): first call to closing day, with a written CMA in 24 hours and launch in 48 to 72.
 
-Services
+## Live market data
 
-Free home valuations for Irvine homeowners
-Listing agent services (3% commission standard)
-Strategic pricing analysis using Irvine MLS data
-Marketing and showing coordination
-Negotiation on behalf of seller
-Closing coordination
+- [Today's mortgage rates](https://drozq.com/rates/): 30y/15y benchmarks plus rates by loan program (conforming, jumbo, FHA, VA, USDA), refreshed every business day, with payment math.
+- [California home prices](https://drozq.com/prices/): LA and San Diego Case-Shiller, the statewide FHFA index, months of supply, sales pace, and affordability, charted with a year of history.
+- [SoCal market insights](https://drozq.com/market-insights/): county-by-county snapshot, refreshed monthly.
 
-Contact
+## Buy-side resources
 
-Phone: (949) 438-5948
-Email: josh@drozq.com
-Website: https://drozq.com
-License: CA DRE #02267255
-Brokerage: Real Brokerage Technologies
+- [For buyers](https://drozq.com/buyers/): the closing-cost estimator fed by today's live 30-year rate, payment-first budgeting, and how a search runs.
 
-Key Pages
+## Proof
 
-Home: Free home valuation and listing agent services
-About: Joshua Guerrero's background and approach
-Case Files: Real client outcomes with specific dollar amounts
-Field Notes: Irvine real estate market commentary
-Market Insights: Current Irvine and Orange County market data
-The Process: Step-by-step listing process
-FAQ: Common questions for Irvine sellers
-Contact: Direct contact and consultation booking
+- [Sold](https://drozq.com/sold/): every closing with the numbers left in ($43,250 negotiated for clients across the first two deals, both closed early).
+- [Case files](https://drozq.com/testimonials/): real transactions told start to finish, including a Long Beach purchase at $775,000 with $23,250 in seller credits and $0 out-of-pocket closing costs.
+- [About Joshua](https://drozq.com/about/) and [Contact](https://drozq.com/contact/): one agent, one phone number.
+
+## Coverage
+
+- [Where I work](https://drozq.com/where-we-help/): 38 Southern California cities in three tiers.
+- [California](https://drozq.com/california/) and [Los Angeles](https://drozq.com/los-angeles/) market pages.
