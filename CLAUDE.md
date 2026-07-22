@@ -541,7 +541,7 @@ The homepage was a clone of sell.realtor.com that has been incrementally cleaned
 - Move Inc tracking pixels destroyed: Facebook pixel `754678604575607`, DoubleClick advertiser `10291144` (3 iframes), Bing UET `25046895`, Adobe/Everest `5154`, `<meta property="fb:app_id">`.
 - GTM-KVV3R96P installed (head + body noscript).
 - Drozq SEO/social meta installed (title, description, canonical, og:*, twitter:*, favicons).
-- Drozq social URLs: Facebook → `facebook.com/Drozq/`, Instagram → `instagram.com/drozq/`, YouTube → `youtube.com/@drozq`. Twitter stays `#top`.
+- Drozq social URLs (footer row order, 2026-07-22): Zillow → `zillow.com/profile/ImJoshua`, Facebook → `facebook.com/Drozq/`, Instagram → `instagram.com/drozq/` (center), YouTube → `youtube.com/@drozq`, LinkedIn → `linkedin.com/in/guerrero-joshua/` (last). All five also live in every page's JSON-LD `sameAs`.
 - Hero tabs (Sell / Buy / Sell & Buy) wired with switcher JS.
 - Mid-page tabs converted from "I'm selling / I'm buying" to the "My Home's Condition is..." switcher (`sellTabBtn`/`sellTab` = Move-in ready, `needsTabBtn`/`needsTab` = Needs work); both panels open the Sell funnel, buyer panel removed.
 - FAQ accordion wired.
