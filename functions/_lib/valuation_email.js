@@ -46,7 +46,7 @@ export function reportInputFromApiResponse(r) {
     beds: prop.bedrooms, baths: prop.bathrooms,
     sqft: prop.squareFootage, yearBuilt: prop.yearBuilt,
     comps: Array.isArray(r && r.cma && r.cma.sold) && r.cma.sold.length
-      ? r.cma.sold.slice(0, 5).map((s) => ({ address: s.address, sqft: s.squareFootage, price: s.soldPrice, daysOld: s.soldDate ? null : null, soldDate: s.soldDate }))
+      ? r.cma.sold.slice(0, 5).map((s) => ({ address: s.address, sqft: s.squareFootage, price: s.soldPrice, daysOld: s.soldDate ? Math.round((Date.now() - new Date(s.soldDate).getTime()) / 86400000) : null }))
       : (Array.isArray(r && r.comps) ? r.comps.slice(0, 5).map((c) => ({ address: c.formattedAddress, sqft: c.squareFootage, price: c.price, daysOld: c.daysOld })) : []),
     soldCount: stats.soldCount,
     soldMedian: stats.soldMedian,
