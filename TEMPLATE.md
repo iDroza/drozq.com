@@ -320,6 +320,7 @@ The inline head script sets `data-drozq-header-hidden="1"` before paint when `lo
 <button id="drozq-hamburger" ...> <!-- hamburger icon (menu_icon.svg) --> </button>
 <aside data-testid="sidebar" data-active="false" class="...">
   <ul data-testid="mobile-nav-items">
+    <li><a href="/sold/">Sold</a></li>
     <li><a href="/faq/">FAQ</a></li>
     <li><a href="/rates/">Mortgage Rates</a></li>
     <li><a href="/prices/">Home Prices</a></li>
@@ -338,6 +339,7 @@ Drawer toggle wired in the mobile-nav script (the `<script>` block after `DROZQ_
 <li id="drozq-more-li" class="...">
   <span id="drozq-more-toggle">More</span>
   <ul id="drozq-more-menu">
+    <li><a href="/sold/">Sold</a></li>
     <li><a href="/faq/">FAQ</a></li>
     <li><a href="/rates/">Mortgage Rates</a></li>
     <li><a href="/prices/">Home Prices</a></li>
