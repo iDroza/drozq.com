@@ -1,7 +1,7 @@
 // /api/prices - second FRED-backed data product (sibling of /api/rates).
 //
 // Returns California-focused home-price indices + national market signals
-// + a single rate complement (5/1 ARM). All eight series come from FRED
+// + a single rate complement (5/1 ARM). All seven series come from FRED
 // with ~1 year of history for sparklines and YoY context.
 //
 // Series:
@@ -109,13 +109,21 @@ function cagr(latestValue, pastValue, years) {
 function pickNYearsBack(cleaned, latest, yearsBack, cadence) {
   if (!latest || !latest.date) return { value: null, date: null };
 
+  const targetMs = new Date(latest.date + "T00:00:00Z").getTime() - yearsBack * DAYS_PER_YEAR * MS_PER_DAY;
+  const toleranceMsEarly = (TOLERANCE_DAYS[cadence] || 60) * MS_PER_DAY;
+  const adjustedToleranceEarly = toleranceMsEarly + (yearsBack - 1) * (toleranceMsEarly / 2);
+
+  // Fast path for dense series, but only when the index-based candidate is
+  // actually near the target DATE: a gappy series (FIXHAI drops months) has
+  // cleaned[12] pointing 14-15 months back, which silently mislabeled the YoY.
   const perYear = OBS_PER_YEAR[cadence];
   if (perYear != null) {
     const idx = perYear * yearsBack;
-    if (cleaned[idx]) return cleaned[idx];
+    const cand = cleaned[idx];
+    if (cand && Math.abs(new Date(cand.date + "T00:00:00Z").getTime() - targetMs) <= adjustedToleranceEarly) {
+      return cand;
+    }
   }
-
-  const targetMs = new Date(latest.date + "T00:00:00Z").getTime() - yearsBack * DAYS_PER_YEAR * MS_PER_DAY;
   let best = null;
   let bestDelta = Infinity;
   for (const o of cleaned) {
@@ -124,11 +132,7 @@ function pickNYearsBack(cleaned, latest, yearsBack, cadence) {
   }
   if (!best) return { value: null, date: null };
 
-  const toleranceMs = (TOLERANCE_DAYS[cadence] || 60) * MS_PER_DAY;
-  // Scale tolerance roughly with yearsBack so a 10y lookup gets a slightly
-  // wider window than a 1y lookup, but cap at one cadence period.
-  const adjustedToleranceMs = toleranceMs + (yearsBack - 1) * (toleranceMs / 2);
-  if (bestDelta > adjustedToleranceMs) return { value: null, date: null };
+  if (bestDelta > adjustedToleranceEarly) return { value: null, date: null };
   return best;
 }
 
@@ -181,8 +185,10 @@ async function fetchSeries(spec, apiKey) {
       return [spec.key, {
         seriesId: spec.id, label: spec.label, unit: spec.unit, cadence: spec.cadence, tier: spec.tier,
         latest: { value: null, date: null }, previous: { value: null, date: null },
-        yearAgo: { value: null, date: null }, history: [],
+        yearAgo: { value: null, date: null }, fiveYearAgo: { value: null, date: null },
+        tenYearAgo: { value: null, date: null }, history: [],
         delta: null, deltaPct: null, deltaYoY: null, deltaYoYPct: null,
+        cagr5y: null, cagr10y: null,
         error: `fred_http_${resp.status}`
       }];
     }
@@ -201,8 +207,10 @@ async function fetchSeries(spec, apiKey) {
     return [spec.key, {
       seriesId: spec.id, label: spec.label, unit: spec.unit, cadence: spec.cadence, tier: spec.tier,
       latest: { value: null, date: null }, previous: { value: null, date: null },
-      yearAgo: { value: null, date: null }, history: [],
+      yearAgo: { value: null, date: null }, fiveYearAgo: { value: null, date: null },
+      tenYearAgo: { value: null, date: null }, history: [],
       delta: null, deltaPct: null, deltaYoY: null, deltaYoYPct: null,
+      cagr5y: null, cagr10y: null,
       error: `fetch_failed`
     }];
   }
@@ -228,6 +236,7 @@ export async function onRequest(context) {
   const lastUpdated = dates.length ? dates[dates.length - 1] : null;
   const anyData = Object.values(series).some((s) => s && s.latest && s.latest.value != null);
 
+  // Total upstream failure is a 503, not a cacheable 200 (mirror /api/rates).
   return json({
     ok: anyData,
     series,
@@ -235,5 +244,5 @@ export async function onRequest(context) {
     fetchedAt: new Date().toISOString(),
     source: "Federal Reserve Economic Data (FRED), St. Louis Fed",
     sourceUrl: "https://fred.stlouisfed.org/"
-  });
+  }, anyData ? 200 : 503);
 }

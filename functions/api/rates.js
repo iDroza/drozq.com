@@ -123,6 +123,7 @@ async function fetchSeries(spec, apiKey) {
   } catch (err) {
     return [spec.key, {
       seriesId: spec.id, label: spec.label, unit: spec.unit, cadence: spec.cadence,
+      provider: spec.provider || null,
       latest: { value: null, date: null }, previous: { value: null, date: null },
       yearAgo: { value: null, date: null }, history: [], delta: null, deltaYoY: null,
       error: `fetch_failed`
@@ -150,6 +151,8 @@ export async function onRequest(context) {
   const lastUpdated = dates.length ? dates[dates.length - 1] : null;
   const anyData = Object.values(series).some((s) => s && s.latest && s.latest.value != null);
 
+  // Total upstream failure is a 503, not a cacheable 200: a browser must not
+  // hold an all-failed payload as fresh for an hour after FRED recovers.
   return json({
     ok: anyData,
     series,
@@ -157,5 +160,5 @@ export async function onRequest(context) {
     fetchedAt: new Date().toISOString(),
     source: "Federal Reserve Economic Data (FRED), St. Louis Fed",
     sourceUrl: "https://fred.stlouisfed.org/"
-  });
+  }, anyData ? 200 : 503);
 }

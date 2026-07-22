@@ -26,8 +26,10 @@
 
 const RENTCAST_BASE = "https://api.rentcast.io/v1";
 
-// Edge cache valuation responses per address for 7 days. AVMs don't move daily
-// and the marginal cost saving is real once paid traffic is hitting this.
+// Rentcast subrequests are edge-cached per upstream URL for 7 days (see
+// rcFetch's cf.cacheTtl): AVMs don't move daily and the marginal cost saving
+// is real. The RESPONSE itself is per-lead (contact-gated), so it is never
+// publicly cacheable.
 const CACHE_TTL_SECONDS = 60 * 60 * 24 * 7;
 
 const json = (body, status = 200, extra = {}) =>
@@ -35,9 +37,7 @@ const json = (body, status = 200, extra = {}) =>
     status,
     headers: {
       "content-type": "application/json; charset=UTF-8",
-      "cache-control": status === 200
-        ? `public, max-age=${CACHE_TTL_SECONDS}, s-maxage=${CACHE_TTL_SECONDS}`
-        : "no-store",
+      "cache-control": "private, no-store",
       ...extra
     }
   });
@@ -198,7 +198,7 @@ function pickAssessorValue(property) {
   if (lastSale) {
     return {
       value: lastSale,
-      year: (property?.lastSaleDate || "").slice(0, 4) || null,
+      year: numberOrNull((property?.lastSaleDate || "").slice(0, 4)),
       source: "last_sale",
       methodology: "No current assessor value available; showing last recorded sale price as a tax-floor proxy."
     };
@@ -456,8 +456,12 @@ function assembleCMA(property, subjLat, subjLng, subjAddressKey, avm, soldPool, 
     // fallback, but the window only tightens when enough SIMILAR comps
     // remain (tolerance-filtered pool), never on raw counts.
     soldNorm = sqftTolerancePool(soldNorm, subjSqft, 3);
+    let effectiveWindowDays = CMA.SOLD_WINDOW_DAYS;
     const recentSolds = soldNorm.filter(n => n.soldAgeDays != null && n.soldAgeDays <= 180);
-    if (recentSolds.length >= 4) soldNorm = recentSolds;
+    // When the pool tightens to <=180-day sales, every derived stat (months of
+    // inventory, soldWindowMonths) must use the 6-month window it actually
+    // spans, not the 9-month fallback (the old mismatch overstated MOI 1.5x).
+    if (recentSolds.length >= 4) { soldNorm = recentSolds; effectiveWindowDays = 180; }
 
     // Sold-band $/sqft from the filtered pool: the reference for adjusted
     // values, the expired-overpricing test, and the subject's comp band.
@@ -588,7 +592,7 @@ function assembleCMA(property, subjLat, subjLng, subjAddressKey, avm, soldPool, 
     // with a thin sold pool (or an implausible ratio) the number measures
     // data coverage, not the market; suppress it rather than mislead (seen
     // live 2026-07-16: 18 recorded solds vs 46 actives read as "23 months").
-    const windowMonths = Math.round(CMA.SOLD_WINDOW_DAYS / 30);
+    const windowMonths = Math.round(effectiveWindowDays / 30);
     const monthlySoldPace = soldAll.length ? soldAll.length / windowMonths : null;
     let monthsOfInventory = (monthlySoldPace && activeAll.length)
       ? Number((activeAll.length / monthlySoldPace).toFixed(1))
@@ -668,7 +672,6 @@ async function computeInvestorMetrics(value, rentEstimate, requestUrl) {
     capRate,
     expenseRatio: 0.35,
     noi: Math.round(noi),
-    wholesaleOffer: Math.round((value * 0.70) - (40 * 250)),  // ARV * 0.70 - placeholder rehab; refined below
     rate30y,
     downPct: 0.20,
     monthlyPI,
@@ -714,10 +717,24 @@ async function fetch30yRate(requestUrl) {
 async function rcFetch(path, params, apiKey) {
   const qs = new URLSearchParams(params).toString();
   const url = `${RENTCAST_BASE}${path}?${qs}`;
-  const resp = await fetch(url, {
-    headers: { "X-Api-Key": apiKey, "Accept": "application/json" },
-    cf: { cacheTtl: CACHE_TTL_SECONDS, cacheEverything: true }
-  });
+  // fetch() rejects on DNS/TLS/connection failures; that must degrade to the
+  // same { ok:false } shape as an upstream HTTP error, never throw out of the
+  // handler (a throw here used to 500 the request AND lose the lead). The
+  // AbortController caps a hung upstream at 10s.
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 10000);
+  let resp;
+  try {
+    resp = await fetch(url, {
+      headers: { "X-Api-Key": apiKey, "Accept": "application/json" },
+      cf: { cacheTtl: CACHE_TTL_SECONDS, cacheEverything: true },
+      signal: ctrl.signal
+    });
+  } catch (err) {
+    clearTimeout(timer);
+    return { ok: false, status: 0, error: "rentcast_network" };
+  }
+  clearTimeout(timer);
   if (!resp.ok) {
     return { ok: false, status: resp.status, error: `rentcast_http_${resp.status}` };
   }
@@ -784,11 +801,17 @@ async function saveValuationLead(request, contact, addr) {
     form.set("submitted_at", new Date().toISOString());
     form.set("message", "Lead generated from the /value/ gate (contact collected before the valuation was computed or returned).");
     const leadUrl = new URL("/api/lead", request.url).toString();
-    await fetch(leadUrl, {
+    const resp = await fetch(leadUrl, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: form.toString()
     });
+    if (!resp.ok) {
+      let body = "";
+      try { body = await resp.text(); } catch (e) {}
+      console.error("VALUATION_LEAD_SAVE_REJECTED status=" + resp.status + " body=" + body.slice(0, 300) +
+        " email=" + contact.email + " address=" + (addr.fullAddress || "-"));
+    }
   } catch (e) {
     console.error("VALUATION_LEAD_SAVE_FAILED " + ((e && e.message) || e));
   }
@@ -852,6 +875,7 @@ export async function onRequest(context) {
         contact.gclid      = (body?.gclid ?? "").toString().trim();
         contact.sourcePage = (body?.source_page ?? "").toString().trim();
         contact.pageUrl    = (body?.page_url ?? "").toString().trim();
+        contact.honeypot   = (body?.company_website ?? "").toString().trim();
       } else if (ctype.includes("application/x-www-form-urlencoded") || ctype.includes("multipart/form-data")) {
         const form = await request.formData();
         address = normalizeAddressInput(form);
@@ -864,6 +888,7 @@ export async function onRequest(context) {
         contact.gclid      = (form.get("gclid") || "").toString().trim();
         contact.sourcePage = (form.get("source_page") || "").toString().trim();
         contact.pageUrl    = (form.get("page_url") || "").toString().trim();
+        contact.honeypot   = (form.get("company_website") || "").toString().trim();
       }
     } else {
       const u = new URL(request.url);
@@ -887,6 +912,11 @@ export async function onRequest(context) {
   // reading the network tab, or replaying the request, because nothing is ever
   // computed or returned without contact, and obtaining the numbers always saves
   // the lead (below).
+  // Honeypot: bots that fill the invisible company_website field get the same
+  // 403 as a missing contact (indistinguishable, no Rentcast spend, no lead).
+  if (contact.honeypot) {
+    return json({ ok: false, error: "contact_required" }, 403);
+  }
   const hasContact = !!(contact.email && contact.phone && contact.consent === "yes");
   if (!hasContact) {
     return json({
@@ -896,6 +926,18 @@ export async function onRequest(context) {
     }, 403);
   }
 
+  // From this point on the visitor has paid with their contact info, so the
+  // lead MUST survive anything the compute does. saveLeadOnce guarantees
+  // exactly one save whether the compute succeeds (rich, Rentcast-parsed
+  // address) or throws (raw input address + 502).
+  let leadSaved = false;
+  const saveLeadOnce = (addr) => {
+    if (leadSaved) return;
+    leadSaved = true;
+    context.waitUntil(saveValuationLead(request, contact, addr));
+  };
+
+  try {
   // Fan out: property lookup first (need attributes + coordinates for the
   // comp-targeted AVM, rent, and comp-study calls), then everything else in
   // parallel: AVM + rent + the three comp-study pools (recorded closings,
@@ -966,14 +1008,14 @@ export async function onRequest(context) {
   // that reaches this point saves the lead (with the Rentcast-parsed address
   // components), so there is no way to obtain the numbers without Joshua getting
   // the lead. Best-effort + decoupled: it never blocks or fails the response.
-  context.waitUntil(saveValuationLead(request, contact, {
+  saveLeadOnce({
     fullAddress: subjectRecord?.formattedAddress || address,
     street: subjectRecord?.addressLine1 || "",
     city:   subjectRecord?.city || "",
     state:  subjectRecord?.state || "",
     zip:    subjectRecord?.zipCode || "",
     lat, lng
-  }));
+  });
 
   const anyData = marketValue || replacement?.value || arv?.value || assessor?.value;
 
@@ -1040,4 +1082,13 @@ export async function onRequest(context) {
     sourceUrl: "https://www.rentcast.io/api",
     fetchedAt: new Date().toISOString()
   });
+  } catch (err) {
+    // A bug or an unforeseen upstream failure must never cost the lead: save
+    // it with the raw input address, log loudly, and give the page its
+    // graceful error state.
+    console.error("VALUATION_COMPUTE_FAILED " + ((err && err.stack) || err));
+    saveLeadOnce({ fullAddress: address, street: "", city: "", state: "", zip: "", lat, lng });
+    return json({ ok: false, error: "upstream_failed", message: "Could not generate the valuation right now." }, 502);
+  }
+
 }

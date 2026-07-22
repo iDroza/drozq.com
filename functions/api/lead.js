@@ -219,6 +219,9 @@ export async function onRequestPost(context) {
     const sourcePage = String(formData.get("source_page") || formData.get("source") || "").trim();
     const consent = String(formData.get("consent") || "").trim();
     const timeline = String(formData.get("timeline") || "").trim();
+    const buyLocation = String(formData.get("buy_location") || "").trim();
+    const buyTimeline = String(formData.get("buy_timeline") || "").trim();
+    const buyProcess = String(formData.get("buy_process") || "").trim();
     const gclid = String(formData.get("gclid") || "").trim();
 
     // 4) Validation. Email + phone + consent are the hard requirements: they are
@@ -284,6 +287,9 @@ Lat/Lng: ${lat || "-"}, ${lng || "-"}
 INQUIRY
 Type: ${safeIntent}
 Timeline: ${timeline || "-"}
+Buy Location: ${buyLocation || "-"}
+Buy Timeline: ${buyTimeline || "-"}
+Buy Process: ${buyProcess || "-"}
 Referral Source: ${referralSource || "-"}
 
 NOTES
@@ -351,6 +357,9 @@ Consent: ${consent}
       lng,
       referral_source: referralSource,
       timeline,
+      buy_location: buyLocation,
+      buy_timeline: buyTimeline,
+      buy_process: buyProcess,
       gclid,
       message,
       source_page: sourcePage,

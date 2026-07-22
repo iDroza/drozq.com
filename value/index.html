@@ -3475,7 +3475,7 @@ body[data-view="after"] .value-loading { display: none; }
 <div id="value-results-root" class="value-results-root" role="region" aria-label="Your home valuation results" tabindex="-1"></div>
 
 <!-- Lead-capture gate: appears the instant a valuation succeeds, before the numbers render.
-     Easy to dismiss (X / backdrop / Esc / skip link); dismissing still reveals the numbers. -->
+     Hard gate: closing abandons the lookup; nothing is fetched or shown without contact. -->
 <div id="value-gate" class="value-gate-overlay" aria-hidden="true">
   <div class="value-gate-card" role="dialog" aria-modal="true" aria-labelledby="value-gate-title" aria-describedby="value-gate-sub">
     <button type="button" id="value-gate-close" class="value-gate-close" aria-label="Close and show my valuation">&times;</button>
@@ -3491,7 +3491,7 @@ body[data-view="after"] .value-loading { display: none; }
       </div>
       <div class="value-gate-field">
         <input type="tel" id="value-gate-phone" name="phone" class="value-gate-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
-      </div>
+      </div><div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;height:1px;width:1px;overflow:hidden"><input type="text" id="value-gate-hp" name="company_website" tabindex="-1" autocomplete="off"></div>
       <p id="value-gate-error" class="value-gate-error" role="alert"></p>
       <button type="submit" id="value-gate-submit" class="value-gate-submit">Show my valuation</button>
     </form>
@@ -3797,6 +3797,7 @@ body[data-view="after"] .value-loading { display: none; }
         setTimeout(function() { ensureValuePacObserver(); alignValuePac(); }, 0);
       });
       input.addEventListener("input", scheduleAlign);
+    input.addEventListener("input", function () { selectedPlace = null; });
       input.addEventListener("blur", function() {
         setTimeout(function() {
           pacActive = false;
@@ -4319,7 +4320,7 @@ body[data-view="after"] .value-loading { display: none; }
   // 11-digit string is always the country code (the Mary Morris fix).
   function gateNormalizeDigits(v) {
     var d = String(v == null ? "" : v).replace(/\D/g, "");
-    if (d.length === 11 && d.charAt(0) === "1") d = d.slice(1);
+    while (d.length > 10 && d.charAt(0) === "1") d = d.slice(1);
     return d.slice(0, 10);
   }
   if (gatePhone) {
@@ -4420,6 +4421,7 @@ body[data-view="after"] .value-loading { display: none; }
     var gc = (window.funnelState && window.funnelState.gclid) || "";
     if (!gc) { try { gc = sessionStorage.getItem("drozq_gclid") || ""; } catch (e) {} }
     var payload = {
+      company_website: (document.getElementById("value-gate-hp") || {}).value || "",
       address: pendingAddr,
       lat: pendingLat, lng: pendingLng,
       name: name, full_name: name, email: email, phone: phone,
@@ -4439,13 +4441,23 @@ body[data-view="after"] .value-loading { display: none; }
       .then(function(res){
         resetBtn();
         if (!res.ok || !res.data || !res.data.ok) {
-          // The lead is still captured server-side, so a no-data address is not
-          // a lost lead; tell them Joshua will follow up by hand.
-          hideGate();
-          setView(BEFORE);
-          var msg = (res.data && res.data.message) || "Thanks, I've got your details. I couldn't auto-generate a full valuation for that address, but I'll build one by hand and send it over. Or call me direct at (949) 438-5948.";
-          showError(msg);
-          trackEvent("valuation_error", { error: (res.data && res.data.error) || "no_data", status: res.status });
+          var errCode = (res.data && res.data.error) || "";
+          // A 200 ok:false (no data for the address) and a 502 upstream_failed
+          // both saved the lead server-side before returning, so "I've got your
+          // details" is true there. Config/validation failures (503 key missing,
+          // 400, 403) save nothing: keep the gate open and let them retry
+          // instead of falsely claiming capture.
+          var leadSaved = res.ok || errCode === "upstream_failed";
+          if (leadSaved) {
+            hideGate();
+            setView(BEFORE);
+            var msg = (res.ok && res.data && res.data.message) ||
+              "Thanks, I've got your details. I couldn't auto-generate a full valuation for that address, but I'll build one by hand and send it over. Or call me direct at (949) 438-5948.";
+            showError(msg);
+          } else {
+            showGateError("Could not generate the report right now. Try again in a minute, or call me direct at (949) 438-5948.");
+          }
+          trackEvent("valuation_error", { error: errCode || "no_data", status: res.status });
           return;
         }
         lastQuery = pendingAddr;
@@ -4501,9 +4513,13 @@ body[data-view="after"] .value-loading { display: none; }
       try { _d = JSON.parse(_h); } catch (e) {}
       if (_d && _d.address && _d.email && _d.phone && (Date.now() - (_d.ts || 0) < 600000)) {
         if (input) input.value = _d.address;
-        pendingAddr = _d.address;
-        pendingLat = (_d.lat != null) ? _d.lat : null;
-        pendingLng = (_d.lng != null) ? _d.lng : null;
+        // Open the gate FIRST (prefilled): every generateValuation failure path
+        // then renders into a visible, retryable dialog. The old flow errored
+        // into a hidden gate and lost the collected lead on one network blip.
+        openGate(_d.address, (_d.lat != null) ? _d.lat : null, (_d.lng != null) ? _d.lng : null);
+        if (gateName)  gateName.value  = (_d.name || "").trim();
+        if (gateEmail) gateEmail.value = _d.email;
+        if (gatePhone) gatePhone.value = _d.phone;
         trackEvent("valuation_submit", { address: _d.address, src: _d.src || "handoff" });
         generateValuation((_d.name || "").trim(), _d.email, _d.phone);
       }
@@ -5317,7 +5333,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
         var current = (inp.value || "").trim().toLowerCase();
         if (!current || current === "irvine, ca") {
           inp.value = returningData.address.formatted;
-          validAddressMap.set(inp, true);
+          validAddressMap.set(inp, returningData.address.lat != null && returningData.address.lng != null);
         }
       }
     }
@@ -5971,7 +5987,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   // ("(194)...") AND truncated the real last digit, silently corrupting leads.
   function normalizeUsDigits(value) {
     var d = String(value == null ? "" : value).replace(/\D/g, "");
-    if (d.length === 11 && d.charAt(0) === "1") d = d.slice(1);
+    while (d.length > 10 && d.charAt(0) === "1") d = d.slice(1);
     return d.slice(0, 10);
   }
   function formatPhone() {
@@ -6600,7 +6616,8 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       closeModal();
     }
   });
-})();
+window.addEventListener("pageshow", function (e) { if (e.persisted) window.location.reload(); });
+  })();
 </script>
 <!-- DROZQ_FUNNEL_JS_END -->
 <script>
@@ -6619,8 +6636,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     if (overlay) overlay.classList.add("drozq-mobile-overlay");
     document.body.style.overflow = "hidden";
   }
-  function closeMobileNav() {
-    if (!sidebar) return;
+  function closeMobileNav() { if (!sidebar || sidebar.getAttribute("data-active") !== "true") return;
     sidebar.setAttribute("data-active", "false");
     if (overlay) overlay.classList.remove("drozq-mobile-overlay");
     document.body.style.overflow = "";

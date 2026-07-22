@@ -57,9 +57,16 @@ export async function onRequestPost(context) {
       return json({ ok: false, error: "bad_issuer" }, 401);
     }
 
-    // 4) Audience check (only enforced when the env var is configured)
+    // 4) Audience check. REQUIRED: without aud pinning, an ID token minted
+    //    for any other Google app verifies fine and mints a lead carrying a
+    //    real third party's verified email with fabricated consent. The env
+    //    var must be set before One Tap goes live (the homepage block is
+    //    inert until its client ID is pasted anyway).
     const expectedAud = env.GOOGLE_ONETAP_CLIENT_ID;
-    if (expectedAud && String(claims.aud || "") !== String(expectedAud)) {
+    if (!expectedAud) {
+      return json({ ok: false, error: "client_id_not_configured" }, 501);
+    }
+    if (String(claims.aud || "") !== String(expectedAud)) {
       return json({ ok: false, error: "bad_audience" }, 401);
     }
 
