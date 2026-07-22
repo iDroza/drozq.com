@@ -4955,10 +4955,12 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   });
 var fx = document.getElementById("funnel-close-x");
   if (fx) fx.addEventListener("click", function () {
-    overlay.classList.remove("is-open");
-    overlay.setAttribute("aria-hidden", "true");
+    var fo = document.getElementById("funnel-overlay");
+    if (fo) { fo.classList.remove("is-open"); fo.setAttribute("aria-hidden", "true"); }
     document.body.style.overflow = "";
-    track("funnel_close", { mode: window.activeFunnel || "" });
+    var fm = { mode: window.activeFunnel || "" };
+    if (window.posthog && window.posthog.capture) window.posthog.capture("funnel_close", fm);
+    if (window.dataLayer) window.dataLayer.push({ event: "funnel_close", mode: fm.mode });
   });
   window.addEventListener("pageshow", function (e) { if (e.persisted) window.location.reload(); });
   })();
