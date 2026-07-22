@@ -29,8 +29,8 @@ These move the needle the most. They are concentrated on `/index.html`.
 ## SEO / AI search
 
 - **Internal links footer block.** Only `/privacy/`, `/terms/`, and `/faq/` (via header) are linked from the homepage. Add a small internal-links section linking `/about/`, `/testimonials/`, `/field-notes/`, `/market-insights/`, `/the-process/`, `/where-we-help/`, `/contact/`. Important for crawl coverage. (Note: these are legacy brand-mode pages; they still exist and accept traffic.)
-- **Verify drozq.com in Google Search Console (Joshua, ~2 minutes).** The embarrassing placeholder meta was removed site-wide 2026-07-22; no token needed: at search.google.com/search-console add a URL-prefix property for https://drozq.com and pick the "Google Tag Manager" verification method (works because GTM-KVV3R96P is on every page and Joshua owns the container). If he prefers the meta-tag method instead, paste the token in chat and it gets installed site-wide.
-- **Bing Webmaster (30 seconds, after GSC).** bing.com/webmasters offers "Import from Google Search Console": one click, no token, imports the verified property.
+- **Submit the sitemap in Search Console (Joshua, 30 seconds).** GSC ownership confirmed 2026-07-22 (domain already verified). In the drozq.com property: Sitemaps → enter `sitemap.xml` → Submit. The sitemap was refreshed the same day (22 URLs incl. `/terms/`, honest lastmod dates); robots.txt already advertises it.
+- **Bing Webmaster (30 seconds, after the sitemap).** bing.com/webmasters offers "Import from Google Search Console": one click, no token, imports the verified property and its sitemap.
 
 ---
 
