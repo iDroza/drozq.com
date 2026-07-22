@@ -6119,4 +6119,126 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   window.addEventListener("hashchange", applyHashTab);
 })();
 </script>
-<script id="drozq-hdr-reveal">(function(){try{var h=document.querySelector('#__next>header');if(!h)return;var f=function(){h.classList.toggle('drozq-hdr-on',(window.scrollY||document.documentElement.scrollTop||0)>64)};window.addEventListener('scroll',f,{passive:!0});f()}catch(e){}})();</script></body></html>
+<script id="drozq-hdr-reveal">(function(){try{var h=document.querySelector('#__next>header');if(!h)return;var f=function(){h.classList.toggle('drozq-hdr-on',(window.scrollY||document.documentElement.scrollTop||0)>64)};window.addEventListener('scroll',f,{passive:!0});f()}catch(e){}})();</script><style id="wwh-gate-css">.value-gate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(26,24,22,0.72);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.value-gate-overlay.is-open { display: flex; opacity: 1; }
+.value-gate-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 18px;
+  padding: 34px 24px 24px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.32);
+  text-align: center;
+  transform: translateY(14px);
+  transition: transform 0.2s ease;
+}
+.value-gate-overlay.is-open .value-gate-card { transform: translateY(0); }
+.value-gate-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  color: #757575;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 9999px;
+}
+.value-gate-close:hover { color: #1a1816; background: #f2efea; }
+.value-gate-eyebrow {
+  display: inline-block;
+  color: #1f7a44;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0 0 10px;
+}
+.value-gate-title {
+  color: #1a1816;
+  font-size: 26px;
+  line-height: 32px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+.value-gate-sub {
+  color: #5c5650;
+  font-size: 15px;
+  line-height: 22px;
+  margin: 0 auto 20px;
+  max-width: 360px;
+}
+.value-gate-addr-em { font-weight: 700; color: #1a1816; }
+.value-gate-field { margin: 0 0 12px; }
+.value-gate-input {
+  width: 100%;
+  height: 52px;
+  box-sizing: border-box;
+  padding: 0 16px;
+  border: 1.5px solid #d8d2c8;
+  border-radius: 10px;
+  background: #fff;
+  color: #1a1816;
+  font-family: inherit;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.value-gate-input::placeholder { color: #9a948c; }
+.value-gate-input:focus { border-color: #d92228; }
+.value-gate-input.is-error { border-color: #d92228; background: #fdf3f3; }
+.value-gate-error {
+  display: none;
+  color: #d92228;
+  font-size: 13px;
+  line-height: 18px;
+  margin: 0 0 12px;
+  text-align: left;
+}
+.value-gate-error.is-shown { display: block; }
+.value-gate-submit {
+  width: 100%;
+  height: 54px;
+  border: none;
+  border-radius: 9999px;
+  background: #d92228;
+  color: #fff;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.value-gate-submit:hover { background: #a92e2a; }
+.value-gate-fineprint {
+  color: #9a948c;
+  font-size: 11px;
+  line-height: 16px;
+  margin: 16px 0 0;
+}
+.value-gate-fineprint a { color: #757575; text-decoration: underline; }
+@media (min-width: 768px) {
+  .value-gate-card { padding: 40px 36px 28px; }
+  .value-gate-title { font-size: 30px; line-height: 36px; }
+}
+</style><div id="value-gate" class="value-gate-overlay" aria-hidden="true"><div class="value-gate-card" role="dialog" aria-modal="true" aria-labelledby="value-gate-title" aria-describedby="value-gate-sub"><button type="button" id="value-gate-close" class="value-gate-close" aria-label="Close">&times;</button><p class="value-gate-eyebrow">&#10003; Free 5-system valuation</p><h2 id="value-gate-title" class="value-gate-title">What's your home worth?</h2><p id="value-gate-sub" class="value-gate-sub">Drop the address and where to send it. The full report renders the moment you submit.</p><form id="value-gate-form" novalidate><div class="value-gate-field"><input type="text" id="value-gate-addr" name="address" class="value-gate-input" placeholder="Enter your address" autocomplete="street-address" aria-label="Property address"></div><div class="value-gate-field"><input type="text" id="value-gate-name" name="full_name" class="value-gate-input" placeholder="Full name" autocomplete="name" autocapitalize="words" aria-label="Full name"></div><div class="value-gate-field"><input type="email" id="value-gate-email" name="email" class="value-gate-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" aria-label="Email"></div><div class="value-gate-field"><input type="tel" id="value-gate-phone" name="phone" class="value-gate-input" placeholder="Phone" autocomplete="tel" inputmode="tel" aria-label="Phone"></div><p id="value-gate-error" class="value-gate-error" role="alert"></p><button type="submit" id="value-gate-submit" class="value-gate-submit">Show my valuation</button></form><p class="value-gate-fineprint">By submitting you agree Joshua Guerrero may call and text you about your home, including by automated means, at the number provided. Consent is not a condition of any purchase. Msg &amp; data rates may apply. <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a>.</p></div></div><script id="wwh-gate-js">(function(){try{var gate=document.getElementById("value-gate");if(!gate)return;var ttl=document.getElementById("value-gate-title"),addr=document.getElementById("value-gate-addr"),nameI=document.getElementById("value-gate-name"),email=document.getElementById("value-gate-email"),phone=document.getElementById("value-gate-phone"),err=document.getElementById("value-gate-error"),form=document.getElementById("value-gate-form"),closeBtn=document.getElementById("value-gate-close");var curCity="",place={lat:null,lng:null},acBound=false;function tr(ev,props){props=props||{};try{if(window.posthog&&posthog.capture)posthog.capture(ev,props)}catch(e){}try{window.dataLayer=window.dataLayer||[];var o={event:ev};for(var k in props)o[k]=props[k];dataLayer.push(o)}catch(e){}}function bindAC(){if(acBound)return;if(!(window.google&&google.maps&&google.maps.places))return;try{var ac=new google.maps.places.Autocomplete(addr,{types:["address"],componentRestrictions:{country:"us"}});ac.addListener("place_changed",function(){var p=ac.getPlace()||{};if(p.formatted_address)addr.value=p.formatted_address;if(p.geometry&&p.geometry.location){place.lat=p.geometry.location.lat();place.lng=p.geometry.location.lng()}});acBound=true}catch(e){}}function openGate(city){curCity=city||"";place={lat:null,lng:null};ttl.textContent=curCity?("What's your "+curCity+" home worth?"):"What's your home worth?";addr.placeholder=curCity?("Enter your "+curCity+" address"):"Enter your address";err.textContent="";gate.classList.add("is-open");gate.setAttribute("aria-hidden","false");try{document.documentElement.style.overflow="hidden";document.body.style.overflow="hidden"}catch(e){}document.addEventListener("keydown",onKey);bindAC();setTimeout(function(){try{addr.focus()}catch(e){}},60);tr("valuation_gate_shown",{src:"where-we-help",city:curCity})}function hideGate(){gate.classList.remove("is-open");gate.setAttribute("aria-hidden","true");try{document.documentElement.style.overflow="";document.body.style.overflow=""}catch(e){}document.removeEventListener("keydown",onKey)}function onKey(e){if(e.key==="Escape"){hideGate();tr("valuation_gate_dismiss",{src:"where-we-help",method:"esc"})}}closeBtn.addEventListener("click",function(){hideGate();tr("valuation_gate_dismiss",{src:"where-we-help",method:"close"})});function digits(x){x=String(x||"").replace(/\D/g,"");if(x.length===11&&x.charAt(0)==="1")x=x.slice(1);return x}form.addEventListener("submit",function(e){e.preventDefault();var a=(addr.value||"").trim(),em=(email.value||"").trim(),ph=digits(phone.value);if(a.length<6){err.textContent="Enter the property address.";addr.focus();return}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){err.textContent="Enter a valid email.";email.focus();return}if(ph.length!==10){err.textContent="Enter a valid 10-digit phone.";phone.focus();return}try{sessionStorage.setItem("drozq_val_handoff",JSON.stringify({address:a,lat:place.lat,lng:place.lng,name:(nameI.value||"").trim(),email:em,phone:ph,src:"where-we-help",ts:Date.now()}))}catch(e2){}tr("valuation_gate_submit",{src:"where-we-help",city:curCity});window.location.href="/value/"});document.addEventListener("click",function(e){var b=e.target&&e.target.closest&&e.target.closest('form button[type="submit"]');if(!b)return;var f=b.closest("form");if(!f||f.classList.contains("pos_relative"))return;var loc=f.querySelector('input[name="location"]');if(!loc)return;var m=/^(.+),\s*CA$/.exec(loc.value||"");if(!m)return;e.preventDefault();e.stopPropagation();openGate(m[1])},true);}catch(e){}})();</script></body></html>
