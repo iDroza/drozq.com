@@ -1,5 +1,6 @@
 import { enrollSubscriber } from "../_lib/enroll.js";
-import { renderLeadAlert, escapeHtml } from "../_lib/email.js";
+import { renderLeadAlert, escapeHtml, sendEmail } from "../_lib/email.js";
+import { renderValuationReport, reportInputFromApiResponse } from "../_lib/valuation_email.js";
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -40,6 +41,39 @@ async function fetchWithTimeout(url, options, ms) {
   } finally {
     clearTimeout(t);
   }
+}
+
+// The instant valuation report for sell-side funnel leads (the other half of
+// "both land in your inbox"). Compute-only internal call: the x-drozq-internal
+// header makes /api/valuation skip re-saving the lead. Runs inside waitUntil;
+// every failure logs and dies quietly.
+async function sendFunnelReport(env, seed) {
+  const resp = await fetchWithTimeout(seed.origin + "/api/valuation", {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-drozq-internal": env.EMAIL_SECRET },
+    body: JSON.stringify({
+      address: seed.address,
+      lat: seed.lat || undefined,
+      lng: seed.lng || undefined,
+      email: seed.email,
+      phone: seed.phone,
+      consent: "yes",
+      name: seed.name
+    })
+  }, 25000);
+  if (!resp.ok) {
+    console.error("VALUATION_REPORT_FETCH_FAILED status=" + resp.status + " addr=" + seed.address);
+    return;
+  }
+  const data = await resp.json();
+  if (!data || !data.ok) {
+    console.log("VALUATION_REPORT_NO_DATA addr=" + seed.address);
+    return;
+  }
+  const report = renderValuationReport(reportInputFromApiResponse(data));
+  const sent = await sendEmail(env, { to: seed.email, toName: seed.name || "", subject: report.subject, html: report.html, text: report.text, unsubUrl: "" });
+  if (sent && sent.ok) console.log("VALUATION_REPORT_SENT to=" + seed.email + " addr=" + seed.address);
+  else console.error("VALUATION_REPORT_FAILED to=" + seed.email + " err=" + (sent && (sent.error || sent.status)));
 }
 
 // Deliver an accepted lead to every configured channel, best effort. CRITICAL
@@ -151,6 +185,17 @@ async function deliverLead(env, lead) {
     // No delivery channel at all: log the full lead so Joshua can recover it
     // from the Cloudflare Pages function logs. The visitor still got a 200.
     console.error("LEAD_NOT_DELIVERED no channel configured; recoverable lead below | " + logLine);
+  }
+
+  // Instant valuation report to the lead. Not a delivery channel for the
+  // alert (never counts toward the channels gauge); requires EMAIL_SECRET
+  // for the internal compute call and MailChannels for the send.
+  if (lead.reportSeed && env.EMAIL_SECRET) {
+    tasks.push(
+      sendFunnelReport(env, lead.reportSeed).catch((e) => {
+        console.error("VALUATION_REPORT_THREW " + ((e && e.message) || e) + " | " + logLine);
+      })
+    );
   }
 
   // Email platform enrollment (best effort, additive, NOT a delivery channel:
@@ -437,6 +482,21 @@ Consent: ${consent}
       page_url: pageUrl || sourcePage || null
     };
 
+    // Instant-report delivery: sell-side funnel leads with a real address get
+    // their valuation report emailed the moment they submit ("both land in
+    // your inbox"). /value/ leads are excluded here because /api/valuation
+    // already emails them directly (intent "Home Valuation Lead").
+    const wantsReport = (safeIntent === "Home Valuation" || safeIntent === "Home Sale + Purchase") && !!fullAddress && !!email;
+    const reportSeed = wantsReport ? {
+      origin: url.origin,
+      address: fullAddress,
+      lat: lat || null,
+      lng: lng || null,
+      email: email,
+      phone: phoneRaw,
+      name: safeName
+    } : null;
+
     // Backstop: the placeholder "Home Valuation View" soft-save was retired (the
     // /value/ page no longer creates anonymous leads). If a stale cached page
     // still posts it, accept the request but DELIVER NOTHING, so Joshua never
@@ -449,7 +509,7 @@ Consent: ${consent}
 
     // 10) Accept now, deliver after. The visitor's 200 does not depend on email
     // or Zapier succeeding, so a delivery outage can never break the funnel.
-    context.waitUntil(deliverLead(env, { emailContent, zapierPayload, fubEvent, logLine, subscriberSeed }));
+    context.waitUntil(deliverLead(env, { emailContent, zapierPayload, fubEvent, logLine, subscriberSeed, reportSeed }));
 
     return json({ ok: true }, 200);
   } catch (err) {

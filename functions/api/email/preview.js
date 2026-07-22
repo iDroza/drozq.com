@@ -12,6 +12,7 @@
 //                                               the no-address fallback copy
 
 import { renderEmail, renderLeadAlert, paragraphsToHtml, personalize, escapeHtml } from "../../_lib/email.js";
+import { renderValuationReport } from "../../_lib/valuation_email.js";
 import { getSequence } from "../../_lib/sequence.js";
 
 const MODES = { sell: "Home Valuation", buy: "Home Purchase", neutral: "" };
@@ -41,6 +42,28 @@ export async function onRequestGet(context) {
     source: url.searchParams.get("source") || "lead",
     intent: MODES[url.searchParams.get("mode") || "sell"] ?? ""
   };
+
+  // ?kind=valuation : the instant valuation report a lead receives
+  if (url.searchParams.get("kind") === "valuation") {
+    const fixture = {
+      street: "214 Cedarwood Ln", formatted: "214 Cedarwood Ln, Irvine, CA 92620",
+      trueValue: 1487000, avmValue: 1462000, avmLow: 1391000, avmHigh: 1533000,
+      assessorValue: 812000, assessorYear: 2025, rebuildValue: 986000, arvValue: 1642000,
+      beds: 4, baths: 3, sqft: 2380, yearBuilt: 1999,
+      comps: [
+        { address: "18 Goldenrod, Irvine, CA", sqft: 2310, price: 1450000, daysOld: 34 },
+        { address: "231 Pinewood Dr, Irvine, CA", sqft: 2455, price: 1512000, daysOld: 61 },
+        { address: "77 Maplewood Ct, Irvine, CA", sqft: 2240, price: 1418000, daysOld: 98 },
+        { address: "402 Cedarwood Ln, Irvine, CA", sqft: 2600, price: 1580000, daysOld: 122 }
+      ],
+      soldCount: 9, soldMedian: 1481000, soldWindowMonths: 6, moi: 3.4, lean: "seller",
+      rentMonthly: 4850, capRate: 3.9
+    };
+    return new Response(renderValuationReport(fixture).html, {
+      status: 200,
+      headers: { "content-type": "text/html; charset=UTF-8", "cache-control": "no-store" }
+    });
+  }
 
   // ?kind=alert : the internal lead-alert email (what lands in Joshua's inbox)
   if (url.searchParams.get("kind") === "alert") {

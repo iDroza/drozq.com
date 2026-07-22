@@ -20,20 +20,17 @@ When something ships, remove the item from this file in the same commit. Don't l
 
 These move the needle the most. They are concentrated on `/index.html`.
 
-- **Wire instant delivery of the funnel deliverable.** The funnel promises the home valuation report "the instant you submit" / "delivered the moment you finish," but `/api/lead` currently only emails the lead to Joshua; nothing auto-delivers to the visitor. Wire real instant delivery (auto-email the valuation, and/or render it inline from `/api/valuation`) so the promise is backed. Until then the instant copy runs ahead of the backend. (The old 5-playbook PDF half of this promise died with the 2026-07-20 playbook kill.)
 - **Headshot above the fold.** Joshua's `Waist.png` is referenced in JSON-LD schema but does not appear in the visible body. Add a hero block or aside that puts a face on the page.
 - **Stat callouts.** No specific Joshua stats on the homepage ("$43,250 in client savings so far," "7 days to MLS," etc.). Pull from case files. Three callouts max.
 - **"About Joshua" callout.** Short bio block somewhere on the homepage. Year started (2024), brokerage (Real Brokerage), DRE, one-line philosophy. Builds trust + EAT signal.
 - **Service-area body section.** Visible content section naming Irvine + Orange County neighborhoods (Turtle Rock, Woodbridge, Northwood, Crystal Cove, etc.). Currently only in JSON-LD `areaServed`. Helps local SEO + visitor confidence.
-- **Closing-CTA offer framing on 4 pages (Joshua's call).** `/field-notes/`, `/market-insights/`, `/prices/`, `/rates/` close with the human-CMA promise ("Free CMA, delivered within 24 hours" or equivalent) directly above forms that open the instant-valuation funnel. Decide per page: re-anchor to the instant valuation (as `/process/`'s closing now does), or keep the hand-built-CMA angle as the closer. `/thank-you/` (reply-time commitment) and `/value/` (refined-CMA tier) are intentional and stay. The 2026-07-14 sweep already moved every landing CTA to "Run my Valuation" + the instant H4 line site-wide; only these four closer paragraphs remain on the old framing.
-
 ---
 
 ## SEO / AI search
 
 - **Internal links footer block.** Only `/privacy/`, `/terms/`, and `/faq/` (via header) are linked from the homepage. Add a small internal-links section linking `/about/`, `/testimonials/`, `/field-notes/`, `/market-insights/`, `/the-process/`, `/where-we-help/`, `/contact/`. Important for crawl coverage. (Note: these are legacy brand-mode pages; they still exist and accept traffic.)
-- **`google-site-verification` token.** Current `<meta>` is the literal placeholder `REPLACE-WITH-SEARCH-CONSOLE-TOKEN`. Replace with the real token from Search Console. (Needs the token from Joshua's Search Console account; not automatable.)
-- **Bing Webmaster verification.** Add `<meta name="msvalidate.01" content="...">` next to the Google one. (Same: needs the real token.)
+- **Verify drozq.com in Google Search Console (Joshua, ~2 minutes).** The embarrassing placeholder meta was removed site-wide 2026-07-22; no token needed: at search.google.com/search-console add a URL-prefix property for https://drozq.com and pick the "Google Tag Manager" verification method (works because GTM-KVV3R96P is on every page and Joshua owns the container). If he prefers the meta-tag method instead, paste the token in chat and it gets installed site-wide.
+- **Bing Webmaster (30 seconds, after GSC).** bing.com/webmasters offers "Import from Google Search Console": one click, no token, imports the verified property.
 
 ---
 
@@ -46,11 +43,10 @@ These move the needle the most. They are concentrated on `/index.html`.
 
 ---
 
-## Code review 2026-07-22: flagged for Joshua's call (not auto-fixed)
+## Code review 2026-07-22: remaining item
 
-- **The funnel overlay has no close path.** No X, no Escape, no backdrop dismiss; only submit, browser-back, or reload exit it. May be deliberate hard-commit design, but combined with the autofill-open listener below an accidental open traps a paid visitor. Decide: add a quiet X / Escape handler, or keep the hard commit.
-- **The landing input's change-listener opens the funnel on any edit + blur.** Typing one character and clicking anywhere opens the full-screen funnel with an unvalidated address 60ms later, bypassing the Places gate (junk sell-lead addresses; the funnel re-asks nothing). Decide: restrict the auto-open to real autofill signals, or accept the aggressive open as a conversion play.
-- **Duplicate-lead retries are by design.** The funnel retries a submit up to 3x on network/5xx; a processed-but-unacknowledged request delivers the lead 2-3x (email/Zapier/FUB). An idempotency key (client-generated UUID deduped in lead.js) would end it; noting since the code comment accepts duplicates deliberately.
+Joshua ruled on the review's flagged decisions 2026-07-22: the funnel X shipped (quiet close, `funnel_close` event), the aggressive autofill-open listener stays (conversion play, accepted), and duplicate-lead retries stay as designed. Remaining:
+
 - **Email rows stuck in 'sending' have no reaper** if an isolate dies mid-send, and a failed sequence send skips that step permanently (claim-before-send has no retry queue). Both rare; add a reaper/requeue if send failures ever show up in `emailer.py log`.
 
 ---

@@ -942,7 +942,7 @@ Every funnel mode (Sell / Buy / Sell & Buy) renders the **same** value experienc
 - **Forms untouched.** Field names, IDs (`funnel-step5-name`, `funnel-step6-email/phone/submit`, etc.), handlers, validation, POST, redirect: all exactly as before. Only what the visitor SEES changed.
 - **Assets.** None. The old `funnel-timeline.webp` + `pb-*.webp` covers were deleted 2026-07-20 with the playbook kill (the timeline graphic carried the six-weeks-guarantee framing baked into the raster).
 - **CSS classes** (in the synced funnel `<style>`): `.funnel-vp-head/-block/-eyebrow/-title/-list/-note/-badge`, and the `#funnel-step-container[data-mode]` / `#funnel-form-col` split rules at `>=880px`. (`.funnel-timeline-*` rules were removed with the timeline block.)
-- **Open follow-up:** the "instant" copy runs ahead of the backend (the form emails the lead; nothing auto-delivers the valuation report yet). Wiring real instant delivery is pending.
+- **Instant delivery is LIVE (2026-07-22):** sell-side submits get the valuation report emailed immediately (`functions/_lib/valuation_email.js`; see CLAUDE.md "Instant delivery: WIRED"). The overlay also carries a quiet close X (`#funnel-close-x`, synced, fires `funnel_close`).
 - **Dead code:** the legacy per-mode `VALUEBAR.buy/sellandbuy`, `DELIVERABLE.buy/sellandbuy`, the `DV_BODY` helper, the `.funnel-dv-*` CSS, and (since the 2026-07-20 playbook kill) the `.funnel-vp-covers` CSS rule are now unused (the funnel always uses the sell entries). Safe to prune; tracked in BACKLOG.
 
 ### TCPA consent fineprint + in-funnel legal modal (2026-06-15)

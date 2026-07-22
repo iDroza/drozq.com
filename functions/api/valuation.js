@@ -1,3 +1,6 @@
+import { sendEmail } from "../_lib/email.js";
+import { renderValuationReport } from "../_lib/valuation_email.js";
+
 // /api/valuation - the 5-system home valuation aggregator powering /value/.
 //
 // One paid upstream (Rentcast) gives us property attributes + AVM market value +
@@ -817,6 +820,26 @@ async function saveValuationLead(request, contact, addr) {
   }
 }
 
+// Email the instant report to the visitor (transactional: no unsubscribe
+// link, no pixel). Failures log and never affect the response.
+async function sendReportEmail(env, contact, data) {
+  try {
+    const report = renderValuationReport(data);
+    const sent = await sendEmail(env, {
+      to: contact.email,
+      toName: contact.name || "",
+      subject: report.subject,
+      html: report.html,
+      text: report.text,
+      unsubUrl: ""
+    });
+    if (sent && sent.ok) console.log("VALUATION_REPORT_SENT to=" + contact.email + " addr=" + (data.formatted || "-"));
+    else console.error("VALUATION_REPORT_FAILED to=" + contact.email + " err=" + (sent && (sent.error || sent.status)));
+  } catch (e) {
+    console.error("VALUATION_REPORT_THREW " + ((e && e.message) || e));
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Utilities
 
@@ -843,6 +866,12 @@ function normalizeAddressInput(form) {
 export async function onRequest(context) {
   const { request, env } = context;
   const apiKey = env && env.RENTCAST_API_KEY;
+
+  // Internal compute-only calls (from /api/lead's instant-report delivery)
+  // authenticate with EMAIL_SECRET: they skip the lead save (the lead already
+  // exists) and skip the report email (the caller sends it).
+  const internalHeader = request.headers.get("x-drozq-internal") || "";
+  const isInternal = !!(env.EMAIL_SECRET && internalHeader && internalHeader === env.EMAIL_SECRET);
 
   if (!apiKey) {
     return json({
@@ -932,7 +961,7 @@ export async function onRequest(context) {
   // address) or throws (raw input address + 502).
   let leadSaved = false;
   const saveLeadOnce = (addr) => {
-    if (leadSaved) return;
+    if (leadSaved || isInternal) return;
     leadSaved = true;
     context.waitUntil(saveValuationLead(request, contact, addr));
   };
@@ -1018,6 +1047,27 @@ export async function onRequest(context) {
   });
 
   const anyData = marketValue || replacement?.value || arv?.value || assessor?.value;
+
+  // The other half of "both land in your inbox": email the visitor their
+  // instant report the moment it exists. Best-effort inside waitUntil; the
+  // hand-built CMA (sent by Joshua himself) follows per the site promise.
+  if (anyData && !isInternal && contact.email) {
+    context.waitUntil(sendReportEmail(env, contact, {
+      street: subjectRecord?.addressLine1 || null,
+      formatted: subjectRecord?.formattedAddress || address,
+      trueValue: triangulated?.value, avmValue: marketValue, avmLow: marketLow, avmHigh: marketHigh,
+      assessorValue: assessor?.value, assessorYear: assessor?.year,
+      rebuildValue: replacement?.value, arvValue: arv?.value,
+      beds: subjectRecord?.bedrooms, baths: subjectRecord?.bathrooms,
+      sqft: subjectSqft, yearBuilt: subjectRecord?.yearBuilt,
+      comps: (Array.isArray(cma?.sold) && cma.sold.length
+        ? cma.sold.slice(0, 5).map((s) => ({ address: s.address, sqft: s.squareFootage, price: s.soldPrice, daysOld: s.soldDate ? Math.round((Date.now() - new Date(s.soldDate).getTime()) / 86400000) : null }))
+        : (comps || []).slice(0, 5).map((c) => ({ address: c.formattedAddress, sqft: c.squareFootage, price: c.price, daysOld: c.daysOld }))),
+      soldCount: cma?.stats?.soldCount, soldMedian: cma?.stats?.soldMedian,
+      soldWindowMonths: cma?.stats?.soldWindowMonths, moi: cma?.stats?.monthsOfInventory,
+      lean: cma?.stats?.marketLean, rentMonthly: investor?.monthlyRent, capRate: investor?.capRate
+    }));
+  }
 
   return json({
     ok: !!anyData,
