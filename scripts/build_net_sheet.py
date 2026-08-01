@@ -236,13 +236,14 @@ CSS = """<style id="ns-css">
 }
 
 /* ---- content tables ---- */
-.ns-tablewrap{overflow-x:auto;max-width:920px;margin:0 auto;-webkit-overflow-scrolling:touch}
+.ns-tablewrap{overflow-x:auto;max-width:920px;margin:0 auto;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid #e5e5e5;border-radius:16px}
+.ns-tablewrap--white{background:#fbf8f4;border-color:#ece8e2}
 .ns-table{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
 .ns-table th{background:#1a1816;color:#fff;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:12px 14px}
-.ns-table th:first-child{border-radius:12px 0 0 0}
-.ns-table th:last-child{border-radius:0 12px 0 0}
 .ns-table td{color:#3f4650;padding:12px 14px;border-bottom:1px solid #ece8e2;line-height:21px;vertical-align:top}
+.ns-table tr:last-child td{border-bottom:none}
 .ns-table tr:nth-child(even) td{background:#fbf8f4}
+.ns-tablewrap--white .ns-table tr:nth-child(even) td{background:#fff}
 .ns-table td:first-child{color:#1a1816;font-weight:700;white-space:nowrap}
 .ns-table td:nth-child(2){white-space:nowrap;font-weight:700;color:#1a1816}
 .ns-cols{display:grid;grid-template-columns:1fr;gap:16px;max-width:920px;margin:0 auto}
@@ -649,7 +650,7 @@ DIFFERENCE = """
   <div class="ns-wrap">
     <h2 class="ns-h2">Why this one gets closer.</h2>
     <p class="ns-sub">Most net sheet calculators multiply your sale price by a few percentages. This one starts with your parcel.</p>
-    <div class="ns-tablewrap">
+    <div class="ns-tablewrap ns-tablewrap--white">
       <table class="ns-table">
         <thead><tr><th>The question</th><th>Typical calculator</th><th>Here</th></tr></thead>
         <tbody>
