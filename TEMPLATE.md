@@ -434,6 +434,13 @@ The fix is a class, `is-pac-open`, added to the pill while the dropdown is visib
 
 The synced funnel JS (`alignVisiblePac` inside `initFunnelPlaces`) owns this for every landing `form.pos_relative input[name="location"]`: on focus it snaps `.pac-container`'s `left`/`top`/`width` to the input (killing Google's default gap/inset) and toggles `is-pac-open` on the parent `form.pos_relative`. You get it for free by scaffolding the standard hero pill; do not hand-wire it.
 
+**Two ways this gets shipped broken (both found on `/net-sheet/`, 2026-08-01):**
+
+1. **Flattening only the input.** The class has to flatten the pill **wrapper** as well. If the wrapper keeps its full `border-radius`, its curved white bottom still renders under the square-topped dropdown and the seam reads as cut off, even though the input itself is square. Flatten both.
+2. **Putting a border on the pill.** A bordered pill draws a hairline straight across the input/dropdown seam (and a red-on-red edge where it passes under the CTA), which is the exact artifact this pattern exists to prevent. The canonical pill is **shadow-only** (`box-shadow: 0 1px 5px rgba(0,0,0,.11)`, no border), as on the homepage hero. If a field needs to read as "fill me in," carry that with a label, a step card, or copy, never with a border on the pill.
+
+Below 480px, where the input and the CTA stack, the input must be **its own pill** with the button beneath it (the homepage arrangement). One shared rounded container at that width puts the dropdown inside the container, on top of the button.
+
 **Bespoke address inputs carry their own copy.** A page-specific address field with its **own** `google.maps.places.Autocomplete` (not a `form.pos_relative input[name="location"]`) is invisible to the synced aligner, so it needs the pattern re-implemented locally: the flatten CSS on its own pill class + a focus/observer aligner that toggles the class and snaps its `.pac-container`. The only instance today is `/value/`'s `#value-address-input` (`.value-pill.is-pac-open` CSS + the aligner in `bindPlaces()`), gated so it only touches its own dropdown and cedes repositioning to the synced aligner once a landing pill has been focused (so the two never ping-pong). Any future bespoke address input must copy that.
 
 ### Hero pill width (canonical)
