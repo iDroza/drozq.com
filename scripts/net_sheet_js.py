@@ -595,6 +595,10 @@ JS = r"""<script id="ns-js">
             hideGate();
             showLookupError((res.data && res.data.message) ||
               "Thanks, I've got your details. I'll pull that record by hand and send the net sheet over. Or call me direct at (949) 438-5948.");
+            var accEl = $("ns-acc");
+            if (accEl) accEl.innerHTML = '<i>&#9888;</i><div><b>Still on generic defaults.</b> ' +
+              "<span>I could not pull that record automatically, so fill in your annual tax bill and payoff " +
+              "by hand, or let me send you the built version.</span></div>";
           } else {
             showGateError("Could not pull that record right now. Try again in a minute, or call me direct at (949) 438-5948.");
           }
@@ -710,6 +714,17 @@ JS = r"""<script id="ns-js">
     if (grid) grid.innerHTML = cards.join("");
     var rec = $("ns-record");
     if (rec) rec.classList.add("is-on");
+
+    /* Flip the accuracy strip: the numbers below are no longer generic. */
+    var acc = $("ns-acc");
+    if (acc){
+      acc.classList.add("is-ok");
+      acc.innerHTML = '<i>&#10003;</i><div><b>Built on the county record.</b> <span>' +
+        esc(lastAddress) + ". Your tax bill, " +
+        (t.specialAssessment && t.specialAssessment.detected ? "special assessment, " : "") +
+        (p.hoaMonthly ? "HOA dues, " : "") +
+        "and purchase are filled in below. Set your sale price and payoff and the rest is exact.</span></div>";
+    }
 
     /* ---- prefill the calculator ---- */
     if (est && est.value) setVal("ns-price", est.value);

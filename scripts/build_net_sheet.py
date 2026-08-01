@@ -85,23 +85,53 @@ CSS = """<style id="ns-css">
 .ns-eyebrow{color:#d92228;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin:0 0 8px}
 .ns-a{color:#d92228;font-weight:700;text-decoration:underline;text-underline-offset:2px}
 
-/* ---- lookup pill (bespoke Places input: carries its own flatten pattern) ---- */
-.ns-lookup{max-width:700px;margin:0 auto 10px}
-.ns-pill{display:flex;flex-direction:column;align-items:stretch;background:#fff;border-radius:30px;box-shadow:0 1px 5px rgba(0,0,0,.11);overflow:visible}
-.ns-pill input{border:none;outline:none;background:transparent;width:100%;height:56px;padding:0 20px;font-size:16px;font-family:inherit;color:#1a1816;border-radius:30px 30px 0 0;box-sizing:border-box}
+/* ---- step 1: the county lookup ------------------------------------------
+   Its own bordered card with a red accent so the address reads as the required
+   first action rather than decoration. The pill is a bespoke Places input, so
+   it also carries its own copy of the "input-pill-flattens" pattern
+   (TEMPLATE.md section 4): the pill supplies the rounded top, the dropdown
+   supplies the rounded bottom, one seamless container. The WRAPPER has to
+   flatten too, not just the input, or its rounded corner shows through under
+   the square-topped dropdown. Below 480px the input is its own pill with the
+   button stacked beneath, so the dropdown never opens across the button. */
+.ns-step1{background:#fff;border:1px solid #e5e5e5;border-left:4px solid #d92228;border-radius:20px;padding:22px 20px;max-width:760px;margin:0 auto 18px;box-sizing:border-box}
+.ns-step1 h2{color:#1a1816;font-size:22px;line-height:29px;font-weight:800;letter-spacing:.2px;margin:0 0 8px}
+.ns-step1-sub{color:#3f4650;font-size:15px;line-height:23px;margin:0 0 18px}
+.ns-step1-sub b{color:#1a1816;font-weight:700}
+.ns-lookup{margin:0}
+.ns-pill{display:flex;flex-direction:column;align-items:stretch;gap:10px;background:transparent;border-radius:0;overflow:visible}
+.ns-pill input{border:1px solid #d3cfca;outline:none;background:#fff;width:100%;height:54px;padding:0 18px;font-size:16px;font-family:inherit;color:#1a1816;border-radius:30px;box-sizing:border-box}
 .ns-pill input::placeholder{color:#9a948c}
-.ns-pill button{border:none;cursor:pointer;background:#d92228;color:#fff;font-family:inherit;font-weight:700;font-size:16px;height:52px;margin:0 3px 3px;border-radius:9999px}
+.ns-pill input:focus{border-color:#d92228}
+.ns-pill button{border:none;cursor:pointer;background:#d92228;color:#fff;font-family:inherit;font-weight:700;font-size:16px;height:52px;margin:0;border-radius:9999px}
 .ns-pill button:hover{background:#a92e2a}
-.ns-pill.is-pac-open input{border-radius:30px 30px 0 0}
+.ns-pill.is-pac-open input{border-radius:30px 30px 0 0;border-bottom-color:transparent}
 .pac-container{border-radius:0 0 16px 16px}
-.ns-lookup-note{color:#757575;font-size:13px;line-height:20px;text-align:center;margin:0}
-.ns-lookup-err{display:none;color:#d92228;font-size:14px;font-weight:700;text-align:center;margin:10px 0 0}
+.ns-lookup-note{color:#757575;font-size:13px;line-height:20px;margin:12px 0 0}
+.ns-lookup-err{display:none;color:#d92228;font-size:14px;font-weight:700;margin:12px 0 0}
 .ns-lookup-err.is-shown{display:block}
+/* Accuracy strip: says out loud that everything below is generic until the
+   record is pulled, then flips to name the address it was built on. */
+.ns-acc{display:flex;align-items:flex-start;gap:10px;max-width:760px;margin:0 auto;padding:13px 16px;border-radius:14px;background:#fbe9ea;font-size:14px;line-height:21px;box-sizing:border-box}
+.ns-acc.is-ok{background:#e7f5e9}
+.ns-acc i{font-style:normal;flex-shrink:0;color:#b81d22;font-size:15px;line-height:21px}
+.ns-acc.is-ok i{color:#0a801f}
+.ns-acc b{color:#b81d22;font-weight:800}
+.ns-acc.is-ok b{color:#0a801f}
+.ns-acc span{color:#3f4650}
 @media (min-width:480px){
-  .ns-pill{flex-direction:row;align-items:center;height:62px}
-  .ns-pill input{height:62px;border-radius:30px 0 0 30px}
+  .ns-pill{flex-direction:row;align-items:center;gap:0;background:#fff;border:1px solid #d3cfca;border-radius:30px;height:60px}
+  .ns-pill:focus-within{border-color:#d92228}
+  .ns-pill input{border:none;background:transparent;height:58px;border-radius:30px 0 0 30px}
   .ns-pill button{width:auto;padding:0 26px;margin:0 4px 0 0;flex-shrink:0}
-  .ns-pill.is-pac-open input{border-radius:30px 0 0 0}
+  /* The dropdown spans the input only and stops before the button, so the
+     wrapper AND the input flatten their bottom-LEFT corner. Button stays a pill. */
+  .ns-pill.is-pac-open{border-bottom-left-radius:0}
+  .ns-pill.is-pac-open input{border-radius:30px 0 0 0;border-bottom-color:transparent}
+}
+@media (min-width:768px){
+  .ns-step1{padding:30px 32px}
+  .ns-step1 h2{font-size:26px;line-height:34px}
 }
 
 /* ---- the record (revealed after a lookup) ---- */
@@ -248,18 +278,28 @@ TOOL = (
     '<section aria-label="Seller net sheet calculator" class="pos_relative z_1" id="calculator">'
     '<div class="ns-wrap">'
 
-    # --- address lookup -----------------------------------------------------
-    '<div class="ns-lookup ns-hide-print">'
+    # --- step 1: the county lookup ------------------------------------------
+    '<div class="ns-step1 ns-hide-print">'
+    '<p class="ns-eyebrow">Step 1</p>'
+    "<h2>Start with your address.</h2>"
+    '<p class="ns-step1-sub">Without it, every number below is a generic Orange County estimate. '
+    "With it, I pull your county record and fill in <b>what you paid and when</b>, <b>your last several "
+    "tax bills</b>, <b>whether a Mello-Roos rides on them</b>, and enough of your loan to back into your "
+    "payoff.</p>"
+    '<div class="ns-lookup">'
     '<form id="ns-lookup-form" autocomplete="off">'
+    '<label class="ns-lab" for="ns-address">Your property address</label>'
     '<div class="ns-pill" id="ns-pill">'
-    '<input type="text" id="ns-address" name="ns_address" placeholder="Enter your home\'s address" '
-    'autocomplete="off" aria-label="Enter your home\'s address">'
+    '<input type="text" id="ns-address" name="ns_address" placeholder="Start typing, then pick your address" '
+    'autocomplete="off" aria-label="Your property address">'
     '<button type="submit" id="ns-lookup-btn">Pull my county record</button>'
     "</div></form>"
     '<p class="ns-lookup-err" id="ns-lookup-err" role="alert"></p>'
-    "</div>"
-    '<p class="ns-lookup-note ns-hide-print">Purchase history, tax bills, and Mello-Roos come back pre-filled. '
-    "Or skip it and type your own numbers below.</p>"
+    '<p class="ns-lookup-note">Rather not? Skip it and type every number yourself below.</p>'
+    "</div></div>"
+    '<div class="ns-acc" id="ns-acc"><i>&#9888;</i><div><b>Generic defaults right now.</b> '
+    '<span>Property taxes, Mello-Roos, HOA dues, and your loan payoff are all guesses until you pull '
+    "the record above.</span></div></div>"
 
     # --- the record ---------------------------------------------------------
     '<div class="ns-record" id="ns-record" aria-live="polite">''<p class="ns-eyebrow" style="text-align:center">Pulled from the county record</p>''<div class="ns-rec-grid" id="ns-rec-grid"></div></div>'
@@ -270,6 +310,7 @@ TOOL = (
 
     # Group: the sale
     '<div class="ns-group">'
+    '<p class="ns-eyebrow">Step 2</p>'
     '<div class="ns-group-h"><h3>The sale</h3></div>'
     + money_field("ns-price", "Sale price", "Start from my estimate, then price it where the comps say.", "1,200,000")
     + '<div class="ns-f"><label class="ns-lab" for="ns-close">Estimated close date</label>'
