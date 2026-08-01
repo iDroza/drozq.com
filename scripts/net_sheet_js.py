@@ -345,6 +345,8 @@ JS = r"""<script id="ns-js">
       }
     }
     setText("ns-o-cg-h", (cgOn && cgTotal > 0) ? minus(cgTotal) : "$0");
+
+    scheduleFit();
   }
 
   /* ---------------- wiring --------------------------------------------- */
@@ -383,6 +385,23 @@ JS = r"""<script id="ns-js">
     adv.classList.toggle("is-on", on);
     this.setAttribute("aria-expanded", on ? "true" : "false");
   });
+
+  /* The output card never scrolls inside itself. It sticks while it fits under
+     the fixed header; the moment its content is taller than the viewport
+     (short laptop, or the capital gains rows opening) it drops to static and
+     scrolls with the page, so the whole card is always readable. */
+  function fitOut(){
+    var out = $("ns-out");
+    if (!out) return;
+    out.classList.remove("ns-out--tall");
+    if (window.innerWidth >= 992 && out.offsetHeight + 108 > window.innerHeight) out.classList.add("ns-out--tall");
+  }
+  var fitRaf = null;
+  function scheduleFit(){
+    if (fitRaf) return;
+    fitRaf = requestAnimationFrame(function(){ fitRaf = null; fitOut(); });
+  }
+  window.addEventListener("resize", scheduleFit);
 
   var printBtn = $("ns-print");
   if (printBtn) printBtn.addEventListener("click", function(){ track("net_sheet_print", {}); window.print(); });

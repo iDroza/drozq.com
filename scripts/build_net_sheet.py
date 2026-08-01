@@ -50,6 +50,7 @@ CHROME = (
     'section[aria-labelledby=ns-hero-title]{background:#f2f0ef;padding-top:56px;padding-bottom:28px}'
     'section[aria-label="Seller net sheet calculator"]{background:#f2f0ef;padding-bottom:56px}'
     '@media(min-width:768px){section[aria-labelledby=ns-hero-title]{padding-top:84px;padding-bottom:36px}}'
+    'main.ov_hidden{overflow:visible}'
     '[id]{scroll-margin-top:80px}'
     '@media print{'
     '@layer base{#__next>header{display:none !important}}'
@@ -229,7 +230,8 @@ CSS = """<style id="ns-css">
 }
 @media (min-width:992px){
   .ns-tool{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:24px}
-  .ns-out{position:sticky;top:88px;max-height:calc(100vh - 108px);overflow-y:auto}
+  .ns-out{position:sticky;top:88px}
+  .ns-out.ns-out--tall{position:static}
   .ns-rec-grid{grid-template-columns:1fr 1fr 1fr}
 }
 
