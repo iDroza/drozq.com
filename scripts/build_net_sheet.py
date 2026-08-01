@@ -100,12 +100,11 @@ CSS = """<style id="ns-css">
 .ns-step1-sub b{color:#1a1816;font-weight:700}
 .ns-lookup{margin:0}
 .ns-pill{display:flex;flex-direction:column;align-items:stretch;gap:10px;background:transparent;border-radius:0;overflow:visible}
-.ns-pill input{border:1px solid #d3cfca;outline:none;background:#fff;width:100%;height:54px;padding:0 18px;font-size:16px;font-family:inherit;color:#1a1816;border-radius:30px;box-sizing:border-box}
+.ns-pill input{border:none;outline:none;background:#fff;width:100%;height:56px;padding:0 20px;font-size:16px;font-family:inherit;color:#1a1816;border-radius:30px;box-shadow:0 1px 5px rgba(0,0,0,.11);box-sizing:border-box}
 .ns-pill input::placeholder{color:#9a948c}
-.ns-pill input:focus{border-color:#d92228}
 .ns-pill button{border:none;cursor:pointer;background:#d92228;color:#fff;font-family:inherit;font-weight:700;font-size:16px;height:52px;margin:0;border-radius:9999px}
 .ns-pill button:hover{background:#a92e2a}
-.ns-pill.is-pac-open input{border-radius:30px 30px 0 0;border-bottom-color:transparent}
+.ns-pill.is-pac-open input{border-radius:30px 30px 0 0}
 .pac-container{border-radius:0 0 16px 16px}
 .ns-lookup-note{color:#757575;font-size:13px;line-height:20px;margin:12px 0 0}
 .ns-lookup-err{display:none;color:#d92228;font-size:14px;font-weight:700;margin:12px 0 0}
@@ -120,14 +119,13 @@ CSS = """<style id="ns-css">
 .ns-acc.is-ok b{color:#0a801f}
 .ns-acc span{color:#3f4650}
 @media (min-width:480px){
-  .ns-pill{flex-direction:row;align-items:center;gap:0;background:#fff;border:1px solid #d3cfca;border-radius:30px;height:60px}
-  .ns-pill:focus-within{border-color:#d92228}
-  .ns-pill input{border:none;background:transparent;height:58px;border-radius:30px 0 0 30px}
+  .ns-pill{flex-direction:row;align-items:center;gap:0;background:#fff;border-radius:30px;box-shadow:0 1px 5px rgba(0,0,0,.11);height:62px}
+  .ns-pill input{background:transparent;box-shadow:none;height:62px;border-radius:30px 0 0 30px}
   .ns-pill button{width:auto;padding:0 26px;margin:0 4px 0 0;flex-shrink:0}
   /* The dropdown spans the input only and stops before the button, so the
      wrapper AND the input flatten their bottom-LEFT corner. Button stays a pill. */
   .ns-pill.is-pac-open{border-bottom-left-radius:0}
-  .ns-pill.is-pac-open input{border-radius:30px 0 0 0;border-bottom-color:transparent}
+  .ns-pill.is-pac-open input{border-radius:30px 0 0 0}
 }
 @media (min-width:768px){
   .ns-step1{padding:30px 32px}
