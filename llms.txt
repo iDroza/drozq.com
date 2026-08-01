@@ -4,6 +4,7 @@
 
 ## Sell-side resources
 
+- [Seller net sheet calculator](https://drozq.com/net-sheet/): a California net-proceeds calculator built on the county record: multi-year property tax bills, assessed value, Mello-Roos and special assessment detection, escrow tax proration against the July-to-June fiscal year and your close date, a mortgage payoff solved from your monthly payment and recorded purchase, county and city documentary transfer tax (including Measure ULA), FTB Form 593 withholding, and a capital gains estimate with the $250k/$500k exclusion.
 - [Cost to sell a house in Orange County](https://drozq.com/cost-to-sell/): every 2026 line item (commission, escrow, title, $1.10/$1,000 county transfer tax), a worked $1,200,000 example netting $726,930, capital gains exclusion, and Prop 19 tax-base transfer.
 - [Selling an inherited house in Orange County](https://drozq.com/inherited-house/): probate vs trust timelines (30-60 days from a trust, 4-9 months in probate), the step-up in basis, Prop 19 reassessment after 2021, sibling buyouts, and the five-step estate sale process.
 - [Selling a house during divorce in California](https://drozq.com/divorce-sale/): community property and the 50/50 baseline, automatic restraining orders after service, the three exits (sell and split, buyout, deferred sale order), the $500,000 married capital gains clock, and a neutral sale process.
