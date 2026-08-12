@@ -1,6 +1,6 @@
 """Shared assets for the case-file pages.
 
-Three migration scripts (testimonials index, case 001, case 002) all need
+The testimonials index and all three case-file generators need
 the same cf-* design system, the same landing-form pill, and the same
 cross-link strip. This module exports them once.
 
@@ -9,7 +9,10 @@ is fully self-contained inside `<main>` and does not depend on a `:root`
 declaration on the page.
 """
 
-# Color tokens — remapped from the legacy brand-mode green/navy palette to
+from pathlib import Path
+import re
+
+# Color tokens, remapped from the legacy brand-mode green/navy palette to
 # the homepage red/dark palette. Inlined where they appear in the cf-* CSS.
 _TOKENS = {
     "var(--color-white)": "#ffffff",
@@ -271,6 +274,49 @@ _CF_CSS_RAW = r"""
 }
 .cf-takeaway__next a:hover { color: var(--color-green); border-color: var(--color-green); }
 
+/* Property photography, always contained at or below the 1024px MLS source. */
+.cf-photo-grid {
+  display: grid; grid-template-columns: 1fr; gap: 18px;
+  max-width: 1000px; margin: 50px auto 0;
+}
+.cf-photo {
+  margin: 0; overflow: hidden; background: var(--color-white);
+  border: 1px solid var(--color-gray-light); border-radius: var(--radius-lg);
+}
+.cf-photo img {
+  display: block; width: 100%; height: auto; aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+.cf-photo figcaption {
+  padding: 14px 18px; color: var(--color-navy-light);
+  font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; text-align: left;
+}
+
+/* Transaction execution steps. */
+.cf-steps {
+  display: grid; grid-template-columns: 1fr; gap: 18px;
+  max-width: 1000px; margin: 50px auto 0; padding: 0; list-style: none;
+}
+.cf-step {
+  background: var(--color-white); border: 1px solid var(--color-gray-light);
+  border-radius: var(--radius-lg); padding: 30px 24px; text-align: left;
+}
+.cf-step__number {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; margin-bottom: 20px; border-radius: 50%;
+  background: var(--color-green); color: var(--color-white);
+  font-size: 0.9rem; font-weight: 800;
+}
+.cf-step h3 {
+  margin: 0 0 10px; color: var(--color-navy);
+  font-size: 1.15rem; line-height: 1.3;
+}
+.cf-step p {
+  margin: 0; color: var(--color-navy-light);
+  font-size: 0.98rem; line-height: 1.6;
+}
+
 /* .cf-reveal: scroll-fade-in removed; sections render immediately. */
 .cf-reveal { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) {
@@ -427,6 +473,12 @@ _CF_CSS_RAW = r"""
 @media (min-width: 560px) {
   .cf-cta-pill { flex-direction: row; align-items: center; }
 }
+@media (min-width: 769px) {
+  .cf-photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cf-photo-grid--feature .cf-photo:first-child { grid-column: 1 / -1; }
+  .cf-photo-grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cf-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 @media (min-width: 992px) {
   .cf-index-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
 }
@@ -515,8 +567,7 @@ def cta_pill(placeholder: str = "City and State or ZIP", mode: str = "buy") -> s
     if mode not in {"buy", "sell"}:
         raise ValueError(f"Unsupported CTA mode: {mode}")
     tab_id = "tab-buy" if mode == "buy" else "tab-sell"
-    return f"""
-    <div role="tabpanel" aria-labelledby="{tab_id}" class="cf-cta-form">
+    return f"""<div role="tabpanel" aria-labelledby="{tab_id}" class="cf-cta-form">
       <form class="pos_relative">
         <div class="cf-cta-pill">
           <input type="text" name="location" placeholder="{placeholder}"
@@ -526,3 +577,162 @@ def cta_pill(placeholder: str = "City and State or ZIP", mode: str = "buy") -> s
         <input type="hidden" name="gclid" value="">
       </form>
     </div>"""
+
+
+XREF_STYLE_BLOCK = (
+    '<style id="drozq-xref-css">'
+    '.xr-band{padding:48px 0}.xr--warm{background:#f2f0ef}.xr--white{background:#fff}'
+    '.xr-wrap{max-width:1035px;margin:0 auto;padding:0 32px;box-sizing:border-box}'
+    '.xr-head{max-width:720px;margin:0 auto 28px;text-align:center}'
+    '.xr-head h2{font-weight:800;opacity:.87;color:#2b2b2b;font-size:26px;line-height:34px;letter-spacing:.3px;margin:0 0 10px}'
+    '.xr-head p{color:#3f4650;font-size:16px;line-height:26px;margin:0}'
+    '.xr-grid{display:grid;grid-template-columns:1fr;gap:16px}'
+    '.xr-card{display:block;background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:24px;text-decoration:none;color:inherit;transition:border-color .15s ease,transform .15s ease,box-shadow .15s ease;text-align:left;box-sizing:border-box}'
+    '.xr--white .xr-card{background:#fbf8f4;border-color:#ece8e2}'
+    '.xr-card:hover{border-color:#d92228;transform:translateY(-2px);box-shadow:0 8px 20px rgba(26,24,22,.08)}'
+    '.xr-eyebrow{color:#d92228;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin:0 0 8px}'
+    '.xr-card h3{color:#1a1816;font-size:19px;line-height:26px;font-weight:700;margin:0 0 8px}'
+    '.xr-card p{color:#3f4650;font-size:15px;line-height:23px;margin:0 0 10px}'
+    '.xr-go{color:#d92228;font-weight:700;font-size:14px}'
+    '.xr-a{color:#d92228;font-weight:700;text-decoration:underline;text-underline-offset:2px}'
+    '@media (min-width:768px){.xr-band{padding:64px 0}.xr-head h2{font-size:32px;line-height:40px}'
+    '.xr-grid--2{grid-template-columns:1fr 1fr;gap:20px}.xr-grid--3{grid-template-columns:1fr 1fr 1fr;gap:20px}}'
+    '</style>'
+)
+
+
+def proof_xref(address: str, result: str, buyer_headline: str) -> str:
+    return (
+        XREF_STYLE_BLOCK
+        + '<section class="xr-band xr--warm"><div class="xr-wrap"><div class="xr-head">'
+        + '<h2>Where this deal lives now.</h2><p>The board it sits on and the playbook it followed.</p>'
+        + '</div><div class="xr-grid xr-grid--2"><a class="xr-card" href="/sold/">'
+        + f'<p class="xr-eyebrow">The board</p><h3>{address}, closed</h3><p>{result}</p>'
+        + '<span class="xr-go">See the board &rarr;</span></a><a class="xr-card" href="/buyers/">'
+        + f'<p class="xr-eyebrow">For buyers</p><h3>{buyer_headline}</h3>'
+        + '<p>The payment math, the closing-cost estimator, and how I run a search.</p>'
+        + '<span class="xr-go">Start here &rarr;</span></a></div></div></section>'
+    )
+
+
+CASE_FILE_CHROME_STYLE = (
+    '<style id="drozq-page-chrome">'
+    '@layer base{#__next>header{position:fixed !important;top:0;left:0;right:0}}'
+    '#__next>header{box-shadow:0 1px 5px rgba(0,0,0,.11)}'
+    'body{padding-top:48px}@media(min-width:768px){body{padding-top:64px}}'
+    '[id]{scroll-margin-top:80px}'
+    '.cf-hero.cf-hero{padding-bottom:150px}'
+    '.cf-hero__scroll{pointer-events:auto;cursor:pointer}'
+    '</style>'
+)
+
+
+CASE_FILE_SCROLL_SCRIPT = (
+    '<script id="cf-scroll-js">'
+    '(function(){try{var c=document.querySelector(".cf-hero__scroll");'
+    'if(!c)return;c.addEventListener("click",function(){var s=document.querySelector(".cf-section");'
+    'if(s)s.scrollIntoView({behavior:"smooth",block:"start"})})}catch(e){}})();'
+    '</script>'
+)
+
+
+def postprocess_case_file(
+    target: str,
+    *,
+    head_additions: str = "",
+    twitter_image: str | None = None,
+    og_image_dimensions: tuple[int, int] | None = None,
+    page_chrome: str = CASE_FILE_CHROME_STYLE,
+    og_type: str | None = "article",
+    add_scroll_script: bool = True,
+) -> None:
+    """Normalize a generated case-file page and remove homepage-only behavior."""
+
+    path = Path(__file__).resolve().parent.parent / target
+    text = path.read_text(encoding="utf-8")
+
+    text, css_count = re.subn(
+        r'<style id="drozq-hero-rotate-css">.*?</style>',
+        page_chrome,
+        text,
+        count=1,
+        flags=re.DOTALL,
+    )
+    if css_count != 1:
+        raise RuntimeError(f"{target}: expected one homepage hero CSS block, found {css_count}")
+
+    text, js_count = re.subn(
+        r'<script id="drozq-hero-rotate-js">.*?</script>',
+        "",
+        text,
+        count=1,
+        flags=re.DOTALL,
+    )
+    if js_count != 1:
+        raise RuntimeError(f"{target}: expected one homepage hero JS block, found {js_count}")
+
+    text, faq_count = re.subn(
+        r'<script type="application/ld\+json">(?=[^<]*"@type":"FAQPage")[^<]*</script>',
+        "",
+        text,
+        count=1,
+    )
+    if faq_count != 1:
+        raise RuntimeError(f"{target}: expected one inherited FAQPage schema, found {faq_count}")
+
+    if og_type is not None:
+        if text.count('<meta property="og:type" content="website">') != 1:
+            raise RuntimeError(f"{target}: expected one website og:type tag")
+        text = text.replace(
+            '<meta property="og:type" content="website">',
+            f'<meta property="og:type" content="{og_type}">',
+            1,
+        )
+
+    if twitter_image is not None:
+        text, twitter_count = re.subn(
+            r'<meta name="twitter:image" content="[^"]+">',
+            f'<meta name="twitter:image" content="{twitter_image}">',
+            text,
+            count=1,
+        )
+        if twitter_count != 1:
+            raise RuntimeError(f"{target}: expected one twitter:image tag, found {twitter_count}")
+
+    if og_image_dimensions is not None:
+        width, height = og_image_dimensions
+        for old, new in (
+            ('<meta property="og:image:width" content="1200">', f'<meta property="og:image:width" content="{width}">'),
+            ('<meta property="og:image:height" content="630">', f'<meta property="og:image:height" content="{height}">'),
+        ):
+            if text.count(old) != 1:
+                raise RuntimeError(f"{target}: expected one metadata tag: {old}")
+            text = text.replace(old, new, 1)
+
+    if head_additions:
+        if text.count("</head>") != 1:
+            raise RuntimeError(f"{target}: expected exactly one closing head tag")
+        text = text.replace("</head>", head_additions + "</head>", 1)
+
+    funnel_end_marker = "<!-- DROZQ_FUNNEL_JS_END -->"
+    mobile_nav_marker = '<script>\n(function() {\n  "use strict";\n\n  // Mobile hamburger:'
+    if text.count(funnel_end_marker) != 1 or text.count(mobile_nav_marker) != 1:
+        raise RuntimeError(f"{target}: expected one funnel end and one mobile-nav script")
+    funnel_end = text.index(funnel_end_marker) + len(funnel_end_marker)
+    mobile_nav = text.index(mobile_nav_marker, funnel_end)
+    text = text[:funnel_end] + "\n" + text[mobile_nav:]
+
+    if add_scroll_script and CASE_FILE_SCROLL_SCRIPT not in text:
+        if text.count("</body>") != 1:
+            raise RuntimeError(f"{target}: expected exactly one closing body tag")
+        text = text.replace("</body>", CASE_FILE_SCROLL_SCRIPT + "</body>", 1)
+
+    funnel_marker = "<!-- DROZQ_FUNNEL_HTML_BEGIN:"
+    if text.count(funnel_marker) != 1:
+        raise RuntimeError(f"{target}: expected exactly one funnel HTML start marker")
+    page_prefix, synced_funnel = text.split(funnel_marker, 1)
+    page_prefix = "\n".join(line.rstrip() for line in page_prefix.splitlines()) + "\n"
+    text = page_prefix + funnel_marker + synced_funnel
+
+    path.write_text(text, encoding="utf-8")
+    print(f"Postprocessed: {target}")

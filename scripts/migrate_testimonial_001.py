@@ -21,7 +21,13 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from scaffold_page import scaffold_page
-from _case_file_shared import CF_STYLE_BLOCK, COUNT_UP_AND_REVEAL_SCRIPT, cta_pill
+from _case_file_shared import (
+    CF_STYLE_BLOCK,
+    COUNT_UP_AND_REVEAL_SCRIPT,
+    cta_pill,
+    postprocess_case_file,
+    proof_xref,
+)
 
 
 HOUSE_SVG = '<svg viewBox="0 0 100 100"><path d="M50 12 L8 48 L18 48 L18 88 L42 88 L42 64 L58 64 L58 88 L82 88 L82 48 L92 48 Z"/></svg>'
@@ -207,7 +213,14 @@ CROSSLINK = """
 """
 
 
-MAIN_BODY = CF_STYLE_BLOCK + HERO + CLIENT + MISSION + SEARCH + DEAL + NEGOTIATION + QUOTE + TAKEAWAY + CROSSLINK + COUNT_UP_AND_REVEAL_SCRIPT
+PROOF_XREF = proof_xref(
+    "1917 E Harding St",
+    "$775,000 with $23,250 in credits and zero out-of-pocket closing costs, on the record.",
+    "Buying like the firefighter did",
+)
+
+
+MAIN_BODY = CF_STYLE_BLOCK + HERO + CLIENT + MISSION + SEARCH + DEAL + NEGOTIATION + QUOTE + TAKEAWAY + CROSSLINK + PROOF_XREF + COUNT_UP_AND_REVEAL_SCRIPT
 
 
 if __name__ == "__main__":
@@ -220,3 +233,4 @@ if __name__ == "__main__":
         og_title="Case File 001: $23,250 seller credit on a Long Beach first home",
         og_description="14 properties walked. One yes. A first-home + investment play in Long Beach.",
     )
+    postprocess_case_file("testimonials/001-long-beach-firefighter/index.html")

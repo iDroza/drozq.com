@@ -12,7 +12,28 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from scaffold_page import scaffold_page
-from _case_file_shared import CF_STYLE_BLOCK, COUNT_UP_AND_REVEAL_SCRIPT, cta_pill
+from _case_file_shared import (
+    CF_STYLE_BLOCK,
+    COUNT_UP_AND_REVEAL_SCRIPT,
+    XREF_STYLE_BLOCK,
+    cta_pill,
+    postprocess_case_file,
+)
+
+
+INDEX_CHROME_STYLE = (
+    '<style id="drozq-page-chrome">'
+    '@layer base{#__next>header{position:fixed !important;top:0;left:0;right:0}}'
+    '#__next>header{box-shadow:0 1px 5px rgba(0,0,0,.11)}'
+    'body{padding-top:48px}@media(min-width:768px){body{padding-top:64px}}'
+    '.drozq-photo-band{height:190px;background:#1a1816 url(/media/images/hero-giem/giem-18.webp) center/cover no-repeat}'
+    '@media(min-width:768px){.drozq-photo-band{height:250px}}'
+    '[id]{scroll-margin-top:80px}'
+    '</style>'
+)
+
+
+PHOTO_BAND = '<div class="drozq-photo-band" role="presentation"></div>'
 
 
 HERO = """
@@ -21,6 +42,7 @@ HERO = """
     <div class="cf-label">Case Files</div>
     <h1>Real deals. Real numbers. Real leverage.</h1>
     <p class="cf-index-hero__sub">Every client comes in with a different goal. A first home, an investment, a strategic entry, a move up. Here is how we execute on those goals, one deal at a time. Every case file is a real transaction with real numbers. We anonymize the clients because discretion is part of the service.</p>
+    <p class="ta_center" style="margin-top:18px"><a href="/sold/" style="color:#d92228;font-weight:700;text-decoration:none">See the sold board &rarr;</a></p>
   </div>
 </section>
 """
@@ -103,6 +125,9 @@ CARDS = """
 </section>
 """
 
+
+XREF = XREF_STYLE_BLOCK + """<section class="xr-band xr--white"><div class="xr-wrap"><div class="xr-head"><h2>The numbers live one page over.</h2><p>Where these deals sit on the record, and how the next one runs.</p></div><div class="xr-grid xr-grid--3"><a class="xr-card" href="/sold/"><p class="xr-eyebrow">The board</p><h3>Sold, with numbers left in</h3><p>$775,000 in Long Beach, $350,000 in Corona, $665,000 in Riverside, and $58,250 negotiated across all three.</p><span class="xr-go">See the board &rarr;</span></a><a class="xr-card" href="/process/"><p class="xr-eyebrow">Method</p><h3>The five steps</h3><p>The sequence behind every case file on this page.</p><span class="xr-go">See the process &rarr;</span></a><a class="xr-card" href="/about/"><p class="xr-eyebrow">The agent</p><h3>Who runs these deals</h3><p>One agent, one phone number. Every file above closed by me.</p><span class="xr-go">About me &rarr;</span></a></div></div></section>"""
+
 CTA = f"""
 <section class="cf-cta-strip">
   <div class="cf-narrow">
@@ -116,7 +141,7 @@ CTA = f"""
 """
 
 
-MAIN_BODY = CF_STYLE_BLOCK + HERO + STATS + CARDS + CTA + COUNT_UP_AND_REVEAL_SCRIPT
+MAIN_BODY = PHOTO_BAND + CF_STYLE_BLOCK + HERO + STATS + CARDS + XREF + CTA + COUNT_UP_AND_REVEAL_SCRIPT
 
 
 if __name__ == "__main__":
@@ -128,4 +153,10 @@ if __name__ == "__main__":
         main_body_html=MAIN_BODY,
         og_title="Case Files | Joshua Guerrero, Real Brokerage",
         og_description="Real deals, real numbers. Drozq case files document every transaction.",
+    )
+    postprocess_case_file(
+        "testimonials/index.html",
+        page_chrome=INDEX_CHROME_STYLE,
+        og_type=None,
+        add_scroll_script=False,
     )
