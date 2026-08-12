@@ -1,8 +1,9 @@
 """Build Case File 003 on the shared testimonial framework.
 
-Richard W.'s story follows the same Client, Mission, Search, Deal, Execution,
-and Takeaway rhythm as Case Files 001 and 002. Listing photography is kept
-inside a 1000px container so the 1024px CRMLS source is never enlarged.
+The Riverside truck driver's story follows the same Client, Mission, Search,
+Deal, Execution, and Takeaway rhythm as Case Files 001 and 002. Listing
+photography is kept inside a 1000px container so the 1024px CRMLS source is
+never enlarged.
 """
 
 from pathlib import Path
@@ -30,7 +31,7 @@ OG_IMAGE = "https://drozq.com/media/images/euclid/pool-day.webp"
 HERO = """
 <section class="cf-hero">
   <div class="cf-hero__inner">
-    <div class="cf-label">Case File 003 &middot; Riverside &middot; First-Time Buyer</div>
+    <div class="cf-label">Case File 003 &middot; Riverside &middot; Truck Driver</div>
     <h1>The first home of his life. The place his whole family had been waiting for.</h1>
   </div>
   <div class="cf-hero__scroll" aria-hidden="true">Scroll</div>
@@ -42,10 +43,11 @@ CLIENT = """
 <section class="cf-section">
   <div class="cf-narrow cf-reveal">
     <div class="cf-label">The Client</div>
-    <p class="cf-body">Richard W. spent 22 years building a steady life through his work at Ralphs. He had never owned a home. When he was finally ready to buy, this was not a temporary move or a box to check. He wanted the first home of his life to be the home that carried him into retirement.</p>
+    <p class="cf-body">The client was a truck driver who had spent 22 years building a steady life through his work at Ralphs. He had never owned a home. When he was finally ready to buy, this was not a temporary move or a box to check. He wanted the first home of his life to be the home that carried him into retirement.</p>
     <div class="cf-badges">
       <span class="cf-badge">First-Time Buyer</span>
-      <span class="cf-badge">22 Years at Ralphs</span>
+      <span class="cf-badge">Ralphs Truck Driver</span>
+      <span class="cf-badge">22 Years with Ralphs</span>
       <span class="cf-badge">Retirement Home</span>
       <span class="cf-badge">Riverside, CA</span>
     </div>
@@ -58,7 +60,7 @@ MISSION = """
 <section class="cf-section cf-section--alt">
   <div class="cf-narrow cf-reveal">
     <div class="cf-label">The Mission</div>
-    <p class="cf-body">Find a home with enough room for Richard to live comfortably, enough life in it to feel like a dream, and enough space for the whole family to gather. His children and grandchildren needed more than an address to visit. They needed a place where birthdays, BBQs, and long summer afternoons could become traditions.</p>
+    <p class="cf-body">Find a home with enough room for him to live comfortably, enough life in it to feel like a dream, and enough space for the whole family to gather. His children and grandchildren needed more than an address to visit. They needed a place where birthdays, BBQs, and long summer afternoons could become traditions.</p>
   </div>
 </section>
 """
@@ -70,7 +72,7 @@ SEARCH = """
     <div class="cf-label">The Search</div>
     <h2 class="cf-headline-stat">Only one home had the pool. His family could already see the summers ahead.</h2>
     <div style="max-width:680px; margin:0 auto;">
-      <p class="cf-body">Euclid Court had the bedrooms, the living space, and the right setting. More than that, it was the only home in Richard's search with a pool. The grandchildren could be in the water while the adults gathered around the grill, and everyone could stay without wondering where they would fit.</p>
+      <p class="cf-body">Euclid Court had the bedrooms, the living space, and the right setting. More than that, it was the only home in his search with a pool. The grandchildren could be in the water while the adults gathered around the grill, and everyone could stay without wondering where they would fit.</p>
     </div>
     <div class="cf-photo-grid cf-photo-grid--feature" aria-label="Euclid Court property photos">
       <figure class="cf-photo">
@@ -158,7 +160,7 @@ EXECUTION = """
 <section class="cf-section">
   <div class="cf-narrow cf-reveal">
     <div class="cf-label">The Execution</div>
-    <p class="cf-body">A first purchase carries enough emotion. The file itself needed discipline. Richard had a strong lender, we stayed ahead of every inspection, and decisions were made while there was still time to make them well. That coordination is what turned an accepted offer into keys ahead of schedule.</p>
+    <p class="cf-body">A first purchase carries enough emotion. The file itself needed discipline. He had a strong lender, we stayed ahead of every inspection, and decisions were made while there was still time to make them well. That coordination is what turned an accepted offer into keys ahead of schedule.</p>
   </div>
 
   <div class="cf-wide cf-reveal">
@@ -166,7 +168,7 @@ EXECUTION = """
       <li class="cf-step">
         <span class="cf-step__number">1</span>
         <h3>The loan file stayed ahead.</h3>
-        <p>Richard's lender kept underwriting, conditions, and communication moving before anyone had to chase them.</p>
+        <p>His lender kept underwriting, conditions, and communication moving before anyone had to chase them.</p>
       </li>
       <li class="cf-step">
         <span class="cf-step__number">2</span>
@@ -176,7 +178,7 @@ EXECUTION = """
       <li class="cf-step">
         <span class="cf-step__number">3</span>
         <h3>Escrow closed early.</h3>
-        <p>With lending and inspections moving together, the file was ready ahead of schedule and Richard received the keys sooner.</p>
+        <p>With lending and inspections moving together, the file was ready ahead of schedule and the first-time buyer received his keys sooner.</p>
       </li>
     </ol>
 
@@ -205,9 +207,9 @@ FAMILY = """
     <div class="cf-label">What the Keys Opened</div>
     <h2 class="cf-headline-stat">The pool was the feature. The family was the reason.</h2>
     <div style="max-width:680px; margin:0 auto;">
-      <p class="cf-body">Richard did not just buy a property. He changed what home means for his family. There is room for everyone, a pool his grandchildren can grow up remembering, and a covered patio ready for BBQs, birthdays, and ordinary afternoons that turn into the memories people keep.</p>
+      <p class="cf-body">He did not just buy a property. He changed what home means for his family. There is room for everyone, a pool his grandchildren can grow up remembering, and a covered patio ready for BBQs, birthdays, and ordinary afternoons that turn into the memories people keep.</p>
     </div>
-    <div class="cf-photo-grid cf-photo-grid--three" aria-label="Spaces for Richard's family">
+    <div class="cf-photo-grid cf-photo-grid--three" aria-label="Spaces for his family">
       <figure class="cf-photo">
         <img src="/media/images/euclid/living-room.webp" width="1024" height="684" alt="Spacious living room inside the Euclid Court home" loading="lazy" decoding="async">
         <figcaption>The main living room</figcaption>
@@ -259,7 +261,7 @@ CROSSLINK = """
 PROOF_XREF = proof_xref(
     "4194 Euclid Ct",
     "$665,000 with $15,000 toward closing costs, a private pool, and an early close. On the record.",
-    "Buying like Richard did",
+    "Buying like the Riverside truck driver did",
 )
 
 
@@ -287,8 +289,8 @@ ARTICLE_SCHEMA = {
     "@context": "https://schema.org",
     "@type": "Article",
     "@id": CANONICAL + "#story",
-    "headline": "Richard W.'s first home and family gathering place in Riverside",
-    "description": "After 22 years at Ralphs, first-time buyer Richard W. bought 4194 Euclid Ct with a $15,000 closing-cost credit and an early close.",
+    "headline": "A Riverside truck driver's first home and family gathering place",
+    "description": "After 22 years at Ralphs, a first-time buyer and truck driver bought 4194 Euclid Ct with a $15,000 closing-cost credit and an early close.",
     "image": [
         OG_IMAGE,
         "https://drozq.com/media/images/euclid/front-day.jpg",
@@ -323,7 +325,7 @@ BREADCRUMB_SCHEMA = {
     "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://drozq.com/"},
         {"@type": "ListItem", "position": 2, "name": "Client Stories", "item": "https://drozq.com/testimonials/"},
-        {"@type": "ListItem", "position": 3, "name": "Richard's Riverside First Home", "item": CANONICAL},
+        {"@type": "ListItem", "position": 3, "name": "The Riverside Truck Driver's First Home", "item": CANONICAL},
     ],
 }
 
@@ -331,13 +333,13 @@ BREADCRUMB_SCHEMA = {
 if __name__ == "__main__":
     scaffold_page(
         target=PAGE_PATH,
-        title="Case File 003 · Richard's Riverside First Home | Joshua Guerrero",
-        description="Richard W. bought his first home at 4194 Euclid Ct with a $15,000 closing-cost credit, a private pool, and an early close.",
+        title="Case File 003 · Riverside Truck Driver | Joshua Guerrero",
+        description="A Riverside truck driver bought his first home at 4194 Euclid Ct with a $15,000 closing-cost credit, a private pool, and an early close.",
         canonical="/testimonials/003-riverside-first-home/",
         main_body_html=MAIN_BODY,
-        og_title="Case File 003: $15,000 credit on Richard's Riverside first home",
-        og_description="After 22 years at Ralphs, Richard bought the retirement home where his whole family can gather.",
-        twitter_title="Case File 003: Richard's Riverside First Home",
+        og_title="Case File 003: $15,000 credit for a Riverside truck driver",
+        og_description="After 22 years at Ralphs, a truck driver bought the retirement home where his whole family can gather.",
+        twitter_title="Case File 003: The Riverside Truck Driver",
         twitter_description="$15,000 toward closing costs, a private pool, room for every generation, and keys ahead of schedule.",
         og_image=OG_IMAGE,
     )

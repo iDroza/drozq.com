@@ -61,6 +61,15 @@ class CaseFileTests(unittest.TestCase):
         self.assertNotIn("Homepage market-trends widget", html)
         self.assertNotIn('"@type":"FAQPage"', html)
 
+    def test_anonymized_client_name_stays_off_public_pages(self) -> None:
+        blocked_identity = "Rich" + "ard"
+        public_files = list(ROOT.rglob("*.html")) + [ROOT / "llms.txt"]
+        for path in public_files:
+            if any(part in {".git", ".codex", "node_modules"} for part in path.parts):
+                continue
+            with self.subTest(page=path.relative_to(ROOT)):
+                self.assertNotIn(blocked_identity.lower(), path.read_text(encoding="utf-8").lower())
+
     def test_shared_case_file_contract(self) -> None:
         for name, html in self.pages.items():
             with self.subTest(page=name):
@@ -95,7 +104,9 @@ class CaseFileTests(unittest.TestCase):
         self.assertIn('data-count-target="15000" data-count-prefix="$"', html)
         self.assertIn("$15,000", html)
         self.assertIn("22 years", html)
-        self.assertIn("only home in Richard's search with a pool", html)
+        self.assertIn("only home in his search with a pool", html)
+        self.assertIn("Ralphs Truck Driver", html)
+        self.assertIn("Case File 003 &middot; Riverside &middot; Truck Driver", html)
         self.assertIn("Escrow closed early", html)
         self.assertIn('<meta property="og:image" content="https://drozq.com/media/images/euclid/pool-day.webp">', html)
         self.assertIn('<meta name="twitter:image" content="https://drozq.com/media/images/euclid/pool-day.webp">', html)

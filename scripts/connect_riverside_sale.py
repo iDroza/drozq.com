@@ -113,17 +113,23 @@ def update_sold() -> None:
 }"""
     text = replace_once(text, media_old, media_new, "sold desktop grid")
 
-    card_anchor = '<a class="sold-link" href="/testimonials/002-corona-analyst/">Read the full case file &rarr;</a></div></article>'
-    euclid_card = """<article class="sold-card"><div class="sold-img" role="img" aria-label="Backyard pool at 4194 Euclid Court" style="background-image:url(/media/images/euclid/pool-dusk.webp);background-position:center 58%"><span class="sold-tag">SOLD</span><div class="sold-addr"><h3>4194 Euclid Ct</h3><p>Riverside, CA 92504</p></div></div><div class="sold-body"><p class="sold-role">Represented the buyer &middot; First-time buyer &middot; Closed early</p><div class="sold-nums"><div class="sold-num"><b>$665,000</b><span>Closed price</span></div><div class="sold-num"><b>$15,000</b><span>Closing-cost credit</span></div><div class="sold-num"><b>Private pool</b><span>Family gathering place</span></div></div><a class="sold-link" href="/testimonials/003-riverside-first-home/">Read Richard's story &rarr;</a></div></article>"""
-    if euclid_card not in text:
-        text = replace_once(text, card_anchor, card_anchor + euclid_card, "Euclid sold card")
+    euclid_card = """<article class="sold-card"><div class="sold-img" role="img" aria-label="Backyard pool at 4194 Euclid Court" style="background-image:url(/media/images/euclid/pool-dusk.webp);background-position:center 58%"><span class="sold-tag">SOLD</span><div class="sold-addr"><h3>4194 Euclid Ct</h3><p>Riverside, CA 92504</p></div></div><div class="sold-body"><p class="sold-role">Represented the buyer &middot; Truck driver &middot; First-time buyer &middot; Closed early</p><div class="sold-nums"><div class="sold-num"><b>$665,000</b><span>Closed price</span></div><div class="sold-num"><b>$15,000</b><span>Closing-cost credit</span></div><div class="sold-num"><b>Private pool</b><span>Family gathering place</span></div></div><a class="sold-link" href="/testimonials/003-riverside-first-home/">Read the truck driver's story &rarr;</a></div></article>"""
+    text = replace_element(
+        text,
+        '<article class="sold-card"><div class="sold-img" role="img" aria-label="Backyard pool at 4194 Euclid Court"',
+        "</article>",
+        euclid_card,
+        "Euclid sold card",
+    )
 
     text = replace_once(text, "The exact sequence both deals ran: price, prep, launch, negotiate, close.", "The exact sequence all three deals ran: price, prep, negotiate, inspect, close.", "sold process crosslink")
     text = replace_once(text, "Tell me what you are thinking about and I'll come back within the hour with a real answer, not a sales pitch.", "Tell me what you are thinking about and I'll come back within the hour with the property records pulled and a clear next step.", "sold closing CTA")
     write(path_name, text)
 
 
-BUYERS_PROOF = """<section class="bg_#fff py_48px md:py_64px"><div class="hub-wrap"><div class="hub-head"><h2>Proof.</h2><p>Three buyers, three strategies, three closed deals.</p></div><div class="hub-grid hub-grid--2"><a class="hub-card" href="/testimonials/001-long-beach-firefighter/"><p class="hub-eyebrow">Case file 001</p><h3>The Long Beach firefighter</h3><p>A first-time buyer with a long-term plan, closed while his peers kept renting.</p><span class="hub-go">Read the file &rarr;</span></a><a class="hub-card" href="/testimonials/002-corona-analyst/"><p class="hub-eyebrow">Case file 002</p><h3>The Corona analyst</h3><p>He analyzes numbers for the State of California. Then he ran mine on his own purchase.</p><span class="hub-go">Read the file &rarr;</span></a><a class="hub-card" href="/testimonials/003-riverside-first-home/"><p class="hub-eyebrow">Case file 003</p><h3>Richard's Riverside first home</h3><p>$15,000 toward closing costs, a pool for the whole family, and an early close.</p><span class="hub-go">Read Richard's story &rarr;</span></a><a class="hub-card" href="/sold/"><p class="hub-eyebrow">The board</p><h3>Sold</h3><p>All three closings live on the board with the numbers left in, and it keeps growing.</p><span class="hub-go">See the board &rarr;</span></a></div></div></section>"""
+BUYERS_PROOF = """<section class="bg_#fff py_48px md:py_64px"><div class="hub-wrap"><div class="hub-head"><h2>Proof.</h2><p>Three buyers, three strategies, three closed deals.</p></div><div class="hub-grid hub-grid--2"><a class="hub-card" href="/testimonials/001-long-beach-firefighter/"><p class="hub-eyebrow">Case file 001</p><h3>The Long Beach firefighter</h3><p>A first-time buyer with a long-term plan, closed while his peers kept renting.</p><span class="hub-go">Read the file &rarr;</span></a><a class="hub-card" href="/testimonials/002-corona-analyst/"><p class="hub-eyebrow">Case file 002</p><h3>The Corona analyst</h3><p>He analyzes numbers for the State of California. Then he ran mine on his own purchase.</p><span class="hub-go">Read the file &rarr;</span></a><a class="hub-card" href="/testimonials/003-riverside-first-home/"><p class="hub-eyebrow">Case file 003</p><h3>The Riverside truck driver</h3><p>$15,000 toward closing costs, a pool for the whole family, and an early close.</p><span class="hub-go">Read the file &rarr;</span></a><a class="hub-card" href="/sold/"><p class="hub-eyebrow">The board</p><h3>Sold</h3><p>All three closings live on the board with the numbers left in, and it keeps growing.</p><span class="hub-go">See the board &rarr;</span></a></div></div></section>"""
+
+BUYERS_FIRST_HOME = """<section class="bg_#fff bd-b_1px_solid_#d3cfca py_48px md:py_64px"><div class="hub-wrap"><div class="hub-head"><h2>First home?</h2><p>The path is more open than the headlines say.</p></div><div class="hub-prose"><p>Low-down-payment paths exist, CalHFA and conventional three percent down among them, and the right answer hangs on your monthly payment, not the sticker. Read how the <a href="/testimonials/001-long-beach-firefighter/" class="c_#d92228 fw_700">Long Beach firefighter</a> and <a href="/testimonials/003-riverside-first-home/" class="c_#d92228 fw_700">Riverside truck driver</a> each turned a first purchase into a long-term plan.</p></div><div class="hub-cta-row"><button type="button" class="hub-cta" onclick="window.openFunnel('','buy')">Start my search</button></div></div></section>"""
 
 
 def update_buyers() -> None:
@@ -132,9 +138,13 @@ def update_buyers() -> None:
     text = path.read_text(encoding="utf-8")
     marker = '<section class="bg_#fff py_48px md:py_64px"><div class="hub-wrap"><div class="hub-head"><h2>Proof.</h2>'
     text = replace_element(text, marker, "</section>", BUYERS_PROOF, "buyers proof section")
-    old_first_home = "Low-down-payment paths exist, CalHFA and conventional three percent down among them, and the right answer hangs on your monthly payment, not the sticker. Case File 001 is a Southern California firefighter who bought his first home with a plan built around exactly that."
-    new_first_home = 'Low-down-payment paths exist, CalHFA and conventional three percent down among them, and the right answer hangs on your monthly payment, not the sticker. Read how the <a href="/testimonials/001-long-beach-firefighter/" class="c_#d92228 fw_700">Long Beach firefighter</a> and <a href="/testimonials/003-riverside-first-home/" class="c_#d92228 fw_700">Richard in Riverside</a> each turned a first purchase into a long-term plan.'
-    text = replace_once(text, old_first_home, new_first_home, "buyers first-home links")
+    text = replace_element(
+        text,
+        '<section class="bg_#fff bd-b_1px_solid_#d3cfca py_48px md:py_64px"><div class="hub-wrap"><div class="hub-head"><h2>First home?</h2>',
+        "</section>",
+        BUYERS_FIRST_HOME,
+        "buyers first-home section",
+    )
     write(path_name, text)
 
 

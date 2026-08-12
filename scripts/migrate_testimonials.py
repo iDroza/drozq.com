@@ -111,11 +111,11 @@ CARDS = """
       </div>
     </a>
 
-    <a class="cf-card cf-card--image" href="/testimonials/003-riverside-first-home/" aria-label="Read Richard W.'s Riverside first-home story">
-      <img class="cf-card__image" src="/media/images/euclid/pool-dusk.webp" alt="The Riverside pool home purchased by Richard W." width="1024" height="686" loading="lazy" decoding="async">
+    <a class="cf-card cf-card--image" href="/testimonials/003-riverside-first-home/" aria-label="Read Case File 003 about the Riverside truck driver">
+      <img class="cf-card__image" src="/media/images/euclid/pool-dusk.webp" alt="The Riverside pool home purchased by a truck driver" width="1024" height="686" loading="lazy" decoding="async">
       <div class="cf-card__content">
         <span class="cf-card__tab">Case File 003</span>
-        <p class="cf-card__meta">Riverside &middot; First-Time Buyer</p>
+        <p class="cf-card__meta">Riverside &middot; Truck Driver</p>
         <h2 class="cf-card__headline">His first home became his family's gathering place.</h2>
         <div class="cf-card__stat"><span class="cf-card__stat-value">$15,000</span><span class="cf-card__stat-label">Closing-cost credit negotiated</span></div>
       </div>
