@@ -373,6 +373,14 @@ _CF_CSS_RAW = r"""
 .cf-card__escrow-sub {
   font-size: 0.85rem; color: var(--color-navy-light); margin: 8px 0 0;
 }
+.cf-card--image { padding: 0; overflow: hidden; gap: 0; }
+.cf-card__image {
+  display: block; width: 100%; height: 190px; object-fit: cover;
+}
+.cf-card__content {
+  display: flex; flex: 1; flex-direction: column; gap: 14px;
+  padding: 28px 26px;
+}
 
 .cf-index-hero { min-height: 55vh; padding: 120px 0 60px; }
 .cf-index-hero h1 {
@@ -400,7 +408,7 @@ _CF_CSS_RAW = r"""
 .cf-cta-pill {
   position: relative; display: flex; flex-direction: column;
   align-items: stretch; background: var(--color-white); border-radius: 30px;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.11); border: 1px solid var(--color-gray-light);
+  box-shadow: 0 1px 5px rgba(0,0,0,0.11); border: 0;
   overflow: hidden;
 }
 .cf-cta-pill input[name="location"] {
@@ -418,6 +426,9 @@ _CF_CSS_RAW = r"""
 .cf-cta-pill button[type="submit"]:hover { background: var(--color-green-hover); }
 @media (min-width: 560px) {
   .cf-cta-pill { flex-direction: row; align-items: center; }
+}
+@media (min-width: 992px) {
+  .cf-index-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
 }
 
 @media (max-width: 768px) {
@@ -499,15 +510,18 @@ COUNT_UP_AND_REVEAL_SCRIPT = """
 """
 
 
-# Inline funnel-opening pill (Sell mode). Reusable across all three pages.
-def cta_pill(placeholder: str = "Enter your address") -> str:
+# Inline funnel-opening pill. These client stories are buyer transactions.
+def cta_pill(placeholder: str = "City and State or ZIP", mode: str = "buy") -> str:
+    if mode not in {"buy", "sell"}:
+        raise ValueError(f"Unsupported CTA mode: {mode}")
+    tab_id = "tab-buy" if mode == "buy" else "tab-sell"
     return f"""
-    <div role="tabpanel" aria-labelledby="tab-sell" class="cf-cta-form">
+    <div role="tabpanel" aria-labelledby="{tab_id}" class="cf-cta-form">
       <form class="pos_relative">
         <div class="cf-cta-pill">
           <input type="text" name="location" placeholder="{placeholder}"
                  autocomplete="off" aria-label="{placeholder}">
-          <button type="submit">See Plan</button>
+          <button type="submit">Run my Valuation</button>
         </div>
         <input type="hidden" name="gclid" value="">
       </form>

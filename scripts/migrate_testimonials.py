@@ -33,30 +33,30 @@ STATS = """
 
       <div class="cf-stats-strip__item">
         <!-- UPDATE AS NEW CASE FILES ARE ADDED -->
-        <span class="cf-stats-strip__number" data-count-target="43250" data-count-prefix="$">$43,250</span>
+        <span class="cf-stats-strip__number" data-count-target="58250" data-count-prefix="$">$58,250</span>
         <!-- END UPDATE -->
-        <div class="cf-stats-strip__sub">Total client savings</div>
+        <div class="cf-stats-strip__sub">Negotiated for clients</div>
       </div>
 
       <div class="cf-stats-strip__item">
         <!-- UPDATE AS NEW CASE FILES ARE ADDED -->
-        <span class="cf-stats-strip__number" data-count-target="2">2</span>
+        <span class="cf-stats-strip__number" data-count-target="3">3</span>
         <!-- END UPDATE -->
         <div class="cf-stats-strip__sub">Homes closed</div>
       </div>
 
       <div class="cf-stats-strip__item">
         <!-- UPDATE AS NEW CASE FILES ARE ADDED -->
-        <span class="cf-stats-strip__number" data-count-target="2">2</span>
+        <span class="cf-stats-strip__number" data-count-target="3">3</span>
         <!-- END UPDATE -->
         <div class="cf-stats-strip__sub">Closed ahead of schedule</div>
       </div>
 
       <div class="cf-stats-strip__item">
         <!-- UPDATE AS NEW CASE FILES ARE ADDED -->
-        <span class="cf-stats-strip__number" data-count-target="23">23</span>
+        <span class="cf-stats-strip__number" data-count-target="1790000" data-count-prefix="$">$1,790,000</span>
         <!-- END UPDATE -->
-        <div class="cf-stats-strip__sub">Properties toured</div>
+        <div class="cf-stats-strip__sub">Closed purchase volume</div>
       </div>
 
     </div>
@@ -69,31 +69,35 @@ CARDS = """
   <div class="cf-label cf-index-section__label">The Case Files</div>
   <div class="cf-index-grid cf-reveal">
 
-    <a class="cf-card" href="/testimonials/001-long-beach-firefighter/" aria-label="Read Case File 001: Long Beach firefighter, first-time buyer">
-      <span class="cf-card__tab">Case File 001</span>
-      <p class="cf-card__meta">Long Beach &middot; First-Time Buyer</p>
-      <h2 class="cf-card__headline">He spends his career protecting other people's homes. We helped him acquire his first.</h2>
-      <div class="cf-card__stat">
-        <span class="cf-card__stat-value">$23,250</span>
-        <span class="cf-card__stat-label">Seller credit negotiated</span>
+    <a class="cf-card cf-card--image" href="/testimonials/001-long-beach-firefighter/" aria-label="Read Case File 001: Long Beach firefighter, first-time buyer">
+      <img class="cf-card__image" src="/media/images/hero-giem/giem-29.webp" alt="The Long Beach home purchased by a first-time buyer" width="1600" height="1114" loading="lazy" decoding="async">
+      <div class="cf-card__content">
+        <span class="cf-card__tab">Case File 001</span>
+        <p class="cf-card__meta">Long Beach &middot; First-Time Buyer</p>
+        <h2 class="cf-card__headline">He protects other people's homes. We helped him acquire his first.</h2>
+        <div class="cf-card__stat"><span class="cf-card__stat-value">$23,250</span><span class="cf-card__stat-label">Seller credit negotiated</span></div>
       </div>
     </a>
 
-    <a class="cf-card" href="/testimonials/002-corona-analyst/" aria-label="Read Case File 002: Corona financial analyst, strategic purchase">
-      <span class="cf-card__tab">Case File 002</span>
-      <p class="cf-card__meta">Corona &middot; Strategic Purchase</p>
-      <h2 class="cf-card__headline">He analyzes numbers for the State of California. Then he ran the numbers on us.</h2>
-      <div class="cf-card__stat">
-        <span class="cf-card__stat-value">$20,000</span>
-        <span class="cf-card__stat-label">Saved off asking price</span>
+    <a class="cf-card cf-card--image" href="/testimonials/002-corona-analyst/" aria-label="Read Case File 002: Corona financial analyst, strategic purchase">
+      <img class="cf-card__image" src="/media/images/Corona.webp" alt="The Corona condo purchased by a financial analyst" width="1024" height="683" loading="lazy" decoding="async">
+      <div class="cf-card__content">
+        <span class="cf-card__tab">Case File 002</span>
+        <p class="cf-card__meta">Corona &middot; Strategic Purchase</p>
+        <h2 class="cf-card__headline">A financial analyst ran the numbers on his own purchase.</h2>
+        <div class="cf-card__stat"><span class="cf-card__stat-value">$20,000</span><span class="cf-card__stat-label">Saved off asking price</span></div>
       </div>
     </a>
 
-    <div class="cf-card cf-card--soon" aria-hidden="true">
-      <span class="cf-card__tab">Case File 003</span>
-      <h2 class="cf-card__headline">Currently in escrow</h2>
-      <p class="cf-card__escrow-sub">Details coming soon</p>
-    </div>
+    <a class="cf-card cf-card--image" href="/testimonials/003-riverside-first-home/" aria-label="Read Richard W.'s Riverside first-home story">
+      <img class="cf-card__image" src="/media/images/euclid/pool-dusk.webp" alt="The Riverside pool home purchased by Richard W." width="1024" height="686" loading="lazy" decoding="async">
+      <div class="cf-card__content">
+        <span class="cf-card__tab">Case File 003</span>
+        <p class="cf-card__meta">Riverside &middot; First-Time Buyer</p>
+        <h2 class="cf-card__headline">His first home became his family's gathering place.</h2>
+        <div class="cf-card__stat"><span class="cf-card__stat-value">$15,000</span><span class="cf-card__stat-label">Closing-cost credit negotiated</span></div>
+      </div>
+    </a>
 
   </div>
 </section>
@@ -104,7 +108,7 @@ CTA = f"""
   <div class="cf-narrow">
     <div class="cf-label">What's Next</div>
     <h2>Want your deal to be the next case file?</h2>
-    <p class="cf-cta-strip__sub">Most clients find us right here. They read a case file, see themselves in it, and start the conversation. If that is you, drop your address.</p>
+    <p class="cf-cta-strip__sub">Most clients find me right here. They read a client story, see themselves in it, and start the conversation. If that is you, tell me where you want to buy.</p>
     {cta_pill()}
     <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_24px ta_center">Or call direct: <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a></p>
   </div>

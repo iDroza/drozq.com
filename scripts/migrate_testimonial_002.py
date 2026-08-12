@@ -165,10 +165,10 @@ TAKEAWAY = f"""
   <div class="cf-narrow cf-reveal cf-takeaway">
     <div class="cf-label">The Takeaway</div>
     <h2 class="cf-takeaway__headline">Lower price. Repairs handled. Early close. Position secured. No emotion. Just execution.</h2>
-    <p class="cf-takeaway__sub">If you are approaching your first purchase as a strategic move rather than a milestone, drop your address below.</p>
+    <p class="cf-takeaway__sub">If you are approaching your first purchase as a strategic move rather than a milestone, tell me the city or ZIP where you want to buy.</p>
     {cta_pill()}
     <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_24px ta_center">Or call direct: <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a></p>
-    <div class="cf-takeaway__next">Case File 003 coming soon.</div>
+    <div class="cf-takeaway__next"><a href="/testimonials/003-riverside-first-home/">Read Richard's Riverside story &rarr;</a></div>
   </div>
 </section>
 """
@@ -180,6 +180,8 @@ CROSSLINK = """
     <a href="/testimonials/">All case files</a>
     <span class="cf-crosslink__sep" aria-hidden="true">&middot;</span>
     <a href="/testimonials/001-long-beach-firefighter/">Case File 001 &middot; Long Beach</a>
+    <span class="cf-crosslink__sep" aria-hidden="true">&middot;</span>
+    <a href="/testimonials/003-riverside-first-home/">Case File 003 &middot; Riverside</a>
   </nav>
 </aside>
 """

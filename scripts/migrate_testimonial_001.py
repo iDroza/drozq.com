@@ -185,7 +185,7 @@ TAKEAWAY = f"""
   <div class="cf-narrow cf-reveal cf-takeaway">
     <div class="cf-label">The Takeaway</div>
     <h2 class="cf-takeaway__headline">First home. Investment property. Rate buy-down. Zero closing costs. One deal. One strategy.</h2>
-    <p class="cf-takeaway__sub">If you are a first-time buyer who wants to build real wealth in this market, this is the conversation we want to have with you. Drop your address below.</p>
+    <p class="cf-takeaway__sub">If you are a first-time buyer who wants to build real wealth in this market, tell me the city or ZIP where you want to buy.</p>
     {cta_pill()}
     <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_24px ta_center">Or call direct: <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a></p>
     <div class="cf-takeaway__next"><a href="/testimonials/002-corona-analyst/">Read Case File 002 &rarr;</a></div>
@@ -200,6 +200,8 @@ CROSSLINK = """
     <a href="/testimonials/">All case files</a>
     <span class="cf-crosslink__sep" aria-hidden="true">&middot;</span>
     <a href="/testimonials/002-corona-analyst/">Case File 002 &middot; Corona</a>
+    <span class="cf-crosslink__sep" aria-hidden="true">&middot;</span>
+    <a href="/testimonials/003-riverside-first-home/">Case File 003 &middot; Riverside</a>
   </nav>
 </aside>
 """

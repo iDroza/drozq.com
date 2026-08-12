@@ -21,7 +21,7 @@ When something ships, remove the item from this file in the same commit. Don't l
 These move the needle the most. They are concentrated on `/index.html`.
 
 - **Headshot above the fold.** Joshua's `Waist.png` is referenced in JSON-LD schema but does not appear in the visible body. Add a hero block or aside that puts a face on the page.
-- **Stat callouts.** No specific Joshua stats on the homepage ("$43,250 in client savings so far," "7 days to MLS," etc.). Pull from case files. Three callouts max.
+- **Stat callouts.** No specific Joshua stats on the homepage ("$58,250 negotiated for clients so far," "7 days to MLS," etc.). Pull from case files. Three callouts max.
 - **"About Joshua" callout.** Short bio block somewhere on the homepage. Year started (2024), brokerage (Real Brokerage), DRE, one-line philosophy. Builds trust + EAT signal.
 - **Service-area body section.** Visible content section naming Irvine + Orange County neighborhoods (Turtle Rock, Woodbridge, Northwood, Crystal Cove, etc.). Currently only in JSON-LD `areaServed`. Helps local SEO + visitor confidence.
 ---
