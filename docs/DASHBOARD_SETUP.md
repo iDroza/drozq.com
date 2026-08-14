@@ -37,7 +37,7 @@ Below it are five fixed rows, each capped at four metrics:
 4. Year-to-date Follow Up Boss Deals Leaderboard gross commission, closed sales, volume, and active agents
 5. Live Google Sheets shell pages remaining and 10-page work sets remaining
 
-The Active Realty view contains 22 company metrics. Its first row is month-to-date Google Ads spend, primary conversions, cost per click, and cost per conversion across all linked leaf accounts. The year-to-date Ads row, both Search Console rows, the team row, and the two production values remain. Production Queue is enlarged and is always the final visible section.
+The Active Realty view contains 22 company metrics. Its first row is month-to-date Google Ads spend, primary conversions, cost per click, and cost per conversion across all linked leaf accounts. Directly below it are both Search Console rows, followed by the year-to-date Ads row, the team row, and the two production values. Production Queue is enlarged and is always the final visible section.
 
 The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the one-minute schedule or the protected manual sync endpoint. Personal and Ads metrics become stale after five minutes, team and Sheets metrics after 15 minutes, and Search Console metrics after 26 hours. Search Console is source-cached for 60 minutes because its reporting data is not real time. Team deal aggregates are source-cached for five minutes.
 

@@ -19,10 +19,6 @@ const expectedMetrics = [
   "googleAdsLeadsMtd",
   "googleAdsCostPerClickMtd",
   "googleAdsCostPerLeadMtd",
-  "googleAdsSpendYtd",
-  "googleAdsLeadsYtd",
-  "googleAdsCostPerLeadYtd",
-  "teamCommissionRoasYtd",
   "activeRealtyClicksRolling90d",
   "activeRealtyImpressionsRolling90d",
   "activeRealtyCtrRolling90d",
@@ -31,6 +27,10 @@ const expectedMetrics = [
   "jtImpressionsRolling90d",
   "jtCtrRolling90d",
   "jtPositionRolling90d",
+  "googleAdsSpendYtd",
+  "googleAdsLeadsYtd",
+  "googleAdsCostPerLeadYtd",
+  "teamCommissionRoasYtd",
   "teamCommissionYtd",
   "teamSalesYtd",
   "teamVolumeYtd",
@@ -93,8 +93,8 @@ const sectionTitles = [
   ...html.matchAll(/<h2 id="active-[^"]+">([^<]+)<\/h2>/gu),
 ].map((match) => match[1]);
 assert.deepEqual(sectionTitles, [
-  "Aggregate Advertising",
   "Organic Search",
+  "Aggregate Advertising",
   "Team Performance",
   "Production Queue",
 ]);
