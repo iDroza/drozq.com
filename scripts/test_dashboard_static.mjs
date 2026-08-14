@@ -11,14 +11,14 @@ const javascript = readFileSync(
 const redirects = readFileSync(new URL("../_redirects", import.meta.url), "utf8");
 
 const expectedMetrics = [
-  "callsToday",
-  "textsToday",
-  "emailsToday",
-  "appointmentsSetMtd",
-  "freshBuyerLeads",
-  "freshSellerLeads",
   "googleAdsSpendMtd",
   "googleAdsLeadsMtd",
+  "freshSellerLeads",
+  "freshBuyerLeads",
+  "callsToday",
+  "appointmentsSetMtd",
+  "textsToday",
+  "emailsToday",
 ];
 const metricMatches = [...html.matchAll(/<article class="metric-card" data-metric="([^"]+)">/gu)];
 assert.deepEqual(
