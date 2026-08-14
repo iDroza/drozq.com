@@ -6,6 +6,7 @@ import { fetchWithRetry, UpstreamRequestError } from "../lib/retry";
 import type {
   DashboardEnv,
   ErrorCategory,
+  GoogleSheetsMetricResults,
   MetricFetchResult,
   RuntimeDependencies,
 } from "../types";
@@ -100,14 +101,41 @@ export function countIncompletePageRows(
   return requireCount(count, "google_sheets_page_count");
 }
 
-function parseValuesPayload(payload: unknown): SheetRows {
+type GoogleSheetsMetricKey = keyof GoogleSheetsMetricResults;
+
+interface RequestedRange {
+  key: GoogleSheetsMetricKey;
+  range: string;
+  mode: "direct" | "table";
+}
+
+function parseBatchPayload(payload: unknown): unknown[] {
+  if (!isRecord(payload) || !Array.isArray(payload["valueRanges"])) {
+    throw new UpstreamRequestError("schema");
+  }
+  return payload["valueRanges"];
+}
+
+function parseValueRangePayload(payload: unknown): SheetRows {
   if (!isRecord(payload) || payload["values"] === undefined) {
     throw new UpstreamRequestError("schema");
   }
   return assertSheetRows(payload["values"]);
 }
 
-function metricError(error: unknown, started: number): MetricFetchResult {
+function unconfiguredResult(started: number): MetricFetchResult {
+  return {
+    kind: "unconfigured",
+    durationMs: Date.now() - started,
+    responseStatus: null,
+  };
+}
+
+function metricError(
+  error: unknown,
+  started: number,
+  fallbackStatus: number | null = null,
+): MetricFetchResult {
   const category: ErrorCategory =
     error instanceof UpstreamRequestError
       ? error.category
@@ -119,34 +147,49 @@ function metricError(error: unknown, started: number): MetricFetchResult {
     category,
     durationMs: Date.now() - started,
     responseStatus:
-      error instanceof UpstreamRequestError ? error.responseStatus : null,
+      error instanceof UpstreamRequestError && error.responseStatus !== null
+        ? error.responseStatus
+        : fallbackStatus,
   };
 }
 
-export async function fetchShellPagesRemaining(
+export async function fetchGoogleSheetsMetrics(
   env: DashboardEnv,
   dependencies: RuntimeDependencies = {},
-): Promise<MetricFetchResult> {
+): Promise<GoogleSheetsMetricResults> {
   const started = Date.now();
   const config = readGoogleSheetsConfig(env);
-  const range = config.remainingRange || config.pagesRange;
-  if (range === "") {
-    return {
-      kind: "unconfigured",
-      durationMs: Date.now() - started,
-      responseStatus: null,
-    };
+  const requests: RequestedRange[] = [];
+  const shellRange = config.remainingRange || config.pagesRange;
+  if (shellRange !== "") {
+    requests.push({
+      key: "shellPagesRemaining",
+      range: shellRange,
+      mode: config.remainingRange !== "" ? "direct" : "table",
+    });
   }
+  if (config.setsRemainingRange !== "") {
+    requests.push({
+      key: "setsRemaining",
+      range: config.setsRemainingRange,
+      mode: "direct",
+    });
+  }
+
+  const results: GoogleSheetsMetricResults = {
+    shellPagesRemaining: unconfiguredResult(started),
+    setsRemaining: unconfiguredResult(started),
+  };
+  if (requests.length === 0) {
+    return results;
+  }
+
   if (
     config.serviceAccountEmail === "" ||
     config.serviceAccountPrivateKey === "" ||
     config.spreadsheetId === ""
   ) {
-    return {
-      kind: "unconfigured",
-      durationMs: Date.now() - started,
-      responseStatus: null,
-    };
+    return results;
   }
 
   try {
@@ -158,8 +201,11 @@ export async function fetchShellPagesRemaining(
       dependencies,
     );
     const endpoint = new URL(
-      `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(config.spreadsheetId)}/values/${encodeURIComponent(range)}`,
+      `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(config.spreadsheetId)}/values:batchGet`,
     );
+    for (const request of requests) {
+      endpoint.searchParams.append("ranges", request.range);
+    }
     endpoint.searchParams.set("majorDimension", "ROWS");
     endpoint.searchParams.set("valueRenderOption", "UNFORMATTED_VALUE");
     const response = await fetchWithRetry(
@@ -180,23 +226,49 @@ export async function fetchShellPagesRemaining(
     if (!response.ok) {
       throw classifyHttpStatus(response.status);
     }
-    const rows = parseValuesPayload(await readBoundedJson(response));
-    const value =
-      config.remainingRange !== ""
-        ? parseDirectCell(rows)
-        : countIncompletePageRows(
-            rows,
-            config.pageHeader,
-            config.statusHeader,
-            config.completeValues,
-          );
-    return {
-      kind: "ok",
-      value,
-      durationMs: Date.now() - started,
-      responseStatus: response.status,
-    };
+    const valueRanges = parseBatchPayload(await readBoundedJson(response));
+    if (valueRanges.length !== requests.length) {
+      throw new UpstreamRequestError("schema");
+    }
+
+    for (let index = 0; index < requests.length; index += 1) {
+      const request = requests[index];
+      if (request === undefined) {
+        throw new UpstreamRequestError("schema");
+      }
+      try {
+        const rows = parseValueRangePayload(valueRanges[index]);
+        const value = request.mode === "direct"
+          ? parseDirectCell(rows)
+          : countIncompletePageRows(
+              rows,
+              config.pageHeader,
+              config.statusHeader,
+              config.completeValues,
+            );
+        results[request.key] = {
+          kind: "ok",
+          value,
+          durationMs: Date.now() - started,
+          responseStatus: response.status,
+        };
+      } catch (error) {
+        results[request.key] = metricError(error, started, response.status);
+      }
+    }
+    return results;
   } catch (error) {
-    return metricError(error, started);
+    for (const request of requests) {
+      results[request.key] = metricError(error, started);
+    }
+    return results;
   }
+}
+
+export async function fetchShellPagesRemaining(
+  env: DashboardEnv,
+  dependencies: RuntimeDependencies = {},
+): Promise<MetricFetchResult> {
+  const results = await fetchGoogleSheetsMetrics(env, dependencies);
+  return results.shellPagesRemaining;
 }

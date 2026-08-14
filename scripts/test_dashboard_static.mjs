@@ -35,6 +35,8 @@ const expectedMetrics = [
   "teamSalesYtd",
   "teamVolumeYtd",
   "teamActiveAgentsYtd",
+  "shellPagesRemaining",
+  "setsRemaining",
 ];
 const metricMatches = [...html.matchAll(/<article class="[^"]*\bmetric-card\b[^"]*" data-metric="([^"]+)">/gu)];
 assert.deepEqual(
@@ -42,7 +44,7 @@ assert.deepEqual(
   expectedMetrics,
   "dashboard metric cards must preserve the required row order",
 );
-assert.equal(metricMatches.length, 24, "dashboard must contain exactly 24 metric cards");
+assert.equal(metricMatches.length, 26, "dashboard must contain exactly 26 metric cards");
 assert.equal(
   (html.match(/class="metrics-grid metrics-grid--compact is-loading"/gu) ?? []).length,
   4,
@@ -56,6 +58,19 @@ assert.match(html, /<h2 id="advertising-title">Aggregate Advertising<\/h2>/u);
 assert.match(html, /<h3 class="metric-row__title">ACTIVEREALTY\.COM<\/h3>/u);
 assert.match(html, /<h3 class="metric-row__title">JUSTINTYE\.COM<\/h3>/u);
 assert.match(html, /<h2 id="team-performance-title">Team Performance<\/h2>/u);
+assert.match(html, /<h2 id="production-queue-title">Production Queue<\/h2>/u);
+assert.match(html, /<h3>SHELL PAGES REMAINING<\/h3>/u);
+assert.match(html, /<h3>SETS REMAINING<\/h3>/u);
+assert.match(
+  html,
+  /data-metric="teamActiveAgentsYtd"[\s\S]*data-metric="shellPagesRemaining"[\s\S]*data-metric="setsRemaining"/u,
+  "Google Sheets metrics must remain the final dashboard row",
+);
+assert.equal(
+  (html.match(/class="metrics-grid metrics-grid--compact metrics-grid--two is-loading"/gu) ?? []).length,
+  1,
+  "the final Google Sheets row must contain the two requested cards",
+);
 assert.match(
   html,
   /<link rel="canonical" href="https:\/\/drozq\.com\/dashboard">/u,

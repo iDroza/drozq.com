@@ -3,7 +3,8 @@ export type MetricStatus = "ok" | "stale" | "error" | "unconfigured";
 export type MetricSource =
   | "follow_up_boss"
   | "google_ads"
-  | "google_search_console";
+  | "google_search_console"
+  | "google_sheets";
 
 export interface DashboardMetric {
   value: number | null;
@@ -40,6 +41,8 @@ export interface DashboardSnapshot {
     teamSalesYtd: DashboardMetric;
     teamVolumeYtd: DashboardMetric;
     teamActiveAgentsYtd: DashboardMetric;
+    shellPagesRemaining: DashboardMetric;
+    setsRemaining: DashboardMetric;
   };
   reportingPeriod: {
     startDate: string;
@@ -107,6 +110,11 @@ export interface GoogleSearchConsoleMetricResults {
   jtPositionRolling90d: MetricFetchResult;
 }
 
+export interface GoogleSheetsMetricResults {
+  shellPagesRemaining: MetricFetchResult;
+  setsRemaining: MetricFetchResult;
+}
+
 export interface FollowUpBossTeamMetricResults {
   teamCommissionYtd: MetricFetchResult;
   teamSalesYtd: MetricFetchResult;
@@ -154,6 +162,7 @@ export interface SecretBindings {
   GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?: string;
   GOOGLE_SHEETS_SPREADSHEET_ID?: string;
   GOOGLE_SHEETS_REMAINING_RANGE?: string;
+  GOOGLE_SHEETS_SETS_REMAINING_RANGE?: string;
   GOOGLE_SHEETS_PAGES_RANGE?: string;
   GOOGLE_SHEETS_PAGE_HEADER?: string;
   GOOGLE_SHEETS_STATUS_HEADER?: string;

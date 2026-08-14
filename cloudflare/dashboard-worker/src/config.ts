@@ -41,6 +41,7 @@ export interface GoogleSheetsConfig {
   serviceAccountPrivateKey: string;
   spreadsheetId: string;
   remainingRange: string;
+  setsRemainingRange: string;
   pagesRange: string;
   pageHeader: string;
   statusHeader: string;
@@ -150,6 +151,7 @@ export function readGoogleSheetsConfig(env: DashboardEnv): GoogleSheetsConfig {
     serviceAccountPrivateKey: clean(env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY),
     spreadsheetId: clean(env.GOOGLE_SHEETS_SPREADSHEET_ID),
     remainingRange: clean(env.GOOGLE_SHEETS_REMAINING_RANGE),
+    setsRemainingRange: clean(env.GOOGLE_SHEETS_SETS_REMAINING_RANGE),
     pagesRange: clean(env.GOOGLE_SHEETS_PAGES_RANGE),
     pageHeader:
       clean(env.GOOGLE_SHEETS_PAGE_HEADER) || CONFIG_DEFAULTS.googleSheetsPageHeader,

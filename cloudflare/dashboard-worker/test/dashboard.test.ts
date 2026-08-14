@@ -38,7 +38,7 @@ import {
 } from "../src/sources/follow-up-boss-team";
 import {
   countIncompletePageRows,
-  fetchShellPagesRemaining,
+  fetchGoogleSheetsMetrics,
   parseDirectCell,
 } from "../src/sources/google-sheets";
 import { handleRequest } from "../src/index";
@@ -97,6 +97,8 @@ function allSuccessfulResults(): MetricResultMap {
     teamSalesYtd: successful(3),
     teamVolumeYtd: successful(1770000),
     teamActiveAgentsYtd: successful(2),
+    shellPagesRemaining: successful(1191),
+    setsRemaining: successful(120),
   };
 }
 
@@ -613,7 +615,7 @@ describe("Follow Up Boss YTD team aggregation", () => {
   });
 });
 
-describe("Google Sheets normalization retained for the source adapter", () => {
+describe("Google Sheets production queue", () => {
   it("parses direct-cell mode", () => {
     expect(parseDirectCell([["14"]])).toBe(14);
   });
@@ -636,9 +638,10 @@ describe("Google Sheets normalization retained for the source adapter", () => {
       .toBe(1);
   });
 
-  it("uses service-account OAuth with escaped private-key newlines", async () => {
+  it("uses one service-account token and one batch read for both direct cells", async () => {
     const privateKey = await generateEscapedTestPrivateKey();
     let tokenCalls = 0;
+    let sheetCalls = 0;
     const fetcher = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
       const url = String(input);
       if (url === "https://oauth2.googleapis.com/token") {
@@ -646,20 +649,110 @@ describe("Google Sheets normalization retained for the source adapter", () => {
         expect(String(init?.body)).toContain("assertion=");
         return jsonResponse({ access_token: "test-sheets-access-token" });
       }
-      expect(url).toContain("sheets.googleapis.com/v4/spreadsheets/test-sheet-id/values/");
-      return jsonResponse({ values: [["9"]] });
+      sheetCalls += 1;
+      const endpoint = new URL(url);
+      expect(endpoint.pathname).toBe(
+        "/v4/spreadsheets/test-sheet-id/values:batchGet",
+      );
+      expect(endpoint.searchParams.getAll("ranges")).toEqual([
+        "Summary!B5",
+        "Summary!B8",
+      ]);
+      return jsonResponse({
+        valueRanges: [
+          { range: "Summary!B5", values: [["1191"]] },
+          { range: "Summary!B8", values: [[120]] },
+        ],
+      });
     };
-    const result = await fetchShellPagesRemaining(
+    const result = await fetchGoogleSheetsMetrics(
       withSecrets({
         GOOGLE_SERVICE_ACCOUNT_EMAIL: "dashboard@test-project.iam.gserviceaccount.com",
         GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: privateKey,
         GOOGLE_SHEETS_SPREADSHEET_ID: "test-sheet-id",
-        GOOGLE_SHEETS_REMAINING_RANGE: "Dashboard Inputs!B2",
+        GOOGLE_SHEETS_REMAINING_RANGE: "Summary!B5",
+        GOOGLE_SHEETS_SETS_REMAINING_RANGE: "Summary!B8",
       }),
       { fetcher, sleep: noDelay, now: NOW },
     );
     expect(tokenCalls).toBe(1);
-    expect(result).toMatchObject({ kind: "ok", value: 9 });
+    expect(sheetCalls).toBe(1);
+    expect(result.shellPagesRemaining).toMatchObject({ kind: "ok", value: 1191 });
+    expect(result.setsRemaining).toMatchObject({ kind: "ok", value: 120 });
+  });
+
+  it("supports a shell page table and a direct sets cell in the same batch", async () => {
+    const privateKey = await generateEscapedTestPrivateKey();
+    const fetcher = async (input: RequestInfo | URL): Promise<Response> => {
+      if (String(input) === "https://oauth2.googleapis.com/token") {
+        return jsonResponse({ access_token: "test-sheets-access-token" });
+      }
+      return jsonResponse({
+        valueRanges: [
+          {
+            values: [
+              ["Page", "Status"],
+              ["About", " complete "],
+              ["Buyers", "Working"],
+              ["", "draft"],
+              [null, null],
+              ["Sellers", "LIVE"],
+            ],
+          },
+          { values: [[1]] },
+        ],
+      });
+    };
+    const result = await fetchGoogleSheetsMetrics(
+      withSecrets({
+        GOOGLE_SERVICE_ACCOUNT_EMAIL: "dashboard@test-project.iam.gserviceaccount.com",
+        GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: privateKey,
+        GOOGLE_SHEETS_SPREADSHEET_ID: "test-sheet-id",
+        GOOGLE_SHEETS_PAGES_RANGE: "Shell Pages!A:B",
+        GOOGLE_SHEETS_SETS_REMAINING_RANGE: "Summary!B8",
+        GOOGLE_SHEETS_COMPLETE_VALUES: "complete,live",
+      }),
+      { fetcher, sleep: noDelay, now: NOW },
+    );
+    expect(result.shellPagesRemaining).toMatchObject({ kind: "ok", value: 1 });
+    expect(result.setsRemaining).toMatchObject({ kind: "ok", value: 1 });
+  });
+
+  it("isolates a malformed sets cell without erasing the valid shell count", async () => {
+    const privateKey = await generateEscapedTestPrivateKey();
+    const fetcher = async (input: RequestInfo | URL): Promise<Response> => {
+      if (String(input) === "https://oauth2.googleapis.com/token") {
+        return jsonResponse({ access_token: "test-sheets-access-token" });
+      }
+      return jsonResponse({
+        valueRanges: [
+          { values: [[1191]] },
+          {},
+        ],
+      });
+    };
+    const result = await fetchGoogleSheetsMetrics(
+      withSecrets({
+        GOOGLE_SERVICE_ACCOUNT_EMAIL: "dashboard@test-project.iam.gserviceaccount.com",
+        GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: privateKey,
+        GOOGLE_SHEETS_SPREADSHEET_ID: "test-sheet-id",
+        GOOGLE_SHEETS_REMAINING_RANGE: "Summary!B5",
+        GOOGLE_SHEETS_SETS_REMAINING_RANGE: "Summary!B8",
+      }),
+      { fetcher, sleep: noDelay, now: NOW },
+    );
+    expect(result.shellPagesRemaining).toMatchObject({ kind: "ok", value: 1191 });
+    expect(result.setsRemaining).toMatchObject({
+      kind: "error",
+      category: "schema",
+      responseStatus: 200,
+    });
+  });
+
+  it("marks a missing sets range unconfigured instead of displaying zero", async () => {
+    const result = await fetchGoogleSheetsMetrics(withSecrets({}));
+    expect(result.shellPagesRemaining).toMatchObject({ kind: "unconfigured" });
+    expect(result.setsRemaining).toMatchObject({ kind: "unconfigured" });
   });
 });
 
@@ -684,6 +777,29 @@ describe("snapshot merging and public contract", () => {
     expect(merged.metrics.freshSellerLeads).toMatchObject({ value: 4, status: "ok" });
   });
 
+  it("preserves the previous sets value when only that Sheet cell fails", () => {
+    const previousTime = new Date("2026-08-14T18:00:00.000Z");
+    const previous = makeSnapshot(previousTime);
+    const results = allSuccessfulResults();
+    results.shellPagesRemaining = successful(1187);
+    results.setsRemaining = failed();
+    const merged = mergeSnapshot(
+      previous,
+      results,
+      NOW,
+      getReportingPeriod(NOW, "America/Los_Angeles"),
+    );
+    expect(merged.metrics.shellPagesRemaining).toMatchObject({
+      value: 1187,
+      status: "ok",
+    });
+    expect(merged.metrics.setsRemaining).toMatchObject({
+      value: 120,
+      updatedAt: previousTime.toISOString(),
+      status: "stale",
+    });
+  });
+
   it("uses error, not zero, for a first-run failure", () => {
     const results = allSuccessfulResults();
     results.callsToday = failed();
@@ -694,6 +810,22 @@ describe("snapshot merging and public contract", () => {
       getReportingPeriod(NOW, "America/Los_Angeles"),
     );
     expect(merged.metrics.callsToday).toMatchObject({
+      value: null,
+      updatedAt: null,
+      status: "error",
+    });
+  });
+
+  it("uses error, not zero, when the sets cell fails on the first run", () => {
+    const results = allSuccessfulResults();
+    results.setsRemaining = failed();
+    const merged = mergeSnapshot(
+      null,
+      results,
+      NOW,
+      getReportingPeriod(NOW, "America/Los_Angeles"),
+    );
+    expect(merged.metrics.setsRemaining).toMatchObject({
       value: null,
       updatedAt: null,
       status: "error",
@@ -725,6 +857,8 @@ describe("snapshot merging and public contract", () => {
       new Date("2026-08-13T12:16:00.000Z"),
     );
     expect(afterSixteenMinutes.metrics.teamSalesYtd.status).toBe("stale");
+    expect(afterSixteenMinutes.metrics.shellPagesRemaining.status).toBe("stale");
+    expect(afterSixteenMinutes.metrics.setsRemaining.status).toBe("stale");
     expect(afterSixteenMinutes.metrics.activeRealtyClicksRolling90d.status).toBe("ok");
 
     const afterTwentySevenHours = toPublicSnapshot(
@@ -837,7 +971,7 @@ describe("snapshot merging and public contract", () => {
     const snapshot = createUnconfiguredSnapshot(NOW, "America/Los_Angeles");
     expect(sanitizeSnapshot(snapshot)).not.toBeNull();
     expect(snapshot.metrics.googleAdsSpendMtd.value).toBeNull();
-    expect(Object.keys(snapshot.metrics)).toHaveLength(24);
+    expect(Object.keys(snapshot.metrics)).toHaveLength(26);
   });
 
   it("serves only a cached sanitized summary with hardened headers", async () => {
@@ -855,7 +989,7 @@ describe("snapshot merging and public contract", () => {
     );
     expect(response.headers.has("Access-Control-Allow-Origin")).toBe(false);
     expect(payload.version).toBe(2);
-    expect(Object.keys(payload.metrics)).toHaveLength(24);
+    expect(Object.keys(payload.metrics)).toHaveLength(26);
   });
 
   it("returns a valid 503 payload when no snapshot exists", async () => {

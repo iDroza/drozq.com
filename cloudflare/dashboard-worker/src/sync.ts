@@ -16,6 +16,7 @@ import { fetchFollowUpBossMetrics } from "./sources/follow-up-boss";
 import { fetchFollowUpBossTeamMetrics } from "./sources/follow-up-boss-team";
 import { fetchGoogleAdsMetrics } from "./sources/google-ads";
 import { fetchGoogleSearchConsoleMetrics } from "./sources/google-search-console";
+import { fetchGoogleSheetsMetrics } from "./sources/google-sheets";
 import type {
   DashboardEnv,
   DashboardMetric,
@@ -25,6 +26,7 @@ import type {
   FollowUpBossTeamMetricResults,
   GoogleAdsMetricResults,
   GoogleSearchConsoleMetricResults,
+  GoogleSheetsMetricResults,
   MetricFetchResult,
   RuntimeDependencies,
 } from "./types";
@@ -229,6 +231,13 @@ function searchConsoleFailure(): GoogleSearchConsoleMetricResults {
   };
 }
 
+function sheetsFailure(): GoogleSheetsMetricResults {
+  return {
+    shellPagesRemaining: unexpectedResult(),
+    setsRemaining: unexpectedResult(),
+  };
+}
+
 export async function synchronizeDashboard(
   env: DashboardEnv,
   dependencies: RuntimeDependencies = {},
@@ -240,7 +249,7 @@ export async function synchronizeDashboard(
   const yearToDatePeriod = getYearToDatePeriod(now, timeZone);
   const previous = await loadPreviousSnapshot(env);
 
-  const [fubSettled, adsSettled, searchSettled, teamSettled] =
+  const [fubSettled, adsSettled, searchSettled, teamSettled, sheetsSettled] =
     await Promise.allSettled([
       fetchFollowUpBossMetrics(env, timeZone, { ...dependencies, now }),
       fetchGoogleAdsMetrics(
@@ -259,6 +268,7 @@ export async function synchronizeDashboard(
         yearToDatePeriod,
         { ...dependencies, now },
       ),
+      fetchGoogleSheetsMetrics(env, { ...dependencies, now }),
     ]);
   const fub = fubSettled.status === "fulfilled" ? fubSettled.value : fubFailure();
   const ads = adsSettled.status === "fulfilled" ? adsSettled.value : adsFailure();
@@ -268,11 +278,15 @@ export async function synchronizeDashboard(
   const team = teamSettled.status === "fulfilled"
     ? teamSettled.value
     : teamFailure();
+  const sheets = sheetsSettled.status === "fulfilled"
+    ? sheetsSettled.value
+    : sheetsFailure();
   const results: MetricResultMap = {
     ...fub,
     ...ads,
     ...search,
     ...team,
+    ...sheets,
   };
 
   logMetricResults(results);

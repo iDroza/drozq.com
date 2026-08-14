@@ -4,7 +4,7 @@ Last updated: August 14, 2026
 
 ## 1. Architecture
 
-`/dashboard` is a static Cloudflare Pages page. It requests only the sanitized `GET /api/dashboard/summary` endpoint and never contacts Follow Up Boss, Google Ads, or Google OAuth from the browser.
+`/dashboard` is a static Cloudflare Pages page. It requests only the sanitized `GET /api/dashboard/summary` endpoint and never contacts Follow Up Boss, Google Ads, Google Search Console, Google Sheets, or Google OAuth from the browser.
 
 The separate `drozq-operating-dashboard` Cloudflare Worker owns all credentials and upstream requests. Its production route is restricted to `drozq.com/api/dashboard*`, so it cannot intercept the rest of the Pages site or the existing `/api/lead` and `/api/geo` Pages Functions.
 
@@ -14,7 +14,7 @@ The Worker runs every minute, which is the fastest Cloudflare Cron Trigger inter
 * * * * *
 ```
 
-Each synchronization runs four integrations concurrently: Follow Up Boss personal activity, Follow Up Boss team deals, Google Ads, and Google Search Console. It merges successful results with the previous snapshot and writes `dashboard:snapshot:v2` to Workers KV. A failed metric retains its last valid value and becomes stale. A first-run failure is unavailable, never a false zero.
+Each synchronization runs five integrations concurrently: Follow Up Boss personal activity, Follow Up Boss team deals, Google Ads, Google Search Console, and Google Sheets. It merges successful results with the previous snapshot and writes `dashboard:snapshot:v2` to Workers KV. A failed metric retains its last valid value and becomes stale. A first-run failure is unavailable, never a false zero.
 
 The first viewport contains exactly eight operating metrics:
 
@@ -27,14 +27,15 @@ The first viewport contains exactly eight operating metrics:
 7. Google Ads spend month to date across all linked leaf accounts
 8. Google Ads primary conversions month to date across all linked leaf accounts
 
-Below it are four fixed rows, each capped at four metrics:
+Below it are five fixed rows, each capped at four metrics:
 
 1. Rolling 90-day Google Ads spend, clicks, primary conversions, and cost per lead across all linked leaf accounts
 2. Rolling 90-day Search Console clicks, impressions, CTR, and average position for `activerealty.com`
 3. The same four Search Console metrics for `justintye.com`
 4. Year-to-date Follow Up Boss gross commission, closed sales, volume, and active agents
+5. Live Google Sheets shell pages remaining and 10-page work sets remaining
 
-The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the one-minute schedule or the protected manual sync endpoint. Personal and Ads metrics become stale after five minutes, team metrics after 15 minutes, and Search Console metrics after 26 hours. Search Console is source-cached for 60 minutes because its reporting data is not real time. Team deal aggregates are source-cached for five minutes.
+The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the one-minute schedule or the protected manual sync endpoint. Personal and Ads metrics become stale after five minutes, team and Sheets metrics after 15 minutes, and Search Console metrics after 26 hours. Search Console is source-cached for 60 minutes because its reporting data is not real time. Team deal aggregates are source-cached for five minutes.
 
 There is no Claude, OpenAI, AI inference, model call, or other nondeterministic runtime dependency. This is a direct API-to-KV-to-dashboard pipeline.
 
@@ -208,23 +209,67 @@ Remove-Variable gsc
 
 The two property URLs and the 60-minute source refresh are non-secret variables in `wrangler.jsonc`. The one-minute Worker schedule can safely reuse the sanitized KV aggregate between upstream refreshes. Google can revise recent Search Console data, so the Worker queries with `dataState: all` and refreshes the complete rolling window instead of incrementally adding daily values.
 
-## 6. Google Sheets adapter status
+## 6. Google Sheets setup
 
-The earlier Shell Pages Remaining card was replaced by the current operating metrics. The tested Google Sheets service-account adapter remains isolated in the Worker source for rollback compatibility, but the production synchronization does not call it and no Sheet data is in the public contract.
+The final dashboard row is live from one read-only Google Sheet. It contains:
 
-Legacy Sheets secrets may be deleted without affecting the current dashboard:
+- Shell Pages Remaining, read from the direct cell configured by `GOOGLE_SHEETS_REMAINING_RANGE`, or calculated from the optional page table mode
+- Sets Remaining, read from the direct cell configured by `GOOGLE_SHEETS_SETS_REMAINING_RANGE`
+
+Production uses the existing native tracker Sheet with these ranges:
+
+- Shell pages: `Summary!B5`
+- Work sets: `Summary!B8`
+
+The second cell is the tracker's `Work sets left (10/set)` output, so the dashboard labels it as 10 pages per set. Both values must be nonnegative whole numbers. A blank, negative, fractional, non-finite, or malformed value fails only that metric and preserves its prior valid value.
+
+Enable the Sheets API in the Google Cloud project that owns the service account:
+
+```powershell
+gcloud auth login
+gcloud services enable sheets.googleapis.com --project=<google-cloud-project-id>
+```
+
+For a new environment, create a dedicated service account and key. Download the key only long enough to install its email and private key as Worker secrets:
+
+```powershell
+gcloud iam service-accounts create drozq-dashboard-sheets --project=<google-cloud-project-id> --display-name="Drozq Dashboard Sheets"
+gcloud iam service-accounts keys create .dashboard-sheets-key.json --iam-account=drozq-dashboard-sheets@<google-cloud-project-id>.iam.gserviceaccount.com --project=<google-cloud-project-id>
+```
+
+Share only the tracker Sheet with the service-account email as Viewer. Do not grant Editor access and do not make the Sheet public.
+
+Install the production secrets without printing their values:
+
+```powershell
+$sheetKey = Get-Content -Raw .dashboard-sheets-key.json | ConvertFrom-Json
+Set-Location cloudflare/dashboard-worker
+$sheetKey.client_email | npx wrangler secret put GOOGLE_SERVICE_ACCOUNT_EMAIL
+$sheetKey.private_key | npx wrangler secret put GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
+npx wrangler secret put GOOGLE_SHEETS_SPREADSHEET_ID
+'Summary!B5' | npx wrangler secret put GOOGLE_SHEETS_REMAINING_RANGE
+'Summary!B8' | npx wrangler secret put GOOGLE_SHEETS_SETS_REMAINING_RANGE
+Set-Location ../..
+Remove-Variable sheetKey
+Remove-Item -LiteralPath .dashboard-sheets-key.json -Force
+```
+
+Paste only the raw spreadsheet ID into the hidden `GOOGLE_SHEETS_SPREADSHEET_ID` prompt. Never paste a full private Sheet URL into source code.
+
+### Optional shell-page table mode
+
+Instead of a direct shell count, the Worker can calculate it from a bounded range containing `Page` and `Status` headers. Delete only the shell direct-cell range, then configure the table range:
 
 ```powershell
 Set-Location cloudflare/dashboard-worker
-npx wrangler secret delete GOOGLE_SERVICE_ACCOUNT_EMAIL
-npx wrangler secret delete GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
-npx wrangler secret delete GOOGLE_SHEETS_SPREADSHEET_ID
 npx wrangler secret delete GOOGLE_SHEETS_REMAINING_RANGE
-npx wrangler secret delete GOOGLE_SHEETS_PAGES_RANGE
+npx wrangler secret put GOOGLE_SHEETS_PAGES_RANGE
 Set-Location ../..
 ```
 
-If the card is deliberately restored later, the adapter supports a nonnegative direct cell or a `Page` and `Status` table, uses a read-only Google service account, normalizes escaped private-key newlines, and stores only the aggregate count.
+Default completed values are `complete,completed,done,published,live`. Header names and complete values can be changed with `GOOGLE_SHEETS_PAGE_HEADER`, `GOOGLE_SHEETS_STATUS_HEADER`, and `GOOGLE_SHEETS_COMPLETE_VALUES`. Matching ignores capitalization and surrounding whitespace. Fully blank rows and rows without a page value are ignored. Sets Remaining remains direct-cell only.
+
+The Worker normalizes escaped newlines before Web Crypto signs the service-account JWT. One OAuth access token and one Sheets `values:batchGet` request serve both metrics per synchronization. Sheet cells and rows are never stored or returned. Only the two validated counts enter the sanitized KV snapshot.
 
 ## 7. Workers KV
 
@@ -374,6 +419,16 @@ Upstream requests retry no more than three times, respect `Retry-After`, and oth
 - Keep `sc-domain:activerealty.com` and `https://justintye.com/` exact. A domain property and a URL-prefix property are not interchangeable.
 - Search Console metrics legitimately trail live traffic. Their saved values become stale only after 26 hours.
 
+### Google Sheets `401`, `403`, or missing production counts
+
+- Confirm the Sheets API remains enabled in the service account's Google Cloud project.
+- Confirm the tracker Sheet is shared with the exact `GOOGLE_SERVICE_ACCOUNT_EMAIL` as Viewer.
+- Confirm the private key and service-account email came from the same active key file.
+- Confirm `GOOGLE_SHEETS_SPREADSHEET_ID` is the raw spreadsheet ID, not a full URL.
+- Confirm the production formulas still return nonnegative whole numbers in `Summary!B5` and `Summary!B8`.
+- A renamed `Summary` tab or moved output cell requires only a range-secret update, not a code change.
+- A malformed cell preserves its previous valid number as stale. It never publishes zero as a fallback.
+
 ### Follow Up Boss activity looks low
 
 - Verify the API key belongs to the intended agent.
@@ -390,7 +445,7 @@ Upstream requests retry no more than three times, respect `Retry-After`, and oth
 
 ### Stale or missing metrics
 
-Personal and Ads metrics become stale after five minutes, team metrics after 15 minutes, and Search Console metrics after 26 hours. Check structured Worker logs for source, HTTP status, duration, and sanitized error category. A missing metric with no prior value is shown as unavailable, not zero. A partial failure does not erase other sources.
+Personal and Ads metrics become stale after five minutes, team and Google Sheets metrics after 15 minutes, and Search Console metrics after 26 hours. Check structured Worker logs for source, HTTP status, duration, and sanitized error category. A missing metric with no prior value is shown as unavailable, not zero. A partial failure does not erase other sources.
 
 ### 30 to 180 day maintenance risks
 
@@ -401,6 +456,9 @@ Personal and Ads metrics become stale after five minutes, team metrics after 15 
 - Follow Up Boss deal-stage renames and commission-field omissions fail closed instead of publishing an understated team total.
 - New Google Ads leaf accounts are automatic, but OAuth and developer-token access must cover them.
 - Changing Google Ads primary conversion settings changes the Leads number by design. Audit primary actions during tracking migrations.
+- Google Sheets service-account keys can be disabled or deleted, and Viewer access can be removed. Monitor `authentication` and `authorization` errors.
+- Renaming the Sheet tab or moving the two Summary outputs breaks only the affected Sheet metric. Update the corresponding range secret after any tracker redesign.
+- A tracker formula that starts returning decimals, text, blanks, or negative numbers fails closed and keeps the last valid count.
 - Worker Cron configuration changes can take time to propagate. Manual sync verifies deployment immediately.
 - Upstream schema drift fails closed and preserves last-known-good values. Keep tests and observability enabled.
 - The daily activity state resets at Los Angeles midnight and the date utility has rollover, leap-year, and DST coverage.
@@ -453,4 +511,6 @@ If the Worker must be removed, first remove only the narrow `drozq.com/api/dashb
 - https://developers.google.com/google-ads/api/docs/reporting/overview
 - https://developers.google.com/webmaster-tools/v1/searchanalytics/query
 - https://developers.google.com/webmaster-tools/v1/how-tos/authorizing
+- https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/batchGet
+- https://developers.google.com/identity/protocols/oauth2/service-account
 - https://docs.followupboss.com/reference/authentication

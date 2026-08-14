@@ -23,6 +23,7 @@ interface MetricSpec {
 
 const FAST_STALE_MS = 5 * 60 * 1_000;
 const TEAM_STALE_MS = 15 * 60 * 1_000;
+const SHEETS_STALE_MS = 15 * 60 * 1_000;
 const SEARCH_STALE_MS = 26 * 60 * 60 * 1_000;
 
 export const METRIC_KEYS = [
@@ -50,6 +51,8 @@ export const METRIC_KEYS = [
   "teamSalesYtd",
   "teamVolumeYtd",
   "teamActiveAgentsYtd",
+  "shellPagesRemaining",
+  "setsRemaining",
 ] as const satisfies readonly DashboardMetricKey[];
 
 export const METRIC_SPECS = {
@@ -173,6 +176,16 @@ export const METRIC_SPECS = {
     definition: "Distinct Follow Up Boss users attached to at least one year-to-date closed deal.",
     staleAfterMs: TEAM_STALE_MS,
   },
+  shellPagesRemaining: {
+    source: "google_sheets",
+    definition: "Incomplete shell pages remaining in the configured Google Sheet.",
+    staleAfterMs: SHEETS_STALE_MS,
+  },
+  setsRemaining: {
+    source: "google_sheets",
+    definition: "Work sets remaining in the configured Google Sheet.",
+    staleAfterMs: SHEETS_STALE_MS,
+  },
 } as const satisfies Record<DashboardMetricKey, MetricSpec>;
 
 const INTEGER_METRICS = new Set<DashboardMetricKey>([
@@ -189,6 +202,8 @@ const INTEGER_METRICS = new Set<DashboardMetricKey>([
   "jtImpressionsRolling90d",
   "teamSalesYtd",
   "teamActiveAgentsYtd",
+  "shellPagesRemaining",
+  "setsRemaining",
 ]);
 
 const CURRENCY_METRICS = new Set<DashboardMetricKey>([
