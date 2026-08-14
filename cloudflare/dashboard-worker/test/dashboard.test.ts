@@ -556,6 +556,7 @@ describe("Follow Up Boss YTD team aggregation", () => {
       projectedCloseDate: "2026-02-10",
       price: "750000",
       commissionValue: "18000",
+      teamCommission: "5000",
       users: [{ id: 659 }],
     },
     {
@@ -565,6 +566,7 @@ describe("Follow Up Boss YTD team aggregation", () => {
       projectedCloseDate: "2026-07-11T00:00:00Z",
       price: 1020000,
       commissionValue: 22605,
+      teamCommission: 8000,
       users: [{ id: 659 }, { id: 777 }],
     },
     {
@@ -574,6 +576,7 @@ describe("Follow Up Boss YTD team aggregation", () => {
       projectedCloseDate: "2026-06-01",
       price: 500000,
       commissionValue: 12000,
+      teamCommission: 3000,
       users: [{ id: 888 }],
     },
   ];
@@ -582,23 +585,48 @@ describe("Follow Up Boss YTD team aggregation", () => {
     const stages = closedStageIds(pipelines, ["closed"]);
     expect([...stages]).toEqual([20]);
     expect(aggregateClosedDeals(deals, stages, period)).toEqual({
-      commission: 40605,
+      commission: 13000,
       sales: 2,
       volume: 1770000,
       activeAgents: 2,
     });
   });
 
+  it("uses the company team split instead of gross commission", () => {
+    const stages = closedStageIds(pipelines, ["closed"]);
+    const totals = aggregateClosedDeals(deals, stages, period);
+    expect(totals.commission).toBe(13000);
+    expect(totals.commission).not.toBe(40605);
+  });
+
+  it("rejects a closed deal whose company split is missing", () => {
+    const stages = closedStageIds(pipelines, ["closed"]);
+    const dealWithoutTeamSplit = { ...deals[0], teamCommission: undefined };
+    expect(() => aggregateClosedDeals([dealWithoutTeamSplit], stages, period))
+      .toThrow();
+  });
+
   it("fetches only sanitized team totals and reuses the five-minute cache", async () => {
     let requests = 0;
-    const fetcher = async (input: RequestInfo | URL): Promise<Response> => {
+    const authorizationHeaders: string[] = [];
+    const fetcher = async (
+      input: RequestInfo | URL,
+      init?: RequestInit,
+    ): Promise<Response> => {
       requests += 1;
       const url = new URL(String(input));
+      authorizationHeaders.push(new Headers(init?.headers).get("Authorization") ?? "");
+      if (url.pathname.endsWith("/me")) {
+        return jsonResponse({ id: 1, role: "Broker", isOwner: true });
+      }
       return url.pathname.endsWith("/pipelines")
         ? collection("pipelines", pipelines)
         : collection("deals", deals);
     };
-    const dashboardEnv = withSecrets({ FUB_API_KEY: "test-fub-key" });
+    const dashboardEnv = withSecrets({
+      FUB_API_KEY: "test-personal-key",
+      FUB_TEAM_API_KEY: "test-broker-key",
+    });
     const first = await fetchFollowUpBossTeamMetrics(
       dashboardEnv,
       period,
@@ -609,9 +637,43 @@ describe("Follow Up Boss YTD team aggregation", () => {
       period,
       { fetcher, sleep: noDelay, now: new Date(NOW.getTime() + 60_000) },
     );
-    expect(first.teamCommissionYtd).toMatchObject({ kind: "ok", value: 40605 });
+    expect(first.teamCommissionYtd).toMatchObject({ kind: "ok", value: 13000 });
     expect(second.teamVolumeYtd).toMatchObject({ kind: "ok", value: 1770000 });
-    expect(requests).toBe(2);
+    expect(requests).toBe(4);
+    expect(new Set(authorizationHeaders)).toEqual(
+      new Set([`Basic ${btoa("test-broker-key:")}`]),
+    );
+  });
+
+  it("never treats the personal activity key as account-wide access", async () => {
+    const fetcher = async (): Promise<Response> => {
+      throw new Error("team source must remain unconfigured");
+    };
+    const result = await fetchFollowUpBossTeamMetrics(
+      withSecrets({ FUB_API_KEY: "test-personal-key" }),
+      period,
+      { fetcher, sleep: noDelay, now: NOW },
+    );
+    expect(result.teamSalesYtd).toMatchObject({ kind: "unconfigured" });
+  });
+
+  it("rejects a non-broker team key before requesting any deals", async () => {
+    const requestedPaths: string[] = [];
+    const fetcher = async (input: RequestInfo | URL): Promise<Response> => {
+      const url = new URL(String(input));
+      requestedPaths.push(url.pathname);
+      return jsonResponse({ id: 659, role: "Agent", isOwner: false });
+    };
+    const result = await fetchFollowUpBossTeamMetrics(
+      withSecrets({ FUB_TEAM_API_KEY: "test-agent-key" }),
+      period,
+      { fetcher, sleep: noDelay, now: NOW },
+    );
+    expect(result.teamSalesYtd).toMatchObject({
+      kind: "error",
+      category: "authorization",
+    });
+    expect(requestedPaths).toEqual(["/v1/me"]);
   });
 });
 

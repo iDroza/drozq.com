@@ -14,7 +14,7 @@ The Worker runs every minute, which is the fastest Cloudflare Cron Trigger inter
 * * * * *
 ```
 
-Each synchronization runs five integrations concurrently: Follow Up Boss personal activity, Follow Up Boss team deals, Google Ads, Google Search Console, and Google Sheets. It merges successful results with the previous snapshot and writes `dashboard:snapshot:v2` to Workers KV. A failed metric retains its last valid value and becomes stale. A first-run failure is unavailable, never a false zero.
+Each synchronization runs five integrations concurrently: Follow Up Boss personal activity, broker-authorized Follow Up Boss team deals, Google Ads, Google Search Console, and Google Sheets. It merges successful results with the previous snapshot and writes `dashboard:snapshot:v2` to Workers KV. A failed metric retains its last valid value and becomes stale. A first-run failure is unavailable, never a false zero.
 
 The first viewport contains exactly eight operating metrics:
 
@@ -32,7 +32,7 @@ Below it are five fixed rows, each capped at four metrics:
 1. Rolling 90-day Google Ads spend, clicks, primary conversions, and cost per lead across all linked leaf accounts
 2. Rolling 90-day Search Console clicks, impressions, CTR, and average position for `activerealty.com`
 3. The same four Search Console metrics for `justintye.com`
-4. Year-to-date Follow Up Boss gross commission, closed sales, volume, and active agents
+4. Year-to-date Follow Up Boss company commission, closed sales, volume, and active agents
 5. Live Google Sheets shell pages remaining and 10-page work sets remaining
 
 The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the one-minute schedule or the protected manual sync endpoint. Personal and Ads metrics become stale after five minutes, team and Sheets metrics after 15 minutes, and Search Console metrics after 26 hours. Search Console is source-cached for 60 minutes because its reporting data is not real time. Team deal aggregates are source-cached for five minutes.
@@ -93,14 +93,24 @@ The activity definitions are deliberate:
 
 Follow Up Boss does not permit this non-owner key to use the account-level agent-activity report or webhooks. The Worker therefore uses the documented REST resources directly. Text and email IDs are hashed before the daily deduplication state is stored in KV. No message content, person name, email address, phone number, or contact record is persisted. A full daily reconciliation runs at least hourly, with incremental scans between reconciliations. This avoids the Follow Up Boss report's roughly 10-minute cache while controlling API volume.
 
-The year-to-date team row uses the same key with read-only `pipelines` and `deals` requests. `FUB_CLOSED_DEAL_STAGE_NAMES` is a comma-separated, case-insensitive allowlist and defaults to `Closed`. A sale is included when its stage matches that allowlist and its projected close date falls inside the current Los Angeles calendar year. The four outputs are:
+The year-to-date team row deliberately does not reuse `FUB_API_KEY`. Follow Up Boss API keys inherit the key owner's role, so an agent key returns only deals that agent can see. Create `FUB_TEAM_API_KEY` while signed in as the account Owner or an Admin whose `/me` role is `Broker`, then store it separately:
 
-- Gross commission: the sum of each closed deal's recorded gross commission value
+```powershell
+Set-Location cloudflare/dashboard-worker
+npx wrangler secret put FUB_TEAM_API_KEY
+Set-Location ../..
+```
+
+The Worker verifies `/v1/me` before every team synchronization and refuses a non-Broker key before downloading pipelines or deals. If `FUB_TEAM_API_KEY` is missing, all four team cards are unavailable. This is intentional because an agent-scoped partial total must never be labeled as company performance.
+
+`FUB_CLOSED_DEAL_STAGE_NAMES` is a comma-separated, case-insensitive allowlist and defaults to `Closed`. A sale is included when its stage matches that allowlist and its projected close date falls inside the current Los Angeles calendar year. The four outputs are:
+
+- Company commission: the sum of each closed deal's recorded Team Split, never gross commission or Agent Split
 - Sales: the number of qualifying closed deals
 - Volume: the sum of each qualifying deal's recorded price
 - Active agents: distinct users attached to at least one qualifying closed deal
 
-The production refresh floor is five minutes for this account-wide deals scan. Change it without code by editing `FUB_TEAM_REFRESH_MINUTES` in `wrangler.jsonc`. If the account renames its closed stages, edit only `FUB_CLOSED_DEAL_STAGE_NAMES`. Multiple names are allowed, for example `Closed,Funded`.
+Every qualifying closed deal must have a price, close date, Team Split, and at least one attached user. Missing fields fail the source closed and preserve the prior complete snapshot. The production refresh floor is five minutes for this account-wide deals scan. Change it without code by editing `FUB_TEAM_REFRESH_MINUTES` in `wrangler.jsonc`. If the account renames its closed stages, edit only `FUB_CLOSED_DEAL_STAGE_NAMES`. Multiple names are allowed, for example `Closed,Funded`.
 
 ## 4. Google Ads setup
 
@@ -285,7 +295,7 @@ Put the returned namespace ID into the `DASHBOARD_KV` binding. Do not rename the
 
 - `dashboard:snapshot:v2`: sanitized public snapshot
 - `dashboard:fub:activity:v2`: counts, checkpoints, and hashed daily message IDs only
-- `dashboard:fub:team:v1`: five-minute sanitized team totals only
+- `dashboard:fub:team:v2`: five-minute sanitized broker-authorized team totals only
 - `dashboard:google_ads:accounts:v2`: short-lived leaf account ID cache
 - `dashboard:search_console:aggregate:v1`: hourly sanitized property aggregates only
 - `dashboard:sync:lease:v2`: short-lived best-effort overlap guard
@@ -387,10 +397,11 @@ The response is the same sanitized snapshot contract as the public endpoint.
 
 ### Follow Up Boss `401` or `403`
 
-- Confirm the dedicated key still exists and belongs to the intended user.
+- Confirm the personal key still exists and belongs to the intended user.
 - Update `FUB_API_KEY` after any key rotation.
 - Confirm the key user can access people, calls, appointments, text messages, emails, and `/me`.
-- Account-level reports and webhooks require owner privileges and are not used.
+- For the team row, confirm `FUB_TEAM_API_KEY` belongs to an Owner or Admin and `/v1/me` returns the `Broker` role.
+- Account-level activity reports and webhooks require owner privileges and are not used for personal metrics.
 
 ### Google Ads `401` or `403`
 
@@ -438,10 +449,13 @@ Upstream requests retry no more than three times, respect `Retry-After`, and oth
 
 ### Follow Up Boss team totals look low
 
+- Never put an agent key into `FUB_TEAM_API_KEY`. FUB limits API data to the key owner's permissions.
+- Confirm the key owner can select Everyone in FUB deal reporting and see every company deal.
 - Confirm every completed transaction is in a configured closed stage and has a projected close date in the current year.
-- Confirm each closed deal has a recorded price, gross commission, and at least one assigned user.
+- Confirm each closed deal has a recorded price, Team Split, and at least one assigned user.
 - Add any renamed or alternate closed stages to `FUB_CLOSED_DEAL_STAGE_NAMES`.
 - The dashboard intentionally counts distinct agents with a closed deal, not every enabled account user.
+- If the brokerage transaction ledger is not maintained in FUB, do not configure this source. Move the team metrics to an authoritative ledger integration instead of publishing partial CRM data.
 
 ### Stale or missing metrics
 
@@ -452,7 +466,7 @@ Personal and Ads metrics become stale after five minutes, team and Google Sheets
 - Google refresh tokens can be revoked by password, consent, or security changes. Monitor `authentication` errors.
 - Search Console property permissions or canonical property changes can revoke one site's data while the other remains healthy.
 - Google Ads API versions are sunset periodically. Review the version before `v25` retirement.
-- Follow Up Boss keys are user-scoped. Role or ownership changes can change accessible records.
+- Follow Up Boss keys are user-scoped. The separate team key is role-checked every run, so a role downgrade fails closed instead of silently shrinking company totals.
 - Follow Up Boss deal-stage renames and commission-field omissions fail closed instead of publishing an understated team total.
 - New Google Ads leaf accounts are automatic, but OAuth and developer-token access must cover them.
 - Changing Google Ads primary conversion settings changes the Leads number by design. Audit primary actions during tracking migrations.
@@ -514,3 +528,5 @@ If the Worker must be removed, first remove only the narrow `drozq.com/api/dashb
 - https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/batchGet
 - https://developers.google.com/identity/protocols/oauth2/service-account
 - https://docs.followupboss.com/reference/authentication
+- https://docs.followupboss.com/docs/inbox-apps-installation-lifecycle
+- https://docs.followupboss.com/reference/deals-post

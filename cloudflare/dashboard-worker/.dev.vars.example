@@ -4,6 +4,7 @@
 ADMIN_SYNC_TOKEN="<long-random-manual-sync-token>"
 
 FUB_API_KEY="<follow-up-boss-api-key>"
+FUB_TEAM_API_KEY="<broker-or-owner-follow-up-boss-api-key>"
 FUB_X_SYSTEM="<optional-follow-up-boss-system-name>"
 FUB_X_SYSTEM_KEY="<optional-follow-up-boss-system-key>"
 FUB_SELLER_TAG="Seller"

@@ -140,6 +140,7 @@ export interface RuntimeDependencies {
 export interface SecretBindings {
   ADMIN_SYNC_TOKEN?: string;
   FUB_API_KEY?: string;
+  FUB_TEAM_API_KEY?: string;
   FUB_X_SYSTEM?: string;
   FUB_X_SYSTEM_KEY?: string;
   FUB_ASSIGNED_USER_ID?: string;

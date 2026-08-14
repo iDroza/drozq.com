@@ -12,7 +12,7 @@ import type {
 } from "../types";
 
 const FUB_BASE_URL = "https://api.followupboss.com/v1";
-const TEAM_CACHE_KEY = "dashboard:fub:team:v1";
+const TEAM_CACHE_KEY = "dashboard:fub:team:v2";
 const PAGE_LIMIT = 100;
 const MAX_PAGES = 100;
 
@@ -24,14 +24,14 @@ export interface TeamDealTotals {
 }
 
 interface TeamCache extends TeamDealTotals {
-  version: 1;
+  version: 2;
   stageKey: string;
   fetchedAt: string;
 }
 
-function headersFor(config: FollowUpBossConfig): Headers {
+function headersFor(config: FollowUpBossConfig, apiKey: string): Headers {
   const headers = new Headers({
-    Authorization: `Basic ${btoa(`${config.apiKey}:`)}`,
+    Authorization: `Basic ${btoa(`${apiKey}:`)}`,
     Accept: "application/json",
   });
   if (config.system !== "") {
@@ -41,6 +41,31 @@ function headersFor(config: FollowUpBossConfig): Headers {
     headers.set("X-System-Key", config.systemKey);
   }
   return headers;
+}
+
+async function assertAccountWideAccess(
+  headers: Headers,
+  dependencies: RuntimeDependencies,
+): Promise<void> {
+  const response = await fetchWithRetry(
+    new URL(`${FUB_BASE_URL}/me`),
+    { method: "GET", headers },
+    {
+      source: "follow_up_boss_team_identity",
+      fetcher: dependencies.fetcher,
+      sleep: dependencies.sleep,
+    },
+  );
+  if (!response.ok) {
+    throw classifyHttpStatus(response.status);
+  }
+  const payload = await readBoundedJson(response);
+  if (!isRecord(payload) || typeof payload["role"] !== "string") {
+    throw new UpstreamRequestError("schema", response.status);
+  }
+  if (normalize(payload["role"]) !== "broker") {
+    throw new UpstreamRequestError("authorization");
+  }
 }
 
 async function listCollection(
@@ -195,8 +220,10 @@ export function aggregateClosedDeals(
     requireCount(deal["id"], "fub_deal_id");
     sales += 1;
     volume += requiredMoney(deal["price"], "fub_deal_price");
-    const commissionValue = deal["commissionValue"] ?? deal["commission"];
-    commission += requiredMoney(commissionValue, "fub_deal_commission");
+    commission += requiredMoney(
+      deal["teamCommission"],
+      "fub_deal_team_commission",
+    );
     for (const id of userIds(deal["users"])) {
       agents.add(id);
     }
@@ -234,7 +261,7 @@ function parseCache(
 ): TeamCache | null {
   if (
     !isRecord(value) ||
-    value["version"] !== 1 ||
+    value["version"] !== 2 ||
     value["stageKey"] !== stageKey ||
     typeof value["fetchedAt"] !== "string" ||
     !Number.isFinite(Date.parse(value["fetchedAt"])) ||
@@ -305,7 +332,7 @@ export async function fetchFollowUpBossTeamMetrics(
 ): Promise<FollowUpBossTeamMetricResults> {
   const started = Date.now();
   const config = readFollowUpBossConfig(env);
-  if (config.apiKey === "" || config.closedDealStageNames.length === 0) {
+  if (config.teamApiKey === "" || config.closedDealStageNames.length === 0) {
     return allSame({
       kind: "unconfigured",
       durationMs: Date.now() - started,
@@ -315,6 +342,12 @@ export async function fetchFollowUpBossTeamMetrics(
 
   const now = dependencies.now ?? new Date();
   const stageKey = config.closedDealStageNames.map(normalize).sort().join(",");
+  const headers = headersFor(config, config.teamApiKey);
+  try {
+    await assertAccountWideAccess(headers, dependencies);
+  } catch (error) {
+    return allSame(errorResult(error, started));
+  }
   try {
     const stored = await env.DASHBOARD_KV.get(TEAM_CACHE_KEY);
     if (stored !== null) {
@@ -337,7 +370,6 @@ export async function fetchFollowUpBossTeamMetrics(
   }
 
   try {
-    const headers = headersFor(config);
     const [pipelines, deals] = await Promise.all([
       listCollection("pipelines", "pipelines", {}, headers, dependencies),
       listCollection(
@@ -358,7 +390,7 @@ export async function fetchFollowUpBossTeamMetrics(
       await env.DASHBOARD_KV.put(
         TEAM_CACHE_KEY,
         JSON.stringify({
-          version: 1,
+          version: 2,
           stageKey,
           fetchedAt: observedAt,
           ...totals,

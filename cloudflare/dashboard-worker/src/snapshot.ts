@@ -158,7 +158,7 @@ export const METRIC_SPECS = {
   },
   teamCommissionYtd: {
     source: "follow_up_boss",
-    definition: "Gross commission recorded on year-to-date closed Follow Up Boss deals across all configured pipelines.",
+    definition: "Company Team Split recorded on year-to-date closed Follow Up Boss deals across all configured pipelines.",
     staleAfterMs: TEAM_STALE_MS,
   },
   teamSalesYtd: {

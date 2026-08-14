@@ -18,6 +18,7 @@ export const CONFIG_DEFAULTS = Object.freeze({
 
 export interface FollowUpBossConfig {
   apiKey: string;
+  teamApiKey: string;
   sellerTag: string;
   assignedUserId: string;
   system: string;
@@ -90,6 +91,7 @@ export function parseCommaSeparated(value: string): string[] {
 export function readFollowUpBossConfig(env: DashboardEnv): FollowUpBossConfig {
   return {
     apiKey: clean(env.FUB_API_KEY),
+    teamApiKey: clean(env.FUB_TEAM_API_KEY),
     sellerTag: clean(env.FUB_SELLER_TAG) || CONFIG_DEFAULTS.fubSellerTag,
     assignedUserId: clean(env.FUB_ASSIGNED_USER_ID),
     system: clean(env.FUB_X_SYSTEM),
