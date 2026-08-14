@@ -26,6 +26,7 @@ export interface ConversionActionCatalogItem {
 interface GoogleAdsPerformance {
   costMicros: bigint;
   conversions: number;
+  clicks: number;
 }
 
 interface GoogleAdsDailyPerformance extends GoogleAdsPerformance {
@@ -91,7 +92,8 @@ export function buildAccountPerformanceQuery(
 SELECT
   segments.date,
   metrics.cost_micros,
-  metrics.conversions
+  metrics.conversions,
+  metrics.clicks
 FROM customer
 WHERE segments.date BETWEEN '${reportingPeriod.startDate}' AND '${reportingPeriod.endDate}'
 `.trim();
@@ -132,7 +134,7 @@ export function parseGoogleAdsSpend(rows: unknown[]): number {
 
 export function parseGoogleAdsPerformance(rows: unknown[]): GoogleAdsPerformance {
   if (rows.length === 0) {
-    return { costMicros: 0n, conversions: 0 };
+    return { costMicros: 0n, conversions: 0, clicks: 0 };
   }
   if (rows.length !== 1 || !isRecord(rows[0]) || !isRecord(rows[0]["metrics"])) {
     throw new UpstreamRequestError("schema");
@@ -144,7 +146,16 @@ export function parseGoogleAdsPerformance(rows: unknown[]): GoogleAdsPerformance
       metrics["conversions"] ?? 0,
       "google_ads_conversions",
     ),
+    clicks: parseClicks(metrics["clicks"] ?? 0),
   };
+}
+
+function parseClicks(value: unknown): number {
+  const clicks = requireNonnegativeNumber(value, "google_ads_clicks");
+  if (!Number.isSafeInteger(clicks)) {
+    throw new UpstreamRequestError("schema");
+  }
+  return clicks;
 }
 
 export function parseGoogleAdsDailyPerformance(
@@ -174,6 +185,7 @@ export function parseGoogleAdsDailyPerformance(
         metrics["conversions"] ?? 0,
         "google_ads_conversions",
       ),
+      clicks: parseClicks(metrics["clicks"] ?? 0),
     };
   });
 }
@@ -513,6 +525,8 @@ export async function fetchGoogleAdsMetrics(
     return {
       googleAdsSpendMtd: unconfigured(started),
       googleAdsLeadsMtd: unconfigured(started),
+      googleAdsCostPerClickMtd: unconfigured(started),
+      googleAdsCostPerLeadMtd: unconfigured(started),
       googleAdsSpendYtd: unconfigured(started),
       googleAdsLeadsYtd: unconfigured(started),
       googleAdsCostPerLeadYtd: unconfigured(started),
@@ -561,6 +575,7 @@ export async function fetchGoogleAdsMetrics(
 
     let mtdCostMicros = 0n;
     let mtdConversions = 0;
+    let mtdClicks = 0;
     let yearToDateCostMicros = 0n;
     let yearToDateConversions = 0;
     for (const item of settled) {
@@ -582,10 +597,23 @@ export async function fetchGoogleAdsMetrics(
         ) {
           mtdCostMicros += performance.costMicros;
           mtdConversions += performance.conversions;
+          mtdClicks += performance.clicks;
         }
       }
     }
     const durationMs = Date.now() - started;
+    const monthToDateSpend = costMicrosToUsd(mtdCostMicros);
+    const monthToDateLeads = requireNonnegativeNumber(
+      mtdConversions,
+      "google_ads_month_to_date_conversions",
+    );
+    const monthToDateClicks = parseClicks(mtdClicks);
+    const monthToDateCostPerClick = monthToDateClicks > 0
+      ? requireSpend(monthToDateSpend / monthToDateClicks)
+      : null;
+    const monthToDateCostPerLead = monthToDateLeads > 0
+      ? requireSpend(monthToDateSpend / monthToDateLeads)
+      : null;
     const yearToDateSpend = costMicrosToUsd(yearToDateCostMicros);
     const yearToDateLeads = requireNonnegativeNumber(
       yearToDateConversions,
@@ -597,19 +625,42 @@ export async function fetchGoogleAdsMetrics(
     return {
       googleAdsSpendMtd: {
         kind: "ok",
-        value: costMicrosToUsd(mtdCostMicros),
+        value: monthToDateSpend,
         durationMs,
         responseStatus: 200,
       },
       googleAdsLeadsMtd: {
         kind: "ok",
-        value: requireNonnegativeNumber(
-          mtdConversions,
-          "google_ads_all_account_conversions",
-        ),
+        value: monthToDateLeads,
         durationMs,
         responseStatus: 200,
       },
+      googleAdsCostPerClickMtd: monthToDateCostPerClick === null
+        ? {
+            kind: "error",
+            category: "no_data",
+            durationMs,
+            responseStatus: 200,
+          }
+        : {
+            kind: "ok",
+            value: monthToDateCostPerClick,
+            durationMs,
+            responseStatus: 200,
+          },
+      googleAdsCostPerLeadMtd: monthToDateCostPerLead === null
+        ? {
+            kind: "error",
+            category: "no_data",
+            durationMs,
+            responseStatus: 200,
+          }
+        : {
+            kind: "ok",
+            value: monthToDateCostPerLead,
+            durationMs,
+            responseStatus: 200,
+          },
       googleAdsSpendYtd: {
         kind: "ok",
         value: yearToDateSpend,
@@ -644,6 +695,8 @@ export async function fetchGoogleAdsMetrics(
     return {
       googleAdsSpendMtd: metric,
       googleAdsLeadsMtd: metric,
+      googleAdsCostPerClickMtd: metric,
+      googleAdsCostPerLeadMtd: metric,
       googleAdsSpendYtd: metric,
       googleAdsLeadsYtd: metric,
       googleAdsCostPerLeadYtd: metric,

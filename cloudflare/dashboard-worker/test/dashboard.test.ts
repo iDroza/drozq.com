@@ -10,8 +10,11 @@ import {
 } from "../src/lib/date";
 import { fetchWithRetry, parseRetryAfter } from "../src/lib/retry";
 import {
+  ACTIVE_METRIC_KEYS,
   createUnconfiguredSnapshot,
   sanitizeSnapshot,
+  sanitizeStoredSnapshot,
+  type ActiveDashboardSnapshot,
   toPublicSnapshot,
 } from "../src/snapshot";
 import {
@@ -90,6 +93,8 @@ function allSuccessfulResults(): MetricResultMap {
     freshSellerLeads: successful(3),
     googleAdsSpendMtd: successful(2362.175313),
     googleAdsLeadsMtd: successful(107),
+    googleAdsCostPerClickMtd: successful(1.968479),
+    googleAdsCostPerLeadMtd: successful(22.076405),
     googleAdsSpendYtd: successful(18400.5),
     googleAdsLeadsYtd: successful(721),
     googleAdsCostPerLeadYtd: successful(25.520804),
@@ -365,11 +370,12 @@ describe("Google Ads all-account aggregation", () => {
   it("parses daily all-account spend and conversions", () => {
     expect(parseGoogleAdsDailyPerformance([{
       segments: { date: "2026-08-14" },
-      metrics: { costMicros: "2500000", conversions: "3" },
+      metrics: { costMicros: "2500000", conversions: "3", clicks: "11" },
     }])).toEqual([{
       date: "2026-08-14",
       costMicros: 2500000n,
       conversions: 3,
+      clicks: 11,
     }]);
   });
 
@@ -437,6 +443,12 @@ describe("Google Ads all-account aggregation", () => {
     expect(result.googleAdsSpendMtd.kind === "ok" ? result.googleAdsSpendMtd.value : null)
       .toBeCloseTo(2362.175313, 6);
     expect(result.googleAdsLeadsMtd).toMatchObject({ kind: "ok", value: 107 });
+    expect(result.googleAdsCostPerClickMtd.kind === "ok"
+      ? result.googleAdsCostPerClickMtd.value
+      : null).toBeCloseTo(1.9684794275, 6);
+    expect(result.googleAdsCostPerLeadMtd.kind === "ok"
+      ? result.googleAdsCostPerLeadMtd.value
+      : null).toBeCloseTo(22.076404794, 6);
     expect(result.googleAdsLeadsYtd).toMatchObject({ kind: "ok", value: 107 });
     expect(result.googleAdsCostPerLeadYtd.kind === "ok"
       ? result.googleAdsCostPerLeadYtd.value
@@ -478,6 +490,8 @@ describe("Google Ads all-account aggregation", () => {
     );
     expect(result.googleAdsSpendMtd.kind).toBe("error");
     expect(result.googleAdsLeadsMtd.kind).toBe("error");
+    expect(result.googleAdsCostPerClickMtd.kind).toBe("error");
+    expect(result.googleAdsCostPerLeadMtd.kind).toBe("error");
   });
 
   it("derives period-matched blended commission ROAS", () => {
@@ -1105,6 +1119,27 @@ describe("snapshot merging and public contract", () => {
     });
   });
 
+  it("migrates a saved snapshot without losing its audited reporting windows", () => {
+    const snapshot = makeSnapshot();
+    const legacy = JSON.parse(JSON.stringify(snapshot)) as {
+      metrics: Record<string, unknown>;
+      rolling90DayPeriod: DashboardSnapshot["rolling90DayPeriod"];
+    };
+    delete legacy.metrics["googleAdsCostPerClickMtd"];
+    delete legacy.metrics["googleAdsCostPerLeadMtd"];
+    const migrated = sanitizeStoredSnapshot(legacy);
+
+    expect(migrated?.rolling90DayPeriod).toEqual(snapshot.rolling90DayPeriod);
+    expect(migrated?.metrics.googleAdsCostPerClickMtd).toMatchObject({
+      value: null,
+      status: "unconfigured",
+    });
+    expect(migrated?.metrics.googleAdsCostPerLeadMtd).toMatchObject({
+      value: null,
+      status: "unconfigured",
+    });
+  });
+
   it("rejects an invalid manual-sync token", async () => {
     const response = await handleRequest(
       new Request("https://drozq.com/api/dashboard/admin/sync", {
@@ -1134,7 +1169,7 @@ describe("snapshot merging and public contract", () => {
     const snapshot = createUnconfiguredSnapshot(NOW, "America/Los_Angeles");
     expect(sanitizeSnapshot(snapshot)).not.toBeNull();
     expect(snapshot.metrics.googleAdsSpendMtd.value).toBeNull();
-    expect(Object.keys(snapshot.metrics)).toHaveLength(26);
+    expect(Object.keys(snapshot.metrics)).toHaveLength(28);
   });
 
   it("serves only a cached sanitized summary with hardened headers", async () => {
@@ -1152,7 +1187,7 @@ describe("snapshot merging and public contract", () => {
     );
     expect(response.headers.has("Access-Control-Allow-Origin")).toBe(false);
     expect(payload.version).toBe(2);
-    expect(Object.keys(payload.metrics)).toHaveLength(26);
+    expect(Object.keys(payload.metrics)).toHaveLength(28);
   });
 
   it("serves the same sanitized snapshot through the browser bootstrap", async () => {
@@ -1188,7 +1223,48 @@ describe("snapshot merging and public contract", () => {
     expect(source).not.toContain("must-not-ship");
     const payload = JSON.parse(source.slice(prefix.length, -1)) as DashboardSnapshot;
     expect(sanitizeSnapshot(payload)).not.toBeNull();
-    expect(Object.keys(payload.metrics)).toHaveLength(26);
+    expect(Object.keys(payload.metrics)).toHaveLength(28);
+  });
+
+  it("serves an explicit company-safe metric allowlist for Active Realty", async () => {
+    await env.DASHBOARD_KV.put(SNAPSHOT_KEY, JSON.stringify(makeSnapshot()));
+    const response = await handleRequest(
+      new Request("https://drozq.com/api/dashboard/active-summary"),
+      withSecrets({}),
+    );
+    const payload = (await response.json()) as ActiveDashboardSnapshot;
+
+    expect(response.status).toBe(200);
+    expect(Object.keys(payload.metrics)).toEqual([...ACTIVE_METRIC_KEYS]);
+    expect(payload.metrics.googleAdsCostPerClickMtd.value).toBeCloseTo(1.968479, 6);
+    expect(payload.metrics.googleAdsCostPerLeadMtd.value).toBeCloseTo(22.076405, 6);
+    for (const personalKey of [
+      "callsToday",
+      "textsToday",
+      "emailsToday",
+      "appointmentsSetMtd",
+      "freshBuyerLeads",
+      "freshSellerLeads",
+    ]) {
+      expect(personalKey in payload.metrics).toBe(false);
+    }
+  });
+
+  it("serves the company-safe allowlist through the Active Realty bootstrap", async () => {
+    await env.DASHBOARD_KV.put(SNAPSHOT_KEY, JSON.stringify(makeSnapshot()));
+    const response = await handleRequest(
+      new Request("https://drozq.com/api/dashboard/active-bootstrap.js"),
+      withSecrets({}),
+    );
+    const source = await response.text();
+    const prefix = '"use strict";window.__ACTIVE_REALTY_DASHBOARD_SNAPSHOT__=';
+    expect(source.startsWith(prefix)).toBe(true);
+    const payload = JSON.parse(
+      source.slice(prefix.length, -1),
+    ) as ActiveDashboardSnapshot;
+    expect(Object.keys(payload.metrics)).toEqual([...ACTIVE_METRIC_KEYS]);
+    expect(source).not.toContain("callsToday");
+    expect(source).not.toContain("freshSellerLeads");
   });
 
   it("returns a valid 503 payload when no snapshot exists", async () => {

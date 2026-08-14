@@ -35,6 +35,8 @@ export const METRIC_KEYS = [
   "freshSellerLeads",
   "googleAdsSpendMtd",
   "googleAdsLeadsMtd",
+  "googleAdsCostPerClickMtd",
+  "googleAdsCostPerLeadMtd",
   "googleAdsSpendYtd",
   "googleAdsLeadsYtd",
   "googleAdsCostPerLeadYtd",
@@ -94,6 +96,16 @@ export const METRIC_SPECS = {
   googleAdsLeadsMtd: {
     source: "google_ads",
     definition: "Total month-to-date primary Google Ads conversions across every accessible non-manager account.",
+    staleAfterMs: FAST_STALE_MS,
+  },
+  googleAdsCostPerClickMtd: {
+    source: "google_ads",
+    definition: "Month-to-date Google Ads cost divided by clicks across every accessible non-manager account.",
+    staleAfterMs: FAST_STALE_MS,
+  },
+  googleAdsCostPerLeadMtd: {
+    source: "google_ads",
+    definition: "Month-to-date Google Ads cost divided by primary conversions across every accessible non-manager account.",
     staleAfterMs: FAST_STALE_MS,
   },
   googleAdsSpendYtd: {
@@ -207,6 +219,8 @@ const INTEGER_METRICS = new Set<DashboardMetricKey>([
 
 const CURRENCY_METRICS = new Set<DashboardMetricKey>([
   "googleAdsSpendMtd",
+  "googleAdsCostPerClickMtd",
+  "googleAdsCostPerLeadMtd",
   "googleAdsSpendYtd",
   "googleAdsCostPerLeadYtd",
   "teamCommissionYtd",
@@ -415,17 +429,16 @@ export function sanitizeStoredSnapshot(value: unknown): DashboardSnapshot | null
     metrics[key] = metric;
   }
   const referenceDate = new Date(`${reportingPeriod.endDate}T12:00:00.000Z`);
+  const rolling90DayPeriod = sanitizePeriod(value["rolling90DayPeriod"]);
+  const yearToDatePeriod = sanitizePeriod(value["yearToDatePeriod"]);
   return {
     version: 2,
     metrics,
     reportingPeriod,
-    rolling90DayPeriod: getSearchConsoleThreeMonthPeriod(
-      reportingPeriod.endDate,
-    ),
-    yearToDatePeriod: getYearToDatePeriod(
-      referenceDate,
-      reportingPeriod.timeZone,
-    ),
+    rolling90DayPeriod: rolling90DayPeriod ??
+      getSearchConsoleThreeMonthPeriod(reportingPeriod.endDate),
+    yearToDatePeriod: yearToDatePeriod ??
+      getYearToDatePeriod(referenceDate, reportingPeriod.timeZone),
     ...timestamps,
   };
 }
@@ -469,4 +482,78 @@ export function toPublicSnapshot(
     }
   }
   return sanitized;
+}
+
+export const ACTIVE_METRIC_KEYS = [
+  "googleAdsSpendMtd",
+  "googleAdsLeadsMtd",
+  "googleAdsCostPerClickMtd",
+  "googleAdsCostPerLeadMtd",
+  "googleAdsSpendYtd",
+  "googleAdsLeadsYtd",
+  "googleAdsCostPerLeadYtd",
+  "teamCommissionRoasYtd",
+  "activeRealtyClicksRolling90d",
+  "activeRealtyImpressionsRolling90d",
+  "activeRealtyCtrRolling90d",
+  "activeRealtyPositionRolling90d",
+  "jtClicksRolling90d",
+  "jtImpressionsRolling90d",
+  "jtCtrRolling90d",
+  "jtPositionRolling90d",
+  "teamCommissionYtd",
+  "teamSalesYtd",
+  "teamVolumeYtd",
+  "teamActiveAgentsYtd",
+  "shellPagesRemaining",
+  "setsRemaining",
+] as const satisfies readonly DashboardMetricKey[];
+
+export type ActiveMetricKey = (typeof ACTIVE_METRIC_KEYS)[number];
+
+export type ActiveDashboardSnapshot = Omit<DashboardSnapshot, "metrics"> & {
+  metrics: Pick<DashboardSnapshot["metrics"], ActiveMetricKey>;
+};
+
+export function toActivePublicSnapshot(
+  snapshot: DashboardSnapshot,
+  now: Date,
+): ActiveDashboardSnapshot {
+  const publicSnapshot = toPublicSnapshot(snapshot, now);
+  return {
+    version: publicSnapshot.version,
+    metrics: {
+      googleAdsSpendMtd: publicSnapshot.metrics.googleAdsSpendMtd,
+      googleAdsLeadsMtd: publicSnapshot.metrics.googleAdsLeadsMtd,
+      googleAdsCostPerClickMtd: publicSnapshot.metrics.googleAdsCostPerClickMtd,
+      googleAdsCostPerLeadMtd: publicSnapshot.metrics.googleAdsCostPerLeadMtd,
+      googleAdsSpendYtd: publicSnapshot.metrics.googleAdsSpendYtd,
+      googleAdsLeadsYtd: publicSnapshot.metrics.googleAdsLeadsYtd,
+      googleAdsCostPerLeadYtd: publicSnapshot.metrics.googleAdsCostPerLeadYtd,
+      teamCommissionRoasYtd: publicSnapshot.metrics.teamCommissionRoasYtd,
+      activeRealtyClicksRolling90d:
+        publicSnapshot.metrics.activeRealtyClicksRolling90d,
+      activeRealtyImpressionsRolling90d:
+        publicSnapshot.metrics.activeRealtyImpressionsRolling90d,
+      activeRealtyCtrRolling90d:
+        publicSnapshot.metrics.activeRealtyCtrRolling90d,
+      activeRealtyPositionRolling90d:
+        publicSnapshot.metrics.activeRealtyPositionRolling90d,
+      jtClicksRolling90d: publicSnapshot.metrics.jtClicksRolling90d,
+      jtImpressionsRolling90d: publicSnapshot.metrics.jtImpressionsRolling90d,
+      jtCtrRolling90d: publicSnapshot.metrics.jtCtrRolling90d,
+      jtPositionRolling90d: publicSnapshot.metrics.jtPositionRolling90d,
+      teamCommissionYtd: publicSnapshot.metrics.teamCommissionYtd,
+      teamSalesYtd: publicSnapshot.metrics.teamSalesYtd,
+      teamVolumeYtd: publicSnapshot.metrics.teamVolumeYtd,
+      teamActiveAgentsYtd: publicSnapshot.metrics.teamActiveAgentsYtd,
+      shellPagesRemaining: publicSnapshot.metrics.shellPagesRemaining,
+      setsRemaining: publicSnapshot.metrics.setsRemaining,
+    },
+    reportingPeriod: publicSnapshot.reportingPeriod,
+    rolling90DayPeriod: publicSnapshot.rolling90DayPeriod,
+    yearToDatePeriod: publicSnapshot.yearToDatePeriod,
+    lastAttemptAt: publicSnapshot.lastAttemptAt,
+    lastSuccessfulFullSyncAt: publicSnapshot.lastSuccessfulFullSyncAt,
+  };
 }

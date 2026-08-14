@@ -26,6 +26,8 @@ export interface DashboardSnapshot {
     freshSellerLeads: DashboardMetric;
     googleAdsSpendMtd: DashboardMetric;
     googleAdsLeadsMtd: DashboardMetric;
+    googleAdsCostPerClickMtd: DashboardMetric;
+    googleAdsCostPerLeadMtd: DashboardMetric;
     googleAdsSpendYtd: DashboardMetric;
     googleAdsLeadsYtd: DashboardMetric;
     googleAdsCostPerLeadYtd: DashboardMetric;
@@ -94,6 +96,8 @@ export type MetricFetchResult =
 export interface GoogleAdsMetricResults {
   googleAdsSpendMtd: MetricFetchResult;
   googleAdsLeadsMtd: MetricFetchResult;
+  googleAdsCostPerClickMtd: MetricFetchResult;
+  googleAdsCostPerLeadMtd: MetricFetchResult;
   googleAdsSpendYtd: MetricFetchResult;
   googleAdsLeadsYtd: MetricFetchResult;
   googleAdsCostPerLeadYtd: MetricFetchResult;

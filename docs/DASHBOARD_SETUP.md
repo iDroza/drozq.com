@@ -6,6 +6,8 @@ Last updated: August 14, 2026
 
 `/dashboard` is a static Cloudflare Pages page. It reads only sanitized aggregate data from the dashboard Worker and never contacts Follow Up Boss, Google Ads, Google Search Console, Google Sheets, or Google OAuth from the browser. Normal refreshes use `GET /api/dashboard/summary`. A same-origin `GET /api/dashboard/bootstrap.js` transport loads the same allowlisted snapshot before the controller runs and provides an automatic fallback when a browser, extension, or privacy layer blocks `fetch`.
 
+`/active` is the company-facing Active Realty view. It uses the same saved snapshot and visual system, but reads a separate explicit allowlist through `GET /api/dashboard/active-summary` and `GET /api/dashboard/active-bootstrap.js`. Those responses exclude calls, texts, emails, appointments, fresh buyer leads, and fresh seller leads at the Worker serialization boundary. The page is `noindex,nofollow,noarchive`, has no Drozq or individual-agent branding, and is not linked from public navigation or the sitemap.
+
 The separate `drozq-operating-dashboard` Cloudflare Worker owns all credentials and upstream requests. Its production route is restricted to `drozq.com/api/dashboard*`, so it cannot intercept the rest of the Pages site or the existing `/api/lead` and `/api/geo` Pages Functions.
 
 The Worker runs every minute, which is the fastest Cloudflare Cron Trigger interval:
@@ -34,6 +36,8 @@ Below it are five fixed rows, each capped at four metrics:
 3. The same four Search Console metrics for `justintye.com`
 4. Year-to-date Follow Up Boss Deals Leaderboard gross commission, closed sales, volume, and active agents
 5. Live Google Sheets shell pages remaining and 10-page work sets remaining
+
+The Active Realty view contains 22 company metrics. Its first row is month-to-date Google Ads spend, primary conversions, cost per click, and cost per conversion across all linked leaf accounts. The year-to-date Ads row, both Search Console rows, the team row, and the two production values remain. Production Queue is enlarged and is always the final visible section.
 
 The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the one-minute schedule or the protected manual sync endpoint. Personal and Ads metrics become stale after five minutes, team and Sheets metrics after 15 minutes, and Search Console metrics after 26 hours. Search Console is source-cached for 60 minutes because its reporting data is not real time. Team deal aggregates are source-cached for five minutes.
 
@@ -152,12 +156,13 @@ One OAuth access token is reused for the complete synchronization. Each leaf acc
 SELECT
   segments.date,
   metrics.cost_micros,
-  metrics.conversions
+  metrics.conversions,
+  metrics.clicks
 FROM customer
 WHERE segments.date BETWEEN 'YYYY-MM-DD' AND 'YYYY-MM-DD'
 ```
 
-The Worker derives month-to-date and year-to-date totals from those non-overlapping daily rows. Spend is the exact sum of `cost_micros` divided by 1,000,000. Conversions are the sum of the Google Ads `Conversions` column, represented by `metrics.conversions`, across all linked leaf accounts. Cost per conversion is YTD spend divided by YTD primary conversions. This intentionally includes every primary conversion in account performance and no longer filters to one action name or one child account. It does not use `metrics.all_conversions`, which can include local actions and other secondary engagement events. If there are no YTD conversions, cost per conversion is unavailable rather than a false zero.
+The Worker derives month-to-date and year-to-date totals from those non-overlapping daily rows. Spend is the exact sum of `cost_micros` divided by 1,000,000. Conversions are the sum of the Google Ads `Conversions` column, represented by `metrics.conversions`, across all linked leaf accounts. The Active Realty CPC is MTD spend divided by MTD clicks. Its CPL is MTD spend divided by MTD primary conversions. The aggregate cost per conversion is YTD spend divided by YTD primary conversions. This intentionally includes every primary conversion in account performance and no longer filters to one action name or one child account. It does not use `metrics.all_conversions`, which can include local actions and other secondary engagement events. A zero click or conversion denominator makes only the applicable rate unavailable rather than publishing zero or Infinity.
 
 Blended ROAS uses matching calendar-year periods:
 
@@ -386,13 +391,17 @@ Verify scope and headers:
 ```powershell
 curl.exe -I https://drozq.com/dashboard
 curl.exe -I https://drozq.com/Dashboard
+curl.exe -I https://drozq.com/active
+curl.exe -I https://drozq.com/Active
 curl.exe -i https://drozq.com/api/dashboard/health
 curl.exe -i https://drozq.com/api/dashboard/summary
+curl.exe -i https://drozq.com/api/dashboard/active-summary
+curl.exe -i https://drozq.com/api/dashboard/active-bootstrap.js
 curl.exe -i https://drozq.com/api/dashboard/not-a-route
 curl.exe -i https://drozq.com/api/geo
 ```
 
-Expected results are `200`, `301` to `/dashboard`, `200`, `200` or first-run `503`, `404`, and the existing geo endpoint's normal response. The summary must include JSON content type, `nosniff`, and the documented 10-second cache policy. It must not include wildcard CORS.
+Both pages return `200`; uppercase page paths return `301` to their lowercase canonical paths. Health returns `200`. Summary endpoints return `200` or a first-run `503`, the JavaScript bootstrap returns `200`, unknown dashboard routes return `404`, and the existing geo endpoint keeps its normal response. JSON summaries must include JSON content type, `nosniff`, and the documented 10-second cache policy without wildcard CORS. The Active Realty responses must contain exactly the 22 documented company metrics and none of the six personal metric keys.
 
 ## 11. Protected manual synchronization
 
@@ -489,6 +498,7 @@ Personal and Ads metrics become stale after five minutes, team and Google Sheets
 - Follow Up Boss fallback deal-stage renames and commission-field omissions fail closed instead of publishing an understated team total.
 - New Google Ads leaf accounts are automatic, but OAuth and developer-token access must cover them.
 - Changing Google Ads primary conversion settings changes the Leads number by design. Audit primary actions during tracking migrations.
+- CPC and CPL intentionally fail closed when clicks or primary conversions are zero, so a missing denominator never appears as a misleading `$0.00`.
 - Google Sheets service-account keys can be disabled or deleted, and Viewer access can be removed. Monitor `authentication` and `authorization` errors.
 - Renaming the Sheet tab or moving the two Summary outputs breaks only the affected Sheet metric. Update the corresponding range secret after any tracker redesign.
 - A tracker formula that starts returning decimals, text, blanks, or negative numbers fails closed and keeps the last valid count.

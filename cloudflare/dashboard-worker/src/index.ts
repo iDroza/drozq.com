@@ -2,6 +2,7 @@ import { readReportingTimeZone } from "./config";
 import {
   createUnconfiguredSnapshot,
   sanitizeStoredSnapshot,
+  toActivePublicSnapshot,
   toPublicSnapshot,
 } from "./snapshot";
 import { SNAPSHOT_KEY, synchronizeDashboard } from "./sync";
@@ -10,6 +11,7 @@ import type { DashboardEnv, DashboardSnapshot } from "./types";
 const SUMMARY_CACHE_CONTROL =
   "public, max-age=10, s-maxage=10, stale-while-revalidate=20";
 const DASHBOARD_BOOTSTRAP_GLOBAL = "__DROZQ_DASHBOARD_SNAPSHOT__";
+const ACTIVE_BOOTSTRAP_GLOBAL = "__ACTIVE_REALTY_DASHBOARD_SNAPSHOT__";
 const SYNC_LEASE_KEY = "dashboard:sync:lease:v2";
 const SYNC_LEASE_TTL_SECONDS = 120;
 
@@ -123,6 +125,33 @@ async function bootstrapResponse(env: DashboardEnv): Promise<Response> {
   );
 }
 
+async function activeSummaryResponse(env: DashboardEnv): Promise<Response> {
+  const now = new Date();
+  const snapshot = await readSnapshot(env);
+  const source = snapshot ?? createUnconfiguredSnapshot(
+    now,
+    readReportingTimeZone(env),
+  );
+  return jsonResponse(
+    toActivePublicSnapshot(source, now),
+    snapshot === null ? 503 : 200,
+    SUMMARY_CACHE_CONTROL,
+  );
+}
+
+async function activeBootstrapResponse(env: DashboardEnv): Promise<Response> {
+  const now = new Date();
+  const snapshot = await readSnapshot(env);
+  const source = snapshot ?? createUnconfiguredSnapshot(
+    now,
+    readReportingTimeZone(env),
+  );
+  const payload = toActivePublicSnapshot(source, now);
+  return javascriptResponse(
+    `"use strict";window.${ACTIVE_BOOTSTRAP_GLOBAL}=${JSON.stringify(payload)};`,
+  );
+}
+
 async function healthResponse(env: DashboardEnv): Promise<Response> {
   const snapshot = await readSnapshot(env);
   return jsonResponse({ ok: true, snapshotExists: snapshot !== null }, 200);
@@ -163,9 +192,21 @@ export async function handleRequest(
   }
   if (
     request.method === "GET" &&
+    url.pathname === "/api/dashboard/active-summary"
+  ) {
+    return activeSummaryResponse(env);
+  }
+  if (
+    request.method === "GET" &&
     url.pathname === "/api/dashboard/bootstrap.js"
   ) {
     return bootstrapResponse(env);
+  }
+  if (
+    request.method === "GET" &&
+    url.pathname === "/api/dashboard/active-bootstrap.js"
+  ) {
+    return activeBootstrapResponse(env);
   }
   if (request.method === "GET" && url.pathname === "/api/dashboard/health") {
     return healthResponse(env);

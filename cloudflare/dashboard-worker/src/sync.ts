@@ -202,6 +202,8 @@ function adsFailure(): GoogleAdsMetricResults {
   return {
     googleAdsSpendMtd: unexpectedResult(),
     googleAdsLeadsMtd: unexpectedResult(),
+    googleAdsCostPerClickMtd: unexpectedResult(),
+    googleAdsCostPerLeadMtd: unexpectedResult(),
     googleAdsSpendYtd: unexpectedResult(),
     googleAdsLeadsYtd: unexpectedResult(),
     googleAdsCostPerLeadYtd: unexpectedResult(),
