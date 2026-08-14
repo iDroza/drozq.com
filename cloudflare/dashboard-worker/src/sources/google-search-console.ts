@@ -3,6 +3,12 @@ import {
   type GoogleSearchConsoleConfig,
 } from "../config";
 import { exchangeRefreshToken } from "../lib/google-auth";
+import {
+  getRollingPeriod,
+  getSearchConsoleThreeMonthPeriod,
+  isIsoCalendarDate,
+  SEARCH_CONSOLE_TIME_ZONE,
+} from "../lib/date";
 import { classifyHttpStatus, isRecord, readBoundedJson } from "../lib/http";
 import { requireCount, requireNonnegativeNumber } from "../lib/numeric";
 import { fetchWithRetry, UpstreamRequestError } from "../lib/retry";
@@ -17,7 +23,8 @@ import type {
 
 const SEARCH_ANALYTICS_BASE_URL =
   "https://www.googleapis.com/webmasters/v3/sites";
-const SEARCH_CONSOLE_CACHE_KEY = "dashboard:search_console:aggregate:v1";
+const SEARCH_CONSOLE_CACHE_KEY = "dashboard:search_console:aggregate:v3";
+const AVAILABILITY_LOOKBACK_DAYS = 14;
 
 export interface SearchConsoleAggregate {
   clicks: number;
@@ -27,11 +34,17 @@ export interface SearchConsoleAggregate {
 }
 
 interface SearchConsoleCache {
-  version: 1;
+  version: 3;
   configHash: string;
   fetchedAt: string;
+  period: DashboardSnapshot["rolling90DayPeriod"];
   activeRealty: SearchConsoleAggregate;
   jt: SearchConsoleAggregate;
+}
+
+export interface GoogleSearchConsoleSyncResult {
+  metrics: GoogleSearchConsoleMetricResults;
+  period: DashboardSnapshot["rolling90DayPeriod"] | null;
 }
 
 function validSiteUrl(value: string): boolean {
@@ -94,11 +107,46 @@ export function parseSearchConsoleAggregate(
   return aggregate;
 }
 
+export function parseLatestSearchConsoleDate(payload: unknown): string {
+  if (!isRecord(payload) || !Array.isArray(payload["rows"])) {
+    throw new UpstreamRequestError("schema");
+  }
+  const dates: string[] = [];
+  for (const row of payload["rows"]) {
+    if (
+      !isRecord(row) ||
+      !Array.isArray(row["keys"]) ||
+      row["keys"].length !== 1 ||
+      !isIsoCalendarDate(row["keys"][0])
+    ) {
+      throw new UpstreamRequestError("schema");
+    }
+    requireCount(row["clicks"], "search_console_daily_clicks");
+    requireCount(row["impressions"], "search_console_daily_impressions");
+    dates.push(row["keys"][0]);
+  }
+  if (dates.length === 0) {
+    throw new UpstreamRequestError("no_data");
+  }
+  dates.sort();
+  return dates[dates.length - 1] as string;
+}
+
+function validPeriod(
+  value: unknown,
+): value is DashboardSnapshot["rolling90DayPeriod"] {
+  return isRecord(value) &&
+    isIsoCalendarDate(value["startDate"]) &&
+    isIsoCalendarDate(value["endDate"]) &&
+    value["startDate"] <= value["endDate"] &&
+    value["timeZone"] === SEARCH_CONSOLE_TIME_ZONE;
+}
+
 async function configHash(config: GoogleSearchConsoleConfig): Promise<string> {
   const digest = await crypto.subtle.digest(
     "SHA-256",
     new TextEncoder().encode(
-      `${config.activeRealtySiteUrl}\n${config.jtSiteUrl}`,
+      `search-console-last-three-months-v3\n${config.activeRealtySiteUrl}\n${config.jtSiteUrl}`,
     ),
   );
   return [...new Uint8Array(digest)]
@@ -114,21 +162,23 @@ function parseCache(
 ): SearchConsoleCache | null {
   if (
     !isRecord(value) ||
-    value["version"] !== 1 ||
+    value["version"] !== 3 ||
     value["configHash"] !== expectedHash ||
     typeof value["fetchedAt"] !== "string" ||
     !Number.isFinite(Date.parse(value["fetchedAt"])) ||
     now.getTime() - Date.parse(value["fetchedAt"]) < 0 ||
     now.getTime() - Date.parse(value["fetchedAt"]) > refreshMs ||
+    !validPeriod(value["period"]) ||
     !validAggregate(value["activeRealty"]) ||
     !validAggregate(value["jt"])
   ) {
     return null;
   }
   return {
-    version: 1,
+    version: 3,
     configHash: expectedHash,
     fetchedAt: value["fetchedAt"],
+    period: value["period"],
     activeRealty: value["activeRealty"],
     jt: value["jt"],
   };
@@ -155,13 +205,13 @@ async function loadCache(
   }
 }
 
-async function querySearchConsole(
+async function requestSearchConsole(
   accessToken: string,
   siteUrl: string,
-  reportingPeriod: DashboardSnapshot["rolling90DayPeriod"],
   source: string,
   dependencies: RuntimeDependencies,
-): Promise<SearchConsoleAggregate> {
+  body: Record<string, unknown>,
+): Promise<unknown> {
   const endpoint = `${SEARCH_ANALYTICS_BASE_URL}/${encodeURIComponent(siteUrl)}/searchAnalytics/query`;
   const response = await fetchWithRetry(
     endpoint,
@@ -172,14 +222,7 @@ async function querySearchConsole(
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({
-        startDate: reportingPeriod.startDate,
-        endDate: reportingPeriod.endDate,
-        type: "web",
-        aggregationType: "byProperty",
-        dataState: "all",
-        rowLimit: 1,
-      }),
+      body: JSON.stringify(body),
     },
     {
       source,
@@ -190,7 +233,56 @@ async function querySearchConsole(
   if (!response.ok) {
     throw classifyHttpStatus(response.status);
   }
-  return parseSearchConsoleAggregate(await readBoundedJson(response));
+  return readBoundedJson(response);
+}
+
+async function queryLatestAvailableDate(
+  accessToken: string,
+  siteUrl: string,
+  discoveryPeriod: DashboardSnapshot["rolling90DayPeriod"],
+  source: string,
+  dependencies: RuntimeDependencies,
+): Promise<string> {
+  const payload = await requestSearchConsole(
+    accessToken,
+    siteUrl,
+    source,
+    dependencies,
+    {
+      startDate: discoveryPeriod.startDate,
+      endDate: discoveryPeriod.endDate,
+      dimensions: ["date"],
+      type: "web",
+      aggregationType: "byProperty",
+      dataState: "final",
+      rowLimit: AVAILABILITY_LOOKBACK_DAYS,
+    },
+  );
+  return parseLatestSearchConsoleDate(payload);
+}
+
+async function querySearchConsole(
+  accessToken: string,
+  siteUrl: string,
+  reportingPeriod: DashboardSnapshot["rolling90DayPeriod"],
+  source: string,
+  dependencies: RuntimeDependencies,
+): Promise<SearchConsoleAggregate> {
+  const payload = await requestSearchConsole(
+    accessToken,
+    siteUrl,
+    source,
+    dependencies,
+    {
+      startDate: reportingPeriod.startDate,
+      endDate: reportingPeriod.endDate,
+      type: "web",
+      aggregationType: "byProperty",
+      dataState: "all",
+      rowLimit: 1,
+    },
+  );
+  return parseSearchConsoleAggregate(payload);
 }
 
 function okResult(
@@ -299,13 +391,15 @@ function siteError(
 
 export async function fetchGoogleSearchConsoleMetrics(
   env: DashboardEnv,
-  reportingPeriod: DashboardSnapshot["rolling90DayPeriod"],
   dependencies: RuntimeDependencies = {},
-): Promise<GoogleSearchConsoleMetricResults> {
+): Promise<GoogleSearchConsoleSyncResult> {
   const started = Date.now();
   const config = readGoogleSearchConsoleConfig(env);
   if (!validConfig(config)) {
-    return allUnavailable("unconfigured", started);
+    return {
+      metrics: allUnavailable("unconfigured", started),
+      period: null,
+    };
   }
 
   const now = dependencies.now ?? new Date();
@@ -313,8 +407,11 @@ export async function fetchGoogleSearchConsoleMetrics(
   const cached = await loadCache(env, hash, now, config.refreshMs);
   if (cached !== null) {
     return {
-      ...siteResults("activeRealty", cached.activeRealty, started, cached.fetchedAt),
-      ...siteResults("jt", cached.jt, started, cached.fetchedAt),
+      metrics: {
+        ...siteResults("activeRealty", cached.activeRealty, started, cached.fetchedAt),
+        ...siteResults("jt", cached.jt, started, cached.fetchedAt),
+      },
+      period: cached.period,
     };
   }
 
@@ -332,17 +429,71 @@ export async function fetchGoogleSearchConsoleMetrics(
   } catch (error) {
     const result = errorResult(error, started);
     return {
-      activeRealtyClicksRolling90d: result,
-      activeRealtyImpressionsRolling90d: result,
-      activeRealtyCtrRolling90d: result,
-      activeRealtyPositionRolling90d: result,
-      jtClicksRolling90d: result,
-      jtImpressionsRolling90d: result,
-      jtCtrRolling90d: result,
-      jtPositionRolling90d: result,
+      metrics: {
+        activeRealtyClicksRolling90d: result,
+        activeRealtyImpressionsRolling90d: result,
+        activeRealtyCtrRolling90d: result,
+        activeRealtyPositionRolling90d: result,
+        jtClicksRolling90d: result,
+        jtImpressionsRolling90d: result,
+        jtCtrRolling90d: result,
+        jtPositionRolling90d: result,
+      },
+      period: null,
     };
   }
 
+  const discoveryPeriod = getRollingPeriod(
+    now,
+    SEARCH_CONSOLE_TIME_ZONE,
+    AVAILABILITY_LOOKBACK_DAYS,
+  );
+  const [activeDateSettled, jtDateSettled] = await Promise.allSettled([
+    queryLatestAvailableDate(
+      accessToken,
+      config.activeRealtySiteUrl,
+      discoveryPeriod,
+      "google_search_console_active_realty_availability",
+      dependencies,
+    ),
+    queryLatestAvailableDate(
+      accessToken,
+      config.jtSiteUrl,
+      discoveryPeriod,
+      "google_search_console_jt_availability",
+      dependencies,
+    ),
+  ]);
+  const latestDates = [activeDateSettled, jtDateSettled]
+    .filter((result): result is PromiseFulfilledResult<string> =>
+      result.status === "fulfilled"
+    )
+    .map((result) => result.value)
+    .sort();
+  if (latestDates.length === 0) {
+    return {
+      metrics: {
+        ...siteError(
+          "activeRealty",
+          activeDateSettled.status === "rejected"
+            ? activeDateSettled.reason
+            : new UpstreamRequestError("no_data"),
+          started,
+        ),
+        ...siteError(
+          "jt",
+          jtDateSettled.status === "rejected"
+            ? jtDateSettled.reason
+            : new UpstreamRequestError("no_data"),
+          started,
+        ),
+      } as GoogleSearchConsoleMetricResults,
+      period: null,
+    };
+  }
+  const reportingPeriod = getSearchConsoleThreeMonthPeriod(
+    latestDates[0] as string,
+  );
   const [activeSettled, jtSettled] = await Promise.allSettled([
     querySearchConsole(
       accessToken,
@@ -377,9 +528,10 @@ export async function fetchGoogleSearchConsoleMetrics(
       await env.DASHBOARD_KV.put(
         SEARCH_CONSOLE_CACHE_KEY,
         JSON.stringify({
-          version: 1,
+          version: 3,
           configHash: hash,
           fetchedAt: observedAt,
+          period: reportingPeriod,
           activeRealty: activeSettled.value,
           jt: jtSettled.value,
         } satisfies SearchConsoleCache),
@@ -393,5 +545,8 @@ export async function fetchGoogleSearchConsoleMetrics(
       }));
     }
   }
-  return results as GoogleSearchConsoleMetricResults;
+  return {
+    metrics: results as GoogleSearchConsoleMetricResults,
+    period: reportingPeriod,
+  };
 }

@@ -72,6 +72,7 @@
   var syncStatus = document.getElementById("sync-status");
   var networkError = document.getElementById("network-error");
   var retryButton = document.getElementById("retry-dashboard");
+  var searchConsolePeriod = document.getElementById("search-console-period");
 
   function isObject(value) {
     return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -88,13 +89,31 @@
       ["ok", "stale", "error", "unconfigured"].indexOf(value.status) !== -1;
   }
 
+  function isPeriod(value) {
+    return isObject(value) &&
+      typeof value.startDate === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(value.startDate) &&
+      typeof value.endDate === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(value.endDate) &&
+      value.startDate <= value.endDate;
+  }
+
   function isSnapshot(value) {
     if (!isObject(value) || value.version !== 2 || !isObject(value.metrics)) {
       return false;
     }
-    return Object.keys(metricConfig).every(function (key) {
+    return isPeriod(value.rolling90DayPeriod) && Object.keys(metricConfig).every(function (key) {
       return isMetric(value.metrics[key]);
     }) && isTimestamp(value.lastAttemptAt);
+  }
+
+  function periodDate(value) {
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      timeZone: "UTC"
+    }).format(new Date(value + "T12:00:00.000Z"));
   }
 
   function formatValue(value, format) {
@@ -191,6 +210,9 @@
     } else {
       syncStatus.textContent = "Last synchronized " + relativeAge(snapshot.lastAttemptAt).replace(/^updated /, "");
     }
+    searchConsolePeriod.textContent = "Last 3 months · " +
+      periodDate(snapshot.rolling90DayPeriod.startDate) + " to " +
+      periodDate(snapshot.rolling90DayPeriod.endDate);
     networkError.hidden = true;
   }
 

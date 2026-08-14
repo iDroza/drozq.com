@@ -85,7 +85,7 @@ assert.match(javascript, /"\/api\/dashboard\/bootstrap\.js"/u);
 assert.match(javascript, /loadBootstrapSnapshot/u);
 assert.match(
   html,
-  /<script src="\/api\/dashboard\/bootstrap\.js" defer><\/script>[\s\S]*<script src="\/dashboard\/dashboard\.js\?v=20260814e" defer><\/script>/u,
+  /<script src="\/api\/dashboard\/bootstrap\.js" defer><\/script>[\s\S]*<script src="\/dashboard\/dashboard\.js\?v=20260814f" defer><\/script>/u,
   "the resilient snapshot bootstrap must load before the dashboard controller",
 );
 assert.doesNotMatch(
@@ -95,6 +95,9 @@ assert.doesNotMatch(
 );
 assert.match(javascript, /15000/u, "visible polling interval must be 15 seconds");
 assert.match(javascript, /document\.visibilityState/u, "hidden pages must pause polling");
+assert.match(html, /id="search-console-period">Last 3 months<\/p>/u);
+assert.doesNotMatch(html, /Rolling 90 days/iu);
+assert.match(javascript, /snapshot\.rolling90DayPeriod\.startDate/u);
 assert.match(javascript, /metric-value--very-long/u, "long values need overflow-safe sizing");
 assert.match(css, /@media \(min-width: 1180px\)[\s\S]*repeat\(4,/u);
 assert.match(css, /@media \(prefers-reduced-motion: reduce\)/u);

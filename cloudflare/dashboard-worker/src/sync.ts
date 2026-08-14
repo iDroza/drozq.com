@@ -2,6 +2,7 @@ import { readReportingTimeZone } from "./config";
 import {
   getReportingPeriod,
   getRollingPeriod,
+  getSearchConsoleThreeMonthPeriod,
   getYearToDatePeriod,
   isIsoUtcTimestamp,
 } from "./lib/date";
@@ -112,11 +113,10 @@ export function mergeSnapshot(
   results: MetricResultMap,
   now: Date,
   reportingPeriod: DashboardSnapshot["reportingPeriod"],
-  rolling90DayPeriod: DashboardSnapshot["rolling90DayPeriod"] = getRollingPeriod(
-    now,
-    reportingPeriod.timeZone,
-    90,
-  ),
+  rolling90DayPeriod: DashboardSnapshot["rolling90DayPeriod"] =
+    getSearchConsoleThreeMonthPeriod(
+      reportingPeriod.endDate,
+    ),
   yearToDatePeriod: DashboardSnapshot["yearToDatePeriod"] = getYearToDatePeriod(
     now,
     reportingPeriod.timeZone,
@@ -300,7 +300,6 @@ export async function synchronizeDashboard(
       ),
       fetchGoogleSearchConsoleMetrics(
         env,
-        rolling90DayPeriod,
         { ...dependencies, now },
       ),
       fetchFollowUpBossTeamMetrics(
@@ -313,8 +312,11 @@ export async function synchronizeDashboard(
   const fub = fubSettled.status === "fulfilled" ? fubSettled.value : fubFailure();
   const ads = adsSettled.status === "fulfilled" ? adsSettled.value : adsFailure();
   const search = searchSettled.status === "fulfilled"
-    ? searchSettled.value
+    ? searchSettled.value.metrics
     : searchConsoleFailure();
+  const searchConsolePeriod = searchSettled.status === "fulfilled"
+    ? searchSettled.value.period
+    : null;
   const team = teamSettled.status === "fulfilled"
     ? teamSettled.value
     : teamFailure();
@@ -339,7 +341,7 @@ export async function synchronizeDashboard(
     results,
     now,
     reportingPeriod,
-    rolling90DayPeriod,
+    searchConsolePeriod ?? previous?.rolling90DayPeriod ?? rolling90DayPeriod,
     yearToDatePeriod,
   );
   await env.DASHBOARD_KV.put(SNAPSHOT_KEY, JSON.stringify(snapshot));

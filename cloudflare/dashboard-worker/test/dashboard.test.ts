@@ -5,6 +5,7 @@ import {
   getActivityWindows,
   getReportingPeriod,
   getRollingPeriod,
+  getSearchConsoleThreeMonthPeriod,
   getYearToDatePeriod,
 } from "../src/lib/date";
 import { fetchWithRetry, parseRetryAfter } from "../src/lib/retry";
@@ -29,6 +30,7 @@ import {
 } from "../src/sources/google-ads";
 import {
   fetchGoogleSearchConsoleMetrics,
+  parseLatestSearchConsoleDate,
   parseSearchConsoleAggregate,
 } from "../src/sources/google-search-console";
 import {
@@ -492,7 +494,7 @@ describe("Google Ads all-account aggregation", () => {
   });
 });
 
-describe("Google Search Console rolling aggregation", () => {
+describe("Google Search Console Performance aggregation", () => {
   it("parses one property-level aggregate row", () => {
     expect(parseSearchConsoleAggregate({ rows: [{
       clicks: 11474,
@@ -507,9 +509,18 @@ describe("Google Search Console rolling aggregation", () => {
     });
   });
 
-  it("uses one OAuth token and queries both configured properties", async () => {
+  it("discovers the newest available Search Console date", () => {
+    expect(parseLatestSearchConsoleDate({ rows: [
+      { keys: ["2026-08-10"], clicks: 100, impressions: 1000 },
+      { keys: ["2026-08-12"], clicks: 120, impressions: 1200 },
+      { keys: ["2026-08-11"], clicks: 110, impressions: 1100 },
+    ] })).toBe("2026-08-12");
+  });
+
+  it("matches the Search Console UI's latest past-three-month range", async () => {
     let tokenCalls = 0;
-    const requestedSites: string[] = [];
+    const availabilitySites: string[] = [];
+    const aggregateSites: string[] = [];
     const allUrls: string[] = [];
     const fetcher = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
       const url = String(input);
@@ -523,21 +534,40 @@ describe("Google Search Console rolling aggregation", () => {
       const suffix = "/searchAnalytics/query";
       expect(pathname.startsWith(prefix)).toBe(true);
       expect(pathname.endsWith(suffix)).toBe(true);
-      requestedSites.push(decodeURIComponent(
+      const site = decodeURIComponent(
         pathname.slice(prefix.length, -suffix.length),
-      ));
+      );
       const body = JSON.parse(String(init?.body)) as Record<string, unknown>;
+      if (Array.isArray(body["dimensions"])) {
+        availabilitySites.push(site);
+        expect(body).toMatchObject({
+          startDate: "2026-08-01",
+          endDate: "2026-08-14",
+          dimensions: ["date"],
+          type: "web",
+          aggregationType: "byProperty",
+          dataState: "final",
+          rowLimit: 14,
+        });
+        return jsonResponse({ rows: [
+          { keys: ["2026-08-11"], clicks: 20, impressions: 400 },
+          { keys: ["2026-08-12"], clicks: 22, impressions: 420 },
+        ] });
+      }
+      aggregateSites.push(site);
       expect(body).toMatchObject({
-        startDate: "2026-05-17",
-        endDate: "2026-08-14",
+        startDate: "2026-05-13",
+        endDate: "2026-08-12",
+        type: "web",
         aggregationType: "byProperty",
         dataState: "all",
+        rowLimit: 1,
       });
       return jsonResponse({ rows: [{
-        clicks: requestedSites.length === 1 ? 11474 : 1200,
-        impressions: requestedSites.length === 1 ? 647748 : 88000,
-        ctr: 0.02,
-        position: 11,
+        clicks: site === "sc-domain:activerealty.com" ? 11474 : 307,
+        impressions: site === "sc-domain:activerealty.com" ? 647748 : 43400,
+        ctr: site === "sc-domain:activerealty.com" ? 0.0177168 : 0.0070737,
+        position: site === "sc-domain:activerealty.com" ? 10.5 : 11.5,
       }] });
     };
     const result = await fetchGoogleSearchConsoleMetrics(
@@ -546,22 +576,37 @@ describe("Google Search Console rolling aggregation", () => {
         GOOGLE_SEARCH_CONSOLE_CLIENT_SECRET: "test-client-secret",
         GOOGLE_SEARCH_CONSOLE_REFRESH_TOKEN: "test-refresh-token",
       }),
-      getRollingPeriod(NOW, "America/Los_Angeles", 90),
       { fetcher, sleep: noDelay, now: NOW },
     );
     expect(tokenCalls).toBe(1);
-    expect(result.activeRealtyClicksRolling90d).toMatchObject({ kind: "ok" });
-    expect(result.jtClicksRolling90d).toMatchObject({ kind: "ok" });
-    expect(allUrls.length).toBe(3);
-    expect(requestedSites.sort()).toEqual([
+    expect(result.period).toEqual({
+      startDate: "2026-05-13",
+      endDate: "2026-08-12",
+      timeZone: "America/Los_Angeles",
+    });
+    expect(result.metrics.activeRealtyClicksRolling90d).toMatchObject({
+      kind: "ok",
+      value: 11474,
+    });
+    expect(result.metrics.jtClicksRolling90d).toMatchObject({
+      kind: "ok",
+      value: 307,
+    });
+    expect(allUrls.length).toBe(5);
+    expect(availabilitySites.sort()).toEqual([
       "https://justintye.com/",
       "sc-domain:activerealty.com",
     ]);
-    expect(result.jtImpressionsRolling90d).toMatchObject({ kind: "ok" });
+    expect(aggregateSites.sort()).toEqual([
+      "https://justintye.com/",
+      "sc-domain:activerealty.com",
+    ]);
+    expect(result.metrics.jtImpressionsRolling90d).toMatchObject({ kind: "ok" });
   });
 
   it("treats a missing aggregate row as no data, never zero", () => {
     expect(() => parseSearchConsoleAggregate({ rows: [] })).toThrow("no_data");
+    expect(() => parseLatestSearchConsoleDate({ rows: [] })).toThrow("no_data");
   });
 });
 
@@ -1208,10 +1253,26 @@ describe("America/Los_Angeles reporting dates", () => {
       .toBe("2026-07-17T19:00:00.000Z");
   });
 
-  it("uses an exact rolling 90-day inclusive Search Console period", () => {
+  it("keeps the generic rolling 90-day helper inclusive", () => {
     expect(getRollingPeriod(NOW, "America/Los_Angeles", 90)).toEqual({
       startDate: "2026-05-17",
       endDate: "2026-08-14",
+      timeZone: "America/Los_Angeles",
+    });
+  });
+
+  it("matches Search Console's past-three-month UI range", () => {
+    expect(getSearchConsoleThreeMonthPeriod("2026-08-12")).toEqual({
+      startDate: "2026-05-13",
+      endDate: "2026-08-12",
+      timeZone: "America/Los_Angeles",
+    });
+  });
+
+  it("clamps past-three-month ranges across leap-year month ends", () => {
+    expect(getSearchConsoleThreeMonthPeriod("2024-05-31")).toEqual({
+      startDate: "2024-03-01",
+      endDate: "2024-05-31",
       timeZone: "America/Los_Angeles",
     });
   });

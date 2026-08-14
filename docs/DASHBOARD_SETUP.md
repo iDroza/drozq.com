@@ -30,7 +30,7 @@ The first viewport contains exactly eight operating metrics:
 Below it are five fixed rows, each capped at four metrics:
 
 1. Year-to-date Google Ads spend, primary conversions, cost per conversion, and blended gross-commission ROAS across all linked leaf accounts
-2. Rolling 90-day Search Console clicks, impressions, CTR, and average position for `activerealty.com`
+2. Search Console past-three-month clicks, impressions, CTR, and average position for `activerealty.com`, matching the Performance overview
 3. The same four Search Console metrics for `justintye.com`
 4. Year-to-date Follow Up Boss Deals Leaderboard gross commission, closed sales, volume, and active agents
 5. Live Google Sheets shell pages remaining and 10-page work sets remaining
@@ -195,7 +195,7 @@ Changing a conversion action from `generate_lead` to `lead_confirmed` no longer 
 
 ## 5. Google Search Console setup
 
-The Search Console integration uses a separate OAuth refresh token with only the `webmasters.readonly` scope. It queries exact inclusive rolling-90-day property aggregates with no dimensions, so each property returns one row containing clicks, impressions, CTR, and average position. The browser receives only those four numeric aggregates.
+The Search Console integration uses a separate OAuth refresh token with only the `webmasters.readonly` scope. Search Console's Performance overview defaults to the past three months, which is not the same as a strict 90-day window ending today. The Worker first queries recent finalized data grouped by date, detects the latest finalized date shared by both properties, then builds the same inclusive past-three-month range used by the UI. For example, an end date of August 12 produces May 13 through August 12. It then requests one property-level aggregate row containing clicks, impressions, CTR, and average position. The browser receives only those four numeric aggregates and the sanitized reporting dates.
 
 Production properties:
 
@@ -232,7 +232,7 @@ Set-Location ../..
 Remove-Variable gsc
 ```
 
-The two property URLs and the 60-minute source refresh are non-secret variables in `wrangler.jsonc`. The one-minute Worker schedule can safely reuse the sanitized KV aggregate between upstream refreshes. Google can revise recent Search Console data, so the Worker queries with `dataState: all` and refreshes the complete rolling window instead of incrementally adding daily values.
+The two property URLs and the 60-minute source refresh are non-secret variables in `wrangler.jsonc`. The one-minute Worker schedule can safely reuse the sanitized KV aggregate between upstream refreshes. The availability probe uses `dataState: final` so partial same-day rows do not shift the window ahead of the Search Console card. The property aggregate uses `dataState: all` within that finalized end date and refreshes the complete three-month window instead of incrementally adding daily values. The dashboard prints the exact start and end dates beneath the Organic Search heading so the comparison window is auditable.
 
 ## 6. Google Sheets setup
 
@@ -482,6 +482,7 @@ Personal and Ads metrics become stale after five minutes, team and Google Sheets
 
 - Google refresh tokens can be revoked by password, consent, or security changes. Monitor `authentication` errors.
 - Search Console property permissions or canonical property changes can revoke one site's data while the other remains healthy.
+- Search Console data availability can move by hours and recent values can remain preliminary. The Worker discovers the latest finalized date on every source refresh and re-queries the full Performance window, so it follows revisions without date-lag configuration.
 - Google Ads API versions are sunset periodically. Review the version before `v25` retirement.
 - The FUB Deals Leaderboard endpoint is an internal web-app endpoint. Its response schema is validated, failures preserve old values, and an optional role-checked broker-key fallback uses documented endpoints.
 - FUB can rename the account host or service-account users. Both are configuration-only changes through `FUB_ACCOUNT_HOST` and `FUB_TEAM_EXCLUDED_USER_NAMES`.

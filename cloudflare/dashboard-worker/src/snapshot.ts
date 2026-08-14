@@ -1,7 +1,7 @@
 import { CONFIG_DEFAULTS } from "./config";
 import {
   getReportingPeriod,
-  getRollingPeriod,
+  getSearchConsoleThreeMonthPeriod,
   getYearToDatePeriod,
   isIsoUtcTimestamp,
   isMetricStale,
@@ -118,42 +118,42 @@ export const METRIC_SPECS = {
   },
   activeRealtyClicksRolling90d: {
     source: "google_search_console",
-    definition: "Total Google Search clicks for activerealty.com during the rolling previous 90 days.",
+    definition: "Total Google Search clicks for activerealty.com in Search Console's past-three-month Performance view, anchored to the latest finalized Search Console date.",
     staleAfterMs: SEARCH_STALE_MS,
   },
   activeRealtyImpressionsRolling90d: {
     source: "google_search_console",
-    definition: "Total Google Search impressions for activerealty.com during the rolling previous 90 days.",
+    definition: "Total Google Search impressions for activerealty.com in Search Console's past-three-month Performance view, anchored to the latest finalized Search Console date.",
     staleAfterMs: SEARCH_STALE_MS,
   },
   activeRealtyCtrRolling90d: {
     source: "google_search_console",
-    definition: "Average Google Search click-through rate for activerealty.com during the rolling previous 90 days.",
+    definition: "Average Google Search click-through rate for activerealty.com in Search Console's past-three-month Performance view, anchored to the latest finalized Search Console date.",
     staleAfterMs: SEARCH_STALE_MS,
   },
   activeRealtyPositionRolling90d: {
     source: "google_search_console",
-    definition: "Average Google Search result position for activerealty.com during the rolling previous 90 days.",
+    definition: "Average Google Search result position for activerealty.com in Search Console's past-three-month Performance view, anchored to the latest finalized Search Console date.",
     staleAfterMs: SEARCH_STALE_MS,
   },
   jtClicksRolling90d: {
     source: "google_search_console",
-    definition: "Total Google Search clicks for justintye.com during the rolling previous 90 days.",
+    definition: "Total Google Search clicks for justintye.com in Search Console's past-three-month Performance view, anchored to the latest finalized Search Console date.",
     staleAfterMs: SEARCH_STALE_MS,
   },
   jtImpressionsRolling90d: {
     source: "google_search_console",
-    definition: "Total Google Search impressions for justintye.com during the rolling previous 90 days.",
+    definition: "Total Google Search impressions for justintye.com in Search Console's past-three-month Performance view, anchored to the latest finalized Search Console date.",
     staleAfterMs: SEARCH_STALE_MS,
   },
   jtCtrRolling90d: {
     source: "google_search_console",
-    definition: "Average Google Search click-through rate for justintye.com during the rolling previous 90 days.",
+    definition: "Average Google Search click-through rate for justintye.com in Search Console's past-three-month Performance view, anchored to the latest finalized Search Console date.",
     staleAfterMs: SEARCH_STALE_MS,
   },
   jtPositionRolling90d: {
     source: "google_search_console",
-    definition: "Average Google Search result position for justintye.com during the rolling previous 90 days.",
+    definition: "Average Google Search result position for justintye.com in Search Console's past-three-month Performance view, anchored to the latest finalized Search Console date.",
     staleAfterMs: SEARCH_STALE_MS,
   },
   teamCommissionYtd: {
@@ -419,10 +419,8 @@ export function sanitizeStoredSnapshot(value: unknown): DashboardSnapshot | null
     version: 2,
     metrics,
     reportingPeriod,
-    rolling90DayPeriod: getRollingPeriod(
-      referenceDate,
-      reportingPeriod.timeZone,
-      90,
+    rolling90DayPeriod: getSearchConsoleThreeMonthPeriod(
+      reportingPeriod.endDate,
     ),
     yearToDatePeriod: getYearToDatePeriod(
       referenceDate,
@@ -444,7 +442,9 @@ export function createUnconfiguredSnapshot(
     version: 2,
     metrics,
     reportingPeriod: getReportingPeriod(now, timeZone),
-    rolling90DayPeriod: getRollingPeriod(now, timeZone, 90),
+    rolling90DayPeriod: getSearchConsoleThreeMonthPeriod(
+      getReportingPeriod(now, timeZone).endDate,
+    ),
     yearToDatePeriod: getYearToDatePeriod(now, timeZone),
     lastAttemptAt: "1970-01-01T00:00:00.000Z",
     lastSuccessfulFullSyncAt: null,

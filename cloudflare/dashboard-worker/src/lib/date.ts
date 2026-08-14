@@ -1,6 +1,7 @@
 import type { DashboardSnapshot } from "../types";
 
 export const STALE_AFTER_MS = 5 * 60 * 1_000;
+export const SEARCH_CONSOLE_TIME_ZONE = "America/Los_Angeles";
 
 interface CalendarDateParts {
   year: number;
@@ -135,6 +136,53 @@ export function getActivityWindows(now: Date, timeZone: string): ActivityWindows
 
 function isoDate(year: number, month: number, day: number): string {
   return `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
+export function isIsoCalendarDate(value: unknown): value is string {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/u.test(value)) {
+    return false;
+  }
+  const [year, month, day] = value.split("-").map(Number);
+  if (year === undefined || month === undefined || day === undefined) {
+    return false;
+  }
+  const parsed = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
+  return parsed.getUTCFullYear() === year &&
+    parsed.getUTCMonth() === month - 1 &&
+    parsed.getUTCDate() === day;
+}
+
+export function getSearchConsoleThreeMonthPeriod(
+  endDate: string,
+): DashboardSnapshot["rolling90DayPeriod"] {
+  if (!isIsoCalendarDate(endDate)) {
+    throw new RangeError("invalid_search_console_end_date");
+  }
+  const [endYear, endMonth, endDay] = endDate.split("-").map(Number) as [
+    number,
+    number,
+    number,
+  ];
+  const targetMonthIndex = endYear * 12 + (endMonth - 1) - 3;
+  const targetYear = Math.floor(targetMonthIndex / 12);
+  const targetMonthIndexInYear = ((targetMonthIndex % 12) + 12) % 12;
+  const targetMonth = targetMonthIndexInYear + 1;
+  const targetMonthLastDay = new Date(
+    Date.UTC(targetYear, targetMonth, 0, 12, 0, 0, 0),
+  ).getUTCDate();
+  const anchorDay = Math.min(endDay, targetMonthLastDay);
+  const start = new Date(
+    Date.UTC(targetYear, targetMonth - 1, anchorDay + 1, 12, 0, 0, 0),
+  );
+  return {
+    startDate: isoDate(
+      start.getUTCFullYear(),
+      start.getUTCMonth() + 1,
+      start.getUTCDate(),
+    ),
+    endDate,
+    timeZone: SEARCH_CONSOLE_TIME_ZONE,
+  };
 }
 
 export function getReportingPeriod(
