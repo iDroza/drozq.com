@@ -344,11 +344,13 @@ Rotate any credential immediately if it has appeared in source control, logs, ch
 
 `.github/workflows/dashboard-worker.yml` runs only when dashboard Worker or related package files change. It installs dependencies, runs tests, type checking, and the production dry-run build. On pushes to `main`, it deploys only the dashboard Worker when these repository settings exist:
 
-- Secret: `CLOUDFLARE_API_TOKEN`, scoped to edit Workers Scripts, Workers KV, and routes for the `drozq.com` zone.
+- Secret: `CLOUDFLARE_API_TOKEN`, scoped to `Workers Scripts:Edit` for the production account and `Workers Routes:Edit` for the `drozq.com` zone. KV permission is not required for deployment because the namespace already exists and its binding ID is committed.
 - Secret: `CLOUDFLARE_ACCOUNT_ID`.
 - Repository variable: `DASHBOARD_KV_NAMESPACE_ID`, required only while the all-zero placeholder remains in the committed Wrangler file. It can be omitted after the real namespace ID is committed.
 
 Runtime API credentials remain Wrangler secrets. GitHub Actions does not create, replace, or manage them. If either Cloudflare credential secret is absent, verification still runs and deployment is skipped.
+
+As of August 14, 2026, both GitHub secrets are configured and a complete CI deployment has succeeded.
 
 ## 15. Rollback
 
