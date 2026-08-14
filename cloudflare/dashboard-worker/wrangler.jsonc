@@ -22,14 +22,12 @@
   "kv_namespaces": [
     {
       "binding": "DASHBOARD_KV",
-      "id": "00000000000000000000000000000000"
+      "id": "4d387f23d1dd41d0976565e586bad72f"
     }
   ],
   "vars": {
     "FUB_SELLER_TAG": "Seller",
     "GOOGLE_ADS_API_VERSION": "v25",
-    "GOOGLE_ADS_CUSTOMER_ID": "8004133723",
-    "GOOGLE_ADS_LEAD_CONVERSION_ACTION_NAMES": "generate_lead",
     "REPORTING_TIME_ZONE": "America/Los_Angeles",
     "GOOGLE_SHEETS_PAGE_HEADER": "Page",
     "GOOGLE_SHEETS_STATUS_HEADER": "Status",

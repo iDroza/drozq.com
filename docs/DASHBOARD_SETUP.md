@@ -67,7 +67,9 @@ Follow Up Boss currently needs an active account and API access. A `403` from th
 
 ## 4. Google Ads developer token and OAuth
 
-The current dashboard customer is `800-413-3723`. The Worker stores and sends it as `8004133723`. This value is configuration in `wrangler.jsonc`, not business-logic code.
+The requested dashboard default is customer `800-413-3723`. The Worker stores and sends it as `8004133723`. That default lives in typed configuration, not business-logic code, and production can override it with the `GOOGLE_ADS_CUSTOMER_ID` secret.
+
+Production note, August 14, 2026: Google Ads returned `CUSTOMER_NOT_FOUND` for `8004133723`, and that customer was absent from the authenticated manager hierarchy. The live Worker therefore uses the verified active real-estate customer `7216252244` through an encrypted override. Once `8004133723` is linked to the manager and accessible to the OAuth identity, update only `GOOGLE_ADS_CUSTOMER_ID` and rerun the diagnostic before synchronizing.
 
 1. In the Google Ads manager account, open API Center and obtain an approved developer token.
 2. In Google Cloud, configure an OAuth consent screen and create an OAuth client.
@@ -85,7 +87,9 @@ npx wrangler secret put GOOGLE_ADS_DEVELOPER_TOKEN
 npx wrangler secret put GOOGLE_ADS_CLIENT_ID
 npx wrangler secret put GOOGLE_ADS_CLIENT_SECRET
 npx wrangler secret put GOOGLE_ADS_REFRESH_TOKEN
+npx wrangler secret put GOOGLE_ADS_CUSTOMER_ID
 npx wrangler secret put GOOGLE_ADS_LOGIN_CUSTOMER_ID
+npx wrangler secret put GOOGLE_ADS_LEAD_CONVERSION_ACTION_NAMES
 Set-Location ../..
 ```
 
@@ -106,12 +110,14 @@ npm run dashboard:list-google-ads-actions
 Remove-Item Env:GOOGLE_ADS_DEVELOPER_TOKEN, Env:GOOGLE_ADS_CLIENT_ID, Env:GOOGLE_ADS_CLIENT_SECRET, Env:GOOGLE_ADS_REFRESH_TOKEN, Env:GOOGLE_ADS_CUSTOMER_ID, Env:GOOGLE_ADS_LOGIN_CUSTOMER_ID -ErrorAction SilentlyContinue
 ```
 
-The current lead action is `generate_lead`. The Worker compares names case-insensitively and counts only configured names. A configured action that does not exist is reported as unavailable, never as a false zero.
+The intended lead event is `generate_lead`. Google Ads can prefix imported GA4 action names with the property or stream name, so configure the exact name printed by the diagnostic. The live `7216252244` override is `ActiveRealty.com (web) generate_lead`. The Worker compares names case-insensitively and counts only configured names. A configured action that does not exist is reported as unavailable, never as a false zero.
 
-To migrate later to `lead_confirmed`, change only this value in `wrangler.jsonc`, then deploy:
+To migrate later to `lead_confirmed`, first list the available actions, then update only the encrypted configuration:
 
-```json
-"GOOGLE_ADS_LEAD_CONVERSION_ACTION_NAMES": "lead_confirmed"
+```powershell
+Set-Location cloudflare/dashboard-worker
+npx wrangler secret put GOOGLE_ADS_LEAD_CONVERSION_ACTION_NAMES
+Set-Location ../..
 ```
 
 Comma-separated names are supported. During an overlapping migration, do not configure both `generate_lead` and `lead_confirmed` unless both represent distinct leads. If both fire for the same submission, configuring both will double-count.
@@ -149,6 +155,8 @@ Set-Location ../..
 
 When this value is present, it takes priority over table mode.
 
+The live production Sheet uses direct-cell range `Summary!B5`. The service account `drozq-dashboard-sheets@drozq-ads-mcp.iam.gserviceaccount.com` has Viewer access only. Its downloaded JSON key was removed after the private key was stored as a Worker secret.
+
 ### Sheet mode B: page table
 
 Do not set the direct-cell range. Set a range that includes the header row and all page rows, for example `Shell Pages!A:B`:
@@ -166,7 +174,7 @@ Change headers or complete values through `GOOGLE_SHEETS_PAGE_HEADER`, `GOOGLE_S
 
 ## 6. Workers KV
 
-Create one production namespace:
+The live namespace is already provisioned and its non-secret namespace ID is committed in `wrangler.jsonc`. To deploy into another Cloudflare account, create a replacement namespace:
 
 ```powershell
 Set-Location cloudflare/dashboard-worker
@@ -174,7 +182,7 @@ npx wrangler kv namespace create DASHBOARD_KV
 Set-Location ../..
 ```
 
-Wrangler prints a 32-character namespace ID. Replace the one all-zero placeholder in `cloudflare/dashboard-worker/wrangler.jsonc`:
+Wrangler prints a 32-character namespace ID. Replace the existing production ID in `cloudflare/dashboard-worker/wrangler.jsonc` only when moving the Worker to another account:
 
 ```json
 "kv_namespaces": [

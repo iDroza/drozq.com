@@ -15,7 +15,7 @@ Then:  python scripts/google_ads_auth.py
 """
 import os, sys, json, base64, hashlib, secrets, webbrowser
 import urllib.parse, urllib.request, urllib.error
-import http.server, threading
+import http.server, threading, time
 
 HERE      = os.path.dirname(os.path.abspath(__file__))
 CREDS_OUT = os.path.join(HERE, ".google_ads.json")
@@ -63,6 +63,14 @@ class Catch(http.server.BaseHTTPRequestHandler):
         pass
 
 
+def wait_for_oauth_callback(server, timeout_seconds=300):
+    """Ignore incidental loopback requests until OAuth returns code or error."""
+    deadline = time.monotonic() + timeout_seconds
+    while time.monotonic() < deadline and not Catch.code and not Catch.err:
+        server.timeout = min(1, max(0, deadline - time.monotonic()))
+        server.handle_request()
+
+
 def main():
     client_id, client_secret = load_client()
     dev_token = os.environ.get("GOOGLE_ADS_DEVELOPER_TOKEN", "")
@@ -80,7 +88,7 @@ def main():
     url = AUTH_URL + "?" + urllib.parse.urlencode(params)
 
     srv = http.server.HTTPServer(("127.0.0.1", PORT), Catch)
-    t = threading.Thread(target=srv.handle_request)
+    t = threading.Thread(target=wait_for_oauth_callback, args=(srv,))
     t.start()
 
     print("\nOpening your browser for Google sign-in...")
