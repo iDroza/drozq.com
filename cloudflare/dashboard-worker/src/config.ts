@@ -2,9 +2,14 @@ import type { DashboardEnv } from "./types";
 
 export const CONFIG_DEFAULTS = Object.freeze({
   fubSellerTag: "Seller",
+  fubClosedDealStageNames: "Closed",
+  fubTeamRefreshMinutes: 5,
   googleAdsApiVersion: "v25",
   googleAdsCustomerId: "8004133723",
   googleAdsLeadConversionActionNames: "generate_lead",
+  googleSearchConsoleActiveRealtySiteUrl: "sc-domain:activerealty.com",
+  googleSearchConsoleJtSiteUrl: "https://justintye.com/",
+  googleSearchConsoleRefreshMinutes: 60,
   reportingTimeZone: "America/Los_Angeles",
   googleSheetsPageHeader: "Page",
   googleSheetsStatusHeader: "Status",
@@ -17,6 +22,8 @@ export interface FollowUpBossConfig {
   assignedUserId: string;
   system: string;
   systemKey: string;
+  closedDealStageNames: string[];
+  teamRefreshMs: number;
 }
 
 export interface GoogleAdsConfig {
@@ -40,8 +47,28 @@ export interface GoogleSheetsConfig {
   completeValues: string[];
 }
 
+export interface GoogleSearchConsoleConfig {
+  clientId: string;
+  clientSecret: string;
+  refreshToken: string;
+  activeRealtySiteUrl: string;
+  jtSiteUrl: string;
+  refreshMs: number;
+}
+
 function clean(value: string | undefined): string {
   return value?.trim() ?? "";
+}
+
+function boundedMinutes(value: string | undefined, fallback: number): number {
+  const cleaned = clean(value);
+  if (cleaned === "") {
+    return fallback;
+  }
+  const parsed = Number(cleaned);
+  return Number.isSafeInteger(parsed) && parsed >= 1 && parsed <= 24 * 60
+    ? parsed
+    : fallback;
 }
 
 export function normalizeCustomerId(value: string): string {
@@ -66,6 +93,39 @@ export function readFollowUpBossConfig(env: DashboardEnv): FollowUpBossConfig {
     assignedUserId: clean(env.FUB_ASSIGNED_USER_ID),
     system: clean(env.FUB_X_SYSTEM),
     systemKey: clean(env.FUB_X_SYSTEM_KEY),
+    closedDealStageNames: parseCommaSeparated(
+      clean(env.FUB_CLOSED_DEAL_STAGE_NAMES) ||
+        CONFIG_DEFAULTS.fubClosedDealStageNames,
+    ),
+    teamRefreshMs:
+      boundedMinutes(
+        env.FUB_TEAM_REFRESH_MINUTES,
+        CONFIG_DEFAULTS.fubTeamRefreshMinutes,
+      ) * 60 * 1_000,
+  };
+}
+
+export function readGoogleSearchConsoleConfig(
+  env: DashboardEnv,
+): GoogleSearchConsoleConfig {
+  return {
+    clientId:
+      clean(env.GOOGLE_SEARCH_CONSOLE_CLIENT_ID) || clean(env.GOOGLE_ADS_CLIENT_ID),
+    clientSecret:
+      clean(env.GOOGLE_SEARCH_CONSOLE_CLIENT_SECRET) ||
+      clean(env.GOOGLE_ADS_CLIENT_SECRET),
+    refreshToken: clean(env.GOOGLE_SEARCH_CONSOLE_REFRESH_TOKEN),
+    activeRealtySiteUrl:
+      clean(env.GOOGLE_SEARCH_CONSOLE_ACTIVE_REALTY_SITE_URL) ||
+      CONFIG_DEFAULTS.googleSearchConsoleActiveRealtySiteUrl,
+    jtSiteUrl:
+      clean(env.GOOGLE_SEARCH_CONSOLE_JT_SITE_URL) ||
+      CONFIG_DEFAULTS.googleSearchConsoleJtSiteUrl,
+    refreshMs:
+      boundedMinutes(
+        env.GOOGLE_SEARCH_CONSOLE_REFRESH_MINUTES,
+        CONFIG_DEFAULTS.googleSearchConsoleRefreshMinutes,
+      ) * 60 * 1_000,
   };
 }
 

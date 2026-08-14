@@ -28,6 +28,11 @@ interface GoogleAdsPerformance {
   conversions: number;
 }
 
+interface GoogleAdsDailyPerformance extends GoogleAdsPerformance {
+  date: string;
+  clicks: number;
+}
+
 interface CustomerClient {
   customerId: string;
   manager: boolean;
@@ -85,8 +90,10 @@ export function buildAccountPerformanceQuery(
 ): string {
   return `
 SELECT
+  segments.date,
   metrics.cost_micros,
-  metrics.conversions
+  metrics.conversions,
+  metrics.clicks
 FROM customer
 WHERE segments.date BETWEEN '${reportingPeriod.startDate}' AND '${reportingPeriod.endDate}'
 `.trim();
@@ -140,6 +147,41 @@ export function parseGoogleAdsPerformance(rows: unknown[]): GoogleAdsPerformance
       "google_ads_conversions",
     ),
   };
+}
+
+export function parseGoogleAdsDailyPerformance(
+  rows: unknown[],
+): GoogleAdsDailyPerformance[] {
+  return rows.map((row) => {
+    if (
+      !isRecord(row) ||
+      !isRecord(row["segments"]) ||
+      !isRecord(row["metrics"])
+    ) {
+      throw new UpstreamRequestError("schema");
+    }
+    const date = row["segments"]["date"];
+    if (
+      typeof date !== "string" ||
+      !/^\d{4}-\d{2}-\d{2}$/u.test(date) ||
+      !Number.isFinite(Date.parse(`${date}T00:00:00.000Z`))
+    ) {
+      throw new UpstreamRequestError("schema");
+    }
+    const metrics = row["metrics"];
+    return {
+      date,
+      costMicros: parseMicros(metrics["costMicros"] ?? "0"),
+      conversions: requireNonnegativeNumber(
+        metrics["conversions"] ?? 0,
+        "google_ads_conversions",
+      ),
+      clicks: requireNonnegativeNumber(
+        metrics["clicks"] ?? 0,
+        "google_ads_clicks",
+      ),
+    };
+  });
 }
 
 function normalizeActionName(value: string): string {
@@ -468,6 +510,7 @@ function unconfigured(started: number): MetricFetchResult {
 export async function fetchGoogleAdsMetrics(
   env: DashboardEnv,
   reportingPeriod: DashboardSnapshot["reportingPeriod"],
+  rolling90DayPeriod: DashboardSnapshot["rolling90DayPeriod"],
   dependencies: RuntimeDependencies = {},
 ): Promise<GoogleAdsMetricResults> {
   const started = Date.now();
@@ -476,6 +519,10 @@ export async function fetchGoogleAdsMetrics(
     return {
       googleAdsSpendMtd: unconfigured(started),
       googleAdsLeadsMtd: unconfigured(started),
+      googleAdsSpendRolling90d: unconfigured(started),
+      googleAdsClicksRolling90d: unconfigured(started),
+      googleAdsLeadsRolling90d: unconfigured(started),
+      googleAdsCostPerLeadRolling90d: unconfigured(started),
     };
   }
 
@@ -496,7 +543,7 @@ export async function fetchGoogleAdsMetrics(
       now,
       dependencies,
     );
-    const query = buildAccountPerformanceQuery(reportingPeriod);
+    const query = buildAccountPerformanceQuery(rolling90DayPeriod);
     const settled = await Promise.allSettled(
       customerIds.map((customerId) => queryGoogleAds(
         accessToken,
@@ -519,38 +566,103 @@ export async function fetchGoogleAdsMetrics(
       throw rejected.reason;
     }
 
-    let costMicros = 0n;
-    let conversions = 0;
+    let mtdCostMicros = 0n;
+    let mtdConversions = 0;
+    let rollingCostMicros = 0n;
+    let rollingConversions = 0;
+    let rollingClicks = 0;
     for (const item of settled) {
       if (item.status !== "fulfilled") {
         throw new UpstreamRequestError("unexpected");
       }
-      const performance = parseGoogleAdsPerformance(item.value);
-      costMicros += performance.costMicros;
-      conversions += performance.conversions;
+      for (const performance of parseGoogleAdsDailyPerformance(item.value)) {
+        if (
+          performance.date < rolling90DayPeriod.startDate ||
+          performance.date > rolling90DayPeriod.endDate
+        ) {
+          throw new UpstreamRequestError("schema");
+        }
+        rollingCostMicros += performance.costMicros;
+        rollingConversions += performance.conversions;
+        rollingClicks += performance.clicks;
+        if (
+          performance.date >= reportingPeriod.startDate &&
+          performance.date <= reportingPeriod.endDate
+        ) {
+          mtdCostMicros += performance.costMicros;
+          mtdConversions += performance.conversions;
+        }
+      }
     }
     const durationMs = Date.now() - started;
+    const rollingSpend = costMicrosToUsd(rollingCostMicros);
+    const rollingLeads = requireNonnegativeNumber(
+      rollingConversions,
+      "google_ads_rolling_conversions",
+    );
+    const rollingCostPerLead = rollingLeads > 0
+      ? requireSpend(rollingSpend / rollingLeads)
+      : null;
     return {
       googleAdsSpendMtd: {
         kind: "ok",
-        value: costMicrosToUsd(costMicros),
+        value: costMicrosToUsd(mtdCostMicros),
         durationMs,
         responseStatus: 200,
       },
       googleAdsLeadsMtd: {
         kind: "ok",
         value: requireNonnegativeNumber(
-          conversions,
+          mtdConversions,
           "google_ads_all_account_conversions",
         ),
         durationMs,
         responseStatus: 200,
       },
+      googleAdsSpendRolling90d: {
+        kind: "ok",
+        value: rollingSpend,
+        durationMs,
+        responseStatus: 200,
+      },
+      googleAdsClicksRolling90d: {
+        kind: "ok",
+        value: requireNonnegativeNumber(
+          rollingClicks,
+          "google_ads_rolling_clicks",
+        ),
+        durationMs,
+        responseStatus: 200,
+      },
+      googleAdsLeadsRolling90d: {
+        kind: "ok",
+        value: rollingLeads,
+        durationMs,
+        responseStatus: 200,
+      },
+      googleAdsCostPerLeadRolling90d: rollingCostPerLead === null
+        ? {
+            kind: "error",
+            category: "no_data",
+            durationMs,
+            responseStatus: 200,
+          }
+        : {
+            kind: "ok",
+            value: rollingCostPerLead,
+            durationMs,
+            responseStatus: 200,
+          },
     };
   } catch (error) {
+    const metric = metricError(error, started);
     return {
-      googleAdsSpendMtd: metricError(error, started),
-      googleAdsLeadsMtd: metricError(error, started),
+      googleAdsSpendMtd: metric,
+      googleAdsLeadsMtd: metric,
+      googleAdsSpendRolling90d: metric,
+      googleAdsClicksRolling90d: metric,
+      googleAdsLeadsRolling90d: metric,
+      googleAdsCostPerLeadRolling90d: metric,
     };
   }
 }

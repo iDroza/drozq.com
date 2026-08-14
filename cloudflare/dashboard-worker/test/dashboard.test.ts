@@ -1,7 +1,12 @@
 import { env } from "cloudflare:workers";
 import { beforeEach, describe, expect, it } from "vitest";
 import { CONFIG_DEFAULTS } from "../src/config";
-import { getActivityWindows, getReportingPeriod } from "../src/lib/date";
+import {
+  getActivityWindows,
+  getReportingPeriod,
+  getRollingPeriod,
+  getYearToDatePeriod,
+} from "../src/lib/date";
 import { fetchWithRetry, parseRetryAfter } from "../src/lib/retry";
 import {
   createUnconfiguredSnapshot,
@@ -19,8 +24,18 @@ import {
 import {
   costMicrosToUsd,
   fetchGoogleAdsMetrics,
+  parseGoogleAdsDailyPerformance,
   sumMatchingLeadConversions,
 } from "../src/sources/google-ads";
+import {
+  fetchGoogleSearchConsoleMetrics,
+  parseSearchConsoleAggregate,
+} from "../src/sources/google-search-console";
+import {
+  aggregateClosedDeals,
+  closedStageIds,
+  fetchFollowUpBossTeamMetrics,
+} from "../src/sources/follow-up-boss-team";
 import {
   countIncompletePageRows,
   fetchShellPagesRemaining,
@@ -66,6 +81,22 @@ function allSuccessfulResults(): MetricResultMap {
     freshSellerLeads: successful(3),
     googleAdsSpendMtd: successful(2362.175313),
     googleAdsLeadsMtd: successful(107),
+    googleAdsSpendRolling90d: successful(8200.5),
+    googleAdsClicksRolling90d: successful(3400),
+    googleAdsLeadsRolling90d: successful(321),
+    googleAdsCostPerLeadRolling90d: successful(25.546729),
+    activeRealtyClicksRolling90d: successful(11474),
+    activeRealtyImpressionsRolling90d: successful(647748),
+    activeRealtyCtrRolling90d: successful(0.0177168),
+    activeRealtyPositionRolling90d: successful(10.5),
+    jtClicksRolling90d: successful(1200),
+    jtImpressionsRolling90d: successful(88000),
+    jtCtrRolling90d: successful(0.013636),
+    jtPositionRolling90d: successful(17.2),
+    teamCommissionYtd: successful(40605),
+    teamSalesYtd: successful(3),
+    teamVolumeYtd: successful(1770000),
+    teamActiveAgentsYtd: successful(2),
   };
 }
 
@@ -79,7 +110,7 @@ function makeSnapshot(now = NOW): DashboardSnapshot {
 }
 
 function withSecrets(secrets: SecretBindings): DashboardEnv {
-  return { ...env, ...secrets };
+  return { ...env, ...secrets } as DashboardEnv;
 }
 
 function jsonResponse(payload: object, status = 200): Response {
@@ -129,6 +160,8 @@ beforeEach(async () => {
     env.DASHBOARD_KV.delete(SNAPSHOT_KEY),
     env.DASHBOARD_KV.delete("dashboard:fub:activity:v2"),
     env.DASHBOARD_KV.delete("dashboard:google_ads:accounts:v2"),
+    env.DASHBOARD_KV.delete("dashboard:search_console:aggregate:v1"),
+    env.DASHBOARD_KV.delete("dashboard:fub:team:v1"),
     env.DASHBOARD_KV.delete("dashboard:sync:lease:v2"),
   ]);
 });
@@ -316,6 +349,18 @@ describe("Google Ads all-account aggregation", () => {
     expect(result).toEqual({ value: 2, matchedRows: 1 });
   });
 
+  it("parses daily all-account spend, conversions, and clicks", () => {
+    expect(parseGoogleAdsDailyPerformance([{
+      segments: { date: "2026-08-14" },
+      metrics: { costMicros: "2500000", conversions: "3", clicks: "41" },
+    }])).toEqual([{
+      date: "2026-08-14",
+      costMicros: 2500000n,
+      conversions: 3,
+      clicks: 41,
+    }]);
+  });
+
   it("discovers every leaf account and sums spend and primary conversions", async () => {
     let tokenCalls = 0;
     const queriedCustomers: string[] = [];
@@ -342,19 +387,23 @@ describe("Google Ads all-account aggregation", () => {
         ] });
       }
       queriedCustomers.push(customerId);
-      const performance: Record<string, [string, number]> = {
-        "3351363652": ["0", 0],
-        "7216252244": ["1352715303", 102],
-        "4069972406": ["1009460010", 5],
+      const performance: Record<string, [string, number, number]> = {
+        "3351363652": ["0", 0, 100],
+        "7216252244": ["1352715303", 102, 900],
+        "4069972406": ["1009460010", 5, 200],
       };
       const values = performance[customerId];
       if (values === undefined) {
         return new Response("", { status: 404 });
       }
-      return jsonResponse({ results: [{ metrics: {
-        costMicros: values[0],
-        conversions: values[1],
-      } }] });
+      return jsonResponse({ results: [{
+        segments: { date: "2026-08-14" },
+        metrics: {
+          costMicros: values[0],
+          conversions: values[1],
+          clicks: values[2],
+        },
+      }] });
     };
     const result = await fetchGoogleAdsMetrics(
       withSecrets({
@@ -365,6 +414,7 @@ describe("Google Ads all-account aggregation", () => {
         GOOGLE_ADS_LOGIN_CUSTOMER_ID: "1975174499",
       }),
       getReportingPeriod(NOW, CONFIG_DEFAULTS.reportingTimeZone),
+      getRollingPeriod(NOW, CONFIG_DEFAULTS.reportingTimeZone, 90),
       { fetcher, sleep: noDelay, now: NOW },
     );
 
@@ -374,6 +424,10 @@ describe("Google Ads all-account aggregation", () => {
     expect(result.googleAdsSpendMtd.kind === "ok" ? result.googleAdsSpendMtd.value : null)
       .toBeCloseTo(2362.175313, 6);
     expect(result.googleAdsLeadsMtd).toMatchObject({ kind: "ok", value: 107 });
+    expect(result.googleAdsClicksRolling90d).toMatchObject({ kind: "ok", value: 1200 });
+    expect(result.googleAdsCostPerLeadRolling90d.kind === "ok"
+      ? result.googleAdsCostPerLeadRolling90d.value
+      : null).toBeCloseTo(22.076404794, 6);
   });
 
   it("does not publish a partial all-account total when one child fails", async () => {
@@ -392,7 +446,10 @@ describe("Google Ads all-account aggregation", () => {
       }
       return url.includes("7216252244")
         ? new Response("", { status: 503 })
-        : jsonResponse({ results: [{ metrics: { costMicros: "1000000", conversions: 1 } }] });
+        : jsonResponse({ results: [{
+            segments: { date: "2026-08-14" },
+            metrics: { costMicros: "1000000", conversions: 1, clicks: 2 },
+          }] });
     };
     const result = await fetchGoogleAdsMetrics(
       withSecrets({
@@ -403,10 +460,156 @@ describe("Google Ads all-account aggregation", () => {
         GOOGLE_ADS_LOGIN_CUSTOMER_ID: "1975174499",
       }),
       getReportingPeriod(NOW, CONFIG_DEFAULTS.reportingTimeZone),
+      getRollingPeriod(NOW, CONFIG_DEFAULTS.reportingTimeZone, 90),
       { fetcher, sleep: noDelay, now: NOW },
     );
     expect(result.googleAdsSpendMtd.kind).toBe("error");
     expect(result.googleAdsLeadsMtd.kind).toBe("error");
+  });
+});
+
+describe("Google Search Console rolling aggregation", () => {
+  it("parses one property-level aggregate row", () => {
+    expect(parseSearchConsoleAggregate({ rows: [{
+      clicks: 11474,
+      impressions: 647748,
+      ctr: 0.0177168,
+      position: 10.5,
+    }] })).toEqual({
+      clicks: 11474,
+      impressions: 647748,
+      ctr: 0.0177168,
+      position: 10.5,
+    });
+  });
+
+  it("uses one OAuth token and queries both configured properties", async () => {
+    let tokenCalls = 0;
+    const requestedSites: string[] = [];
+    const allUrls: string[] = [];
+    const fetcher = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+      const url = String(input);
+      allUrls.push(url);
+      if (url === "https://oauth2.googleapis.com/token") {
+        tokenCalls += 1;
+        return jsonResponse({ access_token: "gsc-test-access-token" });
+      }
+      const pathname = new URL(url).pathname;
+      const prefix = "/webmasters/v3/sites/";
+      const suffix = "/searchAnalytics/query";
+      expect(pathname.startsWith(prefix)).toBe(true);
+      expect(pathname.endsWith(suffix)).toBe(true);
+      requestedSites.push(decodeURIComponent(
+        pathname.slice(prefix.length, -suffix.length),
+      ));
+      const body = JSON.parse(String(init?.body)) as Record<string, unknown>;
+      expect(body).toMatchObject({
+        startDate: "2026-05-17",
+        endDate: "2026-08-14",
+        aggregationType: "byProperty",
+        dataState: "all",
+      });
+      return jsonResponse({ rows: [{
+        clicks: requestedSites.length === 1 ? 11474 : 1200,
+        impressions: requestedSites.length === 1 ? 647748 : 88000,
+        ctr: 0.02,
+        position: 11,
+      }] });
+    };
+    const result = await fetchGoogleSearchConsoleMetrics(
+      withSecrets({
+        GOOGLE_SEARCH_CONSOLE_CLIENT_ID: "test-client-id",
+        GOOGLE_SEARCH_CONSOLE_CLIENT_SECRET: "test-client-secret",
+        GOOGLE_SEARCH_CONSOLE_REFRESH_TOKEN: "test-refresh-token",
+      }),
+      getRollingPeriod(NOW, "America/Los_Angeles", 90),
+      { fetcher, sleep: noDelay, now: NOW },
+    );
+    expect(tokenCalls).toBe(1);
+    expect(result.activeRealtyClicksRolling90d).toMatchObject({ kind: "ok" });
+    expect(result.jtClicksRolling90d).toMatchObject({ kind: "ok" });
+    expect(allUrls.length).toBe(3);
+    expect(requestedSites.sort()).toEqual([
+      "https://justintye.com/",
+      "sc-domain:activerealty.com",
+    ]);
+    expect(result.jtImpressionsRolling90d).toMatchObject({ kind: "ok" });
+  });
+
+  it("treats a missing aggregate row as no data, never zero", () => {
+    expect(() => parseSearchConsoleAggregate({ rows: [] })).toThrow("no_data");
+  });
+});
+
+describe("Follow Up Boss YTD team aggregation", () => {
+  const period = getYearToDatePeriod(NOW, "America/Los_Angeles");
+  const pipelines = [
+    { stages: [{ id: 10, name: " Active " }, { id: 20, name: "CLOSED" }] },
+  ];
+  const deals = [
+    {
+      id: 1,
+      status: "active",
+      stageId: 20,
+      projectedCloseDate: "2026-02-10",
+      price: "750000",
+      commissionValue: "18000",
+      users: [{ id: 659 }],
+    },
+    {
+      id: 2,
+      status: "active",
+      stageId: 20,
+      projectedCloseDate: "2026-07-11T00:00:00Z",
+      price: 1020000,
+      commissionValue: 22605,
+      users: [{ id: 659 }, { id: 777 }],
+    },
+    {
+      id: 3,
+      status: "active",
+      stageId: 10,
+      projectedCloseDate: "2026-06-01",
+      price: 500000,
+      commissionValue: 12000,
+      users: [{ id: 888 }],
+    },
+  ];
+
+  it("normalizes configured closed-stage names and aggregates the requested four totals", () => {
+    const stages = closedStageIds(pipelines, ["closed"]);
+    expect([...stages]).toEqual([20]);
+    expect(aggregateClosedDeals(deals, stages, period)).toEqual({
+      commission: 40605,
+      sales: 2,
+      volume: 1770000,
+      activeAgents: 2,
+    });
+  });
+
+  it("fetches only sanitized team totals and reuses the five-minute cache", async () => {
+    let requests = 0;
+    const fetcher = async (input: RequestInfo | URL): Promise<Response> => {
+      requests += 1;
+      const url = new URL(String(input));
+      return url.pathname.endsWith("/pipelines")
+        ? collection("pipelines", pipelines)
+        : collection("deals", deals);
+    };
+    const dashboardEnv = withSecrets({ FUB_API_KEY: "test-fub-key" });
+    const first = await fetchFollowUpBossTeamMetrics(
+      dashboardEnv,
+      period,
+      { fetcher, sleep: noDelay, now: NOW },
+    );
+    const second = await fetchFollowUpBossTeamMetrics(
+      dashboardEnv,
+      period,
+      { fetcher, sleep: noDelay, now: new Date(NOW.getTime() + 60_000) },
+    );
+    expect(first.teamCommissionYtd).toMatchObject({ kind: "ok", value: 40605 });
+    expect(second.teamVolumeYtd).toMatchObject({ kind: "ok", value: 1770000 });
+    expect(requests).toBe(2);
   });
 });
 
@@ -515,6 +718,22 @@ describe("snapshot merging and public contract", () => {
     expect(publicSnapshot.metrics.callsToday.status).toBe("ok");
   });
 
+  it("uses the longer team and Search Console freshness policies", () => {
+    const snapshot = makeSnapshot(new Date("2026-08-13T12:00:00.000Z"));
+    const afterSixteenMinutes = toPublicSnapshot(
+      snapshot,
+      new Date("2026-08-13T12:16:00.000Z"),
+    );
+    expect(afterSixteenMinutes.metrics.teamSalesYtd.status).toBe("stale");
+    expect(afterSixteenMinutes.metrics.activeRealtyClicksRolling90d.status).toBe("ok");
+
+    const afterTwentySevenHours = toPublicSnapshot(
+      snapshot,
+      new Date("2026-08-14T15:00:00.001Z"),
+    );
+    expect(afterTwentySevenHours.metrics.activeRealtyClicksRolling90d.status).toBe("stale");
+  });
+
   it("strips every non-allowlisted public field", () => {
     const snapshot = makeSnapshot();
     const tainted = {
@@ -538,6 +757,8 @@ describe("snapshot merging and public contract", () => {
       "version",
       "metrics",
       "reportingPeriod",
+      "rolling90DayPeriod",
+      "yearToDatePeriod",
       "lastAttemptAt",
       "lastSuccessfulFullSyncAt",
     ]);
@@ -616,7 +837,7 @@ describe("snapshot merging and public contract", () => {
     const snapshot = createUnconfiguredSnapshot(NOW, "America/Los_Angeles");
     expect(sanitizeSnapshot(snapshot)).not.toBeNull();
     expect(snapshot.metrics.googleAdsSpendMtd.value).toBeNull();
-    expect(Object.keys(snapshot.metrics)).toHaveLength(8);
+    expect(Object.keys(snapshot.metrics)).toHaveLength(24);
   });
 
   it("serves only a cached sanitized summary with hardened headers", async () => {
@@ -634,7 +855,7 @@ describe("snapshot merging and public contract", () => {
     );
     expect(response.headers.has("Access-Control-Allow-Origin")).toBe(false);
     expect(payload.version).toBe(2);
-    expect(Object.keys(payload.metrics)).toHaveLength(8);
+    expect(Object.keys(payload.metrics)).toHaveLength(24);
   });
 
   it("returns a valid 503 payload when no snapshot exists", async () => {
@@ -697,5 +918,21 @@ describe("America/Los_Angeles reporting dates", () => {
   it("uses an exact rolling 28-day fresh-lead window", () => {
     expect(getActivityWindows(NOW, "America/Los_Angeles").rollingFourWeeksStartAt)
       .toBe("2026-07-17T19:00:00.000Z");
+  });
+
+  it("uses an exact rolling 90-day inclusive Search Console period", () => {
+    expect(getRollingPeriod(NOW, "America/Los_Angeles", 90)).toEqual({
+      startDate: "2026-05-17",
+      endDate: "2026-08-14",
+      timeZone: "America/Los_Angeles",
+    });
+  });
+
+  it("builds a year-to-date period in the reporting time zone", () => {
+    expect(getYearToDatePeriod(NOW, "America/Los_Angeles")).toEqual({
+      startDate: "2026-01-01",
+      endDate: "2026-08-14",
+      timeZone: "America/Los_Angeles",
+    });
   });
 });

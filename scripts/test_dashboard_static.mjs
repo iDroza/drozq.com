@@ -19,17 +19,43 @@ const expectedMetrics = [
   "appointmentsSetMtd",
   "textsToday",
   "emailsToday",
+  "googleAdsSpendRolling90d",
+  "googleAdsClicksRolling90d",
+  "googleAdsLeadsRolling90d",
+  "googleAdsCostPerLeadRolling90d",
+  "activeRealtyClicksRolling90d",
+  "activeRealtyImpressionsRolling90d",
+  "activeRealtyCtrRolling90d",
+  "activeRealtyPositionRolling90d",
+  "jtClicksRolling90d",
+  "jtImpressionsRolling90d",
+  "jtCtrRolling90d",
+  "jtPositionRolling90d",
+  "teamCommissionYtd",
+  "teamSalesYtd",
+  "teamVolumeYtd",
+  "teamActiveAgentsYtd",
 ];
-const metricMatches = [...html.matchAll(/<article class="metric-card" data-metric="([^"]+)">/gu)];
+const metricMatches = [...html.matchAll(/<article class="[^"]*\bmetric-card\b[^"]*" data-metric="([^"]+)">/gu)];
 assert.deepEqual(
   metricMatches.map((match) => match[1]),
   expectedMetrics,
-  "dashboard must contain exactly the eight approved metric cards",
+  "dashboard metric cards must preserve the required row order",
+);
+assert.equal(metricMatches.length, 24, "dashboard must contain exactly 24 metric cards");
+assert.equal(
+  (html.match(/class="metrics-grid metrics-grid--compact is-loading"/gu) ?? []).length,
+  4,
+  "each lower dashboard row must be capped at four cards",
 );
 assert.equal((html.match(/<h1\b/gu) ?? []).length, 1, "dashboard must have one h1");
 assert.match(html, /<h2>CALLS MADE<\/h2>/u, "calls card must say CALLS MADE");
 assert.match(html, /<h2>TEXTS SENT<\/h2>/u, "texts card must keep TEXTS SENT");
 assert.match(html, /<h2>EMAILS SENT<\/h2>/u, "emails card must keep EMAILS SENT");
+assert.match(html, /<h2 id="advertising-title">Aggregate Advertising<\/h2>/u);
+assert.match(html, /<h3 class="metric-row__title">ACTIVEREALTY\.COM<\/h3>/u);
+assert.match(html, /<h3 class="metric-row__title">JUSTINTYE\.COM<\/h3>/u);
+assert.match(html, /<h2 id="team-performance-title">Team Performance<\/h2>/u);
 assert.match(
   html,
   /<link rel="canonical" href="https:\/\/drozq\.com\/dashboard">/u,
@@ -40,7 +66,7 @@ assert.match(html, /<noscript>/u, "dashboard needs a noscript message");
 assert.match(javascript, /"\/api\/dashboard\/summary"/u);
 assert.doesNotMatch(
   javascript,
-  /api\.followupboss\.com|googleads\.googleapis\.com|sheets\.googleapis\.com|oauth2\.googleapis\.com/iu,
+  /api\.followupboss\.com|googleads\.googleapis\.com|sheets\.googleapis\.com|oauth2\.googleapis\.com|webmasters\/v3/iu,
   "browser code must not call dashboard upstream data APIs",
 );
 assert.match(javascript, /15000/u, "visible polling interval must be 15 seconds");

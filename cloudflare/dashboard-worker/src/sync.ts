@@ -1,21 +1,30 @@
 import { readReportingTimeZone } from "./config";
-import { getReportingPeriod } from "./lib/date";
+import {
+  getReportingPeriod,
+  getRollingPeriod,
+  getYearToDatePeriod,
+  isIsoUtcTimestamp,
+} from "./lib/date";
 import { isFiniteNonnegative } from "./lib/numeric";
 import {
   METRIC_KEYS,
   METRIC_SPECS,
-  sanitizeSnapshot,
+  sanitizeStoredSnapshot,
   toPublicSnapshot,
 } from "./snapshot";
 import { fetchFollowUpBossMetrics } from "./sources/follow-up-boss";
+import { fetchFollowUpBossTeamMetrics } from "./sources/follow-up-boss-team";
 import { fetchGoogleAdsMetrics } from "./sources/google-ads";
+import { fetchGoogleSearchConsoleMetrics } from "./sources/google-search-console";
 import type {
   DashboardEnv,
   DashboardMetric,
   DashboardMetricKey,
   DashboardSnapshot,
   FollowUpBossMetricResults,
+  FollowUpBossTeamMetricResults,
   GoogleAdsMetricResults,
+  GoogleSearchConsoleMetricResults,
   MetricFetchResult,
   RuntimeDependencies,
 } from "./types";
@@ -54,10 +63,14 @@ function mergeMetric(
     if (!isFiniteNonnegative(result.value)) {
       throw new RangeError("invalid_metric_result");
     }
+    const updatedAt = result.observedAt ?? synchronizedAt;
+    if (!isIsoUtcTimestamp(updatedAt)) {
+      throw new RangeError("invalid_metric_timestamp");
+    }
     return {
       value: result.value,
       source: spec.source,
-      updatedAt: synchronizedAt,
+      updatedAt,
       status: "ok",
       definition: spec.definition,
     };
@@ -97,6 +110,15 @@ export function mergeSnapshot(
   results: MetricResultMap,
   now: Date,
   reportingPeriod: DashboardSnapshot["reportingPeriod"],
+  rolling90DayPeriod: DashboardSnapshot["rolling90DayPeriod"] = getRollingPeriod(
+    now,
+    reportingPeriod.timeZone,
+    90,
+  ),
+  yearToDatePeriod: DashboardSnapshot["yearToDatePeriod"] = getYearToDatePeriod(
+    now,
+    reportingPeriod.timeZone,
+  ),
 ): DashboardSnapshot {
   const synchronizedAt = now.toISOString();
   const configured = Object.values(results).filter(
@@ -118,6 +140,8 @@ export function mergeSnapshot(
     version: 2,
     metrics,
     reportingPeriod,
+    rolling90DayPeriod,
+    yearToDatePeriod,
     lastAttemptAt: synchronizedAt,
     lastSuccessfulFullSyncAt: fullSyncSucceeded
       ? synchronizedAt
@@ -131,7 +155,7 @@ async function loadPreviousSnapshot(env: DashboardEnv): Promise<DashboardSnapsho
     return null;
   }
   try {
-    const snapshot = sanitizeSnapshot(JSON.parse(stored) as unknown);
+    const snapshot = sanitizeStoredSnapshot(JSON.parse(stored) as unknown);
     if (snapshot === null) {
       console.error(
         JSON.stringify({ source: "dashboard_kv", category: "schema", status: null }),
@@ -176,6 +200,32 @@ function adsFailure(): GoogleAdsMetricResults {
   return {
     googleAdsSpendMtd: unexpectedResult(),
     googleAdsLeadsMtd: unexpectedResult(),
+    googleAdsSpendRolling90d: unexpectedResult(),
+    googleAdsClicksRolling90d: unexpectedResult(),
+    googleAdsLeadsRolling90d: unexpectedResult(),
+    googleAdsCostPerLeadRolling90d: unexpectedResult(),
+  };
+}
+
+function teamFailure(): FollowUpBossTeamMetricResults {
+  return {
+    teamCommissionYtd: unexpectedResult(),
+    teamSalesYtd: unexpectedResult(),
+    teamVolumeYtd: unexpectedResult(),
+    teamActiveAgentsYtd: unexpectedResult(),
+  };
+}
+
+function searchConsoleFailure(): GoogleSearchConsoleMetricResults {
+  return {
+    activeRealtyClicksRolling90d: unexpectedResult(),
+    activeRealtyImpressionsRolling90d: unexpectedResult(),
+    activeRealtyCtrRolling90d: unexpectedResult(),
+    activeRealtyPositionRolling90d: unexpectedResult(),
+    jtClicksRolling90d: unexpectedResult(),
+    jtImpressionsRolling90d: unexpectedResult(),
+    jtCtrRolling90d: unexpectedResult(),
+    jtPositionRolling90d: unexpectedResult(),
   };
 }
 
@@ -186,21 +236,54 @@ export async function synchronizeDashboard(
   const now = dependencies.now ?? new Date();
   const timeZone = readReportingTimeZone(env);
   const reportingPeriod = getReportingPeriod(now, timeZone);
+  const rolling90DayPeriod = getRollingPeriod(now, timeZone, 90);
+  const yearToDatePeriod = getYearToDatePeriod(now, timeZone);
   const previous = await loadPreviousSnapshot(env);
 
-  const [fubSettled, adsSettled] = await Promise.allSettled([
-    fetchFollowUpBossMetrics(env, timeZone, { ...dependencies, now }),
-    fetchGoogleAdsMetrics(env, reportingPeriod, { ...dependencies, now }),
-  ]);
+  const [fubSettled, adsSettled, searchSettled, teamSettled] =
+    await Promise.allSettled([
+      fetchFollowUpBossMetrics(env, timeZone, { ...dependencies, now }),
+      fetchGoogleAdsMetrics(
+        env,
+        reportingPeriod,
+        rolling90DayPeriod,
+        { ...dependencies, now },
+      ),
+      fetchGoogleSearchConsoleMetrics(
+        env,
+        rolling90DayPeriod,
+        { ...dependencies, now },
+      ),
+      fetchFollowUpBossTeamMetrics(
+        env,
+        yearToDatePeriod,
+        { ...dependencies, now },
+      ),
+    ]);
   const fub = fubSettled.status === "fulfilled" ? fubSettled.value : fubFailure();
   const ads = adsSettled.status === "fulfilled" ? adsSettled.value : adsFailure();
+  const search = searchSettled.status === "fulfilled"
+    ? searchSettled.value
+    : searchConsoleFailure();
+  const team = teamSettled.status === "fulfilled"
+    ? teamSettled.value
+    : teamFailure();
   const results: MetricResultMap = {
     ...fub,
     ...ads,
+    ...search,
+    ...team,
   };
 
   logMetricResults(results);
-  const snapshot = mergeSnapshot(previous, results, now, reportingPeriod);
+  const snapshot = mergeSnapshot(
+    previous,
+    results,
+    now,
+    reportingPeriod,
+    rolling90DayPeriod,
+    yearToDatePeriod,
+  );
   await env.DASHBOARD_KV.put(SNAPSHOT_KEY, JSON.stringify(snapshot));
   return toPublicSnapshot(snapshot, now);
 }

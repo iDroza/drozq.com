@@ -27,7 +27,12 @@
   ],
   "vars": {
     "FUB_SELLER_TAG": "Seller",
+    "FUB_CLOSED_DEAL_STAGE_NAMES": "Closed",
+    "FUB_TEAM_REFRESH_MINUTES": "5",
     "GOOGLE_ADS_API_VERSION": "v25",
+    "GOOGLE_SEARCH_CONSOLE_ACTIVE_REALTY_SITE_URL": "sc-domain:activerealty.com",
+    "GOOGLE_SEARCH_CONSOLE_JT_SITE_URL": "https://justintye.com/",
+    "GOOGLE_SEARCH_CONSOLE_REFRESH_MINUTES": "60",
     "REPORTING_TIME_ZONE": "America/Los_Angeles"
   },
   "observability": {

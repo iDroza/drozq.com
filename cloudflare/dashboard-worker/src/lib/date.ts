@@ -149,6 +149,41 @@ export function getReportingPeriod(
   };
 }
 
+export function getRollingPeriod(
+  now: Date,
+  timeZone: string,
+  days: number,
+): DashboardSnapshot["rolling90DayPeriod"] {
+  if (!Number.isSafeInteger(days) || days < 1 || days > 3_660) {
+    throw new RangeError("invalid_rolling_days");
+  }
+  const end = calendarParts(now, timeZone);
+  const startDate = new Date(
+    Date.UTC(end.year, end.month - 1, end.day - (days - 1), 12, 0, 0, 0),
+  );
+  return {
+    startDate: isoDate(
+      startDate.getUTCFullYear(),
+      startDate.getUTCMonth() + 1,
+      startDate.getUTCDate(),
+    ),
+    endDate: isoDate(end.year, end.month, end.day),
+    timeZone,
+  };
+}
+
+export function getYearToDatePeriod(
+  now: Date,
+  timeZone: string,
+): DashboardSnapshot["yearToDatePeriod"] {
+  const end = calendarParts(now, timeZone);
+  return {
+    startDate: isoDate(end.year, 1, 1),
+    endDate: isoDate(end.year, end.month, end.day),
+    timeZone,
+  };
+}
+
 export function isIsoUtcTimestamp(value: unknown): value is string {
   if (
     typeof value !== "string" ||
@@ -161,9 +196,13 @@ export function isIsoUtcTimestamp(value: unknown): value is string {
   return Number.isFinite(parsed) && new Date(parsed).toISOString() === value;
 }
 
-export function isMetricStale(updatedAt: string | null, now: Date): boolean {
+export function isMetricStale(
+  updatedAt: string | null,
+  now: Date,
+  staleAfterMs = STALE_AFTER_MS,
+): boolean {
   if (!isIsoUtcTimestamp(updatedAt) || !Number.isFinite(now.getTime())) {
     return false;
   }
-  return now.getTime() - Date.parse(updatedAt) > STALE_AFTER_MS;
+  return now.getTime() - Date.parse(updatedAt) > staleAfterMs;
 }

@@ -70,6 +70,7 @@ function parseAccessToken(payload: unknown): string {
 export async function exchangeRefreshToken(
   credentials: RefreshTokenCredentials,
   dependencies: RuntimeDependencies = {},
+  source = "google_ads_oauth",
 ): Promise<string> {
   const body = new URLSearchParams({
     client_id: credentials.clientId,
@@ -85,7 +86,7 @@ export async function exchangeRefreshToken(
       body,
     },
     {
-      source: "google_ads_oauth",
+      source,
       fetcher: dependencies.fetcher,
       sleep: dependencies.sleep,
     },

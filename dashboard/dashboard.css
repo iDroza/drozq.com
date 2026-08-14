@@ -142,13 +142,40 @@ a {
   gap: 10px;
 }
 
-.metric-card h2 {
+.metric-card h2,
+.metric-card h3,
+.metric-card h4 {
   margin: 0;
   color: #f2f0ef;
   font-size: 0.72rem;
   font-weight: 700;
   line-height: 1.3;
   letter-spacing: 0.12em;
+}
+
+.metric-card--secondary {
+  color: #1a1816;
+  background: #fff;
+  border-color: #dedad5;
+  border-top-color: #1a1816;
+}
+
+.metric-card--secondary h3,
+.metric-card--secondary h4 {
+  color: #3f3a35;
+}
+
+.metric-card--secondary .metric-value {
+  color: #1a1816;
+}
+
+.metric-card--secondary .metric-context,
+.metric-card--secondary .metric-source {
+  color: #6f6962;
+}
+
+.metric-card--secondary .metric-skeleton {
+  background: #dedad5;
 }
 
 .metric-badge {
@@ -226,6 +253,69 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.dashboard-lower {
+  margin-top: 44px;
+  border-top: 1px solid #d8d4cf;
+}
+
+.dashboard-section {
+  padding-top: 44px;
+}
+
+.dashboard-section + .dashboard-section {
+  margin-top: 44px;
+  border-top: 1px solid #d8d4cf;
+}
+
+.dashboard-section__heading {
+  display: flex;
+  margin-bottom: 18px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dashboard-section__heading h2 {
+  margin: 0;
+  color: #1a1816;
+  font-size: clamp(1.55rem, 7vw, 2.25rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.dashboard-section__heading p {
+  margin: 0;
+  color: #6f6962;
+  font-size: 0.7rem;
+  line-height: 1.3;
+  text-align: right;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.metric-row + .metric-row {
+  margin-top: 28px;
+}
+
+.metric-row__title {
+  margin: 0 0 10px;
+  color: #3f3a35;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.12em;
+}
+
+.metrics-grid--compact .metric-card {
+  min-height: 150px;
+}
+
+.metrics-grid--compact .metric-value {
+  min-height: 47px;
+  margin-top: 16px;
 }
 
 .sync-status,
@@ -323,6 +413,35 @@ button:focus-visible {
 
   .sync-row {
     margin-top: 22px;
+  }
+
+  .dashboard-lower {
+    margin-top: 64px;
+  }
+
+  .dashboard-section {
+    padding-top: 56px;
+  }
+
+  .dashboard-section + .dashboard-section {
+    margin-top: 56px;
+  }
+
+  .dashboard-section__heading {
+    margin-bottom: 24px;
+  }
+
+  .metric-row + .metric-row {
+    margin-top: 36px;
+  }
+
+  .metrics-grid--compact .metric-card {
+    min-height: 178px;
+  }
+
+  .metrics-grid--compact .metric-value {
+    min-height: 58px;
+    margin-top: 20px;
   }
 }
 

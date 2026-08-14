@@ -5,6 +5,8 @@
   var POLL_INTERVAL_MS = 15000;
   var REQUEST_TIMEOUT_MS = 10000;
   var STALE_AFTER_MS = 5 * 60 * 1000;
+  var TEAM_STALE_AFTER_MS = 15 * 60 * 1000;
+  var SEARCH_STALE_AFTER_MS = 26 * 60 * 60 * 1000;
   var metricConfig = {
     callsToday: { source: "Follow Up Boss", format: "count" },
     textsToday: { source: "Follow Up Boss", format: "count" },
@@ -13,7 +15,23 @@
     freshBuyerLeads: { source: "Follow Up Boss", format: "count" },
     freshSellerLeads: { source: "Follow Up Boss", format: "count" },
     googleAdsSpendMtd: { source: "Google Ads", format: "currency" },
-    googleAdsLeadsMtd: { source: "Google Ads", format: "conversion" }
+    googleAdsLeadsMtd: { source: "Google Ads", format: "conversion" },
+    googleAdsSpendRolling90d: { source: "Google Ads", format: "currency" },
+    googleAdsClicksRolling90d: { source: "Google Ads", format: "count" },
+    googleAdsLeadsRolling90d: { source: "Google Ads", format: "conversion" },
+    googleAdsCostPerLeadRolling90d: { source: "Google Ads", format: "currency" },
+    activeRealtyClicksRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
+    activeRealtyImpressionsRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
+    activeRealtyCtrRolling90d: { source: "Search Console", format: "percent", staleAfterMs: SEARCH_STALE_AFTER_MS },
+    activeRealtyPositionRolling90d: { source: "Search Console", format: "decimal", staleAfterMs: SEARCH_STALE_AFTER_MS },
+    jtClicksRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
+    jtImpressionsRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
+    jtCtrRolling90d: { source: "Search Console", format: "percent", staleAfterMs: SEARCH_STALE_AFTER_MS },
+    jtPositionRolling90d: { source: "Search Console", format: "decimal", staleAfterMs: SEARCH_STALE_AFTER_MS },
+    teamCommissionYtd: { source: "Follow Up Boss", format: "currencyWhole", staleAfterMs: TEAM_STALE_AFTER_MS },
+    teamSalesYtd: { source: "Follow Up Boss", format: "count", staleAfterMs: TEAM_STALE_AFTER_MS },
+    teamVolumeYtd: { source: "Follow Up Boss", format: "currencyWhole", staleAfterMs: TEAM_STALE_AFTER_MS },
+    teamActiveAgentsYtd: { source: "Follow Up Boss", format: "count", staleAfterMs: TEAM_STALE_AFTER_MS }
   };
   var countFormatter = new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 0
@@ -27,11 +45,25 @@
   var conversionFormatter = new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 2
   });
+  var wholeCurrencyFormatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0
+  });
+  var percentFormatter = new Intl.NumberFormat("en-US", {
+    style: "percent",
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1
+  });
+  var decimalFormatter = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1
+  });
   var pollTimer = null;
   var inFlight = false;
   var currentSnapshot = null;
 
-  var grid = document.getElementById("metrics-grid");
+  var grids = document.querySelectorAll(".metrics-grid");
   var syncStatus = document.getElementById("sync-status");
   var networkError = document.getElementById("network-error");
   var retryButton = document.getElementById("retry-dashboard");
@@ -66,6 +98,15 @@
     }
     if (format === "currency") {
       return currencyFormatter.format(value);
+    }
+    if (format === "currencyWhole") {
+      return wholeCurrencyFormatter.format(value);
+    }
+    if (format === "percent") {
+      return percentFormatter.format(value);
+    }
+    if (format === "decimal") {
+      return decimalFormatter.format(value);
     }
     return format === "conversion"
       ? conversionFormatter.format(value)
@@ -109,7 +150,7 @@
     var badge = card.querySelector("[data-badge]");
     var displayValue = formatValue(metric.value, config.format);
     var stale = metric.status === "stale" ||
-      (metric.updatedAt !== null && ageInMilliseconds(metric.updatedAt) > STALE_AFTER_MS);
+      (metric.updatedAt !== null && ageInMilliseconds(metric.updatedAt) > (config.staleAfterMs || STALE_AFTER_MS));
 
     valueNode.classList.toggle("metric-value--long", displayValue.length >= 11 && displayValue.length < 17);
     valueNode.classList.toggle("metric-value--very-long", displayValue.length >= 17);
@@ -123,13 +164,19 @@
     badge.hidden = !stale;
   }
 
+  function markGridsReady() {
+    grids.forEach(function (grid) {
+      grid.classList.remove("is-loading");
+      grid.setAttribute("aria-busy", "false");
+    });
+  }
+
   function renderSnapshot(snapshot) {
     currentSnapshot = snapshot;
     Object.keys(metricConfig).forEach(function (key) {
       renderMetric(key, snapshot.metrics[key]);
     });
-    grid.classList.remove("is-loading");
-    grid.setAttribute("aria-busy", "false");
+    markGridsReady();
 
     if (snapshot.lastAttemptAt === "1970-01-01T00:00:00.000Z") {
       syncStatus.textContent = "Synchronization pending";
@@ -143,8 +190,7 @@
     Object.keys(metricConfig).forEach(function (key) {
       renderMetric(key, { value: null, updatedAt: null, status: "error" });
     });
-    grid.classList.remove("is-loading");
-    grid.setAttribute("aria-busy", "false");
+    markGridsReady();
     syncStatus.textContent = "Synchronization unavailable";
   }
 

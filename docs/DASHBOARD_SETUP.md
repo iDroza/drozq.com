@@ -14,9 +14,9 @@ The Worker runs every minute, which is the fastest Cloudflare Cron Trigger inter
 * * * * *
 ```
 
-Each synchronization queries Follow Up Boss and Google Ads concurrently, merges successful results with the previous snapshot, and writes `dashboard:snapshot:v2` to Workers KV. A failed metric retains its last valid value and becomes stale. A first-run failure is unavailable, never a false zero.
+Each synchronization runs four integrations concurrently: Follow Up Boss personal activity, Follow Up Boss team deals, Google Ads, and Google Search Console. It merges successful results with the previous snapshot and writes `dashboard:snapshot:v2` to Workers KV. A failed metric retains its last valid value and becomes stale. A first-run failure is unavailable, never a false zero.
 
-The public contract contains exactly eight aggregate metrics:
+The first viewport contains exactly eight operating metrics:
 
 1. Calls made today
 2. Texts sent today
@@ -27,7 +27,14 @@ The public contract contains exactly eight aggregate metrics:
 7. Google Ads spend month to date across all linked leaf accounts
 8. Google Ads primary conversions month to date across all linked leaf accounts
 
-The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the one-minute schedule or the protected manual sync endpoint. A metric becomes stale after five minutes without a successful source update.
+Below it are four fixed rows, each capped at four metrics:
+
+1. Rolling 90-day Google Ads spend, clicks, primary conversions, and cost per lead across all linked leaf accounts
+2. Rolling 90-day Search Console clicks, impressions, CTR, and average position for `activerealty.com`
+3. The same four Search Console metrics for `justintye.com`
+4. Year-to-date Follow Up Boss gross commission, closed sales, volume, and active agents
+
+The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the one-minute schedule or the protected manual sync endpoint. Personal and Ads metrics become stale after five minutes, team metrics after 15 minutes, and Search Console metrics after 26 hours. Search Console is source-cached for 60 minutes because its reporting data is not real time. Team deal aggregates are source-cached for five minutes.
 
 There is no Claude, OpenAI, AI inference, model call, or other nondeterministic runtime dependency. This is a direct API-to-KV-to-dashboard pipeline.
 
@@ -85,6 +92,15 @@ The activity definitions are deliberate:
 
 Follow Up Boss does not permit this non-owner key to use the account-level agent-activity report or webhooks. The Worker therefore uses the documented REST resources directly. Text and email IDs are hashed before the daily deduplication state is stored in KV. No message content, person name, email address, phone number, or contact record is persisted. A full daily reconciliation runs at least hourly, with incremental scans between reconciliations. This avoids the Follow Up Boss report's roughly 10-minute cache while controlling API volume.
 
+The year-to-date team row uses the same key with read-only `pipelines` and `deals` requests. `FUB_CLOSED_DEAL_STAGE_NAMES` is a comma-separated, case-insensitive allowlist and defaults to `Closed`. A sale is included when its stage matches that allowlist and its projected close date falls inside the current Los Angeles calendar year. The four outputs are:
+
+- Gross commission: the sum of each closed deal's recorded gross commission value
+- Sales: the number of qualifying closed deals
+- Volume: the sum of each qualifying deal's recorded price
+- Active agents: distinct users attached to at least one qualifying closed deal
+
+The production refresh floor is five minutes for this account-wide deals scan. Change it without code by editing `FUB_TEAM_REFRESH_MINUTES` in `wrangler.jsonc`. If the account renames its closed stages, edit only `FUB_CLOSED_DEAL_STAGE_NAMES`. Multiple names are allowed, for example `Closed,Funded`.
+
 ## 4. Google Ads setup
 
 The OAuth user must be able to access the manager account and every advertising account that should be included. Obtain:
@@ -109,19 +125,21 @@ Set-Location ../..
 
 `GOOGLE_ADS_LOGIN_CUSTOMER_ID` must be the manager account for the production all-account view. `GOOGLE_ADS_CUSTOMER_ID` is the fallback single account used only when a manager ID is not configured. The original known fallback is `8004133723`, stored without hyphens. Do not put either value into business logic.
 
-At runtime the Worker recursively discovers all accessible, non-hidden, non-test leaf accounts beneath the manager. It caches only the leaf account IDs for ten minutes. New linked accounts are picked up automatically. If any child query fails, neither Ads metric publishes a partial total. The prior complete total remains visible as stale.
+At runtime the Worker recursively discovers all accessible, non-hidden, non-test leaf accounts beneath the manager. It caches only the leaf account IDs for ten minutes. New linked accounts are picked up automatically. If any child query fails, no Ads metric publishes a partial total. The prior complete totals remain visible as stale.
 
-One OAuth access token is reused for the complete synchronization. Each leaf account receives one aggregate GAQL query:
+One OAuth access token is reused for the complete synchronization. Each leaf account receives one daily GAQL query covering the complete rolling 90-day window:
 
 ```sql
 SELECT
+  segments.date,
   metrics.cost_micros,
-  metrics.conversions
+  metrics.conversions,
+  metrics.clicks
 FROM customer
 WHERE segments.date BETWEEN 'YYYY-MM-DD' AND 'YYYY-MM-DD'
 ```
 
-Spend is the exact sum of `cost_micros` divided by 1,000,000. Leads are the sum of the Google Ads `Conversions` column, represented by `metrics.conversions`, across all linked leaf accounts. This intentionally includes every primary conversion in account performance and no longer filters to one action name or one child account. It does not use `metrics.all_conversions`, which can include local actions and other secondary engagement events.
+The Worker derives month-to-date and rolling-90-day totals from those non-overlapping daily rows. Spend is the exact sum of `cost_micros` divided by 1,000,000. Leads are the sum of the Google Ads `Conversions` column, represented by `metrics.conversions`, across all linked leaf accounts. Clicks use `metrics.clicks`, and cost per lead is rolling spend divided by rolling primary conversions. This intentionally includes every primary conversion in account performance and no longer filters to one action name or one child account. It does not use `metrics.all_conversions`, which can include local actions and other secondary engagement events. If there are no rolling conversions, cost per lead is unavailable rather than a false zero.
 
 The configured API version is `v25`. Review Google Ads API sunset notices before that version is retired and update only `GOOGLE_ADS_API_VERSION` after tests pass.
 
@@ -149,7 +167,48 @@ Set-Location ../..
 
 Changing a conversion action from `generate_lead` to `lead_confirmed` no longer requires a dashboard code or configuration change because the dashboard follows the account's primary conversion configuration. During a migration, ensure Google Ads does not mark both actions primary if that would double-count the same submission.
 
-## 5. Google Sheets adapter status
+## 5. Google Search Console setup
+
+The Search Console integration uses a separate OAuth refresh token with only the `webmasters.readonly` scope. It queries exact inclusive rolling-90-day property aggregates with no dimensions, so each property returns one row containing clicks, impressions, CTR, and average position. The browser receives only those four numeric aggregates.
+
+Production properties:
+
+- Active Realty: `sc-domain:activerealty.com`
+- JT: `https://justintye.com/`
+
+The OAuth user must have read access to both exact Search Console properties. Domain and URL-prefix properties are different resources, so preserve the strings exactly.
+
+Enable the API in the Google Cloud project that owns the OAuth client:
+
+```powershell
+gcloud auth login
+gcloud services enable searchconsole.googleapis.com --project=<google-cloud-project-id>
+```
+
+Create or reuse a Desktop OAuth client, then generate the read-only refresh token locally. The helper uses PKCE, opens the consent screen, and writes credentials only to the gitignored `scripts/.google_search_console.json` file:
+
+```powershell
+$env:GOOGLE_OAUTH_CLIENT_ID = Read-Host "OAuth client ID"
+$env:GOOGLE_OAUTH_CLIENT_SECRET = Read-Host "OAuth client secret"
+python scripts/google_search_console_auth.py
+Remove-Item Env:GOOGLE_OAUTH_CLIENT_ID, Env:GOOGLE_OAUTH_CLIENT_SECRET
+```
+
+Install the three resulting values as Worker secrets without printing them:
+
+```powershell
+$gsc = Get-Content -Raw scripts/.google_search_console.json | ConvertFrom-Json
+Set-Location cloudflare/dashboard-worker
+$gsc.client_id | npx wrangler secret put GOOGLE_SEARCH_CONSOLE_CLIENT_ID
+$gsc.client_secret | npx wrangler secret put GOOGLE_SEARCH_CONSOLE_CLIENT_SECRET
+$gsc.refresh_token | npx wrangler secret put GOOGLE_SEARCH_CONSOLE_REFRESH_TOKEN
+Set-Location ../..
+Remove-Variable gsc
+```
+
+The two property URLs and the 60-minute source refresh are non-secret variables in `wrangler.jsonc`. The one-minute Worker schedule can safely reuse the sanitized KV aggregate between upstream refreshes. Google can revise recent Search Console data, so the Worker queries with `dataState: all` and refreshes the complete rolling window instead of incrementally adding daily values.
+
+## 6. Google Sheets adapter status
 
 The earlier Shell Pages Remaining card was replaced by the current operating metrics. The tested Google Sheets service-account adapter remains isolated in the Worker source for rollback compatibility, but the production synchronization does not call it and no Sheet data is in the public contract.
 
@@ -167,7 +226,7 @@ Set-Location ../..
 
 If the card is deliberately restored later, the adapter supports a nonnegative direct cell or a `Page` and `Status` table, uses a read-only Google service account, normalizes escaped private-key newlines, and stores only the aggregate count.
 
-## 6. Workers KV
+## 7. Workers KV
 
 The production namespace is already bound as `DASHBOARD_KV` in `wrangler.jsonc`. To provision a separate environment:
 
@@ -181,12 +240,14 @@ Put the returned namespace ID into the `DASHBOARD_KV` binding. Do not rename the
 
 - `dashboard:snapshot:v2`: sanitized public snapshot
 - `dashboard:fub:activity:v2`: counts, checkpoints, and hashed daily message IDs only
+- `dashboard:fub:team:v1`: five-minute sanitized team totals only
 - `dashboard:google_ads:accounts:v2`: short-lived leaf account ID cache
+- `dashboard:search_console:aggregate:v1`: hourly sanitized property aggregates only
 - `dashboard:sync:lease:v2`: short-lived best-effort overlap guard
 
 KV never stores API keys, OAuth access tokens, refresh tokens, private keys, response bodies, message bodies, or contact details.
 
-## 7. Manual synchronization token
+## 8. Manual synchronization token
 
 Generate a high-entropy token, save it in the approved password manager, and store it as a Worker secret:
 
@@ -205,7 +266,7 @@ Remove-Variable dashboardTokenBytes, dashboardTokenRng, dashboardAdminToken
 
 Paste the generated value only into Wrangler's hidden prompt. Invalid tokens return `401`. A valid request made while another synchronization is active returns `409` rather than starting overlapping upstream work.
 
-## 8. Local development
+## 9. Local development
 
 Copy `.dev.vars.example` to `.dev.vars`, replace placeholders, and never commit the local file:
 
@@ -237,7 +298,7 @@ Then, from another terminal:
 Invoke-WebRequest "http://localhost:8787/cdn-cgi/handler/scheduled?cron=%2A%20%2A%20%2A%20%2A%20%2A"
 ```
 
-## 9. Production deployment
+## 10. Production deployment
 
 Run the complete gate, then deploy only the Worker:
 
@@ -263,7 +324,7 @@ curl.exe -i https://drozq.com/api/geo
 
 Expected results are `200`, `301` to `/dashboard`, `200`, `200` or first-run `503`, `404`, and the existing geo endpoint's normal response. The summary must include JSON content type, `nosniff`, and the documented 10-second cache policy. It must not include wildcard CORS.
 
-## 10. Protected manual synchronization
+## 11. Protected manual synchronization
 
 ```powershell
 $dashboardSecureToken = Read-Host "ADMIN_SYNC_TOKEN" -AsSecureString
@@ -277,7 +338,7 @@ Remove-Variable dashboardSecureToken, dashboardTokenPointer, dashboardSyncToken,
 
 The response is the same sanitized snapshot contract as the public endpoint.
 
-## 11. Troubleshooting and durability runbook
+## 12. Troubleshooting and durability runbook
 
 ### Follow Up Boss `401` or `403`
 
@@ -305,6 +366,14 @@ Upstream requests retry no more than three times, respect `Retry-After`, and oth
 - Compare the Google Ads UI with the same reporting timezone and the `Conversions` column, not `All conversions`.
 - Inspect Worker logs for a child-account error. The Worker refuses partial totals.
 
+### Search Console `401`, `403`, or missing metrics
+
+- Confirm `searchconsole.googleapis.com` is enabled in the OAuth client's Google Cloud project.
+- Confirm the refresh token was authorized with `webmasters.readonly` and has not been revoked.
+- Confirm the OAuth user can open both exact configured properties in Search Console.
+- Keep `sc-domain:activerealty.com` and `https://justintye.com/` exact. A domain property and a URL-prefix property are not interchangeable.
+- Search Console metrics legitimately trail live traffic. Their saved values become stale only after 26 hours.
+
 ### Follow Up Boss activity looks low
 
 - Verify the API key belongs to the intended agent.
@@ -312,15 +381,24 @@ Upstream requests retry no more than three times, respect `Retry-After`, and oth
 - Automated action-plan and campaign messages are intentionally excluded.
 - Run a protected sync. The hourly full reconciliation corrects late-arriving or edited message records.
 
+### Follow Up Boss team totals look low
+
+- Confirm every completed transaction is in a configured closed stage and has a projected close date in the current year.
+- Confirm each closed deal has a recorded price, gross commission, and at least one assigned user.
+- Add any renamed or alternate closed stages to `FUB_CLOSED_DEAL_STAGE_NAMES`.
+- The dashboard intentionally counts distinct agents with a closed deal, not every enabled account user.
+
 ### Stale or missing metrics
 
-A metric becomes stale after five minutes. Check structured Worker logs for source, HTTP status, duration, and sanitized error category. A missing metric with no prior value is shown as unavailable, not zero. A partial failure does not erase other sources.
+Personal and Ads metrics become stale after five minutes, team metrics after 15 minutes, and Search Console metrics after 26 hours. Check structured Worker logs for source, HTTP status, duration, and sanitized error category. A missing metric with no prior value is shown as unavailable, not zero. A partial failure does not erase other sources.
 
 ### 30 to 180 day maintenance risks
 
 - Google refresh tokens can be revoked by password, consent, or security changes. Monitor `authentication` errors.
+- Search Console property permissions or canonical property changes can revoke one site's data while the other remains healthy.
 - Google Ads API versions are sunset periodically. Review the version before `v25` retirement.
 - Follow Up Boss keys are user-scoped. Role or ownership changes can change accessible records.
+- Follow Up Boss deal-stage renames and commission-field omissions fail closed instead of publishing an understated team total.
 - New Google Ads leaf accounts are automatic, but OAuth and developer-token access must cover them.
 - Changing Google Ads primary conversion settings changes the Leads number by design. Audit primary actions during tracking migrations.
 - Worker Cron configuration changes can take time to propagate. Manual sync verifies deployment immediately.
@@ -329,7 +407,7 @@ A metric becomes stale after five minutes. Check structured Worker logs for sour
 
 Review Worker errors and credential age monthly. Run `npm run dashboard:check` before any API-version or schema update.
 
-## 12. Security and rotation
+## 13. Security and rotation
 
 Never commit `.dev.vars`, `.env`, downloaded service-account JSON, API keys, OAuth tokens, private keys, Cloudflare API tokens, or `ADMIN_SYNC_TOKEN`. The public serializer uses an explicit allowlist and cannot return contact details, account names, campaign names, Sheet contents, credentials, or raw upstream errors.
 
@@ -337,7 +415,7 @@ Any credential pasted into chat, committed, logged, or shown in a screenshot mus
 
 The marketing funnel uses a browser-side Google Maps key for Places autocomplete, including in `faq/index.html`. Browser keys are public by design, but the Google Cloud key must be restricted to only the necessary Maps APIs and exact production HTTP referrers. Rotate any version that was ever unrestricted. Do not remove it without a replacement because that would break funnel address validation.
 
-## 13. GitHub Actions
+## 14. GitHub Actions
 
 `.github/workflows/dashboard-worker.yml` runs only when Worker-related files change. It tests, type checks, builds, and then deploys only the dashboard Worker on `main` when these repository secrets exist:
 
@@ -346,7 +424,7 @@ The marketing funnel uses a browser-side Google Maps key for Places autocomplete
 
 Runtime API credentials remain Worker secrets and are not managed by GitHub Actions. The workflow does not touch Cloudflare Pages deployment.
 
-## 14. Rollback
+## 15. Rollback
 
 List and roll back Worker versions:
 
@@ -373,4 +451,6 @@ If the Worker must be removed, first remove only the narrow `drozq.com/api/dashb
 - https://developers.cloudflare.com/kv/api/
 - https://developers.google.com/google-ads/api/docs/oauth/overview
 - https://developers.google.com/google-ads/api/docs/reporting/overview
+- https://developers.google.com/webmaster-tools/v1/searchanalytics/query
+- https://developers.google.com/webmaster-tools/v1/how-tos/authorizing
 - https://docs.followupboss.com/reference/authentication

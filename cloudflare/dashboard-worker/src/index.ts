@@ -1,7 +1,7 @@
 import { readReportingTimeZone } from "./config";
 import {
   createUnconfiguredSnapshot,
-  sanitizeSnapshot,
+  sanitizeStoredSnapshot,
   toPublicSnapshot,
 } from "./snapshot";
 import { SNAPSHOT_KEY, synchronizeDashboard } from "./sync";
@@ -38,7 +38,7 @@ async function readSnapshot(env: DashboardEnv): Promise<DashboardSnapshot | null
     return null;
   }
   try {
-    return sanitizeSnapshot(JSON.parse(stored) as unknown);
+    return sanitizeStoredSnapshot(JSON.parse(stored) as unknown);
   } catch {
     return null;
   }

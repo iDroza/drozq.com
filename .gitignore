@@ -37,6 +37,7 @@ __pycache__/
 
 # Google Ads API credentials (OAuth refresh token) - NEVER commit
 scripts/.google_ads.json
+scripts/.google_search_console.json
 
 # Email platform shared secret (mirrors the EMAIL_SECRET Cloudflare env var) - NEVER commit
 scripts/.email_secret
