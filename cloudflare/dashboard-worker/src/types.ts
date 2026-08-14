@@ -3,6 +3,7 @@ export type MetricStatus = "ok" | "stale" | "error" | "unconfigured";
 export type MetricSource =
   | "follow_up_boss"
   | "google_ads"
+  | "combined"
   | "google_search_console"
   | "google_sheets";
 
@@ -25,10 +26,10 @@ export interface DashboardSnapshot {
     freshSellerLeads: DashboardMetric;
     googleAdsSpendMtd: DashboardMetric;
     googleAdsLeadsMtd: DashboardMetric;
-    googleAdsSpendRolling90d: DashboardMetric;
-    googleAdsClicksRolling90d: DashboardMetric;
-    googleAdsLeadsRolling90d: DashboardMetric;
-    googleAdsCostPerLeadRolling90d: DashboardMetric;
+    googleAdsSpendYtd: DashboardMetric;
+    googleAdsLeadsYtd: DashboardMetric;
+    googleAdsCostPerLeadYtd: DashboardMetric;
+    teamCommissionRoasYtd: DashboardMetric;
     activeRealtyClicksRolling90d: DashboardMetric;
     activeRealtyImpressionsRolling90d: DashboardMetric;
     activeRealtyCtrRolling90d: DashboardMetric;
@@ -93,10 +94,9 @@ export type MetricFetchResult =
 export interface GoogleAdsMetricResults {
   googleAdsSpendMtd: MetricFetchResult;
   googleAdsLeadsMtd: MetricFetchResult;
-  googleAdsSpendRolling90d: MetricFetchResult;
-  googleAdsClicksRolling90d: MetricFetchResult;
-  googleAdsLeadsRolling90d: MetricFetchResult;
-  googleAdsCostPerLeadRolling90d: MetricFetchResult;
+  googleAdsSpendYtd: MetricFetchResult;
+  googleAdsLeadsYtd: MetricFetchResult;
+  googleAdsCostPerLeadYtd: MetricFetchResult;
 }
 
 export interface GoogleSearchConsoleMetricResults {
@@ -141,10 +141,12 @@ export interface SecretBindings {
   ADMIN_SYNC_TOKEN?: string;
   FUB_API_KEY?: string;
   FUB_TEAM_API_KEY?: string;
+  FUB_ACCOUNT_HOST?: string;
   FUB_X_SYSTEM?: string;
   FUB_X_SYSTEM_KEY?: string;
   FUB_ASSIGNED_USER_ID?: string;
   FUB_CLOSED_DEAL_STAGE_NAMES?: string;
+  FUB_TEAM_EXCLUDED_USER_NAMES?: string;
   FUB_TEAM_REFRESH_MINUTES?: string;
   GOOGLE_ADS_DEVELOPER_TOKEN?: string;
   GOOGLE_ADS_CLIENT_ID?: string;

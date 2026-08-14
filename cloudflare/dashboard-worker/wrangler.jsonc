@@ -27,7 +27,9 @@
   ],
   "vars": {
     "FUB_SELLER_TAG": "Seller",
+    "FUB_ACCOUNT_HOST": "activerealty.followupboss.com",
     "FUB_CLOSED_DEAL_STAGE_NAMES": "Closed",
+    "FUB_TEAM_EXCLUDED_USER_NAMES": "Active Agents",
     "FUB_TEAM_REFRESH_MINUTES": "5",
     "GOOGLE_ADS_API_VERSION": "v25",
     "GOOGLE_SEARCH_CONSOLE_ACTIVE_REALTY_SITE_URL": "sc-domain:activerealty.com",

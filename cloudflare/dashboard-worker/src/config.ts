@@ -2,7 +2,9 @@ import type { DashboardEnv } from "./types";
 
 export const CONFIG_DEFAULTS = Object.freeze({
   fubSellerTag: "Seller",
+  fubAccountHost: "activerealty.followupboss.com",
   fubClosedDealStageNames: "Closed",
+  fubTeamExcludedUserNames: "Active Agents",
   fubTeamRefreshMinutes: 5,
   googleAdsApiVersion: "v25",
   googleAdsCustomerId: "8004133723",
@@ -19,11 +21,13 @@ export const CONFIG_DEFAULTS = Object.freeze({
 export interface FollowUpBossConfig {
   apiKey: string;
   teamApiKey: string;
+  accountHost: string;
   sellerTag: string;
   assignedUserId: string;
   system: string;
   systemKey: string;
   closedDealStageNames: string[];
+  teamExcludedUserNames: string[];
   teamRefreshMs: number;
 }
 
@@ -89,9 +93,16 @@ export function parseCommaSeparated(value: string): string[] {
 }
 
 export function readFollowUpBossConfig(env: DashboardEnv): FollowUpBossConfig {
+  const requestedAccountHost = clean(env.FUB_ACCOUNT_HOST).toLocaleLowerCase("en-US");
+  const accountHost = requestedAccountHost === ""
+    ? CONFIG_DEFAULTS.fubAccountHost
+    : /^[a-z0-9-]+\.followupboss\.com$/u.test(requestedAccountHost)
+      ? requestedAccountHost
+      : "";
   return {
     apiKey: clean(env.FUB_API_KEY),
-    teamApiKey: clean(env.FUB_TEAM_API_KEY),
+    teamApiKey: clean(env.FUB_TEAM_API_KEY) || clean(env.FUB_API_KEY),
+    accountHost,
     sellerTag: clean(env.FUB_SELLER_TAG) || CONFIG_DEFAULTS.fubSellerTag,
     assignedUserId: clean(env.FUB_ASSIGNED_USER_ID),
     system: clean(env.FUB_X_SYSTEM),
@@ -99,6 +110,10 @@ export function readFollowUpBossConfig(env: DashboardEnv): FollowUpBossConfig {
     closedDealStageNames: parseCommaSeparated(
       clean(env.FUB_CLOSED_DEAL_STAGE_NAMES) ||
         CONFIG_DEFAULTS.fubClosedDealStageNames,
+    ),
+    teamExcludedUserNames: parseCommaSeparated(
+      clean(env.FUB_TEAM_EXCLUDED_USER_NAMES) ||
+        CONFIG_DEFAULTS.fubTeamExcludedUserNames,
     ),
     teamRefreshMs:
       boundedMinutes(

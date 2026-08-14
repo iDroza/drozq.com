@@ -202,11 +202,51 @@ function adsFailure(): GoogleAdsMetricResults {
   return {
     googleAdsSpendMtd: unexpectedResult(),
     googleAdsLeadsMtd: unexpectedResult(),
-    googleAdsSpendRolling90d: unexpectedResult(),
-    googleAdsClicksRolling90d: unexpectedResult(),
-    googleAdsLeadsRolling90d: unexpectedResult(),
-    googleAdsCostPerLeadRolling90d: unexpectedResult(),
+    googleAdsSpendYtd: unexpectedResult(),
+    googleAdsLeadsYtd: unexpectedResult(),
+    googleAdsCostPerLeadYtd: unexpectedResult(),
   };
+}
+
+export function deriveTeamCommissionRoas(
+  commission: MetricFetchResult,
+  adSpend: MetricFetchResult,
+): MetricFetchResult {
+  const durationMs = Math.max(commission.durationMs, adSpend.durationMs);
+  if (commission.kind === "ok" && adSpend.kind === "ok") {
+    if (adSpend.value === 0) {
+      return {
+        kind: "error",
+        category: "no_data",
+        durationMs,
+        responseStatus: 200,
+      };
+    }
+    const value = commission.value / adSpend.value;
+    if (!isFiniteNonnegative(value)) {
+      return {
+        kind: "error",
+        category: "schema",
+        durationMs,
+        responseStatus: 200,
+      };
+    }
+    return { kind: "ok", value, durationMs, responseStatus: 200 };
+  }
+  const failedInput = commission.kind === "error"
+    ? commission
+    : adSpend.kind === "error"
+      ? adSpend
+      : null;
+  if (failedInput !== null) {
+    return {
+      kind: "error",
+      category: failedInput.category,
+      durationMs,
+      responseStatus: failedInput.responseStatus,
+    };
+  }
+  return { kind: "unconfigured", durationMs, responseStatus: null };
 }
 
 function teamFailure(): FollowUpBossTeamMetricResults {
@@ -255,7 +295,7 @@ export async function synchronizeDashboard(
       fetchGoogleAdsMetrics(
         env,
         reportingPeriod,
-        rolling90DayPeriod,
+        yearToDatePeriod,
         { ...dependencies, now },
       ),
       fetchGoogleSearchConsoleMetrics(
@@ -284,6 +324,10 @@ export async function synchronizeDashboard(
   const results: MetricResultMap = {
     ...fub,
     ...ads,
+    teamCommissionRoasYtd: deriveTeamCommissionRoas(
+      team.teamCommissionYtd,
+      ads.googleAdsSpendYtd,
+    ),
     ...search,
     ...team,
     ...sheets,

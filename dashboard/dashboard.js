@@ -17,10 +17,10 @@
     freshSellerLeads: { source: "Follow Up Boss", format: "count" },
     googleAdsSpendMtd: { source: "Google Ads", format: "currency" },
     googleAdsLeadsMtd: { source: "Google Ads", format: "conversion" },
-    googleAdsSpendRolling90d: { source: "Google Ads", format: "currency" },
-    googleAdsClicksRolling90d: { source: "Google Ads", format: "count" },
-    googleAdsLeadsRolling90d: { source: "Google Ads", format: "conversion" },
-    googleAdsCostPerLeadRolling90d: { source: "Google Ads", format: "currency" },
+    googleAdsSpendYtd: { source: "Google Ads", format: "currency" },
+    googleAdsLeadsYtd: { source: "Google Ads", format: "conversion" },
+    googleAdsCostPerLeadYtd: { source: "Google Ads", format: "currency" },
+    teamCommissionRoasYtd: { source: "FUB + Google Ads", format: "ratio" },
     activeRealtyClicksRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
     activeRealtyImpressionsRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
     activeRealtyCtrRolling90d: { source: "Search Console", format: "percent", staleAfterMs: SEARCH_STALE_AFTER_MS },
@@ -29,10 +29,10 @@
     jtImpressionsRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
     jtCtrRolling90d: { source: "Search Console", format: "percent", staleAfterMs: SEARCH_STALE_AFTER_MS },
     jtPositionRolling90d: { source: "Search Console", format: "decimal", staleAfterMs: SEARCH_STALE_AFTER_MS },
-    teamCommissionYtd: { source: "Follow Up Boss", format: "currencyWhole", staleAfterMs: TEAM_STALE_AFTER_MS },
-    teamSalesYtd: { source: "Follow Up Boss", format: "count", staleAfterMs: TEAM_STALE_AFTER_MS },
-    teamVolumeYtd: { source: "Follow Up Boss", format: "currencyWhole", staleAfterMs: TEAM_STALE_AFTER_MS },
-    teamActiveAgentsYtd: { source: "Follow Up Boss", format: "count", staleAfterMs: TEAM_STALE_AFTER_MS },
+    teamCommissionYtd: { source: "FUB Deals Leaderboard", format: "currencyWhole", staleAfterMs: TEAM_STALE_AFTER_MS },
+    teamSalesYtd: { source: "FUB Deals Leaderboard", format: "count", staleAfterMs: TEAM_STALE_AFTER_MS },
+    teamVolumeYtd: { source: "FUB Deals Leaderboard", format: "currencyWhole", staleAfterMs: TEAM_STALE_AFTER_MS },
+    teamActiveAgentsYtd: { source: "FUB Deals Leaderboard", format: "count", staleAfterMs: TEAM_STALE_AFTER_MS },
     shellPagesRemaining: { source: "Google Sheets", format: "count", staleAfterMs: SHEETS_STALE_AFTER_MS },
     setsRemaining: { source: "Google Sheets", format: "count", staleAfterMs: SHEETS_STALE_AFTER_MS }
   };
@@ -110,6 +110,9 @@
     }
     if (format === "decimal") {
       return decimalFormatter.format(value);
+    }
+    if (format === "ratio") {
+      return decimalFormatter.format(value) + "\u00d7";
     }
     return format === "conversion"
       ? conversionFormatter.format(value)

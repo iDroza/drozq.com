@@ -14,7 +14,7 @@ The Worker runs every minute, which is the fastest Cloudflare Cron Trigger inter
 * * * * *
 ```
 
-Each synchronization runs five integrations concurrently: Follow Up Boss personal activity, broker-authorized Follow Up Boss team deals, Google Ads, Google Search Console, and Google Sheets. It merges successful results with the previous snapshot and writes `dashboard:snapshot:v2` to Workers KV. A failed metric retains its last valid value and becomes stale. A first-run failure is unavailable, never a false zero.
+Each synchronization runs five integrations concurrently: Follow Up Boss personal activity, the Follow Up Boss Deals Leaderboard, Google Ads, Google Search Console, and Google Sheets. It merges successful results with the previous snapshot and writes `dashboard:snapshot:v2` to Workers KV. A failed metric retains its last valid value and becomes stale. A first-run failure is unavailable, never a false zero.
 
 The first viewport contains exactly eight operating metrics:
 
@@ -29,10 +29,10 @@ The first viewport contains exactly eight operating metrics:
 
 Below it are five fixed rows, each capped at four metrics:
 
-1. Rolling 90-day Google Ads spend, clicks, primary conversions, and cost per lead across all linked leaf accounts
+1. Year-to-date Google Ads spend, primary conversions, cost per conversion, and blended gross-commission ROAS across all linked leaf accounts
 2. Rolling 90-day Search Console clicks, impressions, CTR, and average position for `activerealty.com`
 3. The same four Search Console metrics for `justintye.com`
-4. Year-to-date Follow Up Boss company commission, closed sales, volume, and active agents
+4. Year-to-date Follow Up Boss Deals Leaderboard gross commission, closed sales, volume, and active agents
 5. Live Google Sheets shell pages remaining and 10-page work sets remaining
 
 The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the one-minute schedule or the protected manual sync endpoint. Personal and Ads metrics become stale after five minutes, team and Sheets metrics after 15 minutes, and Search Console metrics after 26 hours. Search Console is source-cached for 60 minutes because its reporting data is not real time. Team deal aggregates are source-cached for five minutes.
@@ -93,7 +93,22 @@ The activity definitions are deliberate:
 
 Follow Up Boss does not permit this non-owner key to use the account-level agent-activity report or webhooks. The Worker therefore uses the documented REST resources directly. Text and email IDs are hashed before the daily deduplication state is stored in KV. No message content, person name, email address, phone number, or contact record is persisted. A full daily reconciliation runs at least hourly, with incremental scans between reconciliations. This avoids the Follow Up Boss report's roughly 10-minute cache while controlling API volume.
 
-The year-to-date team row deliberately does not reuse `FUB_API_KEY`. Follow Up Boss API keys inherit the key owner's role, so an agent key returns only deals that agent can see. Create `FUB_TEAM_API_KEY` while signed in as the account Owner or an Admin whose `/me` role is `Broker`, then store it separately:
+The year-to-date team row uses the same all-pipeline, Everyone view as:
+
+```text
+https://activerealty.followupboss.com/2/reporting/leaderboard/deals
+```
+
+The Worker requests the report's aggregate endpoint with `FUB_API_KEY`, using `FUB_ACCOUNT_HOST=activerealty.followupboss.com`. It reads the report-level totals directly. It never sums the per-agent rows because one deal can credit several users and that would double-count volume, commission, and sales. The four outputs are:
+
+- Gross commission: `totals.closedCommissionTotal`
+- Sales: `totals.closedDealCount`
+- Volume: `totals.closedPriceTotal`
+- Active agents: positive per-user closed counts, excluding lenders and names in `FUB_TEAM_EXCLUDED_USER_NAMES`
+
+The default excluded service-account name is `Active Agents`. Change the comma-separated non-secret variable if the FUB user directory changes. Names are used only in memory for exclusion and are never stored in KV or exposed publicly.
+
+The Deals Leaderboard endpoint is part of the FUB web application and is not in FUB's public API reference. To reduce that maintenance risk, the Worker also has an official `/v1/deals` fallback. The fallback is enabled only when a separate Owner or Admin key is stored in `FUB_TEAM_API_KEY`; it verifies that `/v1/me` returns the `Broker` role before scanning deals. Add that optional resilience credential with:
 
 ```powershell
 Set-Location cloudflare/dashboard-worker
@@ -101,16 +116,9 @@ npx wrangler secret put FUB_TEAM_API_KEY
 Set-Location ../..
 ```
 
-The Worker verifies `/v1/me` before every team synchronization and refuses a non-Broker key before downloading pipelines or deals. If `FUB_TEAM_API_KEY` is missing, all four team cards are unavailable. This is intentional because an agent-scoped partial total must never be labeled as company performance.
+The fallback uses `FUB_CLOSED_DEAL_STAGE_NAMES`, which defaults to `Closed`, and sums `commissionValue` so its definition matches the leaderboard's gross commission. It is not used while the leaderboard endpoint is healthy. If both sources fail, previous valid team values become stale instead of silently shrinking to the current user's visible deals.
 
-`FUB_CLOSED_DEAL_STAGE_NAMES` is a comma-separated, case-insensitive allowlist and defaults to `Closed`. A sale is included when its stage matches that allowlist and its projected close date falls inside the current Los Angeles calendar year. The four outputs are:
-
-- Company commission: the sum of each closed deal's recorded Team Split, never gross commission or Agent Split
-- Sales: the number of qualifying closed deals
-- Volume: the sum of each qualifying deal's recorded price
-- Active agents: distinct users attached to at least one qualifying closed deal
-
-Every qualifying closed deal must have a price, close date, Team Split, and at least one attached user. Missing fields fail the source closed and preserve the prior complete snapshot. The production refresh floor is five minutes for this account-wide deals scan. Change it without code by editing `FUB_TEAM_REFRESH_MINUTES` in `wrangler.jsonc`. If the account renames its closed stages, edit only `FUB_CLOSED_DEAL_STAGE_NAMES`. Multiple names are allowed, for example `Closed,Funded`.
+Team aggregates are cached for five minutes to avoid hammering the report endpoint while the Worker itself runs every minute. Change the cache interval with `FUB_TEAM_REFRESH_MINUTES`. The cache key includes the YTD date range, account host, and exclusion list, so a year rollover or configuration change cannot reuse the wrong aggregate.
 
 ## 4. Google Ads setup
 
@@ -138,19 +146,26 @@ Set-Location ../..
 
 At runtime the Worker recursively discovers all accessible, non-hidden, non-test leaf accounts beneath the manager. It caches only the leaf account IDs for ten minutes. New linked accounts are picked up automatically. If any child query fails, no Ads metric publishes a partial total. The prior complete totals remain visible as stale.
 
-One OAuth access token is reused for the complete synchronization. Each leaf account receives one daily GAQL query covering the complete rolling 90-day window:
+One OAuth access token is reused for the complete synchronization. Each leaf account receives one daily GAQL query covering the complete current calendar year:
 
 ```sql
 SELECT
   segments.date,
   metrics.cost_micros,
-  metrics.conversions,
-  metrics.clicks
+  metrics.conversions
 FROM customer
 WHERE segments.date BETWEEN 'YYYY-MM-DD' AND 'YYYY-MM-DD'
 ```
 
-The Worker derives month-to-date and rolling-90-day totals from those non-overlapping daily rows. Spend is the exact sum of `cost_micros` divided by 1,000,000. Leads are the sum of the Google Ads `Conversions` column, represented by `metrics.conversions`, across all linked leaf accounts. Clicks use `metrics.clicks`, and cost per lead is rolling spend divided by rolling primary conversions. This intentionally includes every primary conversion in account performance and no longer filters to one action name or one child account. It does not use `metrics.all_conversions`, which can include local actions and other secondary engagement events. If there are no rolling conversions, cost per lead is unavailable rather than a false zero.
+The Worker derives month-to-date and year-to-date totals from those non-overlapping daily rows. Spend is the exact sum of `cost_micros` divided by 1,000,000. Conversions are the sum of the Google Ads `Conversions` column, represented by `metrics.conversions`, across all linked leaf accounts. Cost per conversion is YTD spend divided by YTD primary conversions. This intentionally includes every primary conversion in account performance and no longer filters to one action name or one child account. It does not use `metrics.all_conversions`, which can include local actions and other secondary engagement events. If there are no YTD conversions, cost per conversion is unavailable rather than a false zero.
+
+Blended ROAS uses matching calendar-year periods:
+
+```text
+FUB Deals Leaderboard YTD gross commission / Google Ads YTD spend
+```
+
+It is a business-level blended ratio, not campaign-attributed incremental ROAS. It includes closed commission from every FUB source, including organic, repeat, and referral business. A zero or unavailable Ads denominator produces an unavailable metric, never Infinity or zero.
 
 The configured API version is `v25`. Review Google Ads API sunset notices before that version is retired and update only `GOOGLE_ADS_API_VERSION` after tests pass.
 
@@ -400,7 +415,9 @@ The response is the same sanitized snapshot contract as the public endpoint.
 - Confirm the personal key still exists and belongs to the intended user.
 - Update `FUB_API_KEY` after any key rotation.
 - Confirm the key user can access people, calls, appointments, text messages, emails, and `/me`.
-- For the team row, confirm `FUB_TEAM_API_KEY` belongs to an Owner or Admin and `/v1/me` returns the `Broker` role.
+- Confirm the key user can open the Deals Leaderboard with All Pipelines, Everyone, and This Year selected.
+- Confirm `FUB_ACCOUNT_HOST` is the account's exact `*.followupboss.com` host.
+- If using the optional fallback, confirm `FUB_TEAM_API_KEY` belongs to an Owner or Admin and `/v1/me` returns the `Broker` role.
 - Account-level activity reports and webhooks require owner privileges and are not used for personal metrics.
 
 ### Google Ads `401` or `403`
@@ -449,12 +466,12 @@ Upstream requests retry no more than three times, respect `Retry-After`, and oth
 
 ### Follow Up Boss team totals look low
 
-- Never put an agent key into `FUB_TEAM_API_KEY`. FUB limits API data to the key owner's permissions.
-- Confirm the key owner can select Everyone in FUB deal reporting and see every company deal.
-- Confirm every completed transaction is in a configured closed stage and has a projected close date in the current year.
-- Confirm each closed deal has a recorded price, Team Split, and at least one assigned user.
-- Add any renamed or alternate closed stages to `FUB_CLOSED_DEAL_STAGE_NAMES`.
-- The dashboard intentionally counts distinct agents with a closed deal, not every enabled account user.
+- Open `/2/reporting/leaderboard/deals`, select All Pipelines, Everyone, and This Year, then compare its report-level totals. Do not add the agent rows because credited users overlap.
+- Confirm the selected report shows the current year and the account's pipelines are marked closed correctly.
+- Gross commission, closed sales, and volume should match the report-level totals, not the current user's regular Deals list.
+- Active agents count positive leaderboard users after excluding lenders and `FUB_TEAM_EXCLUDED_USER_NAMES`. Keep the service-account exclusion list current.
+- If the web report endpoint changes, configure `FUB_TEAM_API_KEY` with an Owner or Admin key so the documented Deals API fallback can take over.
+- The fallback alone uses `FUB_CLOSED_DEAL_STAGE_NAMES`; add renamed or alternate closed stages there.
 - If the brokerage transaction ledger is not maintained in FUB, do not configure this source. Move the team metrics to an authoritative ledger integration instead of publishing partial CRM data.
 
 ### Stale or missing metrics
@@ -466,8 +483,9 @@ Personal and Ads metrics become stale after five minutes, team and Google Sheets
 - Google refresh tokens can be revoked by password, consent, or security changes. Monitor `authentication` errors.
 - Search Console property permissions or canonical property changes can revoke one site's data while the other remains healthy.
 - Google Ads API versions are sunset periodically. Review the version before `v25` retirement.
-- Follow Up Boss keys are user-scoped. The separate team key is role-checked every run, so a role downgrade fails closed instead of silently shrinking company totals.
-- Follow Up Boss deal-stage renames and commission-field omissions fail closed instead of publishing an understated team total.
+- The FUB Deals Leaderboard endpoint is an internal web-app endpoint. Its response schema is validated, failures preserve old values, and an optional role-checked broker-key fallback uses documented endpoints.
+- FUB can rename the account host or service-account users. Both are configuration-only changes through `FUB_ACCOUNT_HOST` and `FUB_TEAM_EXCLUDED_USER_NAMES`.
+- Follow Up Boss fallback deal-stage renames and commission-field omissions fail closed instead of publishing an understated team total.
 - New Google Ads leaf accounts are automatic, but OAuth and developer-token access must cover them.
 - Changing Google Ads primary conversion settings changes the Leads number by design. Audit primary actions during tracking migrations.
 - Google Sheets service-account keys can be disabled or deleted, and Viewer access can be removed. Monitor `authentication` and `authorization` errors.

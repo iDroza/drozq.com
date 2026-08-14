@@ -34,7 +34,9 @@ import {
 import {
   aggregateClosedDeals,
   closedStageIds,
+  countActiveLeaderboardAgents,
   fetchFollowUpBossTeamMetrics,
+  parseDealsLeaderboard,
 } from "../src/sources/follow-up-boss-team";
 import {
   countIncompletePageRows,
@@ -42,7 +44,12 @@ import {
   parseDirectCell,
 } from "../src/sources/google-sheets";
 import { handleRequest } from "../src/index";
-import { mergeSnapshot, SNAPSHOT_KEY, type MetricResultMap } from "../src/sync";
+import {
+  deriveTeamCommissionRoas,
+  mergeSnapshot,
+  SNAPSHOT_KEY,
+  type MetricResultMap,
+} from "../src/sync";
 import type {
   DashboardEnv,
   DashboardSnapshot,
@@ -81,10 +88,10 @@ function allSuccessfulResults(): MetricResultMap {
     freshSellerLeads: successful(3),
     googleAdsSpendMtd: successful(2362.175313),
     googleAdsLeadsMtd: successful(107),
-    googleAdsSpendRolling90d: successful(8200.5),
-    googleAdsClicksRolling90d: successful(3400),
-    googleAdsLeadsRolling90d: successful(321),
-    googleAdsCostPerLeadRolling90d: successful(25.546729),
+    googleAdsSpendYtd: successful(18400.5),
+    googleAdsLeadsYtd: successful(721),
+    googleAdsCostPerLeadYtd: successful(25.520804),
+    teamCommissionRoasYtd: successful(51.781207),
     activeRealtyClicksRolling90d: successful(11474),
     activeRealtyImpressionsRolling90d: successful(647748),
     activeRealtyCtrRolling90d: successful(0.0177168),
@@ -164,6 +171,8 @@ beforeEach(async () => {
     env.DASHBOARD_KV.delete("dashboard:google_ads:accounts:v2"),
     env.DASHBOARD_KV.delete("dashboard:search_console:aggregate:v1"),
     env.DASHBOARD_KV.delete("dashboard:fub:team:v1"),
+    env.DASHBOARD_KV.delete("dashboard:fub:team:v2"),
+    env.DASHBOARD_KV.delete("dashboard:fub:team:v3"),
     env.DASHBOARD_KV.delete("dashboard:sync:lease:v2"),
   ]);
 });
@@ -351,15 +360,14 @@ describe("Google Ads all-account aggregation", () => {
     expect(result).toEqual({ value: 2, matchedRows: 1 });
   });
 
-  it("parses daily all-account spend, conversions, and clicks", () => {
+  it("parses daily all-account spend and conversions", () => {
     expect(parseGoogleAdsDailyPerformance([{
       segments: { date: "2026-08-14" },
-      metrics: { costMicros: "2500000", conversions: "3", clicks: "41" },
+      metrics: { costMicros: "2500000", conversions: "3" },
     }])).toEqual([{
       date: "2026-08-14",
       costMicros: 2500000n,
       conversions: 3,
-      clicks: 41,
     }]);
   });
 
@@ -388,6 +396,7 @@ describe("Google Ads all-account aggregation", () => {
           { customerClient: { clientCustomer: "customers/4069972406" } },
         ] });
       }
+      expect(body.query).toContain("BETWEEN '2026-01-01' AND '2026-08-14'");
       queriedCustomers.push(customerId);
       const performance: Record<string, [string, number, number]> = {
         "3351363652": ["0", 0, 100],
@@ -416,7 +425,7 @@ describe("Google Ads all-account aggregation", () => {
         GOOGLE_ADS_LOGIN_CUSTOMER_ID: "1975174499",
       }),
       getReportingPeriod(NOW, CONFIG_DEFAULTS.reportingTimeZone),
-      getRollingPeriod(NOW, CONFIG_DEFAULTS.reportingTimeZone, 90),
+      getYearToDatePeriod(NOW, CONFIG_DEFAULTS.reportingTimeZone),
       { fetcher, sleep: noDelay, now: NOW },
     );
 
@@ -426,9 +435,9 @@ describe("Google Ads all-account aggregation", () => {
     expect(result.googleAdsSpendMtd.kind === "ok" ? result.googleAdsSpendMtd.value : null)
       .toBeCloseTo(2362.175313, 6);
     expect(result.googleAdsLeadsMtd).toMatchObject({ kind: "ok", value: 107 });
-    expect(result.googleAdsClicksRolling90d).toMatchObject({ kind: "ok", value: 1200 });
-    expect(result.googleAdsCostPerLeadRolling90d.kind === "ok"
-      ? result.googleAdsCostPerLeadRolling90d.value
+    expect(result.googleAdsLeadsYtd).toMatchObject({ kind: "ok", value: 107 });
+    expect(result.googleAdsCostPerLeadYtd.kind === "ok"
+      ? result.googleAdsCostPerLeadYtd.value
       : null).toBeCloseTo(22.076404794, 6);
   });
 
@@ -462,11 +471,24 @@ describe("Google Ads all-account aggregation", () => {
         GOOGLE_ADS_LOGIN_CUSTOMER_ID: "1975174499",
       }),
       getReportingPeriod(NOW, CONFIG_DEFAULTS.reportingTimeZone),
-      getRollingPeriod(NOW, CONFIG_DEFAULTS.reportingTimeZone, 90),
+      getYearToDatePeriod(NOW, CONFIG_DEFAULTS.reportingTimeZone),
       { fetcher, sleep: noDelay, now: NOW },
     );
     expect(result.googleAdsSpendMtd.kind).toBe("error");
     expect(result.googleAdsLeadsMtd.kind).toBe("error");
+  });
+
+  it("derives period-matched blended commission ROAS", () => {
+    const result = deriveTeamCommissionRoas(
+      successful(952812),
+      successful(39125.5),
+    );
+    expect(result.kind === "ok" ? result.value : null).toBeCloseTo(24.3527, 4);
+  });
+
+  it("does not publish Infinity when YTD ad spend is zero", () => {
+    expect(deriveTeamCommissionRoas(successful(952812), successful(0)))
+      .toMatchObject({ kind: "error", category: "no_data" });
   });
 });
 
@@ -545,6 +567,20 @@ describe("Google Search Console rolling aggregation", () => {
 
 describe("Follow Up Boss YTD team aggregation", () => {
   const period = getYearToDatePeriod(NOW, "America/Los_Angeles");
+  const leaderboard = {
+    totals: {
+      closedPriceTotal: "43198750",
+      closedCommissionTotal: "952812",
+      closedDealCount: "56",
+      closedPriceAverage: "771406",
+    },
+    users: [
+      { userId: 1, closedDealCount: "39" },
+      { userId: 2, closedDealCount: "4" },
+      { userId: 3, closedDealCount: "1" },
+      { userId: 4, closedDealCount: "0" },
+    ],
+  };
   const pipelines = [
     { stages: [{ id: 10, name: " Active " }, { id: 20, name: "CLOSED" }] },
   ];
@@ -581,32 +617,48 @@ describe("Follow Up Boss YTD team aggregation", () => {
     },
   ];
 
-  it("normalizes configured closed-stage names and aggregates the requested four totals", () => {
+  it("parses the authoritative leaderboard totals without summing duplicate user rows", () => {
+    expect(parseDealsLeaderboard(leaderboard)).toEqual({
+      commission: 952812,
+      sales: 56,
+      volume: 43198750,
+      activeUserIds: ["1", "2", "3"],
+    });
+  });
+
+  it("rejects malformed leaderboard totals instead of publishing false zeros", () => {
+    expect(() => parseDealsLeaderboard({ totals: {}, users: [] })).toThrow();
+  });
+
+  it("counts positive leaderboard users while excluding lenders and service accounts", () => {
+    const directory = new Map([
+      ["1", { id: "1", name: "Justin Tye", role: "Agent" }],
+      ["2", { id: "2", name: "Active Agents", role: "Agent" }],
+      ["3", { id: "3", name: "Trusted Rate", role: "Lender" }],
+    ]);
+    expect(countActiveLeaderboardAgents(["1", "2", "3"], directory, ["active agents"]))
+      .toBe(1);
+  });
+
+  it("keeps a broker-key fallback and matches the leaderboard's gross commission", () => {
     const stages = closedStageIds(pipelines, ["closed"]);
     expect([...stages]).toEqual([20]);
     expect(aggregateClosedDeals(deals, stages, period)).toEqual({
-      commission: 13000,
+      commission: 40605,
       sales: 2,
       volume: 1770000,
       activeAgents: 2,
     });
   });
 
-  it("uses the company team split instead of gross commission", () => {
+  it("rejects a closed deal whose gross commission is missing", () => {
     const stages = closedStageIds(pipelines, ["closed"]);
-    const totals = aggregateClosedDeals(deals, stages, period);
-    expect(totals.commission).toBe(13000);
-    expect(totals.commission).not.toBe(40605);
-  });
-
-  it("rejects a closed deal whose company split is missing", () => {
-    const stages = closedStageIds(pipelines, ["closed"]);
-    const dealWithoutTeamSplit = { ...deals[0], teamCommission: undefined };
-    expect(() => aggregateClosedDeals([dealWithoutTeamSplit], stages, period))
+    const dealWithoutCommission = { ...deals[0], commissionValue: undefined };
+    expect(() => aggregateClosedDeals([dealWithoutCommission], stages, period))
       .toThrow();
   });
 
-  it("fetches only sanitized team totals and reuses the five-minute cache", async () => {
+  it("fetches the same all-pipeline leaderboard as the UI and reuses its five-minute cache", async () => {
     let requests = 0;
     const authorizationHeaders: string[] = [];
     const fetcher = async (
@@ -616,17 +668,22 @@ describe("Follow Up Boss YTD team aggregation", () => {
       requests += 1;
       const url = new URL(String(input));
       authorizationHeaders.push(new Headers(init?.headers).get("Authorization") ?? "");
-      if (url.pathname.endsWith("/me")) {
-        return jsonResponse({ id: 1, role: "Broker", isOwner: true });
+      if (url.pathname.endsWith("/deals/leaderboard")) {
+        expect(url.searchParams.get("start")).toBe("2026-01-01");
+        expect(url.searchParams.get("end")).toBe("2026-08-14");
+        return jsonResponse(leaderboard);
       }
-      return url.pathname.endsWith("/pipelines")
-        ? collection("pipelines", pipelines)
-        : collection("deals", deals);
+      if (url.pathname.endsWith("/users")) {
+        return collection("users", [
+          { id: 1, name: "Justin Tye", role: "Agent" },
+          { id: 2, name: "Active Agents", role: "Agent" },
+          { id: 3, name: "Derek Liu", role: "Agent" },
+          { id: 4, name: "Trusted Rate", role: "Lender" },
+        ]);
+      }
+      return new Response("", { status: 404 });
     };
-    const dashboardEnv = withSecrets({
-      FUB_API_KEY: "test-personal-key",
-      FUB_TEAM_API_KEY: "test-broker-key",
-    });
+    const dashboardEnv = withSecrets({ FUB_API_KEY: "test-personal-key" });
     const first = await fetchFollowUpBossTeamMetrics(
       dashboardEnv,
       period,
@@ -637,43 +694,42 @@ describe("Follow Up Boss YTD team aggregation", () => {
       period,
       { fetcher, sleep: noDelay, now: new Date(NOW.getTime() + 60_000) },
     );
-    expect(first.teamCommissionYtd).toMatchObject({ kind: "ok", value: 13000 });
-    expect(second.teamVolumeYtd).toMatchObject({ kind: "ok", value: 1770000 });
-    expect(requests).toBe(4);
+    expect(first.teamCommissionYtd).toMatchObject({ kind: "ok", value: 952812 });
+    expect(first.teamSalesYtd).toMatchObject({ kind: "ok", value: 56 });
+    expect(first.teamActiveAgentsYtd).toMatchObject({ kind: "ok", value: 2 });
+    expect(second.teamVolumeYtd).toMatchObject({ kind: "ok", value: 43198750 });
+    expect(requests).toBe(2);
     expect(new Set(authorizationHeaders)).toEqual(
-      new Set([`Basic ${btoa("test-broker-key:")}`]),
+      new Set([`Basic ${btoa("test-personal-key:")}`]),
     );
   });
 
-  it("never treats the personal activity key as account-wide access", async () => {
-    const fetcher = async (): Promise<Response> => {
-      throw new Error("team source must remain unconfigured");
-    };
+  it("leaves team metrics unconfigured when no Follow Up Boss key exists", async () => {
     const result = await fetchFollowUpBossTeamMetrics(
-      withSecrets({ FUB_API_KEY: "test-personal-key" }),
+      withSecrets({}),
       period,
-      { fetcher, sleep: noDelay, now: NOW },
+      { sleep: noDelay, now: NOW },
     );
     expect(result.teamSalesYtd).toMatchObject({ kind: "unconfigured" });
   });
 
-  it("rejects a non-broker team key before requesting any deals", async () => {
-    const requestedPaths: string[] = [];
+  it("preserves the three authoritative totals when only the user directory fails", async () => {
     const fetcher = async (input: RequestInfo | URL): Promise<Response> => {
       const url = new URL(String(input));
-      requestedPaths.push(url.pathname);
-      return jsonResponse({ id: 659, role: "Agent", isOwner: false });
+      if (url.pathname.endsWith("/deals/leaderboard")) {
+        return jsonResponse(leaderboard);
+      }
+      return new Response("", { status: 403 });
     };
     const result = await fetchFollowUpBossTeamMetrics(
-      withSecrets({ FUB_TEAM_API_KEY: "test-agent-key" }),
+      withSecrets({ FUB_API_KEY: "test-agent-key" }),
       period,
       { fetcher, sleep: noDelay, now: NOW },
     );
-    expect(result.teamSalesYtd).toMatchObject({
-      kind: "error",
-      category: "authorization",
-    });
-    expect(requestedPaths).toEqual(["/v1/me"]);
+    expect(result.teamCommissionYtd).toMatchObject({ kind: "ok", value: 952812 });
+    expect(result.teamSalesYtd).toMatchObject({ kind: "ok", value: 56 });
+    expect(result.teamVolumeYtd).toMatchObject({ kind: "ok", value: 43198750 });
+    expect(result.teamActiveAgentsYtd).toMatchObject({ kind: "error" });
   });
 });
 

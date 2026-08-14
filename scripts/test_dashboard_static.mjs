@@ -19,10 +19,10 @@ const expectedMetrics = [
   "appointmentsSetMtd",
   "textsToday",
   "emailsToday",
-  "googleAdsSpendRolling90d",
-  "googleAdsClicksRolling90d",
-  "googleAdsLeadsRolling90d",
-  "googleAdsCostPerLeadRolling90d",
+  "googleAdsSpendYtd",
+  "googleAdsLeadsYtd",
+  "googleAdsCostPerLeadYtd",
+  "teamCommissionRoasYtd",
   "activeRealtyClicksRolling90d",
   "activeRealtyImpressionsRolling90d",
   "activeRealtyCtrRolling90d",
@@ -55,6 +55,8 @@ assert.match(html, /<h2>CALLS MADE<\/h2>/u, "calls card must say CALLS MADE");
 assert.match(html, /<h2>TEXTS SENT<\/h2>/u, "texts card must keep TEXTS SENT");
 assert.match(html, /<h2>EMAILS SENT<\/h2>/u, "emails card must keep EMAILS SENT");
 assert.match(html, /<h2 id="advertising-title">Aggregate Advertising<\/h2>/u);
+assert.match(html, /<h3>BLENDED ROAS<\/h3>/u);
+assert.match(html, /<h3>GROSS COMMISSION<\/h3>/u);
 assert.match(html, /<h3 class="metric-row__title">ACTIVEREALTY\.COM<\/h3>/u);
 assert.match(html, /<h3 class="metric-row__title">JUSTINTYE\.COM<\/h3>/u);
 assert.match(html, /<h2 id="team-performance-title">Team Performance<\/h2>/u);

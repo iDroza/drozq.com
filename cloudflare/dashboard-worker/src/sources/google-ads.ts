@@ -30,7 +30,6 @@ interface GoogleAdsPerformance {
 
 interface GoogleAdsDailyPerformance extends GoogleAdsPerformance {
   date: string;
-  clicks: number;
 }
 
 interface CustomerClient {
@@ -92,8 +91,7 @@ export function buildAccountPerformanceQuery(
 SELECT
   segments.date,
   metrics.cost_micros,
-  metrics.conversions,
-  metrics.clicks
+  metrics.conversions
 FROM customer
 WHERE segments.date BETWEEN '${reportingPeriod.startDate}' AND '${reportingPeriod.endDate}'
 `.trim();
@@ -175,10 +173,6 @@ export function parseGoogleAdsDailyPerformance(
       conversions: requireNonnegativeNumber(
         metrics["conversions"] ?? 0,
         "google_ads_conversions",
-      ),
-      clicks: requireNonnegativeNumber(
-        metrics["clicks"] ?? 0,
-        "google_ads_clicks",
       ),
     };
   });
@@ -510,7 +504,7 @@ function unconfigured(started: number): MetricFetchResult {
 export async function fetchGoogleAdsMetrics(
   env: DashboardEnv,
   reportingPeriod: DashboardSnapshot["reportingPeriod"],
-  rolling90DayPeriod: DashboardSnapshot["rolling90DayPeriod"],
+  yearToDatePeriod: DashboardSnapshot["yearToDatePeriod"],
   dependencies: RuntimeDependencies = {},
 ): Promise<GoogleAdsMetricResults> {
   const started = Date.now();
@@ -519,10 +513,9 @@ export async function fetchGoogleAdsMetrics(
     return {
       googleAdsSpendMtd: unconfigured(started),
       googleAdsLeadsMtd: unconfigured(started),
-      googleAdsSpendRolling90d: unconfigured(started),
-      googleAdsClicksRolling90d: unconfigured(started),
-      googleAdsLeadsRolling90d: unconfigured(started),
-      googleAdsCostPerLeadRolling90d: unconfigured(started),
+      googleAdsSpendYtd: unconfigured(started),
+      googleAdsLeadsYtd: unconfigured(started),
+      googleAdsCostPerLeadYtd: unconfigured(started),
     };
   }
 
@@ -543,7 +536,7 @@ export async function fetchGoogleAdsMetrics(
       now,
       dependencies,
     );
-    const query = buildAccountPerformanceQuery(rolling90DayPeriod);
+    const query = buildAccountPerformanceQuery(yearToDatePeriod);
     const settled = await Promise.allSettled(
       customerIds.map((customerId) => queryGoogleAds(
         accessToken,
@@ -568,23 +561,21 @@ export async function fetchGoogleAdsMetrics(
 
     let mtdCostMicros = 0n;
     let mtdConversions = 0;
-    let rollingCostMicros = 0n;
-    let rollingConversions = 0;
-    let rollingClicks = 0;
+    let yearToDateCostMicros = 0n;
+    let yearToDateConversions = 0;
     for (const item of settled) {
       if (item.status !== "fulfilled") {
         throw new UpstreamRequestError("unexpected");
       }
       for (const performance of parseGoogleAdsDailyPerformance(item.value)) {
         if (
-          performance.date < rolling90DayPeriod.startDate ||
-          performance.date > rolling90DayPeriod.endDate
+          performance.date < yearToDatePeriod.startDate ||
+          performance.date > yearToDatePeriod.endDate
         ) {
           throw new UpstreamRequestError("schema");
         }
-        rollingCostMicros += performance.costMicros;
-        rollingConversions += performance.conversions;
-        rollingClicks += performance.clicks;
+        yearToDateCostMicros += performance.costMicros;
+        yearToDateConversions += performance.conversions;
         if (
           performance.date >= reportingPeriod.startDate &&
           performance.date <= reportingPeriod.endDate
@@ -595,13 +586,13 @@ export async function fetchGoogleAdsMetrics(
       }
     }
     const durationMs = Date.now() - started;
-    const rollingSpend = costMicrosToUsd(rollingCostMicros);
-    const rollingLeads = requireNonnegativeNumber(
-      rollingConversions,
-      "google_ads_rolling_conversions",
+    const yearToDateSpend = costMicrosToUsd(yearToDateCostMicros);
+    const yearToDateLeads = requireNonnegativeNumber(
+      yearToDateConversions,
+      "google_ads_year_to_date_conversions",
     );
-    const rollingCostPerLead = rollingLeads > 0
-      ? requireSpend(rollingSpend / rollingLeads)
+    const yearToDateCostPerLead = yearToDateLeads > 0
+      ? requireSpend(yearToDateSpend / yearToDateLeads)
       : null;
     return {
       googleAdsSpendMtd: {
@@ -619,28 +610,22 @@ export async function fetchGoogleAdsMetrics(
         durationMs,
         responseStatus: 200,
       },
-      googleAdsSpendRolling90d: {
+      googleAdsSpendYtd: {
         kind: "ok",
-        value: rollingSpend,
+        value: yearToDateSpend,
         durationMs,
         responseStatus: 200,
       },
-      googleAdsClicksRolling90d: {
+      googleAdsLeadsYtd: {
         kind: "ok",
         value: requireNonnegativeNumber(
-          rollingClicks,
-          "google_ads_rolling_clicks",
+          yearToDateLeads,
+          "google_ads_year_to_date_conversions",
         ),
         durationMs,
         responseStatus: 200,
       },
-      googleAdsLeadsRolling90d: {
-        kind: "ok",
-        value: rollingLeads,
-        durationMs,
-        responseStatus: 200,
-      },
-      googleAdsCostPerLeadRolling90d: rollingCostPerLead === null
+      googleAdsCostPerLeadYtd: yearToDateCostPerLead === null
         ? {
             kind: "error",
             category: "no_data",
@@ -649,7 +634,7 @@ export async function fetchGoogleAdsMetrics(
           }
         : {
             kind: "ok",
-            value: rollingCostPerLead,
+            value: yearToDateCostPerLead,
             durationMs,
             responseStatus: 200,
           },
@@ -659,10 +644,9 @@ export async function fetchGoogleAdsMetrics(
     return {
       googleAdsSpendMtd: metric,
       googleAdsLeadsMtd: metric,
-      googleAdsSpendRolling90d: metric,
-      googleAdsClicksRolling90d: metric,
-      googleAdsLeadsRolling90d: metric,
-      googleAdsCostPerLeadRolling90d: metric,
+      googleAdsSpendYtd: metric,
+      googleAdsLeadsYtd: metric,
+      googleAdsCostPerLeadYtd: metric,
     };
   }
 }

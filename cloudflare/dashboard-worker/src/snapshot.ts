@@ -35,10 +35,10 @@ export const METRIC_KEYS = [
   "freshSellerLeads",
   "googleAdsSpendMtd",
   "googleAdsLeadsMtd",
-  "googleAdsSpendRolling90d",
-  "googleAdsClicksRolling90d",
-  "googleAdsLeadsRolling90d",
-  "googleAdsCostPerLeadRolling90d",
+  "googleAdsSpendYtd",
+  "googleAdsLeadsYtd",
+  "googleAdsCostPerLeadYtd",
+  "teamCommissionRoasYtd",
   "activeRealtyClicksRolling90d",
   "activeRealtyImpressionsRolling90d",
   "activeRealtyCtrRolling90d",
@@ -96,24 +96,24 @@ export const METRIC_SPECS = {
     definition: "Total month-to-date primary Google Ads conversions across every accessible non-manager account.",
     staleAfterMs: FAST_STALE_MS,
   },
-  googleAdsSpendRolling90d: {
+  googleAdsSpendYtd: {
     source: "google_ads",
-    definition: "Total Google Ads cost during the rolling previous 90 days across every accessible non-manager account.",
+    definition: "Total year-to-date Google Ads cost across every accessible non-manager account.",
     staleAfterMs: FAST_STALE_MS,
   },
-  googleAdsClicksRolling90d: {
+  googleAdsLeadsYtd: {
     source: "google_ads",
-    definition: "Total Google Ads clicks during the rolling previous 90 days across every accessible non-manager account.",
+    definition: "Total year-to-date primary Google Ads conversions across every accessible non-manager account.",
     staleAfterMs: FAST_STALE_MS,
   },
-  googleAdsLeadsRolling90d: {
+  googleAdsCostPerLeadYtd: {
     source: "google_ads",
-    definition: "Total primary Google Ads conversions during the rolling previous 90 days across every accessible non-manager account.",
+    definition: "Year-to-date Google Ads cost divided by primary conversions across every accessible non-manager account.",
     staleAfterMs: FAST_STALE_MS,
   },
-  googleAdsCostPerLeadRolling90d: {
-    source: "google_ads",
-    definition: "Rolling 90-day Google Ads cost divided by primary conversions across every accessible non-manager account.",
+  teamCommissionRoasYtd: {
+    source: "combined",
+    definition: "Year-to-date Follow Up Boss gross closed commission divided by year-to-date Google Ads spend across all accessible accounts. This is blended business ROAS, not campaign-attributed ROAS.",
     staleAfterMs: FAST_STALE_MS,
   },
   activeRealtyClicksRolling90d: {
@@ -158,22 +158,22 @@ export const METRIC_SPECS = {
   },
   teamCommissionYtd: {
     source: "follow_up_boss",
-    definition: "Company Team Split recorded on year-to-date closed Follow Up Boss deals across all configured pipelines.",
+    definition: "Gross commission on year-to-date closed deals in the Follow Up Boss Deals Leaderboard across all pipelines and users.",
     staleAfterMs: TEAM_STALE_MS,
   },
   teamSalesYtd: {
     source: "follow_up_boss",
-    definition: "Number of year-to-date closed Follow Up Boss deals across all configured pipelines.",
+    definition: "Year-to-date closed-deal count from the Follow Up Boss Deals Leaderboard across all pipelines and users.",
     staleAfterMs: TEAM_STALE_MS,
   },
   teamVolumeYtd: {
     source: "follow_up_boss",
-    definition: "Total price of year-to-date closed Follow Up Boss deals across all configured pipelines.",
+    definition: "Year-to-date closed volume from the Follow Up Boss Deals Leaderboard across all pipelines and users.",
     staleAfterMs: TEAM_STALE_MS,
   },
   teamActiveAgentsYtd: {
     source: "follow_up_boss",
-    definition: "Distinct Follow Up Boss users attached to at least one year-to-date closed deal.",
+    definition: "Follow Up Boss agent or broker users credited with at least one year-to-date closed deal, excluding configured service accounts.",
     staleAfterMs: TEAM_STALE_MS,
   },
   shellPagesRemaining: {
@@ -195,7 +195,6 @@ const INTEGER_METRICS = new Set<DashboardMetricKey>([
   "appointmentsSetMtd",
   "freshBuyerLeads",
   "freshSellerLeads",
-  "googleAdsClicksRolling90d",
   "activeRealtyClicksRolling90d",
   "activeRealtyImpressionsRolling90d",
   "jtClicksRolling90d",
@@ -208,8 +207,8 @@ const INTEGER_METRICS = new Set<DashboardMetricKey>([
 
 const CURRENCY_METRICS = new Set<DashboardMetricKey>([
   "googleAdsSpendMtd",
-  "googleAdsSpendRolling90d",
-  "googleAdsCostPerLeadRolling90d",
+  "googleAdsSpendYtd",
+  "googleAdsCostPerLeadYtd",
   "teamCommissionYtd",
   "teamVolumeYtd",
 ]);
