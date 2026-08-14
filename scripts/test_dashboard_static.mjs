@@ -11,16 +11,20 @@ const javascript = readFileSync(
 const redirects = readFileSync(new URL("../_redirects", import.meta.url), "utf8");
 
 const expectedMetrics = [
-  "sellerLeads",
+  "callsToday",
+  "textsToday",
+  "emailsToday",
+  "appointmentsSetMtd",
+  "freshBuyerLeads",
+  "freshSellerLeads",
   "googleAdsSpendMtd",
   "googleAdsLeadsMtd",
-  "shellPagesRemaining",
 ];
 const metricMatches = [...html.matchAll(/<article class="metric-card" data-metric="([^"]+)">/gu)];
 assert.deepEqual(
   metricMatches.map((match) => match[1]),
   expectedMetrics,
-  "dashboard must contain exactly the four approved metric cards",
+  "dashboard must contain exactly the eight approved metric cards",
 );
 assert.equal((html.match(/<h1\b/gu) ?? []).length, 1, "dashboard must have one h1");
 assert.match(
@@ -36,7 +40,7 @@ assert.doesNotMatch(
   /api\.followupboss\.com|googleads\.googleapis\.com|sheets\.googleapis\.com|oauth2\.googleapis\.com/iu,
   "browser code must not call dashboard upstream data APIs",
 );
-assert.match(javascript, /60000/u, "visible polling interval must be 60 seconds");
+assert.match(javascript, /15000/u, "visible polling interval must be 15 seconds");
 assert.match(javascript, /document\.visibilityState/u, "hidden pages must pause polling");
 assert.match(javascript, /metric-value--very-long/u, "long values need overflow-safe sizing");
 assert.match(css, /@media \(min-width: 1180px\)[\s\S]*repeat\(4,/u);

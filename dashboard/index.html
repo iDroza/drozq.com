@@ -7,13 +7,13 @@
     <!-- End Google Tag Manager -->
     <!-- begin Widget Tracker Code --><script>(function(w,i,d,g,e,t){w["WidgetTrackerObject"]=g;(w[g]=w[g]||function(){(w[g].q=w[g].q||[]).push(arguments);}),(w[g].ds=1*new Date());(e="script"),(t=d.createElement(e)),(e=d.getElementsByTagName(e)[0]);t.async=1;t.src=i;e.parentNode.insertBefore(t,e);})(window,"https://widgetbe.com/agent",document,"widgetTracker");window.widgetTracker("create", "WT-AETGAYMU");window.widgetTracker("send", "pageview");</script><!-- end Widget Tracker Code -->
     <title>Operating Dashboard | Drozq</title>
-    <meta name="description" content="The public Drozq operating dashboard: seller leads, month-to-date Google Ads spend and leads, and shell pages remaining.">
+    <meta name="description" content="The public Drozq operating dashboard: daily outreach, appointments, fresh leads, and all-account Google Ads performance.">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#1a1816">
     <link rel="canonical" href="https://drozq.com/dashboard">
     <meta property="og:url" content="https://drozq.com/dashboard">
     <meta property="og:title" content="Operating Dashboard | Drozq">
-    <meta property="og:description" content="Four current operating numbers for drozq.com.">
+    <meta property="og:description" content="Current operating numbers for drozq.com.">
     <meta property="og:image" content="https://drozq.com/preview.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -22,7 +22,7 @@
     <meta property="og:site_name" content="Drozq">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Operating Dashboard | Drozq">
-    <meta name="twitter:description" content="Four current operating numbers for drozq.com.">
+    <meta name="twitter:description" content="Current operating numbers for drozq.com.">
     <meta name="twitter:image" content="https://drozq.com/preview.png">
     <link rel="icon" type="image/png" href="/favicon-96x96.png?v=20260506" sizes="96x96">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260506">
@@ -30,8 +30,8 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260506">
     <meta name="apple-mobile-web-app-title" content="Drozq">
     <link rel="manifest" href="/site.webmanifest?v=20260506">
-    <link rel="stylesheet" href="/dashboard/dashboard.css?v=20260814">
-    <script src="/dashboard/dashboard.js?v=20260814" defer></script>
+    <link rel="stylesheet" href="/dashboard/dashboard.css?v=20260814b">
+    <script src="/dashboard/dashboard.js?v=20260814b" defer></script>
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
@@ -53,13 +53,63 @@
         </div>
 
         <div id="metrics-grid" class="metrics-grid is-loading" aria-busy="true" aria-live="polite">
-          <article class="metric-card" data-metric="sellerLeads">
+          <article class="metric-card" data-metric="callsToday">
             <div class="metric-card__head">
-              <h2>SELLER LEADS</h2>
+              <h2>CALLS SENT</h2>
               <span class="metric-badge" data-badge hidden>STALE</span>
             </div>
-            <p class="metric-value" data-value aria-label="Seller leads loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
-            <p class="metric-context" aria-hidden="true">&nbsp;</p>
+            <p class="metric-value" data-value aria-label="Calls sent today loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+            <p class="metric-context">Today</p>
+            <p class="metric-source" data-source>Follow Up Boss &middot; loading</p>
+          </article>
+
+          <article class="metric-card" data-metric="textsToday">
+            <div class="metric-card__head">
+              <h2>TEXTS SENT</h2>
+              <span class="metric-badge" data-badge hidden>STALE</span>
+            </div>
+            <p class="metric-value" data-value aria-label="Texts sent today loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+            <p class="metric-context">Today</p>
+            <p class="metric-source" data-source>Follow Up Boss &middot; loading</p>
+          </article>
+
+          <article class="metric-card" data-metric="emailsToday">
+            <div class="metric-card__head">
+              <h2>EMAILS SENT</h2>
+              <span class="metric-badge" data-badge hidden>STALE</span>
+            </div>
+            <p class="metric-value" data-value aria-label="Emails sent today loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+            <p class="metric-context">Today</p>
+            <p class="metric-source" data-source>Follow Up Boss &middot; loading</p>
+          </article>
+
+          <article class="metric-card" data-metric="appointmentsSetMtd">
+            <div class="metric-card__head">
+              <h2>APPOINTMENTS SET</h2>
+              <span class="metric-badge" data-badge hidden>STALE</span>
+            </div>
+            <p class="metric-value" data-value aria-label="Appointments set this month loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+            <p class="metric-context">Month to date</p>
+            <p class="metric-source" data-source>Follow Up Boss &middot; loading</p>
+          </article>
+
+          <article class="metric-card" data-metric="freshBuyerLeads">
+            <div class="metric-card__head">
+              <h2>FRESH BUYER LEADS</h2>
+              <span class="metric-badge" data-badge hidden>STALE</span>
+            </div>
+            <p class="metric-value" data-value aria-label="Fresh buyer leads loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+            <p class="metric-context">Last 4 weeks</p>
+            <p class="metric-source" data-source>Follow Up Boss &middot; loading</p>
+          </article>
+
+          <article class="metric-card" data-metric="freshSellerLeads">
+            <div class="metric-card__head">
+              <h2>FRESH SELLER LEADS</h2>
+              <span class="metric-badge" data-badge hidden>STALE</span>
+            </div>
+            <p class="metric-value" data-value aria-label="Fresh seller leads loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+            <p class="metric-context">Last 4 weeks</p>
             <p class="metric-source" data-source>Follow Up Boss &middot; loading</p>
           </article>
 
@@ -69,7 +119,7 @@
               <span class="metric-badge" data-badge hidden>STALE</span>
             </div>
             <p class="metric-value" data-value aria-label="Google Ads spend loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
-            <p class="metric-context">Month to date</p>
+            <p class="metric-context">Month to date &middot; all accounts</p>
             <p class="metric-source" data-source>Google Ads &middot; loading</p>
           </article>
 
@@ -79,18 +129,8 @@
               <span class="metric-badge" data-badge hidden>STALE</span>
             </div>
             <p class="metric-value" data-value aria-label="Google Ads leads loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
-            <p class="metric-context">Month to date</p>
+            <p class="metric-context">Month to date &middot; all accounts</p>
             <p class="metric-source" data-source>Google Ads &middot; loading</p>
-          </article>
-
-          <article class="metric-card" data-metric="shellPagesRemaining">
-            <div class="metric-card__head">
-              <h2>SHELL PAGES REMAINING</h2>
-              <span class="metric-badge" data-badge hidden>STALE</span>
-            </div>
-            <p class="metric-value" data-value aria-label="Shell pages remaining loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
-            <p class="metric-context" aria-hidden="true">&nbsp;</p>
-            <p class="metric-source" data-source>Google Sheets &middot; loading</p>
           </article>
         </div>
 

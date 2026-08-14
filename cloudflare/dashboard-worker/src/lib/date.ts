@@ -1,6 +1,6 @@
 import type { DashboardSnapshot } from "../types";
 
-export const STALE_AFTER_MS = 15 * 60 * 1_000;
+export const STALE_AFTER_MS = 5 * 60 * 1_000;
 
 interface CalendarDateParts {
   year: number;
@@ -8,7 +8,7 @@ interface CalendarDateParts {
   day: number;
 }
 
-function calendarParts(now: Date, timeZone: string): CalendarDateParts {
+export function calendarParts(now: Date, timeZone: string): CalendarDateParts {
   if (!Number.isFinite(now.getTime())) {
     throw new RangeError("invalid_date");
   }
@@ -38,6 +38,99 @@ function calendarParts(now: Date, timeZone: string): CalendarDateParts {
   }
 
   return { year, month, day };
+}
+
+interface ZonedDateTimeParts extends CalendarDateParts {
+  hour: number;
+  minute: number;
+  second: number;
+}
+
+function zonedParts(now: Date, timeZone: string): ZonedDateTimeParts {
+  if (!Number.isFinite(now.getTime())) {
+    throw new RangeError("invalid_date");
+  }
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  });
+  const values = new Map(
+    formatter.formatToParts(now).map((part) => [part.type, part.value]),
+  );
+  const result = {
+    year: Number(values.get("year")),
+    month: Number(values.get("month")),
+    day: Number(values.get("day")),
+    hour: Number(values.get("hour")),
+    minute: Number(values.get("minute")),
+    second: Number(values.get("second")),
+  };
+  if (Object.values(result).some((value) => !Number.isInteger(value))) {
+    throw new RangeError("invalid_calendar_parts");
+  }
+  return result;
+}
+
+export function localMidnightUtc(
+  date: CalendarDateParts,
+  timeZone: string,
+): Date {
+  const target = Date.UTC(date.year, date.month - 1, date.day, 0, 0, 0, 0);
+  let candidate = target;
+  for (let iteration = 0; iteration < 4; iteration += 1) {
+    const represented = zonedParts(new Date(candidate), timeZone);
+    const representedAsUtc = Date.UTC(
+      represented.year,
+      represented.month - 1,
+      represented.day,
+      represented.hour,
+      represented.minute,
+      represented.second,
+      0,
+    );
+    const next = candidate + (target - representedAsUtc);
+    if (next === candidate) {
+      break;
+    }
+    candidate = next;
+  }
+  const result = new Date(candidate);
+  if (!Number.isFinite(result.getTime())) {
+    throw new RangeError("invalid_local_midnight");
+  }
+  return result;
+}
+
+export interface ActivityWindows {
+  localDate: string;
+  dayStartAt: string;
+  monthStartAt: string;
+  rollingFourWeeksStartAt: string;
+  endAt: string;
+}
+
+export function getActivityWindows(now: Date, timeZone: string): ActivityWindows {
+  const parts = calendarParts(now, timeZone);
+  const dayStart = localMidnightUtc(parts, timeZone);
+  const monthStart = localMidnightUtc(
+    { year: parts.year, month: parts.month, day: 1 },
+    timeZone,
+  );
+  return {
+    localDate: isoDate(parts.year, parts.month, parts.day),
+    dayStartAt: dayStart.toISOString(),
+    monthStartAt: monthStart.toISOString(),
+    rollingFourWeeksStartAt: new Date(
+      now.getTime() - 28 * 24 * 60 * 60 * 1_000,
+    ).toISOString(),
+    endAt: now.toISOString(),
+  };
 }
 
 function isoDate(year: number, month: number, day: number): string {

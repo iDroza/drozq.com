@@ -1,21 +1,26 @@
 import { readReportingTimeZone } from "./config";
 import { getReportingPeriod } from "./lib/date";
 import { isFiniteNonnegative } from "./lib/numeric";
-import { METRIC_SPECS, sanitizeSnapshot, toPublicSnapshot } from "./snapshot";
-import { fetchSellerLeads } from "./sources/follow-up-boss";
+import {
+  METRIC_KEYS,
+  METRIC_SPECS,
+  sanitizeSnapshot,
+  toPublicSnapshot,
+} from "./snapshot";
+import { fetchFollowUpBossMetrics } from "./sources/follow-up-boss";
 import { fetchGoogleAdsMetrics } from "./sources/google-ads";
-import { fetchShellPagesRemaining } from "./sources/google-sheets";
 import type {
   DashboardEnv,
   DashboardMetric,
   DashboardMetricKey,
   DashboardSnapshot,
+  FollowUpBossMetricResults,
   GoogleAdsMetricResults,
   MetricFetchResult,
   RuntimeDependencies,
 } from "./types";
 
-export const SNAPSHOT_KEY = "dashboard:snapshot:v1";
+export const SNAPSHOT_KEY = "dashboard:snapshot:v2";
 
 export type MetricResultMap = Record<DashboardMetricKey, MetricFetchResult>;
 
@@ -99,35 +104,19 @@ export function mergeSnapshot(
   );
   const fullSyncSucceeded =
     configured.length > 0 && configured.every((result) => result.kind === "ok");
+  const metrics = {} as DashboardSnapshot["metrics"];
+  for (const key of METRIC_KEYS) {
+    metrics[key] = mergeMetric(
+      key,
+      previous?.metrics[key],
+      results[key],
+      synchronizedAt,
+    );
+  }
 
   return {
-    version: 1,
-    metrics: {
-      sellerLeads: mergeMetric(
-        "sellerLeads",
-        previous?.metrics.sellerLeads,
-        results.sellerLeads,
-        synchronizedAt,
-      ),
-      googleAdsSpendMtd: mergeMetric(
-        "googleAdsSpendMtd",
-        previous?.metrics.googleAdsSpendMtd,
-        results.googleAdsSpendMtd,
-        synchronizedAt,
-      ),
-      googleAdsLeadsMtd: mergeMetric(
-        "googleAdsLeadsMtd",
-        previous?.metrics.googleAdsLeadsMtd,
-        results.googleAdsLeadsMtd,
-        synchronizedAt,
-      ),
-      shellPagesRemaining: mergeMetric(
-        "shellPagesRemaining",
-        previous?.metrics.shellPagesRemaining,
-        results.shellPagesRemaining,
-        synchronizedAt,
-      ),
-    },
+    version: 2,
+    metrics,
     reportingPeriod,
     lastAttemptAt: synchronizedAt,
     lastSuccessfulFullSyncAt: fullSyncSucceeded
@@ -172,8 +161,18 @@ function logMetricResults(results: MetricResultMap): void {
   }
 }
 
-function adsFailure(reason: unknown): GoogleAdsMetricResults {
-  void reason;
+function fubFailure(): FollowUpBossMetricResults {
+  return {
+    callsToday: unexpectedResult(),
+    textsToday: unexpectedResult(),
+    emailsToday: unexpectedResult(),
+    appointmentsSetMtd: unexpectedResult(),
+    freshBuyerLeads: unexpectedResult(),
+    freshSellerLeads: unexpectedResult(),
+  };
+}
+
+function adsFailure(): GoogleAdsMetricResults {
   return {
     googleAdsSpendMtd: unexpectedResult(),
     googleAdsLeadsMtd: unexpectedResult(),
@@ -185,30 +184,19 @@ export async function synchronizeDashboard(
   dependencies: RuntimeDependencies = {},
 ): Promise<DashboardSnapshot> {
   const now = dependencies.now ?? new Date();
-  const reportingPeriod = getReportingPeriod(now, readReportingTimeZone(env));
+  const timeZone = readReportingTimeZone(env);
+  const reportingPeriod = getReportingPeriod(now, timeZone);
   const previous = await loadPreviousSnapshot(env);
 
-  const [fubSettled, adsSettled, sheetsSettled] = await Promise.allSettled([
-    fetchSellerLeads(env, dependencies),
-    fetchGoogleAdsMetrics(env, reportingPeriod, dependencies),
-    fetchShellPagesRemaining(env, dependencies),
+  const [fubSettled, adsSettled] = await Promise.allSettled([
+    fetchFollowUpBossMetrics(env, timeZone, { ...dependencies, now }),
+    fetchGoogleAdsMetrics(env, reportingPeriod, { ...dependencies, now }),
   ]);
-
-  const fub =
-    fubSettled.status === "fulfilled" ? fubSettled.value : unexpectedResult();
-  const ads =
-    adsSettled.status === "fulfilled"
-      ? adsSettled.value
-      : adsFailure(adsSettled.reason);
-  const sheets =
-    sheetsSettled.status === "fulfilled"
-      ? sheetsSettled.value
-      : unexpectedResult();
+  const fub = fubSettled.status === "fulfilled" ? fubSettled.value : fubFailure();
+  const ads = adsSettled.status === "fulfilled" ? adsSettled.value : adsFailure();
   const results: MetricResultMap = {
-    sellerLeads: fub,
-    googleAdsSpendMtd: ads.googleAdsSpendMtd,
-    googleAdsLeadsMtd: ads.googleAdsLeadsMtd,
-    shellPagesRemaining: sheets,
+    ...fub,
+    ...ads,
   };
 
   logMetricResults(results);

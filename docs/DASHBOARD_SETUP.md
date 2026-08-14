@@ -1,85 +1,100 @@
-# Drozq Operating Dashboard Setup
+# Drozq Operating Dashboard
 
-Last reviewed: August 14, 2026
-
-This runbook deploys the public operating dashboard at `https://drozq.com/dashboard` and its isolated Worker at `https://drozq.com/api/dashboard*`.
+Last updated: August 14, 2026
 
 ## 1. Architecture
 
-The browser loads three static Cloudflare Pages files:
+`/dashboard` is a static Cloudflare Pages page. It requests only the sanitized `GET /api/dashboard/summary` endpoint and never contacts Follow Up Boss, Google Ads, or Google OAuth from the browser.
 
-- `dashboard/index.html`
-- `dashboard/dashboard.css`
-- `dashboard/dashboard.js`
+The separate `drozq-operating-dashboard` Cloudflare Worker owns all credentials and upstream requests. Its production route is restricted to `drozq.com/api/dashboard*`, so it cannot intercept the rest of the Pages site or the existing `/api/lead` and `/api/geo` Pages Functions.
 
-The page reads only `GET /api/dashboard/summary`. It never uses dashboard credentials and never requests Follow Up Boss, Google Ads, Google Sheets, or Google OAuth data directly.
+The Worker runs every minute, which is the fastest Cloudflare Cron Trigger interval:
 
-The separate `drozq-operating-dashboard` Worker owns all data access. Its `scheduled()` handler runs every five minutes, requests the three sources concurrently, normalizes four numbers, merges failures with the prior valid snapshot, and writes one sanitized object to Workers KV under `dashboard:snapshot:v1`. The public summary handler reads KV only. `POST /api/dashboard/admin/sync` runs the same synchronization function after bearer-token authentication.
-
-The existing Cloudflare Pages project and its `/functions/api/lead.js`, `/functions/api/geo.js`, and other endpoints are separate. The Worker route is deliberately limited to `drozq.com/api/dashboard*`.
-
-No AI model, inference endpoint, Claude API, OpenAI API, or other paid model call exists in this runtime. This is a deterministic API-to-KV-to-dashboard pipeline.
-
-## 2. Prerequisites and install
-
-Use Node.js 22 or newer and log Wrangler into the Cloudflare account that owns the `drozq.com` zone.
-
-```powershell
-Set-Location C:\Users\guerr\Documents\drozq.com
-npm install
-npx wrangler login
-npm run dashboard:check
+```text
+* * * * *
 ```
 
-For local development, copy the placeholder file and replace every angle-bracket value that applies:
+Each synchronization queries Follow Up Boss and Google Ads concurrently, merges successful results with the previous snapshot, and writes `dashboard:snapshot:v2` to Workers KV. A failed metric retains its last valid value and becomes stale. A first-run failure is unavailable, never a false zero.
+
+The public contract contains exactly eight aggregate metrics:
+
+1. Calls sent today
+2. Texts sent today
+3. Emails sent today
+4. Appointments set month to date
+5. Fresh buyer leads from the rolling previous four weeks
+6. Fresh seller leads from the rolling previous four weeks
+7. Google Ads spend month to date across all linked leaf accounts
+8. Google Ads primary conversions month to date across all linked leaf accounts
+
+The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the one-minute schedule or the protected manual sync endpoint. A metric becomes stale after five minutes without a successful source update.
+
+There is no Claude, OpenAI, AI inference, model call, or other nondeterministic runtime dependency. This is a direct API-to-KV-to-dashboard pipeline.
+
+## 2. Install and verify
+
+Use the repository's existing npm workspace and lockfile:
 
 ```powershell
-Copy-Item cloudflare/dashboard-worker/.dev.vars.example cloudflare/dashboard-worker/.dev.vars
+npm ci
+npm run dashboard:test
+npm run dashboard:typecheck
+npm run dashboard:build
 ```
 
-`.dev.vars`, `.env`, Wrangler state, build output, and installed packages are ignored by Git. Never put real credentials in `.dev.vars.example` or `wrangler.jsonc`.
+Do not add another package manager or lockfile.
 
-## 3. Follow Up Boss
+## 3. Follow Up Boss setup
 
-Create or retrieve an API key for the Follow Up Boss user whose accessible contacts should be counted. The Worker calls `GET https://api.followupboss.com/v1/people` with Basic authentication, a blank password, `tags=Seller`, `includeTrash=false`, `limit=1`, and `fields=id`. It stores only `_metadata.total`.
+Create a dedicated API key in Follow Up Boss for the user whose personal activity should appear on the dashboard. The key's `/me` identity defines "I" for calls, texts, emails, and appointments.
 
-Defaults and options:
-
-- `FUB_SELLER_TAG` defaults to `Seller`.
-- `FUB_ASSIGNED_USER_ID` is optional. Set it to narrow the count to one assigned user.
-- `FUB_X_SYSTEM` and `FUB_X_SYSTEM_KEY` are optional paired integration headers. Set them only when Follow Up Boss has issued them.
-- Trash is always excluded.
-
-Set production credentials from the Worker directory:
+Store the required key:
 
 ```powershell
 Set-Location cloudflare/dashboard-worker
 npx wrangler secret put FUB_API_KEY
+Set-Location ../..
+```
+
+If the Follow Up Boss account requires partner identification, also store:
+
+```powershell
+Set-Location cloudflare/dashboard-worker
 npx wrangler secret put FUB_X_SYSTEM
 npx wrangler secret put FUB_X_SYSTEM_KEY
+Set-Location ../..
+```
+
+The `Seller` tag is configured in `wrangler.jsonc` as `FUB_SELLER_TAG`. Tag matching ignores capitalization and surrounding whitespace. A fresh contact with the Seller tag is counted as a seller. Other accessible fresh contacts are counted as buyers.
+
+`FUB_ASSIGNED_USER_ID` is optional. If set, it scopes only the two fresh-lead counts. Leave it unset to count all accessible fresh contacts:
+
+```powershell
+Set-Location cloudflare/dashboard-worker
 npx wrangler secret put FUB_ASSIGNED_USER_ID
 Set-Location ../..
 ```
 
-Skip the three optional commands when they do not apply. To change the public tag without code changes, edit `FUB_SELLER_TAG` in `wrangler.jsonc` and deploy.
+The activity definitions are deliberate:
 
-Follow Up Boss currently needs an active account and API access. A `403` from this source commonly means the authenticated user cannot access the requested records, the API key is invalid for the account, or the account is inactive.
+- Calls are outbound call records whose `userId` matches the API-key user.
+- Texts are manual outbound text records for that user. Incoming and action-plan messages are excluded.
+- Emails are sent manual email records for that user. Drafts, other users, action plans, and campaigns are excluded.
+- Appointments are records created during the current local month whose `createdById` matches the API-key user. The assignee does not change who set the appointment.
+- Today and month boundaries use `REPORTING_TIME_ZONE`, currently `America/Los_Angeles`.
 
-## 4. Google Ads developer token and OAuth
+Follow Up Boss does not permit this non-owner key to use the account-level agent-activity report or webhooks. The Worker therefore uses the documented REST resources directly. Text and email IDs are hashed before the daily deduplication state is stored in KV. No message content, person name, email address, phone number, or contact record is persisted. A full daily reconciliation runs at least hourly, with incremental scans between reconciliations. This avoids the Follow Up Boss report's roughly 10-minute cache while controlling API volume.
 
-The requested dashboard default is customer `800-413-3723`. The Worker stores and sends it as `8004133723`. That default lives in typed configuration, not business-logic code, and production can override it with the `GOOGLE_ADS_CUSTOMER_ID` secret.
+## 4. Google Ads setup
 
-Production note, August 14, 2026: Google Ads returned `CUSTOMER_NOT_FOUND` for `8004133723`, and that customer was absent from the authenticated manager hierarchy. The live Worker therefore uses the verified active real-estate customer `7216252244` through an encrypted override. Once `8004133723` is linked to the manager and accessible to the OAuth identity, update only `GOOGLE_ADS_CUSTOMER_ID` and rerun the diagnostic before synchronizing.
+The OAuth user must be able to access the manager account and every advertising account that should be included. Obtain:
 
-1. In the Google Ads manager account, open API Center and obtain an approved developer token.
-2. In Google Cloud, configure an OAuth consent screen and create an OAuth client.
-3. Authorize a Google user that can access customer `800-413-3723` with the `https://www.googleapis.com/auth/adwords` scope and offline access.
-4. Capture the OAuth client ID, client secret, and refresh token. Never commit them.
-5. Set `GOOGLE_ADS_LOGIN_CUSTOMER_ID` only when requests must pass through a manager account. Store it without hyphens.
+- A Google Ads developer token
+- An OAuth client ID and client secret
+- An offline refresh token for the authorized Google user
+- The manager customer ID, without hyphens
 
-The repository's existing `scripts/google_ads_auth.py` can mint an offline Google Ads refresh token, but it belongs to an older reporting workflow with different account defaults. Do not copy those account IDs into this dashboard. The refresh token may be reused only if its Google user has access to the dashboard customer.
-
-Set the Worker secrets:
+Store the credentials:
 
 ```powershell
 Set-Location cloudflare/dashboard-worker
@@ -87,94 +102,74 @@ npx wrangler secret put GOOGLE_ADS_DEVELOPER_TOKEN
 npx wrangler secret put GOOGLE_ADS_CLIENT_ID
 npx wrangler secret put GOOGLE_ADS_CLIENT_SECRET
 npx wrangler secret put GOOGLE_ADS_REFRESH_TOKEN
-npx wrangler secret put GOOGLE_ADS_CUSTOMER_ID
 npx wrangler secret put GOOGLE_ADS_LOGIN_CUSTOMER_ID
-npx wrangler secret put GOOGLE_ADS_LEAD_CONVERSION_ACTION_NAMES
+npx wrangler secret put GOOGLE_ADS_CUSTOMER_ID
 Set-Location ../..
 ```
 
-Skip `GOOGLE_ADS_LOGIN_CUSTOMER_ID` when the customer can be addressed directly. The current API version is configured as `v25`.
+`GOOGLE_ADS_LOGIN_CUSTOMER_ID` must be the manager account for the production all-account view. `GOOGLE_ADS_CUSTOMER_ID` is the fallback single account used only when a manager ID is not configured. The original known fallback is `8004133723`, stored without hyphens. Do not put either value into business logic.
 
-### List conversion-action names
+At runtime the Worker recursively discovers all accessible, non-hidden, non-test leaf accounts beneath the manager. It caches only the leaf account IDs for ten minutes. New linked accounts are picked up automatically. If any child query fails, neither Ads metric publishes a partial total. The prior complete total remains visible as stale.
 
-The diagnostic prints only action name, status, and type. It never prints credentials, access tokens, customer names, or raw API responses. Provide credentials in the current process, run it, then clear them:
+One OAuth access token is reused for the complete synchronization. Each leaf account receives one aggregate GAQL query:
+
+```sql
+SELECT
+  metrics.cost_micros,
+  metrics.conversions
+FROM customer
+WHERE segments.date BETWEEN 'YYYY-MM-DD' AND 'YYYY-MM-DD'
+```
+
+Spend is the exact sum of `cost_micros` divided by 1,000,000. Leads are the sum of the Google Ads `Conversions` column, represented by `metrics.conversions`, across all linked leaf accounts. This intentionally includes every primary conversion in account performance and no longer filters to one action name or one child account. It does not use `metrics.all_conversions`, which can include local actions and other secondary engagement events.
+
+The configured API version is `v25`. Review Google Ads API sunset notices before that version is retired and update only `GOOGLE_ADS_API_VERSION` after tests pass.
+
+### Conversion action diagnostic
+
+The local diagnostic lists non-removed conversion actions across every discovered leaf account. It prints no OAuth credential, developer token, or refresh token:
 
 ```powershell
-$env:GOOGLE_ADS_DEVELOPER_TOKEN = "<developer-token>"
-$env:GOOGLE_ADS_CLIENT_ID = "<oauth-client-id>"
-$env:GOOGLE_ADS_CLIENT_SECRET = "<oauth-client-secret>"
-$env:GOOGLE_ADS_REFRESH_TOKEN = "<oauth-refresh-token>"
-$env:GOOGLE_ADS_CUSTOMER_ID = "8004133723"
-$env:GOOGLE_ADS_LOGIN_CUSTOMER_ID = "<optional-manager-id>"
+$env:GOOGLE_ADS_DEVELOPER_TOKEN = Read-Host "Developer token"
+$env:GOOGLE_ADS_CLIENT_ID = Read-Host "OAuth client ID"
+$env:GOOGLE_ADS_CLIENT_SECRET = Read-Host "OAuth client secret"
+$env:GOOGLE_ADS_REFRESH_TOKEN = Read-Host "OAuth refresh token"
+$env:GOOGLE_ADS_LOGIN_CUSTOMER_ID = Read-Host "Manager customer ID without hyphens"
 npm run dashboard:list-google-ads-actions
-Remove-Item Env:GOOGLE_ADS_DEVELOPER_TOKEN, Env:GOOGLE_ADS_CLIENT_ID, Env:GOOGLE_ADS_CLIENT_SECRET, Env:GOOGLE_ADS_REFRESH_TOKEN, Env:GOOGLE_ADS_CUSTOMER_ID, Env:GOOGLE_ADS_LOGIN_CUSTOMER_ID -ErrorAction SilentlyContinue
+Remove-Item Env:GOOGLE_ADS_DEVELOPER_TOKEN, Env:GOOGLE_ADS_CLIENT_ID, Env:GOOGLE_ADS_CLIENT_SECRET, Env:GOOGLE_ADS_REFRESH_TOKEN, Env:GOOGLE_ADS_LOGIN_CUSTOMER_ID
 ```
 
-The intended lead event is `generate_lead`. Google Ads can prefix imported GA4 action names with the property or stream name, so configure the exact name printed by the diagnostic. The live `7216252244` override is `ActiveRealty.com (web) generate_lead`. The Worker compares names case-insensitively and counts only configured names. A configured action that does not exist is reported as unavailable, never as a false zero.
-
-To migrate later to `lead_confirmed`, first list the available actions, then update only the encrypted configuration:
+The legacy `GOOGLE_ADS_LEAD_CONVERSION_ACTION_NAMES` secret is no longer read by production. It may be deleted:
 
 ```powershell
 Set-Location cloudflare/dashboard-worker
-npx wrangler secret put GOOGLE_ADS_LEAD_CONVERSION_ACTION_NAMES
+npx wrangler secret delete GOOGLE_ADS_LEAD_CONVERSION_ACTION_NAMES
 Set-Location ../..
 ```
 
-Comma-separated names are supported. During an overlapping migration, do not configure both `generate_lead` and `lead_confirmed` unless both represent distinct leads. If both fire for the same submission, configuring both will double-count.
+Changing a conversion action from `generate_lead` to `lead_confirmed` no longer requires a dashboard code or configuration change because the dashboard follows the account's primary conversion configuration. During a migration, ensure Google Ads does not mark both actions primary if that would double-count the same submission.
 
-## 5. Google Sheets service account
+## 5. Google Sheets adapter status
 
-1. In a Google Cloud project, enable Google Sheets API v4.
-2. Create a service account with no broad project role. The Sheet itself grants access.
-3. Create a JSON key for that account.
-4. Copy only `client_email` and `private_key` into the matching Worker secrets.
-5. Share the target Google Sheet with the service-account email as Viewer.
-6. Delete or securely archive the downloaded JSON key. Never place it in this repository.
+The earlier Shell Pages Remaining card was replaced by the current operating metrics. The tested Google Sheets service-account adapter remains isolated in the Worker source for rollback compatibility, but the production synchronization does not call it and no Sheet data is in the public contract.
 
-The Worker normalizes either real newlines or escaped `\n` characters in the private key before Web Crypto signing.
-
-Set the core secrets:
+Legacy Sheets secrets may be deleted without affecting the current dashboard:
 
 ```powershell
 Set-Location cloudflare/dashboard-worker
-npx wrangler secret put GOOGLE_SERVICE_ACCOUNT_EMAIL
-npx wrangler secret put GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
-npx wrangler secret put GOOGLE_SHEETS_SPREADSHEET_ID
-Set-Location ../..
-```
-
-### Sheet mode A: direct cell
-
-Set one A1 range whose first value is a nonnegative whole number. Example: `Dashboard Inputs!B2`.
-
-```powershell
-Set-Location cloudflare/dashboard-worker
-npx wrangler secret put GOOGLE_SHEETS_REMAINING_RANGE
-Set-Location ../..
-```
-
-When this value is present, it takes priority over table mode.
-
-The live production Sheet uses direct-cell range `Summary!B5`. The service account `drozq-dashboard-sheets@drozq-ads-mcp.iam.gserviceaccount.com` has Viewer access only. Its downloaded JSON key was removed after the private key was stored as a Worker secret.
-
-### Sheet mode B: page table
-
-Do not set the direct-cell range. Set a range that includes the header row and all page rows, for example `Shell Pages!A:B`:
-
-```powershell
-Set-Location cloudflare/dashboard-worker
+npx wrangler secret delete GOOGLE_SERVICE_ACCOUNT_EMAIL
+npx wrangler secret delete GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
+npx wrangler secret delete GOOGLE_SHEETS_SPREADSHEET_ID
 npx wrangler secret delete GOOGLE_SHEETS_REMAINING_RANGE
-npx wrangler secret put GOOGLE_SHEETS_PAGES_RANGE
+npx wrangler secret delete GOOGLE_SHEETS_PAGES_RANGE
 Set-Location ../..
 ```
 
-Default headers are `Page` and `Status`. Default complete values are `complete,completed,done,published,live`. Matching ignores capitalization and surrounding whitespace. Every nonblank page row whose status is not complete is counted. Fully blank rows and rows without a page value are ignored.
-
-Change headers or complete values through `GOOGLE_SHEETS_PAGE_HEADER`, `GOOGLE_SHEETS_STATUS_HEADER`, and `GOOGLE_SHEETS_COMPLETE_VALUES` in `wrangler.jsonc`. If neither range is configured, the public metric is `unconfigured`, not zero.
+If the card is deliberately restored later, the adapter supports a nonnegative direct cell or a `Page` and `Status` table, uses a read-only Google service account, normalizes escaped private-key newlines, and stores only the aggregate count.
 
 ## 6. Workers KV
 
-The live namespace is already provisioned and its non-secret namespace ID is committed in `wrangler.jsonc`. To deploy into another Cloudflare account, create a replacement namespace:
+The production namespace is already bound as `DASHBOARD_KV` in `wrangler.jsonc`. To provision a separate environment:
 
 ```powershell
 Set-Location cloudflare/dashboard-worker
@@ -182,43 +177,40 @@ npx wrangler kv namespace create DASHBOARD_KV
 Set-Location ../..
 ```
 
-Wrangler prints a 32-character namespace ID. Replace the existing production ID in `cloudflare/dashboard-worker/wrangler.jsonc` only when moving the Worker to another account:
+Put the returned namespace ID into the `DASHBOARD_KV` binding. Do not rename these stable keys:
 
-```json
-"kv_namespaces": [
-  {
-    "binding": "DASHBOARD_KV",
-    "id": "<production-kv-namespace-id>"
-  }
-]
-```
+- `dashboard:snapshot:v2`: sanitized public snapshot
+- `dashboard:fub:activity:v2`: counts, checkpoints, and hashed daily message IDs only
+- `dashboard:google_ads:accounts:v2`: short-lived leaf account ID cache
+- `dashboard:sync:lease:v2`: short-lived best-effort overlap guard
 
-Do not rename the `DASHBOARD_KV` binding or the stable `dashboard:snapshot:v1` key.
+KV never stores API keys, OAuth access tokens, refresh tokens, private keys, response bodies, message bodies, or contact details.
 
-## 7. Admin synchronization token
+## 7. Manual synchronization token
 
-Generate a high-entropy token locally, copy it, and store it with Wrangler:
+Generate a high-entropy token, save it in the approved password manager, and store it as a Worker secret:
 
 ```powershell
-$bytes = New-Object byte[] 32
-$rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
-$rng.GetBytes($bytes)
-$rng.Dispose()
-$token = [Convert]::ToBase64String($bytes)
-$token | Set-Clipboard
+$dashboardTokenBytes = New-Object byte[] 32
+$dashboardTokenRng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$dashboardTokenRng.GetBytes($dashboardTokenBytes)
+$dashboardTokenRng.Dispose()
+$dashboardAdminToken = [Convert]::ToBase64String($dashboardTokenBytes)
+$dashboardAdminToken | Set-Clipboard
 Set-Location cloudflare/dashboard-worker
 npx wrangler secret put ADMIN_SYNC_TOKEN
 Set-Location ../..
-Remove-Variable token, bytes, rng
+Remove-Variable dashboardTokenBytes, dashboardTokenRng, dashboardAdminToken
 ```
 
-Paste the generated value only into Wrangler's hidden prompt. Store it in the approved password manager. The endpoint compares SHA-256 digests with a timing-safe primitive when available in Workers.
+Paste the generated value only into Wrangler's hidden prompt. Invalid tokens return `401`. A valid request made while another synchronization is active returns `409` rather than starting overlapping upstream work.
 
 ## 8. Local development
 
-After filling `cloudflare/dashboard-worker/.dev.vars`:
+Copy `.dev.vars.example` to `.dev.vars`, replace placeholders, and never commit the local file:
 
 ```powershell
+Copy-Item cloudflare/dashboard-worker/.dev.vars.example cloudflare/dashboard-worker/.dev.vars
 Set-Location cloudflare/dashboard-worker
 npm run dev
 ```
@@ -230,50 +222,35 @@ Invoke-RestMethod http://localhost:8787/api/dashboard/health
 Invoke-WebRequest http://localhost:8787/api/dashboard/summary
 ```
 
-The summary request never contacts upstream services. It returns the current local KV snapshot or a valid `503` unconfigured payload when none exists.
+The summary request never contacts upstream services. It returns a saved snapshot or a valid sanitized `503` first-run payload.
 
-To test the scheduled handler locally:
+Test the scheduled handler locally:
 
 ```powershell
 Set-Location cloudflare/dashboard-worker
 npm run dev:scheduled
 ```
 
-Then call Wrangler's scheduled-test endpoint from another terminal:
+Then, from another terminal:
 
 ```powershell
-Invoke-WebRequest "http://localhost:8787/cdn-cgi/handler/scheduled?cron=%2A%2F5%20%2A%20%2A%20%2A%20%2A"
+Invoke-WebRequest "http://localhost:8787/cdn-cgi/handler/scheduled?cron=%2A%20%2A%20%2A%20%2A%20%2A"
 ```
 
-Inspect structured logs for source, HTTP status, duration, result, and sanitized error category. Logs must never contain tokens, authorization headers, private keys, full response bodies, or contact data.
+## 9. Production deployment
 
-## 9. Test and production build
-
-From the repository root:
+Run the complete gate, then deploy only the Worker:
 
 ```powershell
-npm run dashboard:test
-npm run dashboard:typecheck
-npm run dashboard:build
-```
-
-The tests mock every external request. They do not call live APIs.
-
-## 10. Production deployment
-
-Confirm the KV ID has replaced the placeholder and all required secrets are set, then deploy only the dashboard Worker:
-
-```powershell
+npm run dashboard:check
 Set-Location cloudflare/dashboard-worker
 npx wrangler deploy
 Set-Location ../..
 ```
 
-Wrangler deploys `drozq-operating-dashboard`, installs the `*/5 * * * *` Cron Trigger, and routes only `drozq.com/api/dashboard*`. `workers_dev` and preview URLs are disabled. Cloudflare Pages remains responsible for every other path.
+The route must remain exactly `drozq.com/api/dashboard*`. Never broaden it to `drozq.com/*`. `workers_dev` and preview URLs remain disabled. Cloudflare can take up to roughly 15 minutes to propagate a Cron change, so use one protected manual sync immediately after a deployment.
 
-The Pages side deploys through the repository's existing main-branch auto-deployment. `_redirects` sends `/Dashboard`, `/Dashboard/`, and `/dashboard/` to the canonical `/dashboard` with HTTP 301, then internally serves the directory index at the no-slash canonical path.
-
-Verify route scope and health:
+Verify scope and headers:
 
 ```powershell
 curl.exe -I https://drozq.com/dashboard
@@ -284,77 +261,94 @@ curl.exe -i https://drozq.com/api/dashboard/not-a-route
 curl.exe -i https://drozq.com/api/geo
 ```
 
-Expected results are `200`, `301` to `/dashboard`, `200`, `200` or first-run `503`, `404`, and the existing geo endpoint's normal response. The summary response should include `Content-Type: application/json`, `X-Content-Type-Options: nosniff`, and the documented 60-second cache policy. It should not include `Access-Control-Allow-Origin: *`.
+Expected results are `200`, `301` to `/dashboard`, `200`, `200` or first-run `503`, `404`, and the existing geo endpoint's normal response. The summary must include JSON content type, `nosniff`, and the documented 10-second cache policy. It must not include wildcard CORS.
 
-## 11. Manual synchronization
-
-Run one protected synchronization after the first deploy so the dashboard does not wait for the next Cron Trigger:
+## 10. Protected manual synchronization
 
 ```powershell
-$secureToken = Read-Host "ADMIN_SYNC_TOKEN" -AsSecureString
-$tokenPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureToken)
-$syncToken = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($tokenPointer)
-[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($tokenPointer)
-$headers = @{ Authorization = "Bearer $syncToken" }
-Invoke-RestMethod -Method Post -Uri "https://drozq.com/api/dashboard/admin/sync" -Headers $headers
-Remove-Variable secureToken, tokenPointer, syncToken, headers
+$dashboardSecureToken = Read-Host "ADMIN_SYNC_TOKEN" -AsSecureString
+$dashboardTokenPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($dashboardSecureToken)
+$dashboardSyncToken = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($dashboardTokenPointer)
+[Runtime.InteropServices.Marshal]::ZeroFreeBSTR($dashboardTokenPointer)
+$dashboardHeaders = @{ Authorization = "Bearer $dashboardSyncToken" }
+Invoke-RestMethod -Method Post -Uri "https://drozq.com/api/dashboard/admin/sync" -Headers $dashboardHeaders
+Remove-Variable dashboardSecureToken, dashboardTokenPointer, dashboardSyncToken, dashboardHeaders
 ```
 
-The response is the same sanitized aggregate contract as the public summary. An incorrect or missing token returns `401`.
+The response is the same sanitized snapshot contract as the public endpoint.
 
-## 12. Troubleshooting
+## 11. Troubleshooting and durability runbook
 
-### `401`
+### Follow Up Boss `401` or `403`
 
-- Follow Up Boss: recreate the API key and update `FUB_API_KEY`.
-- Google OAuth: confirm client ID, client secret, and refresh token belong together. Reauthorize with offline access if Google returns `invalid_grant`.
-- Manual sync: confirm the bearer value exactly matches `ADMIN_SYNC_TOKEN`.
+- Confirm the dedicated key still exists and belongs to the intended user.
+- Update `FUB_API_KEY` after any key rotation.
+- Confirm the key user can access people, calls, appointments, text messages, emails, and `/me`.
+- Account-level reports and webhooks require owner privileges and are not used.
 
-### `403`
+### Google Ads `401` or `403`
 
-- Follow Up Boss: confirm the account is active and the API-key user can access the tagged contacts. The repository notes that the prior personal Follow Up Boss subscription may be inactive, so reactivation may be required.
-- Google Ads: verify the OAuth user can access customer `800-413-3723`, the developer token has sufficient access, and the optional login customer is the correct manager.
-- Google Sheets: share the Sheet with the exact service-account email as Viewer and confirm Sheets API v4 is enabled.
+- Confirm client ID, client secret, and refresh token belong together.
+- Reauthorize with offline access if Google returns `invalid_grant`.
+- Confirm the OAuth user still has access to the configured manager and children.
+- Confirm the developer token remains approved for the account hierarchy.
+- Confirm the login manager ID contains ten digits and no hyphens.
 
-### `429`
+### `429` or transient `5xx`
 
-The Worker retries up to three attempts, honors `Retry-After`, and otherwise uses exponential backoff with jitter. Persistent rate limiting leaves the prior value visible as stale. Do not shorten the five-minute Cron interval.
+Upstream requests retry no more than three times, respect `Retry-After`, and otherwise use bounded exponential backoff with jitter. Persistent failure retains the last complete value as stale. Do not shorten the one-minute Cron because Cloudflare does not support a faster schedule and higher manual frequency can cause rate limits.
 
-### Stale data
+### Google Ads spend or leads look low
 
-A value becomes stale after more than 15 minutes without a successful source update. Check Worker logs, then invoke the protected manual sync. A partial failure never erases a prior valid number.
+- Check that every advertising account is linked beneath the configured manager.
+- Wait ten minutes for the hierarchy cache, or run a manual sync after deleting `dashboard:google_ads:accounts:v2` from KV.
+- Compare the Google Ads UI with the same reporting timezone and the `Conversions` column, not `All conversions`.
+- Inspect Worker logs for a child-account error. The Worker refuses partial totals.
 
-### Missing Google Ads leads
+### Follow Up Boss activity looks low
 
-Run `npm run dashboard:list-google-ads-actions`. Confirm the exact action exists and set `GOOGLE_ADS_LEAD_CONVERSION_ACTION_NAMES`. An action can exist with a legitimate zero month-to-date count. A name that does not exist is not displayed as zero.
+- Verify the API key belongs to the intended agent.
+- Confirm records are being saved to Follow Up Boss under that user's ID.
+- Automated action-plan and campaign messages are intentionally excluded.
+- Run a protected sync. The hourly full reconciliation corrects late-arriving or edited message records.
 
-### Missing Sheet metric
+### Stale or missing metrics
 
-Configure exactly one intended input mode, confirm the range includes readable values, and check that direct-cell data is a nonnegative integer. For table mode, ensure the range includes both configured headers.
+A metric becomes stale after five minutes. Check structured Worker logs for source, HTTP status, duration, and sanitized error category. A missing metric with no prior value is shown as unavailable, not zero. A partial failure does not erase other sources.
 
-## 13. Security and secret rotation
+### 30 to 180 day maintenance risks
 
-Never commit `.dev.vars`, `.env`, downloaded service-account JSON, OAuth tokens, API keys, Cloudflare tokens, or `ADMIN_SYNC_TOKEN`. Worker secrets are encrypted bindings and are never stored in KV. KV contains only the four normalized numbers, source identifiers, definitions, statuses, dates, and timestamps.
+- Google refresh tokens can be revoked by password, consent, or security changes. Monitor `authentication` errors.
+- Google Ads API versions are sunset periodically. Review the version before `v25` retirement.
+- Follow Up Boss keys are user-scoped. Role or ownership changes can change accessible records.
+- New Google Ads leaf accounts are automatic, but OAuth and developer-token access must cover them.
+- Changing Google Ads primary conversion settings changes the Leads number by design. Audit primary actions during tracking migrations.
+- Worker Cron configuration changes can take time to propagate. Manual sync verifies deployment immediately.
+- Upstream schema drift fails closed and preserves last-known-good values. Keep tests and observability enabled.
+- The daily activity state resets at Los Angeles midnight and the date utility has rollover, leap-year, and DST coverage.
 
-The existing marketing funnel loads a browser-side Google Maps key for Places autocomplete, including on `faq/index.html`. A browser key is necessarily public, but any key that may have been exposed without strict restrictions must be rotated in Google Cloud. Restrict its replacement to the required Maps APIs and the exact production HTTP referrers. Removing it without a replacement would break address validation in the lead funnel, so this dashboard change does not remove it.
+Review Worker errors and credential age monthly. Run `npm run dashboard:check` before any API-version or schema update.
 
-Rotate any credential immediately if it has appeared in source control, logs, chat, screenshots, or an untrusted machine. Removing a credential from the current file does not revoke it. After rotation, update the Wrangler secret and deploy again.
+## 12. Security and rotation
 
-## 14. Optional GitHub Actions deployment
+Never commit `.dev.vars`, `.env`, downloaded service-account JSON, API keys, OAuth tokens, private keys, Cloudflare API tokens, or `ADMIN_SYNC_TOKEN`. The public serializer uses an explicit allowlist and cannot return contact details, account names, campaign names, Sheet contents, credentials, or raw upstream errors.
 
-`.github/workflows/dashboard-worker.yml` runs only when dashboard Worker or related package files change. It installs dependencies, runs tests, type checking, and the production dry-run build. On pushes to `main`, it deploys only the dashboard Worker when these repository settings exist:
+Any credential pasted into chat, committed, logged, or shown in a screenshot must be treated as exposed and rotated. Removing it from a file or deleting a message does not revoke it.
 
-- Secret: `CLOUDFLARE_API_TOKEN`, scoped to `Workers Scripts:Edit` for the production account and `Workers Routes:Edit` for the `drozq.com` zone. KV permission is not required for deployment because the namespace already exists and its binding ID is committed.
-- Secret: `CLOUDFLARE_ACCOUNT_ID`.
-- Repository variable: `DASHBOARD_KV_NAMESPACE_ID`, required only while the all-zero placeholder remains in the committed Wrangler file. It can be omitted after the real namespace ID is committed.
+The marketing funnel uses a browser-side Google Maps key for Places autocomplete, including in `faq/index.html`. Browser keys are public by design, but the Google Cloud key must be restricted to only the necessary Maps APIs and exact production HTTP referrers. Rotate any version that was ever unrestricted. Do not remove it without a replacement because that would break funnel address validation.
 
-Runtime API credentials remain Wrangler secrets. GitHub Actions does not create, replace, or manage them. If either Cloudflare credential secret is absent, verification still runs and deployment is skipped.
+## 13. GitHub Actions
 
-As of August 14, 2026, both GitHub secrets are configured and a complete CI deployment has succeeded.
+`.github/workflows/dashboard-worker.yml` runs only when Worker-related files change. It tests, type checks, builds, and then deploys only the dashboard Worker on `main` when these repository secrets exist:
 
-## 15. Rollback
+- `CLOUDFLARE_API_TOKEN`, limited to the required Worker script and route permissions
+- `CLOUDFLARE_ACCOUNT_ID`
 
-List Worker deployments and roll back to the prior version:
+Runtime API credentials remain Worker secrets and are not managed by GitHub Actions. The workflow does not touch Cloudflare Pages deployment.
+
+## 14. Rollback
+
+List and roll back Worker versions:
 
 ```powershell
 Set-Location cloudflare/dashboard-worker
@@ -363,22 +357,20 @@ npx wrangler rollback <prior-version-id>
 Set-Location ../..
 ```
 
-For the static dashboard or configuration committed to Git, revert the exact release commit and push it:
+Revert the exact repository release for the static page or configuration:
 
 ```powershell
 git revert <release-commit-hash>
 git push origin main
 ```
 
-If the Worker must be removed entirely, first remove or disable the narrow `drozq.com/api/dashboard*` route in Cloudflare, then remove the Worker. Do not broaden, alter, or delete the Cloudflare Pages routes or existing Pages Functions.
+If the Worker must be removed, first remove only the narrow `drozq.com/api/dashboard*` route. Do not alter the Pages routes or existing Pages Functions.
 
 ## Official references
 
-- [Cloudflare Workers routes](https://developers.cloudflare.com/workers/configuration/routing/routes/)
-- [Cloudflare Cron Triggers](https://developers.cloudflare.com/workers/configuration/cron-triggers/)
-- [Cloudflare Workers KV bindings](https://developers.cloudflare.com/kv/api/)
-- [Google Ads API OAuth](https://developers.google.com/google-ads/api/docs/oauth/overview)
-- [Google Ads API REST](https://developers.google.com/google-ads/api/rest/overview)
-- [Google service-account OAuth](https://developers.google.com/identity/protocols/oauth2/service-account)
-- [Google Sheets values API](https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/get)
-- [Follow Up Boss API authentication](https://docs.followupboss.com/reference/authentication)
+- https://developers.cloudflare.com/workers/configuration/cron-triggers/
+- https://developers.cloudflare.com/workers/configuration/routing/routes/
+- https://developers.cloudflare.com/kv/api/
+- https://developers.google.com/google-ads/api/docs/oauth/overview
+- https://developers.google.com/google-ads/api/docs/reporting/overview
+- https://docs.followupboss.com/reference/authentication

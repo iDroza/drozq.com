@@ -2,8 +2,7 @@ export type MetricStatus = "ok" | "stale" | "error" | "unconfigured";
 
 export type MetricSource =
   | "follow_up_boss"
-  | "google_ads"
-  | "google_sheets";
+  | "google_ads";
 
 export interface DashboardMetric {
   value: number | null;
@@ -14,12 +13,16 @@ export interface DashboardMetric {
 }
 
 export interface DashboardSnapshot {
-  version: 1;
+  version: 2;
   metrics: {
-    sellerLeads: DashboardMetric;
+    callsToday: DashboardMetric;
+    textsToday: DashboardMetric;
+    emailsToday: DashboardMetric;
+    appointmentsSetMtd: DashboardMetric;
+    freshBuyerLeads: DashboardMetric;
+    freshSellerLeads: DashboardMetric;
     googleAdsSpendMtd: DashboardMetric;
     googleAdsLeadsMtd: DashboardMetric;
-    shellPagesRemaining: DashboardMetric;
   };
   reportingPeriod: {
     startDate: string;
@@ -61,6 +64,15 @@ export interface GoogleAdsMetricResults {
   googleAdsLeadsMtd: MetricFetchResult;
 }
 
+export interface FollowUpBossMetricResults {
+  callsToday: MetricFetchResult;
+  textsToday: MetricFetchResult;
+  emailsToday: MetricFetchResult;
+  appointmentsSetMtd: MetricFetchResult;
+  freshBuyerLeads: MetricFetchResult;
+  freshSellerLeads: MetricFetchResult;
+}
+
 export interface RuntimeDependencies {
   fetcher?: typeof fetch | undefined;
   now?: Date | undefined;
@@ -85,6 +97,9 @@ export interface SecretBindings {
   GOOGLE_SHEETS_SPREADSHEET_ID?: string;
   GOOGLE_SHEETS_REMAINING_RANGE?: string;
   GOOGLE_SHEETS_PAGES_RANGE?: string;
+  GOOGLE_SHEETS_PAGE_HEADER?: string;
+  GOOGLE_SHEETS_STATUS_HEADER?: string;
+  GOOGLE_SHEETS_COMPLETE_VALUES?: string;
 }
 
 export type DashboardEnv = Env & SecretBindings;

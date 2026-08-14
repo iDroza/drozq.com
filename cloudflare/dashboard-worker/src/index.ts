@@ -8,7 +8,9 @@ import { SNAPSHOT_KEY, synchronizeDashboard } from "./sync";
 import type { DashboardEnv, DashboardSnapshot } from "./types";
 
 const SUMMARY_CACHE_CONTROL =
-  "public, max-age=60, s-maxage=60, stale-while-revalidate=60";
+  "public, max-age=10, s-maxage=10, stale-while-revalidate=20";
+const SYNC_LEASE_KEY = "dashboard:sync:lease:v2";
+const SYNC_LEASE_TTL_SECONDS = 120;
 
 function responseHeaders(cacheControl: string): Headers {
   return new Headers({
@@ -57,6 +59,36 @@ function bearerToken(request: Request): string {
   return match?.[1] ?? "";
 }
 
+async function acquireSyncLease(env: DashboardEnv): Promise<string | null> {
+  try {
+    if ((await env.DASHBOARD_KV.get(SYNC_LEASE_KEY)) !== null) {
+      return null;
+    }
+    const token = crypto.randomUUID();
+    await env.DASHBOARD_KV.put(SYNC_LEASE_KEY, token, {
+      expirationTtl: SYNC_LEASE_TTL_SECONDS,
+    });
+    return (await env.DASHBOARD_KV.get(SYNC_LEASE_KEY)) === token ? token : null;
+  } catch {
+    console.error(
+      JSON.stringify({ source: "dashboard_sync_lease", category: "storage", status: null }),
+    );
+    return null;
+  }
+}
+
+async function releaseSyncLease(env: DashboardEnv, token: string): Promise<void> {
+  try {
+    if ((await env.DASHBOARD_KV.get(SYNC_LEASE_KEY)) === token) {
+      await env.DASHBOARD_KV.delete(SYNC_LEASE_KEY);
+    }
+  } catch {
+    console.error(
+      JSON.stringify({ source: "dashboard_sync_lease", category: "storage", status: null }),
+    );
+  }
+}
+
 async function summaryResponse(env: DashboardEnv): Promise<Response> {
   const now = new Date();
   const snapshot = await readSnapshot(env);
@@ -85,8 +117,16 @@ async function manualSyncResponse(
     return response;
   }
 
-  const snapshot = await synchronizeDashboard(env);
-  return jsonResponse(snapshot, 200);
+  const lease = await acquireSyncLease(env);
+  if (lease === null) {
+    return jsonResponse({ ok: false, error: "sync_in_progress" }, 409);
+  }
+  try {
+    const snapshot = await synchronizeDashboard(env);
+    return jsonResponse(snapshot, 200);
+  } finally {
+    await releaseSyncLease(env, lease);
+  }
 }
 
 export async function handleRequest(
@@ -110,12 +150,21 @@ export async function handleRequest(
 }
 
 async function runScheduledSync(env: DashboardEnv): Promise<void> {
+  const lease = await acquireSyncLease(env);
+  if (lease === null) {
+    console.log(
+      JSON.stringify({ source: "dashboard_sync", category: "already_running", status: null }),
+    );
+    return;
+  }
   try {
     await synchronizeDashboard(env);
   } catch {
     console.error(
       JSON.stringify({ source: "dashboard_sync", category: "unexpected", status: null }),
     );
+  } finally {
+    await releaseSyncLease(env, lease);
   }
 }
 

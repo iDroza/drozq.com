@@ -16,7 +16,7 @@
   ],
   "triggers": {
     "crons": [
-      "*/5 * * * *"
+      "* * * * *"
     ]
   },
   "kv_namespaces": [
@@ -28,10 +28,7 @@
   "vars": {
     "FUB_SELLER_TAG": "Seller",
     "GOOGLE_ADS_API_VERSION": "v25",
-    "REPORTING_TIME_ZONE": "America/Los_Angeles",
-    "GOOGLE_SHEETS_PAGE_HEADER": "Page",
-    "GOOGLE_SHEETS_STATUS_HEADER": "Status",
-    "GOOGLE_SHEETS_COMPLETE_VALUES": "complete,completed,done,published,live"
+    "REPORTING_TIME_ZONE": "America/Los_Angeles"
   },
   "observability": {
     "enabled": true,

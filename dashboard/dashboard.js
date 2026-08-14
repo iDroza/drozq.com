@@ -2,14 +2,18 @@
   "use strict";
 
   var SUMMARY_URL = "/api/dashboard/summary";
-  var POLL_INTERVAL_MS = 60000;
+  var POLL_INTERVAL_MS = 15000;
   var REQUEST_TIMEOUT_MS = 10000;
-  var STALE_AFTER_MS = 15 * 60 * 1000;
+  var STALE_AFTER_MS = 5 * 60 * 1000;
   var metricConfig = {
-    sellerLeads: { source: "Follow Up Boss", format: "count" },
+    callsToday: { source: "Follow Up Boss", format: "count" },
+    textsToday: { source: "Follow Up Boss", format: "count" },
+    emailsToday: { source: "Follow Up Boss", format: "count" },
+    appointmentsSetMtd: { source: "Follow Up Boss", format: "count" },
+    freshBuyerLeads: { source: "Follow Up Boss", format: "count" },
+    freshSellerLeads: { source: "Follow Up Boss", format: "count" },
     googleAdsSpendMtd: { source: "Google Ads", format: "currency" },
-    googleAdsLeadsMtd: { source: "Google Ads", format: "count" },
-    shellPagesRemaining: { source: "Google Sheets", format: "count" }
+    googleAdsLeadsMtd: { source: "Google Ads", format: "conversion" }
   };
   var countFormatter = new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 0
@@ -18,6 +22,9 @@
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+  var conversionFormatter = new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 2
   });
   var pollTimer = null;
@@ -45,7 +52,7 @@
   }
 
   function isSnapshot(value) {
-    if (!isObject(value) || value.version !== 1 || !isObject(value.metrics)) {
+    if (!isObject(value) || value.version !== 2 || !isObject(value.metrics)) {
       return false;
     }
     return Object.keys(metricConfig).every(function (key) {
@@ -55,10 +62,13 @@
 
   function formatValue(value, format) {
     if (value === null) {
-      return "\u2014";
+      return "\u2013";
     }
-    return format === "currency"
-      ? currencyFormatter.format(value)
+    if (format === "currency") {
+      return currencyFormatter.format(value);
+    }
+    return format === "conversion"
+      ? conversionFormatter.format(value)
       : countFormatter.format(value);
   }
 

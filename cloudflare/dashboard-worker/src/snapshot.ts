@@ -1,10 +1,6 @@
 import { CONFIG_DEFAULTS } from "./config";
 import { getReportingPeriod, isIsoUtcTimestamp, isMetricStale } from "./lib/date";
-import {
-  isFiniteNonnegative,
-  MAX_COUNT,
-  MAX_SPEND_USD,
-} from "./lib/numeric";
+import { isFiniteNonnegative, MAX_COUNT, MAX_SPEND_USD } from "./lib/numeric";
 import type {
   DashboardMetric,
   DashboardMetricKey,
@@ -18,29 +14,68 @@ interface MetricSpec {
   definition: string;
 }
 
+export const METRIC_KEYS = [
+  "callsToday",
+  "textsToday",
+  "emailsToday",
+  "appointmentsSetMtd",
+  "freshBuyerLeads",
+  "freshSellerLeads",
+  "googleAdsSpendMtd",
+  "googleAdsLeadsMtd",
+] as const satisfies readonly DashboardMetricKey[];
+
 export const METRIC_SPECS = {
-  sellerLeads: {
+  callsToday: {
     source: "follow_up_boss",
     definition:
-      'All accessible Follow Up Boss contacts tagged "Seller", excluding Trash.',
+      "Outbound calls made today by the authenticated Follow Up Boss user.",
+  },
+  textsToday: {
+    source: "follow_up_boss",
+    definition:
+      "Manual outbound text messages sent today by the authenticated Follow Up Boss user.",
+  },
+  emailsToday: {
+    source: "follow_up_boss",
+    definition:
+      "Manual outbound emails sent today by the authenticated Follow Up Boss user.",
+  },
+  appointmentsSetMtd: {
+    source: "follow_up_boss",
+    definition:
+      "Appointments created this month by the authenticated Follow Up Boss user.",
+  },
+  freshBuyerLeads: {
+    source: "follow_up_boss",
+    definition:
+      "Accessible non-trash buyer contacts created during the rolling previous four weeks.",
+  },
+  freshSellerLeads: {
+    source: "follow_up_boss",
+    definition:
+      "Accessible non-trash contacts tagged Seller and created during the rolling previous four weeks.",
   },
   googleAdsSpendMtd: {
     source: "google_ads",
     definition:
-      "Total Google Ads cost from the first day of the current month through today.",
+      "Total month-to-date Google Ads cost across every accessible non-manager account.",
   },
   googleAdsLeadsMtd: {
     source: "google_ads",
     definition:
-      "Month-to-date Google Ads conversions matching the configured lead conversion action names.",
-  },
-  shellPagesRemaining: {
-    source: "google_sheets",
-    definition:
-      "Incomplete shell-page rows in the configured Google Sheet, or the configured remaining-count cell.",
+      "Total month-to-date primary Google Ads conversions across every accessible non-manager account.",
   },
 } as const satisfies Record<DashboardMetricKey, MetricSpec>;
 
+const INTEGER_METRICS = new Set<DashboardMetricKey>([
+  "callsToday",
+  "textsToday",
+  "emailsToday",
+  "appointmentsSetMtd",
+  "freshBuyerLeads",
+  "freshSellerLeads",
+]);
 const VALID_STATUSES = new Set<MetricStatus>([
   "ok",
   "stale",
@@ -72,7 +107,6 @@ function sanitizeMetric(
   const status = value["status"];
   const updatedAt = value["updatedAt"];
   const maximum = key === "googleAdsSpendMtd" ? MAX_SPEND_USD : MAX_COUNT;
-  const requiresInteger = key === "sellerLeads" || key === "shellPagesRemaining";
 
   if (
     value["source"] !== spec.source ||
@@ -81,7 +115,7 @@ function sanitizeMetric(
     (rawValue !== null &&
       (!isFiniteNonnegative(rawValue) ||
         rawValue > maximum ||
-        (requiresInteger && !Number.isSafeInteger(rawValue)))) ||
+        (INTEGER_METRICS.has(key) && !Number.isSafeInteger(rawValue)))) ||
     (updatedAt !== null && !isIsoUtcTimestamp(updatedAt))
   ) {
     return null;
@@ -91,10 +125,7 @@ function sanitizeMetric(
   if ((rawValue === null) !== (updatedAt === null)) {
     return null;
   }
-  if (
-    (typedStatus === "ok" || typedStatus === "stale") &&
-    rawValue === null
-  ) {
+  if ((typedStatus === "ok" || typedStatus === "stale") && rawValue === null) {
     return null;
   }
   if (
@@ -116,38 +147,29 @@ function sanitizeMetric(
 export function sanitizeSnapshot(value: unknown): DashboardSnapshot | null {
   if (
     !isRecord(value) ||
-    value["version"] !== 1 ||
+    value["version"] !== 2 ||
     !isRecord(value["metrics"]) ||
     !isRecord(value["reportingPeriod"])
   ) {
     return null;
   }
 
-  const sellerLeads = sanitizeMetric(value["metrics"]["sellerLeads"], "sellerLeads");
-  const googleAdsSpendMtd = sanitizeMetric(
-    value["metrics"]["googleAdsSpendMtd"],
-    "googleAdsSpendMtd",
-  );
-  const googleAdsLeadsMtd = sanitizeMetric(
-    value["metrics"]["googleAdsLeadsMtd"],
-    "googleAdsLeadsMtd",
-  );
-  const shellPagesRemaining = sanitizeMetric(
-    value["metrics"]["shellPagesRemaining"],
-    "shellPagesRemaining",
-  );
+  const metrics = {} as DashboardSnapshot["metrics"];
+  for (const key of METRIC_KEYS) {
+    const metric = sanitizeMetric(value["metrics"][key], key);
+    if (metric === null) {
+      return null;
+    }
+    metrics[key] = metric;
+  }
+
   const reportingPeriod = value["reportingPeriod"];
   const startDate = reportingPeriod["startDate"];
   const endDate = reportingPeriod["endDate"];
   const timeZone = reportingPeriod["timeZone"];
   const lastAttemptAt = value["lastAttemptAt"];
   const lastSuccessfulFullSyncAt = value["lastSuccessfulFullSyncAt"];
-
   if (
-    sellerLeads === null ||
-    googleAdsSpendMtd === null ||
-    googleAdsLeadsMtd === null ||
-    shellPagesRemaining === null ||
     !validIsoDate(startDate) ||
     !validIsoDate(endDate) ||
     startDate > endDate ||
@@ -162,13 +184,8 @@ export function sanitizeSnapshot(value: unknown): DashboardSnapshot | null {
   }
 
   return {
-    version: 1,
-    metrics: {
-      sellerLeads,
-      googleAdsSpendMtd,
-      googleAdsLeadsMtd,
-      shellPagesRemaining,
-    },
+    version: 2,
+    metrics,
     reportingPeriod: { startDate, endDate, timeZone },
     lastAttemptAt,
     lastSuccessfulFullSyncAt,
@@ -190,14 +207,13 @@ export function createUnconfiguredSnapshot(
   now: Date,
   timeZone: string = CONFIG_DEFAULTS.reportingTimeZone,
 ): DashboardSnapshot {
+  const metrics = {} as DashboardSnapshot["metrics"];
+  for (const key of METRIC_KEYS) {
+    metrics[key] = unavailableMetric(key);
+  }
   return {
-    version: 1,
-    metrics: {
-      sellerLeads: unavailableMetric("sellerLeads"),
-      googleAdsSpendMtd: unavailableMetric("googleAdsSpendMtd"),
-      googleAdsLeadsMtd: unavailableMetric("googleAdsLeadsMtd"),
-      shellPagesRemaining: unavailableMetric("shellPagesRemaining"),
-    },
+    version: 2,
+    metrics,
     reportingPeriod: getReportingPeriod(now, timeZone),
     lastAttemptAt: "1970-01-01T00:00:00.000Z",
     lastSuccessfulFullSyncAt: null,
@@ -213,7 +229,7 @@ export function toPublicSnapshot(
     throw new TypeError("invalid_snapshot");
   }
 
-  for (const key of Object.keys(sanitized.metrics) as DashboardMetricKey[]) {
+  for (const key of METRIC_KEYS) {
     const metric = sanitized.metrics[key];
     if (metric.status === "ok" && isMetricStale(metric.updatedAt, now)) {
       metric.status = "stale";

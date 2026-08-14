@@ -27,7 +27,6 @@ export interface GoogleAdsConfig {
   customerId: string;
   loginCustomerId: string;
   apiVersion: string;
-  leadConversionActionNames: string[];
 }
 
 export interface GoogleSheetsConfig {
@@ -71,11 +70,6 @@ export function readFollowUpBossConfig(env: DashboardEnv): FollowUpBossConfig {
 }
 
 export function readGoogleAdsConfig(env: DashboardEnv): GoogleAdsConfig {
-  const actionNames = parseCommaSeparated(
-    clean(env.GOOGLE_ADS_LEAD_CONVERSION_ACTION_NAMES) ||
-      CONFIG_DEFAULTS.googleAdsLeadConversionActionNames,
-  );
-
   return {
     developerToken: clean(env.GOOGLE_ADS_DEVELOPER_TOKEN),
     clientId: clean(env.GOOGLE_ADS_CLIENT_ID),
@@ -87,7 +81,6 @@ export function readGoogleAdsConfig(env: DashboardEnv): GoogleAdsConfig {
     loginCustomerId: normalizeCustomerId(clean(env.GOOGLE_ADS_LOGIN_CUSTOMER_ID)),
     apiVersion:
       clean(env.GOOGLE_ADS_API_VERSION) || CONFIG_DEFAULTS.googleAdsApiVersion,
-    leadConversionActionNames: actionNames,
   };
 }
 

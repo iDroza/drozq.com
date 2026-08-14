@@ -1,10 +1,7 @@
 import { readGoogleAdsConfig, type GoogleAdsConfig } from "../config";
 import { exchangeRefreshToken } from "../lib/google-auth";
 import { classifyHttpStatus, isRecord, readBoundedJson } from "../lib/http";
-import {
-  requireNonnegativeNumber,
-  requireSpend,
-} from "../lib/numeric";
+import { requireNonnegativeNumber, requireSpend } from "../lib/numeric";
 import { fetchWithRetry, UpstreamRequestError } from "../lib/retry";
 import type {
   DashboardEnv,
@@ -16,11 +13,26 @@ import type {
 } from "../types";
 
 const MAX_PAGES = 100;
+const MAX_CUSTOMERS = 100;
+const ACCOUNT_CACHE_KEY = "dashboard:google_ads:accounts:v2";
+const ACCOUNT_CACHE_MS = 10 * 60 * 1_000;
 
 export interface ConversionActionCatalogItem {
   name: string;
   status: string;
   type: string;
+}
+
+interface GoogleAdsPerformance {
+  costMicros: bigint;
+  conversions: number;
+}
+
+interface CustomerClient {
+  customerId: string;
+  manager: boolean;
+  hidden: boolean;
+  testAccount: boolean;
 }
 
 export const CONVERSION_ACTION_CATALOG_QUERY = `
@@ -31,6 +43,18 @@ SELECT
 FROM conversion_action
 WHERE conversion_action.status != 'REMOVED'
 ORDER BY conversion_action.name
+`.trim();
+
+export const CUSTOMER_CLIENT_QUERY = `
+SELECT
+  customer_client.client_customer,
+  customer_client.manager,
+  customer_client.level,
+  customer_client.status,
+  customer_client.hidden,
+  customer_client.test_account
+FROM customer_client
+WHERE customer_client.level <= 1
 `.trim();
 
 export function buildSpendQuery(
@@ -50,6 +74,18 @@ export function buildLeadQuery(
   return `
 SELECT
   segments.conversion_action_name,
+  metrics.conversions
+FROM customer
+WHERE segments.date BETWEEN '${reportingPeriod.startDate}' AND '${reportingPeriod.endDate}'
+`.trim();
+}
+
+export function buildAccountPerformanceQuery(
+  reportingPeriod: DashboardSnapshot["reportingPeriod"],
+): string {
+  return `
+SELECT
+  metrics.cost_micros,
   metrics.conversions
 FROM customer
 WHERE segments.date BETWEEN '${reportingPeriod.startDate}' AND '${reportingPeriod.endDate}'
@@ -86,7 +122,24 @@ export function parseGoogleAdsSpend(rows: unknown[]): number {
   if (rows.length !== 1 || !isRecord(rows[0]) || !isRecord(rows[0]["metrics"])) {
     throw new UpstreamRequestError("schema");
   }
-  return costMicrosToUsd(rows[0]["metrics"]["costMicros"]);
+  return costMicrosToUsd(rows[0]["metrics"]["costMicros"] ?? "0");
+}
+
+export function parseGoogleAdsPerformance(rows: unknown[]): GoogleAdsPerformance {
+  if (rows.length === 0) {
+    return { costMicros: 0n, conversions: 0 };
+  }
+  if (rows.length !== 1 || !isRecord(rows[0]) || !isRecord(rows[0]["metrics"])) {
+    throw new UpstreamRequestError("schema");
+  }
+  const metrics = rows[0]["metrics"];
+  return {
+    costMicros: parseMicros(metrics["costMicros"] ?? "0"),
+    conversions: requireNonnegativeNumber(
+      metrics["conversions"] ?? 0,
+      "google_ads_conversions",
+    ),
+  };
 }
 
 function normalizeActionName(value: string): string {
@@ -169,19 +222,22 @@ function validateGoogleAdsConfig(config: GoogleAdsConfig): boolean {
     config.refreshToken !== "" &&
     /^\d{10}$/u.test(config.customerId) &&
     (config.loginCustomerId === "" || /^\d{10}$/u.test(config.loginCustomerId)) &&
-    /^v\d+$/u.test(config.apiVersion) &&
-    config.leadConversionActionNames.length > 0
+    /^v\d+$/u.test(config.apiVersion)
   );
 }
 
 export async function queryGoogleAds(
   accessToken: string,
   config: GoogleAdsConfig,
+  customerId: string,
   query: string,
   source: string,
   dependencies: RuntimeDependencies = {},
 ): Promise<unknown[]> {
-  const endpoint = `https://googleads.googleapis.com/${config.apiVersion}/customers/${config.customerId}/googleAds:search`;
+  if (!/^\d{10}$/u.test(customerId)) {
+    throw new UpstreamRequestError("configuration");
+  }
+  const endpoint = `https://googleads.googleapis.com/${config.apiVersion}/customers/${customerId}/googleAds:search`;
   const headers = new Headers({
     Authorization: `Bearer ${accessToken}`,
     "developer-token": config.developerToken,
@@ -232,6 +288,159 @@ export async function queryGoogleAds(
   throw new UpstreamRequestError("schema");
 }
 
+function parseCustomerClients(rows: unknown[]): CustomerClient[] {
+  return rows.map((row) => {
+    if (!isRecord(row) || !isRecord(row["customerClient"])) {
+      throw new UpstreamRequestError("schema");
+    }
+    const client = row["customerClient"];
+    const resource = client["clientCustomer"];
+    if (typeof resource !== "string") {
+      throw new UpstreamRequestError("schema");
+    }
+    const match = /^customers\/(\d{10})$/u.exec(resource);
+    if (match?.[1] === undefined) {
+      throw new UpstreamRequestError("schema");
+    }
+    for (const field of ["manager", "hidden", "testAccount"] as const) {
+      if (client[field] !== undefined && typeof client[field] !== "boolean") {
+        throw new UpstreamRequestError("schema");
+      }
+    }
+    return {
+      customerId: match[1],
+      manager: client["manager"] === true,
+      hidden: client["hidden"] === true,
+      testAccount: client["testAccount"] === true,
+    };
+  });
+}
+
+export async function discoverGoogleAdsCustomerIds(
+  accessToken: string,
+  config: GoogleAdsConfig,
+  dependencies: RuntimeDependencies = {},
+): Promise<string[]> {
+  const rootCustomerId = config.loginCustomerId || config.customerId;
+  const managers = [rootCustomerId];
+  const visitedManagers = new Set<string>();
+  const customerIds = new Set<string>();
+
+  while (managers.length > 0) {
+    const managerId = managers.shift();
+    if (managerId === undefined || visitedManagers.has(managerId)) {
+      continue;
+    }
+    visitedManagers.add(managerId);
+    if (visitedManagers.size + customerIds.size > MAX_CUSTOMERS) {
+      throw new UpstreamRequestError("schema");
+    }
+    const rows = await queryGoogleAds(
+      accessToken,
+      config,
+      managerId,
+      CUSTOMER_CLIENT_QUERY,
+      "google_ads_accounts",
+      dependencies,
+    );
+    for (const client of parseCustomerClients(rows)) {
+      if (client.hidden || client.testAccount) {
+        continue;
+      }
+      if (client.manager) {
+        if (client.customerId !== managerId && !visitedManagers.has(client.customerId)) {
+          managers.push(client.customerId);
+        }
+      } else {
+        customerIds.add(client.customerId);
+      }
+    }
+  }
+
+  if (customerIds.size === 0) {
+    throw new UpstreamRequestError("schema");
+  }
+  return [...customerIds].sort();
+}
+
+function parseCachedCustomerIds(
+  value: unknown,
+  rootCustomerId: string,
+  now: Date,
+): string[] | null {
+  if (
+    !isRecord(value) ||
+    value["version"] !== 2 ||
+    value["rootCustomerId"] !== rootCustomerId ||
+    typeof value["discoveredAt"] !== "string" ||
+    !Number.isFinite(Date.parse(value["discoveredAt"])) ||
+    now.getTime() - Date.parse(value["discoveredAt"]) > ACCOUNT_CACHE_MS ||
+    !Array.isArray(value["customerIds"]) ||
+    value["customerIds"].length === 0 ||
+    value["customerIds"].length > MAX_CUSTOMERS ||
+    !value["customerIds"].every(
+      (customerId) => typeof customerId === "string" && /^\d{10}$/u.test(customerId),
+    )
+  ) {
+    return null;
+  }
+  return [...new Set(value["customerIds"] as string[])].sort();
+}
+
+async function resolveCustomerIds(
+  env: DashboardEnv,
+  accessToken: string,
+  config: GoogleAdsConfig,
+  now: Date,
+  dependencies: RuntimeDependencies,
+): Promise<string[]> {
+  const rootCustomerId = config.loginCustomerId || config.customerId;
+  try {
+    const stored = await env.DASHBOARD_KV.get(ACCOUNT_CACHE_KEY);
+    if (stored !== null) {
+      const cached = parseCachedCustomerIds(
+        JSON.parse(stored) as unknown,
+        rootCustomerId,
+        now,
+      );
+      if (cached !== null) {
+        return cached;
+      }
+    }
+  } catch {
+    console.warn(JSON.stringify({
+      source: "google_ads_account_cache",
+      category: "storage",
+      status: null,
+    }));
+  }
+
+  const customerIds = await discoverGoogleAdsCustomerIds(
+    accessToken,
+    config,
+    dependencies,
+  );
+  try {
+    await env.DASHBOARD_KV.put(
+      ACCOUNT_CACHE_KEY,
+      JSON.stringify({
+        version: 2,
+        rootCustomerId,
+        discoveredAt: now.toISOString(),
+        customerIds,
+      }),
+      { expirationTtl: 3_600 },
+    );
+  } catch {
+    console.warn(JSON.stringify({
+      source: "google_ads_account_cache",
+      category: "storage",
+      status: null,
+    }));
+  }
+  return customerIds;
+}
+
 function metricError(error: unknown, started: number): MetricFetchResult {
   const category: ErrorCategory =
     error instanceof UpstreamRequestError
@@ -270,9 +479,8 @@ export async function fetchGoogleAdsMetrics(
     };
   }
 
-  let accessToken: string;
   try {
-    accessToken = await exchangeRefreshToken(
+    const accessToken = await exchangeRefreshToken(
       {
         clientId: config.clientId,
         clientSecret: config.clientSecret,
@@ -280,79 +488,69 @@ export async function fetchGoogleAdsMetrics(
       },
       dependencies,
     );
+    const now = dependencies.now ?? new Date();
+    const customerIds = await resolveCustomerIds(
+      env,
+      accessToken,
+      config,
+      now,
+      dependencies,
+    );
+    const query = buildAccountPerformanceQuery(reportingPeriod);
+    const settled = await Promise.allSettled(
+      customerIds.map((customerId) => queryGoogleAds(
+        accessToken,
+        config,
+        customerId,
+        query,
+        "google_ads_performance",
+        dependencies,
+      )),
+    );
+    const rejected = settled.find(
+      (item): item is PromiseRejectedResult => item.status === "rejected",
+    );
+    if (rejected !== undefined) {
+      try {
+        await env.DASHBOARD_KV.delete(ACCOUNT_CACHE_KEY);
+      } catch {
+        // The next cache expiry will force account discovery if deletion fails.
+      }
+      throw rejected.reason;
+    }
+
+    let costMicros = 0n;
+    let conversions = 0;
+    for (const item of settled) {
+      if (item.status !== "fulfilled") {
+        throw new UpstreamRequestError("unexpected");
+      }
+      const performance = parseGoogleAdsPerformance(item.value);
+      costMicros += performance.costMicros;
+      conversions += performance.conversions;
+    }
+    const durationMs = Date.now() - started;
+    return {
+      googleAdsSpendMtd: {
+        kind: "ok",
+        value: costMicrosToUsd(costMicros),
+        durationMs,
+        responseStatus: 200,
+      },
+      googleAdsLeadsMtd: {
+        kind: "ok",
+        value: requireNonnegativeNumber(
+          conversions,
+          "google_ads_all_account_conversions",
+        ),
+        durationMs,
+        responseStatus: 200,
+      },
+    };
   } catch (error) {
     return {
       googleAdsSpendMtd: metricError(error, started),
       googleAdsLeadsMtd: metricError(error, started),
     };
   }
-
-  const [spendSettled, leadsSettled, catalogSettled] = await Promise.allSettled([
-    queryGoogleAds(
-      accessToken,
-      config,
-      buildSpendQuery(reportingPeriod),
-      "google_ads_spend",
-      dependencies,
-    ),
-    queryGoogleAds(
-      accessToken,
-      config,
-      buildLeadQuery(reportingPeriod),
-      "google_ads_leads",
-      dependencies,
-    ),
-    queryGoogleAds(
-      accessToken,
-      config,
-      CONVERSION_ACTION_CATALOG_QUERY,
-      "google_ads_actions",
-      dependencies,
-    ),
-  ]);
-
-  let googleAdsSpendMtd: MetricFetchResult;
-  try {
-    if (spendSettled.status === "rejected") {
-      throw spendSettled.reason;
-    }
-    googleAdsSpendMtd = {
-      kind: "ok",
-      value: parseGoogleAdsSpend(spendSettled.value),
-      durationMs: Date.now() - started,
-      responseStatus: 200,
-    };
-  } catch (error) {
-    googleAdsSpendMtd = metricError(error, started);
-  }
-
-  let googleAdsLeadsMtd: MetricFetchResult;
-  try {
-    if (leadsSettled.status === "rejected") {
-      throw leadsSettled.reason;
-    }
-    const matching = sumMatchingLeadConversions(
-      leadsSettled.value,
-      config.leadConversionActionNames,
-    );
-    if (matching.matchedRows === 0) {
-      if (catalogSettled.status === "rejected") {
-        throw catalogSettled.reason;
-      }
-      const catalog = parseConversionActionCatalog(catalogSettled.value);
-      if (!catalogContainsConfiguredAction(catalog, config.leadConversionActionNames)) {
-        throw new UpstreamRequestError("conversion_action_not_found");
-      }
-    }
-    googleAdsLeadsMtd = {
-      kind: "ok",
-      value: matching.value,
-      durationMs: Date.now() - started,
-      responseStatus: 200,
-    };
-  } catch (error) {
-    googleAdsLeadsMtd = metricError(error, started);
-  }
-
-  return { googleAdsSpendMtd, googleAdsLeadsMtd };
 }

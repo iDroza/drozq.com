@@ -1,8 +1,9 @@
-import { CONFIG_DEFAULTS, normalizeCustomerId, parseCommaSeparated } from "../cloudflare/dashboard-worker/src/config";
+import { CONFIG_DEFAULTS, normalizeCustomerId } from "../cloudflare/dashboard-worker/src/config";
 import { exchangeRefreshToken } from "../cloudflare/dashboard-worker/src/lib/google-auth";
 import { UpstreamRequestError } from "../cloudflare/dashboard-worker/src/lib/retry";
 import {
   CONVERSION_ACTION_CATALOG_QUERY,
+  discoverGoogleAdsCustomerIds,
   parseConversionActionCatalog,
   queryGoogleAds,
 } from "../cloudflare/dashboard-worker/src/sources/google-ads";
@@ -32,10 +33,6 @@ async function main(): Promise<void> {
     loginCustomerId: normalizeCustomerId(setting("GOOGLE_ADS_LOGIN_CUSTOMER_ID")),
     apiVersion:
       setting("GOOGLE_ADS_API_VERSION") || CONFIG_DEFAULTS.googleAdsApiVersion,
-    leadConversionActionNames: parseCommaSeparated(
-      setting("GOOGLE_ADS_LEAD_CONVERSION_ACTION_NAMES") ||
-        CONFIG_DEFAULTS.googleAdsLeadConversionActionNames,
-    ),
   };
 
   if (!/^\d{10}$/u.test(config.customerId)) {
@@ -50,24 +47,27 @@ async function main(): Promise<void> {
     clientSecret: config.clientSecret,
     refreshToken: config.refreshToken,
   });
-  const rows = await queryGoogleAds(
-    accessToken,
-    config,
-    CONVERSION_ACTION_CATALOG_QUERY,
-    "google_ads_actions_diagnostic",
-  );
-  const actions = parseConversionActionCatalog(rows).sort((left, right) =>
-    left.name.localeCompare(right.name, "en-US", { sensitivity: "base" }),
-  );
-
-  if (actions.length === 0) {
-    console.log("No non-removed conversion actions were returned.");
-    return;
-  }
-
-  console.log("Available Google Ads conversion actions:");
-  for (const action of actions) {
-    console.log(`${action.name}\t${action.status}\t${action.type}`);
+  const customerIds = await discoverGoogleAdsCustomerIds(accessToken, config);
+  console.log(`Available Google Ads conversion actions across ${customerIds.length} account(s):`);
+  for (const customerId of customerIds) {
+    const rows = await queryGoogleAds(
+      accessToken,
+      config,
+      customerId,
+      CONVERSION_ACTION_CATALOG_QUERY,
+      "google_ads_actions_diagnostic",
+    );
+    const actions = parseConversionActionCatalog(rows).sort((left, right) =>
+      left.name.localeCompare(right.name, "en-US", { sensitivity: "base" }),
+    );
+    console.log(`Customer ${customerId}:`);
+    if (actions.length === 0) {
+      console.log("  No non-removed conversion actions were returned.");
+      continue;
+    }
+    for (const action of actions) {
+      console.log(`  ${action.name}\t${action.status}\t${action.type}`);
+    }
   }
 }
 
