@@ -2,6 +2,7 @@
   "use strict";
 
   var SUMMARY_URL = "/api/dashboard/summary";
+  var BOOTSTRAP_URL = "/api/dashboard/bootstrap.js";
   var POLL_INTERVAL_MS = 15000;
   var REQUEST_TIMEOUT_MS = 10000;
   var STALE_AFTER_MS = 5 * 60 * 1000;
@@ -65,6 +66,7 @@
   var pollTimer = null;
   var inFlight = false;
   var currentSnapshot = null;
+  var bootstrapScript = null;
 
   var grids = document.querySelectorAll(".metrics-grid");
   var syncStatus = document.getElementById("sync-status");
@@ -203,10 +205,79 @@
   function showNetworkError() {
     if (!currentSnapshot) {
       renderUnavailable();
+      networkError.hidden = false;
     } else {
-      syncStatus.textContent = "Last saved snapshot shown";
+      syncStatus.textContent = "Last synchronized " + relativeAge(currentSnapshot.lastAttemptAt).replace(/^updated /, "");
+      networkError.hidden = true;
     }
-    networkError.hidden = false;
+  }
+
+  function loadBootstrapSnapshot() {
+    return new Promise(function (resolve, reject) {
+      if (bootstrapScript) {
+        bootstrapScript.remove();
+      }
+      var script = document.createElement("script");
+      var timeout = window.setTimeout(function () {
+        script.remove();
+        if (bootstrapScript === script) {
+          bootstrapScript = null;
+        }
+        reject(new Error("dashboard_bootstrap_timeout"));
+      }, REQUEST_TIMEOUT_MS);
+
+      bootstrapScript = script;
+      script.async = true;
+      script.referrerPolicy = "no-referrer";
+      script.src = BOOTSTRAP_URL + "?refresh=" + Date.now();
+      script.onload = function () {
+        window.clearTimeout(timeout);
+        script.remove();
+        if (bootstrapScript === script) {
+          bootstrapScript = null;
+        }
+        var payload = window.__DROZQ_DASHBOARD_SNAPSHOT__;
+        if (isSnapshot(payload)) {
+          resolve(payload);
+        } else {
+          reject(new Error("dashboard_bootstrap_invalid"));
+        }
+      };
+      script.onerror = function () {
+        window.clearTimeout(timeout);
+        script.remove();
+        if (bootstrapScript === script) {
+          bootstrapScript = null;
+        }
+        reject(new Error("dashboard_bootstrap_unavailable"));
+      };
+      document.head.appendChild(script);
+    });
+  }
+
+  async function requestSnapshot() {
+    if (typeof window.fetch !== "function" || typeof window.AbortController !== "function") {
+      return loadBootstrapSnapshot();
+    }
+    var controller = new window.AbortController();
+    var timeout = window.setTimeout(function () {
+      controller.abort();
+    }, REQUEST_TIMEOUT_MS);
+    try {
+      var response = await window.fetch(SUMMARY_URL, {
+        method: "GET",
+        headers: { "Accept": "application/json" },
+        credentials: "same-origin",
+        signal: controller.signal
+      });
+      var payload = await response.json();
+      if ((response.ok || response.status === 503) && isSnapshot(payload)) {
+        return payload;
+      }
+      throw new Error("dashboard_unavailable");
+    } finally {
+      window.clearTimeout(timeout);
+    }
   }
 
   function clearPollTimer() {
@@ -230,28 +301,18 @@
     }
     inFlight = true;
     retryButton.disabled = true;
-    var controller = new AbortController();
-    var timeout = window.setTimeout(function () {
-      controller.abort();
-    }, REQUEST_TIMEOUT_MS);
 
     try {
-      var response = await fetch(SUMMARY_URL, {
-        method: "GET",
-        headers: { "Accept": "application/json" },
-        credentials: "same-origin",
-        signal: controller.signal
-      });
-      var payload = await response.json();
-      if ((response.ok || response.status === 503) && isSnapshot(payload)) {
-        renderSnapshot(payload);
-      } else {
-        throw new Error("dashboard_unavailable");
+      var payload;
+      try {
+        payload = await requestSnapshot();
+      } catch (_requestError) {
+        payload = await loadBootstrapSnapshot();
       }
+      renderSnapshot(payload);
     } catch (_error) {
       showNetworkError();
     } finally {
-      window.clearTimeout(timeout);
       retryButton.disabled = false;
       inFlight = false;
       schedulePoll();
@@ -271,5 +332,8 @@
     }
   });
 
+  if (isSnapshot(window.__DROZQ_DASHBOARD_SNAPSHOT__)) {
+    renderSnapshot(window.__DROZQ_DASHBOARD_SNAPSHOT__);
+  }
   void refreshDashboard();
 })();

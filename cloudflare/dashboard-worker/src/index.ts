@@ -9,6 +9,7 @@ import type { DashboardEnv, DashboardSnapshot } from "./types";
 
 const SUMMARY_CACHE_CONTROL =
   "public, max-age=10, s-maxage=10, stale-while-revalidate=20";
+const DASHBOARD_BOOTSTRAP_GLOBAL = "__DROZQ_DASHBOARD_SNAPSHOT__";
 const SYNC_LEASE_KEY = "dashboard:sync:lease:v2";
 const SYNC_LEASE_TTL_SECONDS = 120;
 
@@ -29,6 +30,18 @@ function jsonResponse(
   return new Response(JSON.stringify(payload), {
     status,
     headers: responseHeaders(cacheControl),
+  });
+}
+
+function javascriptResponse(source: string): Response {
+  return new Response(source, {
+    status: 200,
+    headers: {
+      "Content-Type": "application/javascript; charset=utf-8",
+      "X-Content-Type-Options": "nosniff",
+      "Cache-Control": SUMMARY_CACHE_CONTROL,
+      "Referrer-Policy": "no-referrer",
+    },
   });
 }
 
@@ -99,6 +112,17 @@ async function summaryResponse(env: DashboardEnv): Promise<Response> {
   return jsonResponse(toPublicSnapshot(snapshot, now), 200, SUMMARY_CACHE_CONTROL);
 }
 
+async function bootstrapResponse(env: DashboardEnv): Promise<Response> {
+  const now = new Date();
+  const snapshot = await readSnapshot(env);
+  const payload = snapshot === null
+    ? createUnconfiguredSnapshot(now, readReportingTimeZone(env))
+    : toPublicSnapshot(snapshot, now);
+  return javascriptResponse(
+    `"use strict";window.${DASHBOARD_BOOTSTRAP_GLOBAL}=${JSON.stringify(payload)};`,
+  );
+}
+
 async function healthResponse(env: DashboardEnv): Promise<Response> {
   const snapshot = await readSnapshot(env);
   return jsonResponse({ ok: true, snapshotExists: snapshot !== null }, 200);
@@ -136,6 +160,12 @@ export async function handleRequest(
   const url = new URL(request.url);
   if (request.method === "GET" && url.pathname === "/api/dashboard/summary") {
     return summaryResponse(env);
+  }
+  if (
+    request.method === "GET" &&
+    url.pathname === "/api/dashboard/bootstrap.js"
+  ) {
+    return bootstrapResponse(env);
   }
   if (request.method === "GET" && url.pathname === "/api/dashboard/health") {
     return healthResponse(env);

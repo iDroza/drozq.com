@@ -81,6 +81,13 @@ assert.match(
 assert.match(html, /aria-live="polite"/u, "metrics need an aria-live region");
 assert.match(html, /<noscript>/u, "dashboard needs a noscript message");
 assert.match(javascript, /"\/api\/dashboard\/summary"/u);
+assert.match(javascript, /"\/api\/dashboard\/bootstrap\.js"/u);
+assert.match(javascript, /loadBootstrapSnapshot/u);
+assert.match(
+  html,
+  /<script src="\/api\/dashboard\/bootstrap\.js" defer><\/script>[\s\S]*<script src="\/dashboard\/dashboard\.js\?v=20260814e" defer><\/script>/u,
+  "the resilient snapshot bootstrap must load before the dashboard controller",
+);
 assert.doesNotMatch(
   javascript,
   /api\.followupboss\.com|googleads\.googleapis\.com|sheets\.googleapis\.com|oauth2\.googleapis\.com|webmasters\/v3/iu,

@@ -1110,6 +1110,42 @@ describe("snapshot merging and public contract", () => {
     expect(Object.keys(payload.metrics)).toHaveLength(26);
   });
 
+  it("serves the same sanitized snapshot through the browser bootstrap", async () => {
+    const snapshot = makeSnapshot();
+    await env.DASHBOARD_KV.put(SNAPSHOT_KEY, JSON.stringify({
+      ...snapshot,
+      privateField: "must-not-ship",
+      metrics: {
+        ...snapshot.metrics,
+        callsToday: {
+          ...snapshot.metrics.callsToday,
+          rawResponse: "must-not-ship",
+        },
+      },
+    }));
+    const response = await handleRequest(
+      new Request("https://drozq.com/api/dashboard/bootstrap.js"),
+      withSecrets({}),
+    );
+    const source = await response.text();
+    const prefix = '"use strict";window.__DROZQ_DASHBOARD_SNAPSHOT__=';
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Content-Type")).toBe(
+      "application/javascript; charset=utf-8",
+    );
+    expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
+    expect(response.headers.get("Cache-Control")).toBe(
+      "public, max-age=10, s-maxage=10, stale-while-revalidate=20",
+    );
+    expect(source.startsWith(prefix)).toBe(true);
+    expect(source.endsWith(";")).toBe(true);
+    expect(source).not.toContain("must-not-ship");
+    const payload = JSON.parse(source.slice(prefix.length, -1)) as DashboardSnapshot;
+    expect(sanitizeSnapshot(payload)).not.toBeNull();
+    expect(Object.keys(payload.metrics)).toHaveLength(26);
+  });
+
   it("returns a valid 503 payload when no snapshot exists", async () => {
     const response = await handleRequest(
       new Request("https://drozq.com/api/dashboard/summary"),

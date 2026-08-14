@@ -4,7 +4,7 @@ Last updated: August 14, 2026
 
 ## 1. Architecture
 
-`/dashboard` is a static Cloudflare Pages page. It requests only the sanitized `GET /api/dashboard/summary` endpoint and never contacts Follow Up Boss, Google Ads, Google Search Console, Google Sheets, or Google OAuth from the browser.
+`/dashboard` is a static Cloudflare Pages page. It reads only sanitized aggregate data from the dashboard Worker and never contacts Follow Up Boss, Google Ads, Google Search Console, Google Sheets, or Google OAuth from the browser. Normal refreshes use `GET /api/dashboard/summary`. A same-origin `GET /api/dashboard/bootstrap.js` transport loads the same allowlisted snapshot before the controller runs and provides an automatic fallback when a browser, extension, or privacy layer blocks `fetch`.
 
 The separate `drozq-operating-dashboard` Cloudflare Worker owns all credentials and upstream requests. Its production route is restricted to `drozq.com/api/dashboard*`, so it cannot intercept the rest of the Pages site or the existing `/api/lead` and `/api/geo` Pages Functions.
 
