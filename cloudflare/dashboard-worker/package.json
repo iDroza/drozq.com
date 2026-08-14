@@ -1,0 +1,25 @@
+{
+  "name": "@drozq/dashboard-worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "dev:scheduled": "wrangler dev --test-scheduled",
+    "generate-types": "wrangler types",
+    "test": "npm run generate-types && vitest run",
+    "typecheck": "npm run generate-types && tsc --noEmit",
+    "build": "npm run generate-types && wrangler deploy --dry-run --minify --outdir dist",
+    "check": "npm run test && npm run typecheck && npm run build",
+    "list-google-ads-actions": "tsx ../../scripts/list-google-ads-conversion-actions.ts",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "0.21.3",
+    "@types/node": "26.2.0",
+    "tsx": "4.23.12",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10",
+    "wrangler": "4.123.0"
+  }
+}

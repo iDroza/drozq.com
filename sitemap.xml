@@ -9,6 +9,13 @@
   </url>
 
   <url>
+    <loc>https://drozq.com/dashboard</loc>
+    <lastmod>2026-08-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
     <loc>https://drozq.com/rates/</loc>
     <lastmod>2026-07-22</lastmod>
     <changefreq>weekly</changefreq>

@@ -1,0 +1,52 @@
+name: Dashboard Worker
+
+on:
+  pull_request:
+    paths:
+      - "cloudflare/dashboard-worker/**"
+      - "scripts/list-google-ads-conversion-actions.ts"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/dashboard-worker.yml"
+  push:
+    branches: [main]
+    paths:
+      - "cloudflare/dashboard-worker/**"
+      - "scripts/list-google-ads-conversion-actions.ts"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/dashboard-worker.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dashboard-worker-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      DASHBOARD_KV_NAMESPACE_ID: ${{ vars.DASHBOARD_KV_NAMESPACE_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run dashboard:check
+
+      - name: Inject production KV namespace ID
+        if: github.event_name == 'push' && env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
+        run: >-
+          node -e "const fs=require('fs');const p='cloudflare/dashboard-worker/wrangler.jsonc';const m='00000000000000000000000000000000';const s=fs.readFileSync(p,'utf8');if(s.includes(m)){if(!process.env.DASHBOARD_KV_NAMESPACE_ID)throw new Error('Set DASHBOARD_KV_NAMESPACE_ID or commit the real namespace ID');if(s.split(m).length!==2)throw new Error('Expected one KV placeholder');fs.writeFileSync(p,s.replace(m,process.env.DASHBOARD_KV_NAMESPACE_ID));}"
+
+      - name: Deploy dashboard Worker
+        if: github.event_name == 'push' && env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
+        run: npm run deploy --workspace @drozq/dashboard-worker

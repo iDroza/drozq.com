@@ -1,0 +1,29 @@
+# Copy this file to .dev.vars for local Worker development only.
+# Replace every angle-bracket value. Never commit .dev.vars.
+
+ADMIN_SYNC_TOKEN="<long-random-manual-sync-token>"
+
+FUB_API_KEY="<follow-up-boss-api-key>"
+FUB_X_SYSTEM="<optional-follow-up-boss-system-name>"
+FUB_X_SYSTEM_KEY="<optional-follow-up-boss-system-key>"
+FUB_SELLER_TAG="Seller"
+FUB_ASSIGNED_USER_ID="<optional-follow-up-boss-user-id>"
+
+GOOGLE_ADS_DEVELOPER_TOKEN="<google-ads-developer-token>"
+GOOGLE_ADS_CLIENT_ID="<google-oauth-client-id>"
+GOOGLE_ADS_CLIENT_SECRET="<google-oauth-client-secret>"
+GOOGLE_ADS_REFRESH_TOKEN="<google-oauth-refresh-token>"
+GOOGLE_ADS_CUSTOMER_ID="<ten-digit-customer-id-without-hyphens>"
+GOOGLE_ADS_LOGIN_CUSTOMER_ID="<optional-ten-digit-manager-id-without-hyphens>"
+GOOGLE_ADS_API_VERSION="v25"
+GOOGLE_ADS_LEAD_CONVERSION_ACTION_NAMES="generate_lead"
+REPORTING_TIME_ZONE="America/Los_Angeles"
+
+GOOGLE_SERVICE_ACCOUNT_EMAIL="<service-account-email>"
+GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n<service-account-private-key>\n-----END PRIVATE KEY-----\n"
+GOOGLE_SHEETS_SPREADSHEET_ID="<spreadsheet-id>"
+GOOGLE_SHEETS_REMAINING_RANGE="<optional-direct-cell-range>"
+GOOGLE_SHEETS_PAGES_RANGE="<optional-page-table-range>"
+GOOGLE_SHEETS_PAGE_HEADER="Page"
+GOOGLE_SHEETS_STATUS_HEADER="Status"
+GOOGLE_SHEETS_COMPLETE_VALUES="complete,completed,done,published,live"
