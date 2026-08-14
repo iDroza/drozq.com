@@ -27,6 +27,9 @@ assert.deepEqual(
   "dashboard must contain exactly the eight approved metric cards",
 );
 assert.equal((html.match(/<h1\b/gu) ?? []).length, 1, "dashboard must have one h1");
+assert.match(html, /<h2>CALLS MADE<\/h2>/u, "calls card must say CALLS MADE");
+assert.match(html, /<h2>TEXTS SENT<\/h2>/u, "texts card must keep TEXTS SENT");
+assert.match(html, /<h2>EMAILS SENT<\/h2>/u, "emails card must keep EMAILS SENT");
 assert.match(
   html,
   /<link rel="canonical" href="https:\/\/drozq\.com\/dashboard">/u,

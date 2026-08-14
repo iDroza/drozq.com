@@ -18,7 +18,7 @@ Each synchronization queries Follow Up Boss and Google Ads concurrently, merges 
 
 The public contract contains exactly eight aggregate metrics:
 
-1. Calls sent today
+1. Calls made today
 2. Texts sent today
 3. Emails sent today
 4. Appointments set month to date
