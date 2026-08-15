@@ -20,7 +20,7 @@ Each synchronization runs five integrations concurrently: Follow Up Boss persona
 
 The desktop splash contains two black-card rows and ends exactly at the viewport fold:
 
-1. Top row: Google Ads cost per click and cost per lead, both month to date across all linked leaf accounts
+1. Top row: Google Ads spend, leads, cost per click, and cost per lead, all month to date across all linked leaf accounts
 2. Second row: fresh seller leads, fresh buyer leads, the authenticated user's outbound dials year to date, and that user's credited closed deals year to date
 
 A third black row starts after the desktop fold so it appears only on scroll. It preserves calls made today, appointments set month to date, texts sent today, and emails sent today. Mobile keeps the same semantic order in a single-column flow without a forced viewport-height spacer.

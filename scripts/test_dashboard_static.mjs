@@ -11,6 +11,8 @@ const javascript = readFileSync(
 const redirects = readFileSync(new URL("../_redirects", import.meta.url), "utf8");
 
 const expectedMetrics = [
+  "googleAdsSpendMtd",
+  "googleAdsLeadsMtd",
   "googleAdsCostPerClickMtd",
   "googleAdsCostPerLeadMtd",
   "freshSellerLeads",
@@ -46,19 +48,24 @@ assert.deepEqual(
   expectedMetrics,
   "dashboard metric cards must preserve the required row order",
 );
-assert.equal(metricMatches.length, 28, "dashboard must contain exactly 28 metric cards");
+assert.equal(metricMatches.length, 30, "dashboard must contain exactly 30 metric cards");
 assert.deepEqual(
-  metricMatches.slice(0, 2).map((match) => match[1]),
-  ["googleAdsCostPerClickMtd", "googleAdsCostPerLeadMtd"],
-  "the top row must be Google Ads CPC and CPL",
+  metricMatches.slice(0, 4).map((match) => match[1]),
+  [
+    "googleAdsSpendMtd",
+    "googleAdsLeadsMtd",
+    "googleAdsCostPerClickMtd",
+    "googleAdsCostPerLeadMtd",
+  ],
+  "the top row must be Google Ads spend, leads, CPC, and CPL",
 );
 assert.deepEqual(
-  metricMatches.slice(2, 6).map((match) => match[1]),
+  metricMatches.slice(4, 8).map((match) => match[1]),
   ["freshSellerLeads", "freshBuyerLeads", "totalDialsYtd", "personalDealsClosedYtd"],
   "the second row must be leads, YTD dials, and Joshua's YTD closed deals",
 );
 assert.deepEqual(
-  metricMatches.slice(6, 10).map((match) => match[1]),
+  metricMatches.slice(8, 12).map((match) => match[1]),
   ["callsToday", "appointmentsSetMtd", "textsToday", "emailsToday"],
   "the third black row must preserve the daily activity cards",
 );
@@ -69,6 +76,8 @@ assert.equal(
 );
 assert.equal((html.match(/<h1\b/gu) ?? []).length, 1, "dashboard must have one h1");
 assert.match(html, /<h2>CALLS MADE<\/h2>/u, "calls card must say CALLS MADE");
+assert.match(html, /<h2>GOOGLE ADS SPEND<\/h2>/u);
+assert.match(html, /<h2>GOOGLE ADS LEADS<\/h2>/u);
 assert.match(html, /<h2>GOOGLE ADS CPC<\/h2>/u);
 assert.match(html, /<h2>GOOGLE ADS CPL<\/h2>/u);
 assert.match(html, /<h2>TOTAL DIALS MADE THIS YEAR<\/h2>/u);
