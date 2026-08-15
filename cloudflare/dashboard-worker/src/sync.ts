@@ -195,6 +195,7 @@ function fubFailure(): FollowUpBossMetricResults {
     appointmentsSetMtd: unexpectedResult(),
     freshBuyerLeads: unexpectedResult(),
     freshSellerLeads: unexpectedResult(),
+    totalDialsYtd: unexpectedResult(),
   };
 }
 
@@ -257,6 +258,7 @@ function teamFailure(): FollowUpBossTeamMetricResults {
     teamSalesYtd: unexpectedResult(),
     teamVolumeYtd: unexpectedResult(),
     teamActiveAgentsYtd: unexpectedResult(),
+    personalDealsClosedYtd: unexpectedResult(),
   };
 }
 

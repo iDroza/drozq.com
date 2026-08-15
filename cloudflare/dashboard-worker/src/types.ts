@@ -24,6 +24,8 @@ export interface DashboardSnapshot {
     appointmentsSetMtd: DashboardMetric;
     freshBuyerLeads: DashboardMetric;
     freshSellerLeads: DashboardMetric;
+    totalDialsYtd: DashboardMetric;
+    personalDealsClosedYtd: DashboardMetric;
     googleAdsSpendMtd: DashboardMetric;
     googleAdsLeadsMtd: DashboardMetric;
     googleAdsCostPerClickMtd: DashboardMetric;
@@ -124,6 +126,7 @@ export interface FollowUpBossTeamMetricResults {
   teamSalesYtd: MetricFetchResult;
   teamVolumeYtd: MetricFetchResult;
   teamActiveAgentsYtd: MetricFetchResult;
+  personalDealsClosedYtd: MetricFetchResult;
 }
 
 export interface FollowUpBossMetricResults {
@@ -133,6 +136,7 @@ export interface FollowUpBossMetricResults {
   appointmentsSetMtd: MetricFetchResult;
   freshBuyerLeads: MetricFetchResult;
   freshSellerLeads: MetricFetchResult;
+  totalDialsYtd: MetricFetchResult;
 }
 
 export interface RuntimeDependencies {

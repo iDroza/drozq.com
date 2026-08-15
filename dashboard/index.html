@@ -30,9 +30,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260506">
     <meta name="apple-mobile-web-app-title" content="Drozq">
     <link rel="manifest" href="/site.webmanifest?v=20260506">
-    <link rel="stylesheet" href="/dashboard/dashboard.css?v=20260814d">
+    <link rel="stylesheet" href="/dashboard/dashboard.css?v=20260815a">
     <script src="/api/dashboard/bootstrap.js" defer></script>
-    <script src="/dashboard/dashboard.js?v=20260814f" defer></script>
+    <script src="/dashboard/dashboard.js?v=20260815a" defer></script>
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
@@ -49,51 +49,77 @@
 
     <main id="dashboard-main" class="dashboard-main">
       <section class="dashboard-shell" aria-labelledby="dashboard-title">
-        <div class="dashboard-heading">
-          <h1 id="dashboard-title">Operating Dashboard</h1>
+        <div class="dashboard-splash">
+          <div class="dashboard-heading">
+            <h1 id="dashboard-title">Operating Dashboard</h1>
+          </div>
+
+          <div id="metrics-grid" class="metrics-grid metrics-grid--top is-loading" aria-busy="true" aria-live="polite">
+            <article class="metric-card" data-metric="googleAdsCostPerClickMtd">
+              <div class="metric-card__head">
+                <h2>GOOGLE ADS CPC</h2>
+                <span class="metric-badge" data-badge hidden>STALE</span>
+              </div>
+              <p class="metric-value" data-value aria-label="Google Ads cost per click loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+              <p class="metric-context">Month to date &middot; all accounts</p>
+              <p class="metric-source" data-source>Google Ads &middot; loading</p>
+            </article>
+
+            <article class="metric-card" data-metric="googleAdsCostPerLeadMtd">
+              <div class="metric-card__head">
+                <h2>GOOGLE ADS CPL</h2>
+                <span class="metric-badge" data-badge hidden>STALE</span>
+              </div>
+              <p class="metric-value" data-value aria-label="Google Ads cost per lead loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+              <p class="metric-context">Month to date &middot; all accounts</p>
+              <p class="metric-source" data-source>Google Ads &middot; loading</p>
+            </article>
+          </div>
+
+          <div class="metrics-grid metrics-grid--focus is-loading" aria-busy="true" aria-live="polite">
+            <article class="metric-card" data-metric="freshSellerLeads">
+              <div class="metric-card__head">
+                <h2>FRESH SELLER LEADS</h2>
+                <span class="metric-badge" data-badge hidden>STALE</span>
+              </div>
+              <p class="metric-value" data-value aria-label="Fresh seller leads loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+              <p class="metric-context">Last 4 weeks</p>
+              <p class="metric-source" data-source>Follow Up Boss &middot; loading</p>
+            </article>
+
+            <article class="metric-card" data-metric="freshBuyerLeads">
+              <div class="metric-card__head">
+                <h2>FRESH BUYER LEADS</h2>
+                <span class="metric-badge" data-badge hidden>STALE</span>
+              </div>
+              <p class="metric-value" data-value aria-label="Fresh buyer leads loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+              <p class="metric-context">Last 4 weeks</p>
+              <p class="metric-source" data-source>Follow Up Boss &middot; loading</p>
+            </article>
+
+            <article class="metric-card" data-metric="totalDialsYtd">
+              <div class="metric-card__head">
+                <h2>TOTAL DIALS MADE THIS YEAR</h2>
+                <span class="metric-badge" data-badge hidden>STALE</span>
+              </div>
+              <p class="metric-value" data-value aria-label="Year-to-date dials loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+              <p class="metric-context">Year to date &middot; #1 correlation to deals</p>
+              <p class="metric-source" data-source>Follow Up Boss &middot; loading</p>
+            </article>
+
+            <article class="metric-card" data-metric="personalDealsClosedYtd">
+              <div class="metric-card__head">
+                <h2>DEALS CLOSED THIS YEAR</h2>
+                <span class="metric-badge" data-badge hidden>STALE</span>
+              </div>
+              <p class="metric-value" data-value aria-label="Joshua's year-to-date closed deals loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+              <p class="metric-context">Year to date &middot; Joshua only</p>
+              <p class="metric-source" data-source>FUB Deals Leaderboard &middot; loading</p>
+            </article>
+          </div>
         </div>
 
-        <div id="metrics-grid" class="metrics-grid is-loading" aria-busy="true" aria-live="polite">
-          <article class="metric-card" data-metric="googleAdsSpendMtd">
-            <div class="metric-card__head">
-              <h2>GOOGLE ADS SPEND</h2>
-              <span class="metric-badge" data-badge hidden>STALE</span>
-            </div>
-            <p class="metric-value" data-value aria-label="Google Ads spend loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
-            <p class="metric-context">Month to date &middot; all accounts</p>
-            <p class="metric-source" data-source>Google Ads &middot; loading</p>
-          </article>
-
-          <article class="metric-card" data-metric="googleAdsLeadsMtd">
-            <div class="metric-card__head">
-              <h2>GOOGLE ADS LEADS</h2>
-              <span class="metric-badge" data-badge hidden>STALE</span>
-            </div>
-            <p class="metric-value" data-value aria-label="Google Ads leads loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
-            <p class="metric-context">Month to date &middot; all accounts</p>
-            <p class="metric-source" data-source>Google Ads &middot; loading</p>
-          </article>
-
-          <article class="metric-card" data-metric="freshSellerLeads">
-            <div class="metric-card__head">
-              <h2>FRESH SELLER LEADS</h2>
-              <span class="metric-badge" data-badge hidden>STALE</span>
-            </div>
-            <p class="metric-value" data-value aria-label="Fresh seller leads loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
-            <p class="metric-context">Last 4 weeks</p>
-            <p class="metric-source" data-source>Follow Up Boss &middot; loading</p>
-          </article>
-
-          <article class="metric-card" data-metric="freshBuyerLeads">
-            <div class="metric-card__head">
-              <h2>FRESH BUYER LEADS</h2>
-              <span class="metric-badge" data-badge hidden>STALE</span>
-            </div>
-            <p class="metric-value" data-value aria-label="Fresh buyer leads loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
-            <p class="metric-context">Last 4 weeks</p>
-            <p class="metric-source" data-source>Follow Up Boss &middot; loading</p>
-          </article>
-
+        <div class="metrics-grid metrics-grid--continuation is-loading" aria-busy="true" aria-live="polite">
           <article class="metric-card" data-metric="callsToday">
             <div class="metric-card__head">
               <h2>CALLS MADE</h2>

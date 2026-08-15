@@ -13,11 +13,14 @@ import type {
 
 const FUB_BASE_URL = "https://api.followupboss.com/v1";
 const FUB_ACTIVITY_STATE_KEY = "dashboard:fub:activity:v2";
+const FUB_DIAL_STATE_KEY = "dashboard:fub:dials:v1";
 const PAGE_LIMIT = 100;
 const MAX_PAGES = 100;
+const MAX_DIAL_PAGES = 500;
 const MAX_ACTIVITY_CONTACTS = 250;
 const ACTIVITY_OVERLAP_MS = 15 * 60 * 1_000;
 const FULL_RECONCILIATION_MS = 60 * 60 * 1_000;
+const DIAL_FULL_RECONCILIATION_MS = 6 * 60 * 60 * 1_000;
 const MAX_SEEN_ACTIVITY_IDS = 100_000;
 
 type ActivityKind = "texts" | "emails";
@@ -34,6 +37,12 @@ interface FollowUpBossActivityState {
   localDate: string;
   texts: ActivityChannelState;
   emails: ActivityChannelState;
+}
+
+interface FollowUpBossDialState {
+  version: 1;
+  localYear: string;
+  dials: ActivityChannelState;
 }
 
 interface ActivityUpdate {
@@ -104,11 +113,12 @@ async function listCollection(
   headers: Headers,
   source: string,
   dependencies: RuntimeDependencies,
+  maxPages: number = MAX_PAGES,
 ): Promise<unknown[]> {
   const rows: unknown[] = [];
   let offset = 0;
 
-  for (let page = 0; page < MAX_PAGES; page += 1) {
+  for (let page = 0; page < maxPages; page += 1) {
     const url = new URL(`${FUB_BASE_URL}/${endpoint}`);
     for (const [name, value] of Object.entries(parameters)) {
       url.searchParams.set(name, value);
@@ -202,6 +212,27 @@ export function countOutboundCalls(
     }
   }
   return requireCount(count, "fub_calls_today");
+}
+
+export function outboundCallIds(
+  rows: unknown[],
+  userId: string,
+  startAt: string,
+  endAt: string,
+): string[] {
+  const ids = new Set<string>();
+  for (const row of rows) {
+    if (!isRecord(row)) {
+      throw new UpstreamRequestError("schema");
+    }
+    if (!withinWindow(row["created"], startAt, endAt)) {
+      continue;
+    }
+    if (belongsToUser(row["userId"], userId) && falseLike(row["isIncoming"])) {
+      ids.add(normalizedId(row["id"], "fub_call_id"));
+    }
+  }
+  return [...ids];
 }
 
 export function countAppointmentsCreatedByUser(
@@ -348,6 +379,7 @@ function errorResults(error: unknown, started: number): FollowUpBossMetricResult
     appointmentsSetMtd: errorResult(error, started),
     freshBuyerLeads: errorResult(error, started),
     freshSellerLeads: errorResult(error, started),
+    totalDialsYtd: errorResult(error, started),
   };
 }
 
@@ -359,6 +391,7 @@ function unconfiguredResults(started: number): FollowUpBossMetricResults {
     appointmentsSetMtd: unconfiguredResult(started),
     freshBuyerLeads: unconfiguredResult(started),
     freshSellerLeads: unconfiguredResult(started),
+    totalDialsYtd: unconfiguredResult(started),
   };
 }
 
@@ -436,10 +469,56 @@ async function loadActivityState(
   };
 }
 
-async function hashActivityId(kind: ActivityKind, id: string): Promise<string> {
+function parseDialState(
+  value: unknown,
+  localYear: string,
+): FollowUpBossDialState | null {
+  if (
+    !isRecord(value) ||
+    value["version"] !== 1 ||
+    value["localYear"] !== localYear ||
+    !validChannel(value["dials"])
+  ) {
+    return null;
+  }
+  return {
+    version: 1,
+    localYear,
+    dials: value["dials"],
+  };
+}
+
+async function loadDialState(
+  env: DashboardEnv,
+  localYear: string,
+  yearStartAt: string,
+): Promise<FollowUpBossDialState> {
+  try {
+    const stored = await env.DASHBOARD_KV.get(FUB_DIAL_STATE_KEY);
+    if (stored !== null) {
+      const parsed = parseDialState(JSON.parse(stored) as unknown, localYear);
+      if (parsed !== null) {
+        return parsed;
+      }
+    }
+  } catch {
+    console.warn(JSON.stringify({
+      source: "follow_up_boss_dial_state",
+      category: "storage",
+      status: null,
+    }));
+  }
+  return {
+    version: 1,
+    localYear,
+    dials: blankChannel(yearStartAt),
+  };
+}
+
+async function hashRecordId(namespace: string, id: string): Promise<string> {
   const digest = await crypto.subtle.digest(
     "SHA-256",
-    new TextEncoder().encode(`${kind}:${id}`),
+    new TextEncoder().encode(`${namespace}:${id}`),
   );
   return [...new Uint8Array(digest)]
     .map((byte) => byte.toString(16).padStart(2, "0"))
@@ -595,13 +674,70 @@ async function updateActivity(
     );
     const seen = shouldReconcile ? new Set<string>() : new Set(previous.seen);
     for (const id of activityIdGroups.flat()) {
-      seen.add(await hashActivityId(kind, id));
+      seen.add(await hashRecordId(kind, id));
     }
     if (seen.size > MAX_SEEN_ACTIVITY_IDS) {
       throw new UpstreamRequestError("schema");
     }
     const state: ActivityChannelState = {
       count: requireCount(seen.size, `fub_${kind}_today`),
+      checkpointAt: endAt,
+      lastFullScanAt: shouldReconcile ? endAt : previous.lastFullScanAt,
+      seen: [...seen],
+    };
+    return { result: okResult(state.count, started), state };
+  } catch (error) {
+    return { result: errorResult(error, started), state: null };
+  }
+}
+
+async function updateYtdDials(
+  previous: ActivityChannelState,
+  userId: string,
+  yearStartAt: string,
+  endAt: string,
+  headers: Headers,
+  dependencies: RuntimeDependencies,
+): Promise<ActivityUpdate> {
+  const started = Date.now();
+  try {
+    const nowMs = Date.parse(endAt);
+    const shouldReconcile =
+      nowMs - Date.parse(previous.lastFullScanAt) >= DIAL_FULL_RECONCILIATION_MS;
+    const incrementalCutoff = new Date(
+      Math.max(
+        Date.parse(yearStartAt),
+        Date.parse(previous.checkpointAt) - ACTIVITY_OVERLAP_MS,
+      ),
+    ).toISOString();
+    const cutoffAt = shouldReconcile ? yearStartAt : incrementalCutoff;
+    const rows = await listCollection(
+      "calls",
+      ["calls"],
+      {
+        createdAfter: cutoffAt,
+        createdBefore: endAt,
+        fields: "id,created,userId,isIncoming",
+      },
+      headers,
+      "follow_up_boss_dials_ytd",
+      dependencies,
+      MAX_DIAL_PAGES,
+    );
+    const seen = shouldReconcile ? new Set<string>() : new Set(previous.seen);
+    const hashedIds = await mapWithConcurrency(
+      outboundCallIds(rows, userId, cutoffAt, endAt),
+      20,
+      (id) => hashRecordId("calls", id),
+    );
+    for (const id of hashedIds) {
+      seen.add(id);
+    }
+    if (seen.size > MAX_SEEN_ACTIVITY_IDS) {
+      throw new UpstreamRequestError("schema");
+    }
+    const state: ActivityChannelState = {
+      count: requireCount(seen.size, "fub_dials_ytd"),
       checkpointAt: endAt,
       lastFullScanAt: shouldReconcile ? endAt : previous.lastFullScanAt,
       seen: [...seen],
@@ -691,11 +827,18 @@ export async function fetchFollowUpBossMetrics(
   }
   const userId = userSettled.value;
 
-  const state = await loadActivityState(
-    env,
-    windows.localDate,
-    windows.dayStartAt,
-  );
+  const [state, dialState] = await Promise.all([
+    loadActivityState(
+      env,
+      windows.localDate,
+      windows.dayStartAt,
+    ),
+    loadDialState(
+      env,
+      windows.localDate.slice(0, 4),
+      windows.yearStartAt,
+    ),
+  ]);
   const callsPromise = listCollection(
     "calls",
     ["calls"],
@@ -723,6 +866,14 @@ export async function fetchFollowUpBossMetrics(
   const settled = await Promise.allSettled([
     callsPromise,
     appointmentsPromise,
+    updateYtdDials(
+      dialState.dials,
+      userId,
+      windows.yearStartAt,
+      windows.endAt,
+      headers,
+      dependencies,
+    ),
     updateActivity(
       "texts",
       state.texts,
@@ -783,8 +934,13 @@ export async function fetchFollowUpBossMetrics(
     result.appointmentsSetMtd = errorResult(appointments?.reason, started);
   }
 
-  const texts = settled[2];
-  const emails = settled[3];
+  const dials = settled[2];
+  result.totalDialsYtd = dials?.status === "fulfilled"
+    ? dials.value.result
+    : errorResult(dials?.reason, started);
+
+  const texts = settled[3];
+  const emails = settled[4];
   result.textsToday = texts?.status === "fulfilled"
     ? texts.value.result
     : errorResult(texts?.reason, started);
@@ -792,7 +948,7 @@ export async function fetchFollowUpBossMetrics(
     ? emails.value.result
     : errorResult(emails?.reason, started);
 
-  const fresh = settled[4];
+  const fresh = settled[5];
   if (fresh?.status === "fulfilled") {
     result.freshBuyerLeads = okResult(fresh.value.buyers, started);
     result.freshSellerLeads = okResult(fresh.value.sellers, started);
@@ -828,6 +984,27 @@ export async function fetchFollowUpBossMetrics(
       if (nextEmails !== null) {
         result.emailsToday = storageError;
       }
+    }
+  }
+
+  const nextDials = dials?.status === "fulfilled" ? dials.value.state : null;
+  if (nextDials !== null) {
+    try {
+      await env.DASHBOARD_KV.put(
+        FUB_DIAL_STATE_KEY,
+        JSON.stringify({
+          version: 1,
+          localYear: windows.localDate.slice(0, 4),
+          dials: nextDials,
+        } satisfies FollowUpBossDialState),
+      );
+    } catch {
+      result.totalDialsYtd = {
+        kind: "error",
+        category: "storage",
+        durationMs: Date.now() - started,
+        responseStatus: null,
+      };
     }
   }
 

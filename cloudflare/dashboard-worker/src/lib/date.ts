@@ -112,6 +112,7 @@ export interface ActivityWindows {
   localDate: string;
   dayStartAt: string;
   monthStartAt: string;
+  yearStartAt: string;
   rollingFourWeeksStartAt: string;
   endAt: string;
 }
@@ -123,10 +124,15 @@ export function getActivityWindows(now: Date, timeZone: string): ActivityWindows
     { year: parts.year, month: parts.month, day: 1 },
     timeZone,
   );
+  const yearStart = localMidnightUtc(
+    { year: parts.year, month: 1, day: 1 },
+    timeZone,
+  );
   return {
     localDate: isoDate(parts.year, parts.month, parts.day),
     dayStartAt: dayStart.toISOString(),
     monthStartAt: monthStart.toISOString(),
+    yearStartAt: yearStart.toISOString(),
     rollingFourWeeksStartAt: new Date(
       now.getTime() - 28 * 24 * 60 * 60 * 1_000,
     ).toISOString(),

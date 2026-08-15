@@ -11,10 +11,12 @@ const javascript = readFileSync(
 const redirects = readFileSync(new URL("../_redirects", import.meta.url), "utf8");
 
 const expectedMetrics = [
-  "googleAdsSpendMtd",
-  "googleAdsLeadsMtd",
+  "googleAdsCostPerClickMtd",
+  "googleAdsCostPerLeadMtd",
   "freshSellerLeads",
   "freshBuyerLeads",
+  "totalDialsYtd",
+  "personalDealsClosedYtd",
   "callsToday",
   "appointmentsSetMtd",
   "textsToday",
@@ -44,7 +46,22 @@ assert.deepEqual(
   expectedMetrics,
   "dashboard metric cards must preserve the required row order",
 );
-assert.equal(metricMatches.length, 26, "dashboard must contain exactly 26 metric cards");
+assert.equal(metricMatches.length, 28, "dashboard must contain exactly 28 metric cards");
+assert.deepEqual(
+  metricMatches.slice(0, 2).map((match) => match[1]),
+  ["googleAdsCostPerClickMtd", "googleAdsCostPerLeadMtd"],
+  "the top row must be Google Ads CPC and CPL",
+);
+assert.deepEqual(
+  metricMatches.slice(2, 6).map((match) => match[1]),
+  ["freshSellerLeads", "freshBuyerLeads", "totalDialsYtd", "personalDealsClosedYtd"],
+  "the second row must be leads, YTD dials, and Joshua's YTD closed deals",
+);
+assert.deepEqual(
+  metricMatches.slice(6, 10).map((match) => match[1]),
+  ["callsToday", "appointmentsSetMtd", "textsToday", "emailsToday"],
+  "the third black row must preserve the daily activity cards",
+);
 assert.equal(
   (html.match(/class="metrics-grid metrics-grid--compact is-loading"/gu) ?? []).length,
   4,
@@ -52,6 +69,12 @@ assert.equal(
 );
 assert.equal((html.match(/<h1\b/gu) ?? []).length, 1, "dashboard must have one h1");
 assert.match(html, /<h2>CALLS MADE<\/h2>/u, "calls card must say CALLS MADE");
+assert.match(html, /<h2>GOOGLE ADS CPC<\/h2>/u);
+assert.match(html, /<h2>GOOGLE ADS CPL<\/h2>/u);
+assert.match(html, /<h2>TOTAL DIALS MADE THIS YEAR<\/h2>/u);
+assert.match(html, /<h2>DEALS CLOSED THIS YEAR<\/h2>/u);
+assert.match(html, /Year to date &middot; #1 correlation to deals/u);
+assert.match(html, /Year to date &middot; Joshua only/u);
 assert.match(html, /<h2>TEXTS SENT<\/h2>/u, "texts card must keep TEXTS SENT");
 assert.match(html, /<h2>EMAILS SENT<\/h2>/u, "emails card must keep EMAILS SENT");
 assert.match(html, /<h2 id="advertising-title">Aggregate Advertising<\/h2>/u);
@@ -85,7 +108,7 @@ assert.match(javascript, /"\/api\/dashboard\/bootstrap\.js"/u);
 assert.match(javascript, /loadBootstrapSnapshot/u);
 assert.match(
   html,
-  /<script src="\/api\/dashboard\/bootstrap\.js" defer><\/script>[\s\S]*<script src="\/dashboard\/dashboard\.js\?v=20260814f" defer><\/script>/u,
+  /<script src="\/api\/dashboard\/bootstrap\.js" defer><\/script>[\s\S]*<script src="\/dashboard\/dashboard\.js\?v=20260815a" defer><\/script>/u,
   "the resilient snapshot bootstrap must load before the dashboard controller",
 );
 assert.doesNotMatch(
@@ -100,6 +123,16 @@ assert.doesNotMatch(html, /Rolling 90 days/iu);
 assert.match(javascript, /snapshot\.rolling90DayPeriod\.startDate/u);
 assert.match(javascript, /metric-value--very-long/u, "long values need overflow-safe sizing");
 assert.match(css, /@media \(min-width: 1180px\)[\s\S]*repeat\(4,/u);
+assert.match(
+  css,
+  /@media \(min-width: 1180px\)[\s\S]*\.dashboard-splash\s*\{[\s\S]*min-height: calc\(100vh - 136px\)/u,
+  "desktop splash must hold the third black row below the fold",
+);
+assert.match(
+  html,
+  /<div class="dashboard-splash">[\s\S]*metrics-grid--focus[\s\S]*<\/div>\s*<div class="metrics-grid metrics-grid--continuation is-loading"/u,
+  "daily activity must sit outside the desktop splash",
+);
 assert.match(css, /@media \(prefers-reduced-motion: reduce\)/u);
 assert.match(redirects, /^\/Dashboard \/dashboard 301$/mu);
 assert.match(redirects, /^\/Dashboard\/ \/dashboard 301$/mu);

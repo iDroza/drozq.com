@@ -114,10 +114,19 @@ a {
   letter-spacing: -0.035em;
 }
 
+.dashboard-splash {
+  min-width: 0;
+}
+
 .metrics-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 12px;
+}
+
+.metrics-grid--focus,
+.metrics-grid--continuation {
+  margin-top: 12px;
 }
 
 .metric-card {
@@ -401,6 +410,11 @@ button:focus-visible {
     gap: 16px;
   }
 
+  .metrics-grid--focus,
+  .metrics-grid--continuation {
+    margin-top: 16px;
+  }
+
   .metric-card {
     min-height: 196px;
     padding: 24px;
@@ -450,8 +464,16 @@ button:focus-visible {
     padding-top: 72px;
   }
 
+  .dashboard-splash {
+    min-height: calc(100vh - 136px);
+  }
+
   .metrics-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .metrics-grid.metrics-grid--top {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .metrics-grid.metrics-grid--two {

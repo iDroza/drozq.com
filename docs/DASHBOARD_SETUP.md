@@ -1,12 +1,12 @@
 # Drozq Operating Dashboard
 
-Last updated: August 14, 2026
+Last updated: August 15, 2026
 
 ## 1. Architecture
 
 `/dashboard` is a static Cloudflare Pages page. It reads only sanitized aggregate data from the dashboard Worker and never contacts Follow Up Boss, Google Ads, Google Search Console, Google Sheets, or Google OAuth from the browser. Normal refreshes use `GET /api/dashboard/summary`. A same-origin `GET /api/dashboard/bootstrap.js` transport loads the same allowlisted snapshot before the controller runs and provides an automatic fallback when a browser, extension, or privacy layer blocks `fetch`.
 
-`/active` is the company-facing Active Realty view. It uses the same saved snapshot and visual system, but reads a separate explicit allowlist through `GET /api/dashboard/active-summary` and `GET /api/dashboard/active-bootstrap.js`. Those responses exclude calls, texts, emails, appointments, fresh buyer leads, and fresh seller leads at the Worker serialization boundary. The page is `noindex,nofollow,noarchive`, has no Drozq or individual-agent branding, and is not linked from public navigation or the sitemap.
+`/active` is the company-facing Active Realty view. It uses the same saved snapshot and visual system, but reads a separate explicit allowlist through `GET /api/dashboard/active-summary` and `GET /api/dashboard/active-bootstrap.js`. Those responses exclude calls, texts, emails, appointments, fresh buyer leads, fresh seller leads, personal year-to-date dials, and personal year-to-date closings at the Worker serialization boundary. The page is `noindex,nofollow,noarchive`, has no Drozq or individual-agent branding, and is not linked from public navigation or the sitemap.
 
 The separate `drozq-operating-dashboard` Cloudflare Worker owns all credentials and upstream requests. Its production route is restricted to `drozq.com/api/dashboard*`, so it cannot intercept the rest of the Pages site or the existing `/api/lead` and `/api/geo` Pages Functions.
 
@@ -18,16 +18,12 @@ The Worker runs every minute, which is the fastest Cloudflare Cron Trigger inter
 
 Each synchronization runs five integrations concurrently: Follow Up Boss personal activity, the Follow Up Boss Deals Leaderboard, Google Ads, Google Search Console, and Google Sheets. It merges successful results with the previous snapshot and writes `dashboard:snapshot:v2` to Workers KV. A failed metric retains its last valid value and becomes stale. A first-run failure is unavailable, never a false zero.
 
-The first viewport contains exactly eight operating metrics:
+The desktop splash contains two black-card rows and ends exactly at the viewport fold:
 
-1. Calls made today
-2. Texts sent today
-3. Emails sent today
-4. Appointments set month to date
-5. Fresh buyer leads from the rolling previous four weeks
-6. Fresh seller leads from the rolling previous four weeks
-7. Google Ads spend month to date across all linked leaf accounts
-8. Google Ads primary conversions month to date across all linked leaf accounts
+1. Top row: Google Ads cost per click and cost per lead, both month to date across all linked leaf accounts
+2. Second row: fresh seller leads, fresh buyer leads, the authenticated user's outbound dials year to date, and that user's credited closed deals year to date
+
+A third black row starts after the desktop fold so it appears only on scroll. It preserves calls made today, appointments set month to date, texts sent today, and emails sent today. Mobile keeps the same semantic order in a single-column flow without a forced viewport-height spacer.
 
 Below it are five fixed rows, each capped at four metrics:
 
@@ -58,7 +54,7 @@ Do not add another package manager or lockfile.
 
 ## 3. Follow Up Boss setup
 
-Create a dedicated API key in Follow Up Boss for the user whose personal activity should appear on the dashboard. The key's `/me` identity defines "I" for calls, texts, emails, and appointments.
+Create a dedicated API key in Follow Up Boss for the user whose personal activity should appear on the dashboard. The key's `/me` identity defines "I" for calls, texts, emails, appointments, year-to-date dials, and credited year-to-date closings.
 
 Store the required key:
 
@@ -90,12 +86,13 @@ Set-Location ../..
 The activity definitions are deliberate:
 
 - Calls are outbound call records whose `userId` matches the API-key user.
+- Total dials are the same outbound-call definition accumulated from Los Angeles midnight on January 1 through the current synchronization.
 - Texts are manual outbound text records for that user. Incoming and action-plan messages are excluded.
 - Emails are sent manual email records for that user. Drafts, other users, action plans, and campaigns are excluded.
 - Appointments are records created during the current local month whose `createdById` matches the API-key user. The assignee does not change who set the appointment.
-- Today and month boundaries use `REPORTING_TIME_ZONE`, currently `America/Los_Angeles`.
+- Today, month, and year boundaries use `REPORTING_TIME_ZONE`, currently `America/Los_Angeles`.
 
-Follow Up Boss does not permit this non-owner key to use the account-level agent-activity report or webhooks. The Worker therefore uses the documented REST resources directly. Text and email IDs are hashed before the daily deduplication state is stored in KV. No message content, person name, email address, phone number, or contact record is persisted. A full daily reconciliation runs at least hourly, with incremental scans between reconciliations. This avoids the Follow Up Boss report's roughly 10-minute cache while controlling API volume.
+Follow Up Boss does not permit this non-owner key to use the account-level agent-activity report or webhooks. The Worker therefore uses the documented REST resources directly. Call, text, and email IDs are hashed before deduplication state is stored in KV. No message content, person name, email address, phone number, or contact record is persisted. Daily message activity fully reconciles at least hourly. The year-to-date dial counter fully reconciles every six hours and uses 15-minute-overlap incremental scans between reconciliations. This keeps the annual count correct without rescanning the whole year every minute.
 
 The year-to-date team row uses the same all-pipeline, Everyone view as:
 
@@ -103,12 +100,14 @@ The year-to-date team row uses the same all-pipeline, Everyone view as:
 https://activerealty.followupboss.com/2/reporting/leaderboard/deals
 ```
 
-The Worker requests the report's aggregate endpoint with `FUB_API_KEY`, using `FUB_ACCOUNT_HOST=activerealty.followupboss.com`. It reads the report-level totals directly. It never sums the per-agent rows because one deal can credit several users and that would double-count volume, commission, and sales. The four outputs are:
+The Worker requests the report's aggregate endpoint with `FUB_API_KEY`, using `FUB_ACCOUNT_HOST=activerealty.followupboss.com`. It reads the report-level totals directly. It never sums the per-agent rows because one deal can credit several users and that would double-count volume, commission, and sales. The four company outputs are:
 
 - Gross commission: `totals.closedCommissionTotal`
 - Sales: `totals.closedDealCount`
 - Volume: `totals.closedPriceTotal`
 - Active agents: positive per-user closed counts, excluding lenders and names in `FUB_TEAM_EXCLUDED_USER_NAMES`
+
+The personal dashboard also reads the authenticated user's own `closedDealCount` from the same leaderboard response. The user ID comes from `FUB_API_KEY` through `/v1/me`. This avoids mistaking the company total for Joshua's individual result. The Active Realty serializer excludes this personal metric.
 
 The default excluded service-account name is `Active Agents`. Change the comma-separated non-secret variable if the FUB user directory changes. Names are used only in memory for exclusion and are never stored in KV or exposed publicly.
 
@@ -122,7 +121,7 @@ Set-Location ../..
 
 The fallback uses `FUB_CLOSED_DEAL_STAGE_NAMES`, which defaults to `Closed`, and sums `commissionValue` so its definition matches the leaderboard's gross commission. It is not used while the leaderboard endpoint is healthy. If both sources fail, previous valid team values become stale instead of silently shrinking to the current user's visible deals.
 
-Team aggregates are cached for five minutes to avoid hammering the report endpoint while the Worker itself runs every minute. Change the cache interval with `FUB_TEAM_REFRESH_MINUTES`. The cache key includes the YTD date range, account host, and exclusion list, so a year rollover or configuration change cannot reuse the wrong aggregate.
+Team aggregates and the authenticated user's credited closing count are cached for five minutes to avoid hammering the report endpoint while the Worker itself runs every minute. Change the cache interval with `FUB_TEAM_REFRESH_MINUTES`. The cache key includes the YTD date range, account host, and exclusion list, while the cache payload records the resolved personal user ID, so a year rollover or configuration change cannot reuse the wrong aggregate.
 
 ## 4. Google Ads setup
 
@@ -315,7 +314,8 @@ Put the returned namespace ID into the `DASHBOARD_KV` binding. Do not rename the
 
 - `dashboard:snapshot:v2`: sanitized public snapshot
 - `dashboard:fub:activity:v2`: counts, checkpoints, and hashed daily message IDs only
-- `dashboard:fub:team:v2`: five-minute sanitized broker-authorized team totals only
+- `dashboard:fub:dials:v1`: the current year, checkpoints, count, and hashed outbound-call IDs only
+- `dashboard:fub:team:v4`: five-minute sanitized team totals, resolved personal user ID, and personal closed-deal count only
 - `dashboard:google_ads:accounts:v2`: short-lived leaf account ID cache
 - `dashboard:search_console:aggregate:v1`: hourly sanitized property aggregates only
 - `dashboard:sync:lease:v2`: short-lived best-effort overlap guard
@@ -401,7 +401,7 @@ curl.exe -i https://drozq.com/api/dashboard/not-a-route
 curl.exe -i https://drozq.com/api/geo
 ```
 
-Both pages return `200`; uppercase page paths return `301` to their lowercase canonical paths. Health returns `200`. Summary endpoints return `200` or a first-run `503`, the JavaScript bootstrap returns `200`, unknown dashboard routes return `404`, and the existing geo endpoint keeps its normal response. JSON summaries must include JSON content type, `nosniff`, and the documented 10-second cache policy without wildcard CORS. The Active Realty responses must contain exactly the 22 documented company metrics and none of the six personal metric keys.
+Both pages return `200`; uppercase page paths return `301` to their lowercase canonical paths. Health returns `200`. Summary endpoints return `200` or a first-run `503`, the JavaScript bootstrap returns `200`, unknown dashboard routes return `404`, and the existing geo endpoint keeps its normal response. JSON summaries must include JSON content type, `nosniff`, and the documented 10-second cache policy without wildcard CORS. The Active Realty responses must contain exactly the 22 documented company metrics and none of the eight personal metric keys.
 
 ## 11. Protected manual synchronization
 
@@ -470,8 +470,9 @@ Upstream requests retry no more than three times, respect `Retry-After`, and oth
 
 - Verify the API key belongs to the intended agent.
 - Confirm records are being saved to Follow Up Boss under that user's ID.
+- Compare total dials against outbound call records only. Incoming calls do not count.
 - Automated action-plan and campaign messages are intentionally excluded.
-- Run a protected sync. The hourly full reconciliation corrects late-arriving or edited message records.
+- Run a protected sync. The hourly message reconciliation and six-hour year-to-date dial reconciliation correct late-arriving or edited records.
 
 ### Follow Up Boss team totals look low
 
@@ -479,6 +480,7 @@ Upstream requests retry no more than three times, respect `Retry-After`, and oth
 - Confirm the selected report shows the current year and the account's pipelines are marked closed correctly.
 - Gross commission, closed sales, and volume should match the report-level totals, not the current user's regular Deals list.
 - Active agents count positive leaderboard users after excluding lenders and `FUB_TEAM_EXCLUDED_USER_NAMES`. Keep the service-account exclusion list current.
+- Compare Joshua's personal closed-deal card with his own leaderboard row, not the 56-deal report total. `/v1/me` from `FUB_API_KEY` chooses that row.
 - If the web report endpoint changes, configure `FUB_TEAM_API_KEY` with an Owner or Admin key so the documented Deals API fallback can take over.
 - The fallback alone uses `FUB_CLOSED_DEAL_STAGE_NAMES`; add renamed or alternate closed stages there.
 - If the brokerage transaction ledger is not maintained in FUB, do not configure this source. Move the team metrics to an authoritative ledger integration instead of publishing partial CRM data.
@@ -504,7 +506,7 @@ Personal and Ads metrics become stale after five minutes, team and Google Sheets
 - A tracker formula that starts returning decimals, text, blanks, or negative numbers fails closed and keeps the last valid count.
 - Worker Cron configuration changes can take time to propagate. Manual sync verifies deployment immediately.
 - Upstream schema drift fails closed and preserves last-known-good values. Keep tests and observability enabled.
-- The daily activity state resets at Los Angeles midnight and the date utility has rollover, leap-year, and DST coverage.
+- The daily activity state resets at Los Angeles midnight, the dial state resets on January 1, and the date utility has rollover, leap-year, and DST coverage.
 
 Review Worker errors and credential age monthly. Run `npm run dashboard:check` before any API-version or schema update.
 
@@ -557,5 +559,7 @@ If the Worker must be removed, first remove only the narrow `drozq.com/api/dashb
 - https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/batchGet
 - https://developers.google.com/identity/protocols/oauth2/service-account
 - https://docs.followupboss.com/reference/authentication
+- https://docs.followupboss.com/reference/calls-get
+- https://docs.followupboss.com/reference/deals-get
 - https://docs.followupboss.com/docs/inbox-apps-installation-lifecycle
 - https://docs.followupboss.com/reference/deals-post

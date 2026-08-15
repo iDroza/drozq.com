@@ -22,6 +22,7 @@ import {
   countFreshLeads,
   countOutboundCalls,
   fetchFollowUpBossMetrics,
+  outboundCallIds,
   outboundActivityIds,
   parseFollowUpBossTotal,
 } from "../src/sources/follow-up-boss";
@@ -40,6 +41,7 @@ import {
   aggregateClosedDeals,
   closedStageIds,
   countActiveLeaderboardAgents,
+  countPersonalClosedDeals,
   fetchFollowUpBossTeamMetrics,
   parseDealsLeaderboard,
 } from "../src/sources/follow-up-boss-team";
@@ -91,6 +93,8 @@ function allSuccessfulResults(): MetricResultMap {
     appointmentsSetMtd: successful(5),
     freshBuyerLeads: successful(141),
     freshSellerLeads: successful(3),
+    totalDialsYtd: successful(1842),
+    personalDealsClosedYtd: successful(3),
     googleAdsSpendMtd: successful(2362.175313),
     googleAdsLeadsMtd: successful(107),
     googleAdsCostPerClickMtd: successful(1.968479),
@@ -175,11 +179,13 @@ beforeEach(async () => {
   await Promise.all([
     env.DASHBOARD_KV.delete(SNAPSHOT_KEY),
     env.DASHBOARD_KV.delete("dashboard:fub:activity:v2"),
+    env.DASHBOARD_KV.delete("dashboard:fub:dials:v1"),
     env.DASHBOARD_KV.delete("dashboard:google_ads:accounts:v2"),
     env.DASHBOARD_KV.delete("dashboard:search_console:aggregate:v1"),
     env.DASHBOARD_KV.delete("dashboard:fub:team:v1"),
     env.DASHBOARD_KV.delete("dashboard:fub:team:v2"),
     env.DASHBOARD_KV.delete("dashboard:fub:team:v3"),
+    env.DASHBOARD_KV.delete("dashboard:fub:team:v4"),
     env.DASHBOARD_KV.delete("dashboard:sync:lease:v2"),
   ]);
 });
@@ -207,11 +213,13 @@ describe("Follow Up Boss normalization", () => {
   });
 
   it("counts only the authenticated user's outbound calls", () => {
-    expect(countOutboundCalls([
+    const calls = [
       { id: 1, created: "2026-08-14T18:00:00.000Z", userId: 659, isIncoming: false },
       { id: 2, created: "2026-08-14T18:01:00.000Z", userId: 659, isIncoming: true },
       { id: 3, created: "2026-08-14T18:02:00.000Z", userId: 42, isIncoming: false },
-    ], "659", DAY_START, NOW.toISOString())).toBe(1);
+    ];
+    expect(countOutboundCalls(calls, "659", DAY_START, NOW.toISOString())).toBe(1);
+    expect(outboundCallIds(calls, "659", DAY_START, NOW.toISOString())).toEqual(["1"]);
   });
 
   it("counts appointments by creator, not assignee", () => {
@@ -232,8 +240,9 @@ describe("Follow Up Boss normalization", () => {
     expect(outboundActivityIds(rows, "emails", "659", DAY_START, NOW.toISOString())).toEqual(["1", "2"]);
   });
 
-  it("fetches all six FUB metrics and deduplicates incremental message scans", async () => {
+  it("fetches all personal FUB activity metrics and deduplicates incremental scans", async () => {
     let authorization = "";
+    const callStarts: string[] = [];
     const fetcher = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
       const url = new URL(String(input));
       authorization = new Headers(init?.headers).get("Authorization") ?? "";
@@ -241,6 +250,7 @@ describe("Follow Up Boss normalization", () => {
         return jsonResponse({ id: 659 });
       }
       if (url.pathname.endsWith("/calls")) {
+        callStarts.push(url.searchParams.get("createdAfter") ?? "");
         return collection("calls", [
           { id: 1, created: "2026-08-14T18:00:00.000Z", userId: 659, isIncoming: false },
           { id: 2, created: "2026-08-14T18:01:00.000Z", userId: 659, isIncoming: true },
@@ -298,8 +308,12 @@ describe("Follow Up Boss normalization", () => {
     expect(first.appointmentsSetMtd).toMatchObject({ kind: "ok", value: 1 });
     expect(first.freshBuyerLeads).toMatchObject({ kind: "ok", value: 1 });
     expect(first.freshSellerLeads).toMatchObject({ kind: "ok", value: 1 });
+    expect(first.totalDialsYtd).toMatchObject({ kind: "ok", value: 1 });
+    expect(second.totalDialsYtd).toMatchObject({ kind: "ok", value: 1 });
     expect(second.textsToday).toMatchObject({ kind: "ok", value: 1 });
     expect(second.emailsToday).toMatchObject({ kind: "ok", value: 1 });
+    expect(callStarts).toContain("2026-01-01T08:00:00.000Z");
+    expect(callStarts).toContain("2026-08-14T18:45:00.000Z");
   });
 });
 
@@ -682,6 +696,7 @@ describe("Follow Up Boss YTD team aggregation", () => {
       sales: 56,
       volume: 43198750,
       activeUserIds: ["1", "2", "3"],
+      closedDealsByUserId: { "1": 39, "2": 4, "3": 1, "4": 0 },
     });
   });
 
@@ -708,6 +723,8 @@ describe("Follow Up Boss YTD team aggregation", () => {
       volume: 1770000,
       activeAgents: 2,
     });
+    expect(countPersonalClosedDeals(deals, stages, period, "659")).toBe(2);
+    expect(countPersonalClosedDeals(deals, stages, period, "777")).toBe(1);
   });
 
   it("rejects a closed deal whose gross commission is missing", () => {
@@ -731,6 +748,9 @@ describe("Follow Up Boss YTD team aggregation", () => {
         expect(url.searchParams.get("start")).toBe("2026-01-01");
         expect(url.searchParams.get("end")).toBe("2026-08-14");
         return jsonResponse(leaderboard);
+      }
+      if (url.pathname.endsWith("/me")) {
+        return jsonResponse({ id: 1 });
       }
       if (url.pathname.endsWith("/users")) {
         return collection("users", [
@@ -756,8 +776,10 @@ describe("Follow Up Boss YTD team aggregation", () => {
     expect(first.teamCommissionYtd).toMatchObject({ kind: "ok", value: 952812 });
     expect(first.teamSalesYtd).toMatchObject({ kind: "ok", value: 56 });
     expect(first.teamActiveAgentsYtd).toMatchObject({ kind: "ok", value: 2 });
+    expect(first.personalDealsClosedYtd).toMatchObject({ kind: "ok", value: 39 });
     expect(second.teamVolumeYtd).toMatchObject({ kind: "ok", value: 43198750 });
-    expect(requests).toBe(2);
+    expect(second.personalDealsClosedYtd).toMatchObject({ kind: "ok", value: 39 });
+    expect(requests).toBe(3);
     expect(new Set(authorizationHeaders)).toEqual(
       new Set([`Basic ${btoa("test-personal-key:")}`]),
     );
@@ -789,6 +811,7 @@ describe("Follow Up Boss YTD team aggregation", () => {
     expect(result.teamSalesYtd).toMatchObject({ kind: "ok", value: 56 });
     expect(result.teamVolumeYtd).toMatchObject({ kind: "ok", value: 43198750 });
     expect(result.teamActiveAgentsYtd).toMatchObject({ kind: "error" });
+    expect(result.personalDealsClosedYtd).toMatchObject({ kind: "error" });
   });
 });
 
@@ -1127,6 +1150,8 @@ describe("snapshot merging and public contract", () => {
     };
     delete legacy.metrics["googleAdsCostPerClickMtd"];
     delete legacy.metrics["googleAdsCostPerLeadMtd"];
+    delete legacy.metrics["totalDialsYtd"];
+    delete legacy.metrics["personalDealsClosedYtd"];
     const migrated = sanitizeStoredSnapshot(legacy);
 
     expect(migrated?.rolling90DayPeriod).toEqual(snapshot.rolling90DayPeriod);
@@ -1135,6 +1160,14 @@ describe("snapshot merging and public contract", () => {
       status: "unconfigured",
     });
     expect(migrated?.metrics.googleAdsCostPerLeadMtd).toMatchObject({
+      value: null,
+      status: "unconfigured",
+    });
+    expect(migrated?.metrics.totalDialsYtd).toMatchObject({
+      value: null,
+      status: "unconfigured",
+    });
+    expect(migrated?.metrics.personalDealsClosedYtd).toMatchObject({
       value: null,
       status: "unconfigured",
     });
@@ -1169,7 +1202,7 @@ describe("snapshot merging and public contract", () => {
     const snapshot = createUnconfiguredSnapshot(NOW, "America/Los_Angeles");
     expect(sanitizeSnapshot(snapshot)).not.toBeNull();
     expect(snapshot.metrics.googleAdsSpendMtd.value).toBeNull();
-    expect(Object.keys(snapshot.metrics)).toHaveLength(28);
+    expect(Object.keys(snapshot.metrics)).toHaveLength(30);
   });
 
   it("serves only a cached sanitized summary with hardened headers", async () => {
@@ -1187,7 +1220,7 @@ describe("snapshot merging and public contract", () => {
     );
     expect(response.headers.has("Access-Control-Allow-Origin")).toBe(false);
     expect(payload.version).toBe(2);
-    expect(Object.keys(payload.metrics)).toHaveLength(28);
+    expect(Object.keys(payload.metrics)).toHaveLength(30);
   });
 
   it("serves the same sanitized snapshot through the browser bootstrap", async () => {
@@ -1223,7 +1256,7 @@ describe("snapshot merging and public contract", () => {
     expect(source).not.toContain("must-not-ship");
     const payload = JSON.parse(source.slice(prefix.length, -1)) as DashboardSnapshot;
     expect(sanitizeSnapshot(payload)).not.toBeNull();
-    expect(Object.keys(payload.metrics)).toHaveLength(28);
+    expect(Object.keys(payload.metrics)).toHaveLength(30);
   });
 
   it("serves an explicit company-safe metric allowlist for Active Realty", async () => {
@@ -1245,6 +1278,8 @@ describe("snapshot merging and public contract", () => {
       "appointmentsSetMtd",
       "freshBuyerLeads",
       "freshSellerLeads",
+      "totalDialsYtd",
+      "personalDealsClosedYtd",
     ]) {
       expect(personalKey in payload.metrics).toBe(false);
     }
@@ -1265,6 +1300,8 @@ describe("snapshot merging and public contract", () => {
     expect(Object.keys(payload.metrics)).toEqual([...ACTIVE_METRIC_KEYS]);
     expect(source).not.toContain("callsToday");
     expect(source).not.toContain("freshSellerLeads");
+    expect(source).not.toContain("totalDialsYtd");
+    expect(source).not.toContain("personalDealsClosedYtd");
   });
 
   it("returns a valid 503 payload when no snapshot exists", async () => {
@@ -1321,6 +1358,7 @@ describe("America/Los_Angeles reporting dates", () => {
       localDate: "2026-03-09",
       dayStartAt: "2026-03-09T07:00:00.000Z",
       monthStartAt: "2026-03-01T08:00:00.000Z",
+      yearStartAt: "2026-01-01T08:00:00.000Z",
     });
   });
 

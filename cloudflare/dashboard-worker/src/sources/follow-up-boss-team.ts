@@ -12,7 +12,7 @@ import type {
 } from "../types";
 
 const FUB_API_BASE_URL = "https://api.followupboss.com/v1";
-const TEAM_CACHE_KEY = "dashboard:fub:team:v3";
+const TEAM_CACHE_KEY = "dashboard:fub:team:v4";
 const PAGE_LIMIT = 100;
 const MAX_PAGES = 100;
 
@@ -28,6 +28,7 @@ export interface LeaderboardTotals {
   sales: number;
   volume: number;
   activeUserIds: string[];
+  closedDealsByUserId: Record<string, number>;
 }
 
 interface DirectoryUser {
@@ -37,9 +38,11 @@ interface DirectoryUser {
 }
 
 interface TeamCache extends TeamDealTotals {
-  version: 3;
+  version: 4;
   configKey: string;
   fetchedAt: string;
+  personalUserId: string;
+  personalSales: number;
 }
 
 function normalize(value: string): string {
@@ -74,6 +77,36 @@ function headersFor(config: FollowUpBossConfig, apiKey: string): Headers {
   return headers;
 }
 
+function requiredUserId(value: unknown): string {
+  return String(requireCount(value, "fub_personal_user_id"));
+}
+
+async function fetchPersonalUserId(
+  config: FollowUpBossConfig,
+  dependencies: RuntimeDependencies,
+): Promise<string> {
+  if (config.apiKey === "") {
+    throw new UpstreamRequestError("configuration");
+  }
+  const response = await fetchWithRetry(
+    new URL(`${FUB_API_BASE_URL}/me`),
+    { method: "GET", headers: headersFor(config, config.apiKey) },
+    {
+      source: "follow_up_boss_personal_identity",
+      fetcher: dependencies.fetcher,
+      sleep: dependencies.sleep,
+    },
+  );
+  if (!response.ok) {
+    throw classifyHttpStatus(response.status);
+  }
+  const payload = await readBoundedJson(response);
+  if (!isRecord(payload)) {
+    throw new UpstreamRequestError("schema", response.status);
+  }
+  return requiredUserId(payload["id"]);
+}
+
 export function parseDealsLeaderboard(payload: unknown): LeaderboardTotals {
   if (
     !isRecord(payload) ||
@@ -84,6 +117,7 @@ export function parseDealsLeaderboard(payload: unknown): LeaderboardTotals {
   }
   const totals = payload["totals"];
   const activeUserIds = new Set<string>();
+  const closedDealsByUserId: Record<string, number> = {};
   for (const row of payload["users"]) {
     if (!isRecord(row)) {
       throw new UpstreamRequestError("schema");
@@ -96,12 +130,14 @@ export function parseDealsLeaderboard(payload: unknown): LeaderboardTotals {
     if (closedDeals > 0) {
       activeUserIds.add(String(userId));
     }
+    closedDealsByUserId[String(userId)] = closedDeals;
   }
   return {
     commission: requiredMoney(totals["closedCommissionTotal"]),
     sales: requireCount(totals["closedDealCount"], "fub_leaderboard_closed_deals"),
     volume: requiredMoney(totals["closedPriceTotal"]),
     activeUserIds: [...activeUserIds],
+    closedDealsByUserId,
   };
 }
 
@@ -375,6 +411,36 @@ export function aggregateClosedDeals(
   };
 }
 
+export function countPersonalClosedDeals(
+  deals: unknown[],
+  stageIds: Set<number>,
+  reportingPeriod: DashboardSnapshot["yearToDatePeriod"],
+  userId: string,
+): number {
+  let sales = 0;
+  for (const deal of deals) {
+    if (!isRecord(deal) || typeof deal["status"] !== "string") {
+      throw new UpstreamRequestError("schema");
+    }
+    if (normalize(deal["status"]) === "deleted") {
+      continue;
+    }
+    const stageId = requireCount(deal["stageId"], "fub_deal_stage_id");
+    if (!stageIds.has(stageId)) {
+      continue;
+    }
+    const closeDate = dateOnly(deal["projectedCloseDate"]);
+    if (closeDate < reportingPeriod.startDate || closeDate > reportingPeriod.endDate) {
+      continue;
+    }
+    requireCount(deal["id"], "fub_deal_id");
+    if (dealUserIds(deal["users"]).includes(userId)) {
+      sales += 1;
+    }
+  }
+  return requireCount(sales, "fub_personal_sales");
+}
+
 function excludedUserIds(
   directory: Map<string, DirectoryUser>,
   excludedUserNames: string[],
@@ -404,10 +470,12 @@ function parseCache(
   refreshMs: number,
 ): TeamCache | null {
   if (
-    !isRecord(value) || value["version"] !== 3 || value["configKey"] !== configKey ||
+    !isRecord(value) || value["version"] !== 4 || value["configKey"] !== configKey ||
     typeof value["fetchedAt"] !== "string" || !Number.isFinite(Date.parse(value["fetchedAt"])) ||
     now.getTime() - Date.parse(value["fetchedAt"]) < 0 ||
-    now.getTime() - Date.parse(value["fetchedAt"]) > refreshMs || !validTotals(value)
+    now.getTime() - Date.parse(value["fetchedAt"]) > refreshMs || !validTotals(value) ||
+    typeof value["personalUserId"] !== "string" || !/^\d+$/u.test(value["personalUserId"]) ||
+    !Number.isSafeInteger(value["personalSales"]) || (value["personalSales"] as number) < 0
   ) {
     return null;
   }
@@ -426,6 +494,7 @@ function okResult(value: number, started: number, observedAt: string): MetricFet
 
 function toResults(
   totals: TeamDealTotals,
+  personalSales: number,
   started: number,
   observedAt: string,
 ): FollowUpBossTeamMetricResults {
@@ -434,6 +503,7 @@ function toResults(
     teamSalesYtd: okResult(totals.sales, started, observedAt),
     teamVolumeYtd: okResult(totals.volume, started, observedAt),
     teamActiveAgentsYtd: okResult(totals.activeAgents, started, observedAt),
+    personalDealsClosedYtd: okResult(personalSales, started, observedAt),
   };
 }
 
@@ -457,6 +527,7 @@ function allSame(result: MetricFetchResult): FollowUpBossTeamMetricResults {
     teamSalesYtd: result,
     teamVolumeYtd: result,
     teamActiveAgentsYtd: result,
+    personalDealsClosedYtd: result,
   };
 }
 
@@ -465,14 +536,18 @@ async function writeCache(
   configKey: string,
   observedAt: string,
   totals: TeamDealTotals,
+  personalUserId: string,
+  personalSales: number,
 ): Promise<void> {
   try {
     await env.DASHBOARD_KV.put(
       TEAM_CACHE_KEY,
       JSON.stringify({
-        version: 3,
+        version: 4,
         configKey,
         fetchedAt: observedAt,
+        personalUserId,
+        personalSales,
         ...totals,
       } satisfies TeamCache),
       { expirationTtl: 48 * 60 * 60 },
@@ -490,8 +565,9 @@ async function fetchBrokerFallback(
   env: DashboardEnv,
   config: FollowUpBossConfig,
   reportingPeriod: DashboardSnapshot["yearToDatePeriod"],
+  personalUserId: string | null,
   dependencies: RuntimeDependencies,
-): Promise<TeamDealTotals> {
+): Promise<{ totals: TeamDealTotals; personalSales: number | null }> {
   const dedicatedKey = env.FUB_TEAM_API_KEY?.trim() ?? "";
   if (dedicatedKey === "" || config.closedDealStageNames.length === 0) {
     throw new UpstreamRequestError("configuration");
@@ -503,12 +579,18 @@ async function fetchBrokerFallback(
     listCollection("deals", "deals", { includeArchived: "1" }, headers, dependencies),
     fetchUserDirectory(headers, dependencies),
   ]);
-  return aggregateClosedDeals(
-    deals,
-    closedStageIds(pipelines, config.closedDealStageNames),
-    reportingPeriod,
-    excludedUserIds(directory, config.teamExcludedUserNames),
-  );
+  const stageIds = closedStageIds(pipelines, config.closedDealStageNames);
+  return {
+    totals: aggregateClosedDeals(
+      deals,
+      stageIds,
+      reportingPeriod,
+      excludedUserIds(directory, config.teamExcludedUserNames),
+    ),
+    personalSales: personalUserId === null
+      ? null
+      : countPersonalClosedDeals(deals, stageIds, reportingPeriod, personalUserId),
+  };
 }
 
 export async function fetchFollowUpBossTeamMetrics(
@@ -533,7 +615,7 @@ export async function fetchFollowUpBossTeamMetrics(
     if (stored !== null) {
       const cached = parseCache(JSON.parse(stored) as unknown, configKey, now, config.teamRefreshMs);
       if (cached !== null) {
-        return toResults(cached, started, cached.fetchedAt);
+        return toResults(cached, cached.personalSales, started, cached.fetchedAt);
       }
     }
   } catch {
@@ -545,24 +627,33 @@ export async function fetchFollowUpBossTeamMetrics(
   }
 
   const headers = headersFor(config, config.teamApiKey);
+  const personalUserPromise = fetchPersonalUserId(config, dependencies);
+  void personalUserPromise.catch(() => undefined);
   try {
     const leaderboard = await fetchLeaderboard(config, reportingPeriod, headers, dependencies);
     const observedAt = now.toISOString();
-    try {
-      const directory = await fetchUserDirectory(headers, dependencies);
-      const totals: TeamDealTotals = {
+    const [directorySettled, personalUserSettled] = await Promise.allSettled([
+      fetchUserDirectory(headers, dependencies),
+      personalUserPromise,
+    ]);
+
+    let totals: TeamDealTotals | null = null;
+    let activeAgentsResult: MetricFetchResult;
+    if (directorySettled.status === "fulfilled") {
+      const activeAgents = countActiveLeaderboardAgents(
+        leaderboard.activeUserIds,
+        directorySettled.value,
+        config.teamExcludedUserNames,
+      );
+      totals = {
         commission: leaderboard.commission,
         sales: leaderboard.sales,
         volume: leaderboard.volume,
-        activeAgents: countActiveLeaderboardAgents(
-          leaderboard.activeUserIds,
-          directory,
-          config.teamExcludedUserNames,
-        ),
+        activeAgents,
       };
-      await writeCache(env, configKey, observedAt, totals);
-      return toResults(totals, started, observedAt);
-    } catch (directoryError) {
+      activeAgentsResult = okResult(activeAgents, started, observedAt);
+    } else {
+      const directoryError = directorySettled.reason;
       console.warn(JSON.stringify({
         source: "follow_up_boss_team_directory",
         category: directoryError instanceof UpstreamRequestError
@@ -574,14 +665,50 @@ export async function fetchFollowUpBossTeamMetrics(
           ? directoryError.responseStatus
           : null,
       }));
-      const activeAgentsError = errorResult(directoryError, started);
-      return {
-        teamCommissionYtd: okResult(leaderboard.commission, started, observedAt),
-        teamSalesYtd: okResult(leaderboard.sales, started, observedAt),
-        teamVolumeYtd: okResult(leaderboard.volume, started, observedAt),
-        teamActiveAgentsYtd: activeAgentsError,
-      };
+      activeAgentsResult = errorResult(directoryError, started);
     }
+
+    let personalUserId: string | null = null;
+    let personalSales: number | null = null;
+    let personalSalesResult: MetricFetchResult;
+    if (personalUserSettled.status === "fulfilled") {
+      personalUserId = personalUserSettled.value;
+      personalSales = leaderboard.closedDealsByUserId[personalUserId] ?? 0;
+      personalSalesResult = okResult(personalSales, started, observedAt);
+    } else {
+      const identityError = personalUserSettled.reason;
+      console.warn(JSON.stringify({
+        source: "follow_up_boss_personal_identity",
+        category: identityError instanceof UpstreamRequestError
+          ? identityError.category
+          : identityError instanceof RangeError
+            ? "schema"
+            : "unexpected",
+        status: identityError instanceof UpstreamRequestError
+          ? identityError.responseStatus
+          : null,
+      }));
+      personalSalesResult = errorResult(identityError, started);
+    }
+
+    if (totals !== null && personalUserId !== null && personalSales !== null) {
+      await writeCache(
+        env,
+        configKey,
+        observedAt,
+        totals,
+        personalUserId,
+        personalSales,
+      );
+      return toResults(totals, personalSales, started, observedAt);
+    }
+    return {
+      teamCommissionYtd: okResult(leaderboard.commission, started, observedAt),
+      teamSalesYtd: okResult(leaderboard.sales, started, observedAt),
+      teamVolumeYtd: okResult(leaderboard.volume, started, observedAt),
+      teamActiveAgentsYtd: activeAgentsResult,
+      personalDealsClosedYtd: personalSalesResult,
+    };
   } catch (leaderboardError) {
     console.warn(JSON.stringify({
       source: "follow_up_boss_team_leaderboard",
@@ -593,15 +720,47 @@ export async function fetchFollowUpBossTeamMetrics(
         : null,
     }));
     try {
-      const totals = await fetchBrokerFallback(
+      const [personalUserSettled] = await Promise.allSettled([personalUserPromise]);
+      const personalUserId = personalUserSettled.status === "fulfilled"
+        ? personalUserSettled.value
+        : null;
+      const fallback = await fetchBrokerFallback(
         env,
         config,
         reportingPeriod,
+        personalUserId,
         dependencies,
       );
       const observedAt = now.toISOString();
-      await writeCache(env, configKey, observedAt, totals);
-      return toResults(totals, started, observedAt);
+      if (personalUserId !== null && fallback.personalSales !== null) {
+        await writeCache(
+          env,
+          configKey,
+          observedAt,
+          fallback.totals,
+          personalUserId,
+          fallback.personalSales,
+        );
+        return toResults(
+          fallback.totals,
+          fallback.personalSales,
+          started,
+          observedAt,
+        );
+      }
+      return {
+        teamCommissionYtd: okResult(fallback.totals.commission, started, observedAt),
+        teamSalesYtd: okResult(fallback.totals.sales, started, observedAt),
+        teamVolumeYtd: okResult(fallback.totals.volume, started, observedAt),
+        teamActiveAgentsYtd: okResult(
+          fallback.totals.activeAgents,
+          started,
+          observedAt,
+        ),
+        personalDealsClosedYtd: personalUserSettled.status === "rejected"
+          ? errorResult(personalUserSettled.reason, started)
+          : errorResult(new UpstreamRequestError("no_data"), started),
+      };
     } catch (fallbackError) {
       return allSame(errorResult(
         (env.FUB_TEAM_API_KEY?.trim() ?? "") === ""
