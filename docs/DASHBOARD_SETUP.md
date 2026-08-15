@@ -4,7 +4,7 @@ Last updated: August 15, 2026
 
 ## 1. Architecture
 
-`/dashboard` is a static Cloudflare Pages page. It reads only sanitized aggregate data from the dashboard Worker and never contacts Follow Up Boss, Google Ads, Google Search Console, Google Sheets, or Google OAuth from the browser. Normal refreshes use `GET /api/dashboard/summary`. A same-origin `GET /api/dashboard/bootstrap.js` transport loads the same allowlisted snapshot before the controller runs and provides an automatic fallback when a browser, extension, or privacy layer blocks `fetch`.
+`/dashboard` is a static Cloudflare Pages page. It reads only sanitized aggregate data from the dashboard Worker and never contacts Follow Up Boss, Google Ads, Google Search Console, the Active Realty publisher, Google Sheets, or Google OAuth from the browser. Normal refreshes use `GET /api/dashboard/summary`. A same-origin `GET /api/dashboard/bootstrap.js` transport loads the same allowlisted snapshot before the controller runs and provides an automatic fallback when a browser, extension, or privacy layer blocks `fetch`.
 
 `/active` is the company-facing Active Realty view. It uses the same saved snapshot and visual system, but reads a separate explicit allowlist through `GET /api/dashboard/active-summary` and `GET /api/dashboard/active-bootstrap.js`. Those responses exclude calls, texts, emails, appointments, fresh buyer leads, fresh seller leads, personal year-to-date dials, and personal year-to-date closings at the Worker serialization boundary. The page is `noindex,nofollow,noarchive`, has no Drozq or individual-agent branding, and is not linked from public navigation or the sitemap.
 
@@ -16,7 +16,7 @@ The Worker runs every minute, which is the fastest Cloudflare Cron Trigger inter
 * * * * *
 ```
 
-Each synchronization runs five integrations concurrently: Follow Up Boss personal activity, the Follow Up Boss Deals Leaderboard, Google Ads, Google Search Console, and Google Sheets. It merges successful results with the previous snapshot and writes `dashboard:snapshot:v2` to Workers KV. A failed metric retains its last valid value and becomes stale. A first-run failure is unavailable, never a false zero.
+Each synchronization runs five integrations concurrently: Follow Up Boss personal activity, the Follow Up Boss Deals Leaderboard, Google Ads, Google Search Console, and the KV-backed Active Realty repository publication. It merges successful results with the previous snapshot and writes `dashboard:snapshot:v2` to Workers KV. A failed metric retains its last valid value and becomes stale. A first-run failure is unavailable, never a false zero. The prior Google Sheets reader remains in the Worker as dormant rollback code, but normal synchronization does not call it.
 
 The desktop splash contains two black-card rows and ends exactly at the viewport fold:
 
@@ -31,11 +31,11 @@ Below it are five fixed rows, each capped at four metrics:
 2. Search Console past-three-month clicks, impressions, CTR, and average position for `activerealty.com`, matching the Performance overview
 3. The same four Search Console metrics for `justintye.com`
 4. Year-to-date Follow Up Boss Deals Leaderboard gross commission, closed sales, volume, and active agents
-5. Live Google Sheets shell pages remaining and 10-page work sets remaining
+5. Active Realty repository shell pages remaining and work sets remaining
 
 The Active Realty view contains 22 company metrics. Its first row is month-to-date Google Ads spend, primary conversions, cost per click, and cost per conversion across all linked leaf accounts. Directly below it are both Search Console rows, followed by the year-to-date Ads row, the team row, and the two production values. Production Queue is enlarged and is always the final visible section.
 
-The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the one-minute schedule or the protected manual sync endpoint. Personal and Ads metrics become stale after five minutes, team and Sheets metrics after 15 minutes, and Search Console metrics after 26 hours. Search Console is source-cached for 60 minutes because its reporting data is not real time. Team deal aggregates are source-cached for five minutes.
+The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the one-minute schedule or the protected manual sync endpoint. Personal and Ads metrics become stale after five minutes, team metrics after 15 minutes, Active Realty repository progress after 12 hours, and Search Console metrics after 26 hours. The Active Realty workflow publishes every six hours as a heartbeat. Search Console is source-cached for 60 minutes because its reporting data is not real time. Team deal aggregates are source-cached for five minutes.
 
 There is no Claude, OpenAI, AI inference, model call, or other nondeterministic runtime dependency. This is a direct API-to-KV-to-dashboard pipeline.
 
@@ -238,14 +238,63 @@ Remove-Variable gsc
 
 The two property URLs and the 60-minute source refresh are non-secret variables in `wrangler.jsonc`. The one-minute Worker schedule can safely reuse the sanitized KV aggregate between upstream refreshes. The availability probe uses `dataState: final` so partial same-day rows do not shift the window ahead of the Search Console card. The property aggregate uses `dataState: all` within that finalized end date and refreshes the complete three-month window instead of incrementally adding daily values. The dashboard prints the exact start and end dates beneath the Organic Search heading so the comparison window is auditable.
 
-## 6. Google Sheets setup
+## 6. Active Realty shell-progress bridge
 
-The final dashboard row is live from one read-only Google Sheet. It contains:
+The final dashboard row is published by the `iDroza/activerealty-com` main-branch workflow. The publisher sends one authenticated heartbeat every six hours to:
+
+```text
+POST https://drozq.com/api/dashboard/admin/shell-progress
+```
+
+The receiver requires `Authorization: Bearer <token>`, accepts at most 4 KiB, applies `Cache-Control: no-store` to every response, and does not enable CORS. The JSON body must contain exactly these fields:
+
+```json
+{
+  "schemaVersion": 1,
+  "sourceRepo": "iDroza/activerealty-com",
+  "sourceRef": "refs/heads/main",
+  "sourceSha": "0123456789abcdef0123456789abcdef01234567",
+  "runId": "1234567890",
+  "publishedAt": "2026-08-15T12:00:00.000Z",
+  "shellPagesRemaining": 37,
+  "setsRemaining": 4
+}
+```
+
+The SHA must be 40 lowercase hexadecimal characters. The run ID must be a positive decimal string and is compared by decimal-string length and lexical order, never by JavaScript `Number`. Timestamps must be valid RFC3339 UTC values and are normalized to canonical millisecond UTC form. Both counts must be nonnegative safe integers. Missing fields, extra fields, wrong repository identity, malformed values, and oversized bodies fail before KV is written.
+
+The receiver stores only the validated record at `dashboard:active-realty-progress:v1`. A retry with the same run ID and identical record succeeds with `idempotent: true`. The same run ID with different content and any lower run ID return `409` without replacing the record. The publisher workflow is the primary single writer, while the receiver check is defense in depth.
+
+The one-minute dashboard synchronization reads that KV record, revalidates it, and emits only `shellPagesRemaining`, `setsRemaining`, and the publication time into the existing metric merge. Missing or corrupt progress data is an error, never zero. Existing valid snapshot values remain visible as stale. Ingest metadata, repository fields, run IDs, and SHAs never enter either public dashboard response.
+
+Generate one 256-bit token and install the same value through stdin in both systems. Do not print it or save it to either repository:
+
+```powershell
+$progressTokenBytes = [byte[]]::new(32)
+[System.Security.Cryptography.RandomNumberGenerator]::Fill($progressTokenBytes)
+$progressToken = [Convert]::ToBase64String($progressTokenBytes).TrimEnd('=').Replace('+', '-').Replace('/', '_')
+try {
+  Push-Location cloudflare/dashboard-worker
+  $progressToken | npx wrangler secret put ACTIVE_REALTY_PROGRESS_TOKEN
+  Pop-Location
+  $progressToken | gh secret set DROZQ_SHELL_PROGRESS_TOKEN --repo iDroza/activerealty-com
+} finally {
+  if ((Get-Location).Path -like '*cloudflare\\dashboard-worker') { Pop-Location }
+  [Array]::Clear($progressTokenBytes, 0, $progressTokenBytes.Length)
+  Remove-Variable progressTokenBytes, progressToken -ErrorAction SilentlyContinue
+}
+```
+
+Confirm only the secret names with `npx wrangler secret list` and `gh secret list --repo iDroza/activerealty-com`. Never send a valid payload by hand and never seed the progress KV key. The first valid production record must come from the Active Realty GitHub workflow.
+
+### Dormant Google Sheets rollback
+
+The prior read-only Google Sheets consumer, configuration, credentials, and tests remain intact but are not called by normal synchronization. Reverting the receiver cutover restores these inputs:
 
 - Shell Pages Remaining, read from the direct cell configured by `GOOGLE_SHEETS_REMAINING_RANGE`, or calculated from the optional page table mode
 - Sets Remaining, read from the direct cell configured by `GOOGLE_SHEETS_SETS_REMAINING_RANGE`
 
-Production uses the existing native tracker Sheet with these ranges:
+The retained native tracker Sheet uses these ranges:
 
 - Shell pages: `Summary!B5`
 - Work sets: `Summary!B8`
@@ -313,6 +362,7 @@ Set-Location ../..
 Put the returned namespace ID into the `DASHBOARD_KV` binding. Do not rename these stable keys:
 
 - `dashboard:snapshot:v2`: sanitized public snapshot
+- `dashboard:active-realty-progress:v1`: the exact validated repository progress record and no other publisher data
 - `dashboard:fub:activity:v2`: counts, checkpoints, and hashed daily message IDs only
 - `dashboard:fub:dials:v2`: the current year, stable checkpoints and count, hashed outbound-call IDs, and resumable reconciliation cursor state
 - `dashboard:fub:team:v4`: five-minute sanitized team totals, resolved personal user ID, and personal closed-deal count only
@@ -320,7 +370,7 @@ Put the returned namespace ID into the `DASHBOARD_KV` binding. Do not rename the
 - `dashboard:search_console:aggregate:v1`: hourly sanitized property aggregates only
 - `dashboard:sync:lease:v2`: short-lived best-effort overlap guard
 
-KV never stores API keys, OAuth access tokens, refresh tokens, private keys, response bodies, message bodies, or contact details.
+KV never stores API keys, bearer tokens, OAuth access tokens, refresh tokens, private keys, raw request bodies, request headers, page content, assignment data, message bodies, or contact details.
 
 ## 8. Manual synchronization token
 
@@ -397,11 +447,12 @@ curl.exe -i https://drozq.com/api/dashboard/health
 curl.exe -i https://drozq.com/api/dashboard/summary
 curl.exe -i https://drozq.com/api/dashboard/active-summary
 curl.exe -i https://drozq.com/api/dashboard/active-bootstrap.js
+curl.exe -i -X POST https://drozq.com/api/dashboard/admin/shell-progress
 curl.exe -i https://drozq.com/api/dashboard/not-a-route
 curl.exe -i https://drozq.com/api/geo
 ```
 
-Both pages return `200`; uppercase page paths return `301` to their lowercase canonical paths. Health returns `200`. Summary endpoints return `200` or a first-run `503`, the JavaScript bootstrap returns `200`, unknown dashboard routes return `404`, and the existing geo endpoint keeps its normal response. JSON summaries must include JSON content type, `nosniff`, and the documented 10-second cache policy without wildcard CORS. The Active Realty responses must contain exactly the 22 documented company metrics and none of the eight personal metric keys.
+Both pages return `200`; uppercase page paths return `301` to their lowercase canonical paths. Health returns `200`. Summary endpoints return `200` or a first-run `503`, the JavaScript bootstrap returns `200`, the unauthenticated shell-progress POST returns `401` with `Cache-Control: no-store`, unknown dashboard routes return `404`, and the existing geo endpoint keeps its normal response. JSON summaries must include JSON content type, `nosniff`, and the documented 10-second cache policy without wildcard CORS. The Active Realty responses must contain exactly the 22 documented company metrics and none of the eight personal metric keys or any shell-progress ingest metadata.
 
 ## 11. Protected manual synchronization
 
@@ -456,15 +507,20 @@ Upstream requests retry no more than three times, respect `Retry-After`, and oth
 - Keep `sc-domain:activerealty.com` and `https://justintye.com/` exact. A domain property and a URL-prefix property are not interchangeable.
 - Search Console metrics legitimately trail live traffic. Their saved values become stale only after 26 hours.
 
-### Google Sheets `401`, `403`, or missing production counts
+### Active Realty progress is stale or missing
 
-- Confirm the Sheets API remains enabled in the service account's Google Cloud project.
-- Confirm the tracker Sheet is shared with the exact `GOOGLE_SERVICE_ACCOUNT_EMAIL` as Viewer.
-- Confirm the private key and service-account email came from the same active key file.
-- Confirm `GOOGLE_SHEETS_SPREADSHEET_ID` is the raw spreadsheet ID, not a full URL.
-- Confirm the production formulas still return nonnegative whole numbers in `Summary!B5` and `Summary!B8`.
-- A renamed `Summary` tab or moved output cell requires only a range-secret update, not a code change.
-- A malformed cell preserves its previous valid number as stale. It never publishes zero as a fallback.
+- Confirm `ACTIVE_REALTY_PROGRESS_TOKEN` exists on `drozq-operating-dashboard` and `DROZQ_SHELL_PROGRESS_TOKEN` exists in `iDroza/activerealty-com`. Compare names only, never values.
+- Confirm the Active Realty publication workflow is enabled on `main` and its most recent scheduled or push run completed.
+- Confirm the workflow sends `sourceRepo=iDroza/activerealty-com`, `sourceRef=refs/heads/main`, the lowercase 40-character commit SHA, the decimal GitHub run ID, and an RFC3339 UTC publication time.
+- A `401` means the publisher and receiver secrets do not match or one is missing. Rotate both together with one new 256-bit value.
+- A `400` means the payload failed schema validation. Inspect the receiver's secret-free rejection category and the publisher's generated JSON keys and types.
+- A `409` means a duplicate run ID changed content or an older workflow tried to replace a newer publication. The stored record remains untouched.
+- A `413` means the publisher sent more than 4 KiB. The bridge must contain only the eight documented fields.
+- Missing or corrupt KV preserves the last valid dashboard values as stale. It never publishes zero as a fallback.
+
+### Dormant Google Sheets rollback diagnostics
+
+If the cutover commit is reverted, confirm the Sheets API, Viewer share, service-account key pair, raw spreadsheet ID, and the two `Summary` ranges remain valid. The retained reader still rejects blank, negative, fractional, non-finite, or malformed values without replacing the prior snapshot.
 
 ### Follow Up Boss activity looks low
 
@@ -487,7 +543,7 @@ Upstream requests retry no more than three times, respect `Retry-After`, and oth
 
 ### Stale or missing metrics
 
-Personal and Ads metrics become stale after five minutes, team and Google Sheets metrics after 15 minutes, and Search Console metrics after 26 hours. Check structured Worker logs for source, HTTP status, duration, and sanitized error category. A missing metric with no prior value is shown as unavailable, not zero. A partial failure does not erase other sources.
+Personal and Ads metrics become stale after five minutes, team metrics after 15 minutes, Active Realty repository progress after 12 hours, and Search Console metrics after 26 hours. Check structured Worker logs for source, HTTP status, duration, and sanitized error category. A missing metric with no prior value is shown as unavailable, not zero. A partial failure does not erase other sources.
 
 ### 30 to 180 day maintenance risks
 
@@ -501,9 +557,9 @@ Personal and Ads metrics become stale after five minutes, team and Google Sheets
 - New Google Ads leaf accounts are automatic, but OAuth and developer-token access must cover them.
 - Changing Google Ads primary conversion settings changes the Leads number by design. Audit primary actions during tracking migrations.
 - CPC and CPL intentionally fail closed when clicks or primary conversions are zero, so a missing denominator never appears as a misleading `$0.00`.
-- Google Sheets service-account keys can be disabled or deleted, and Viewer access can be removed. Monitor `authentication` and `authorization` errors.
-- Renaming the Sheet tab or moving the two Summary outputs breaks only the affected Sheet metric. Update the corresponding range secret after any tracker redesign.
-- A tracker formula that starts returning decimals, text, blanks, or negative numbers fails closed and keeps the last valid count.
+- The Active Realty publisher token can be deleted or rotated on only one side. Monitor `authentication` rejections and always rotate both secret names together.
+- A disabled workflow, changed repository/ref identity, malformed SHA, timestamp, run ID, or count fails closed and keeps the last valid progress values.
+- The dormant Google Sheets service-account key and Viewer access should remain available for rollback. Do not delete or rotate those credentials as part of the repository cutover.
 - Worker Cron configuration changes can take time to propagate. Manual sync verifies deployment immediately.
 - Upstream schema drift fails closed and preserves last-known-good values. Keep tests and observability enabled.
 - The daily activity state resets at Los Angeles midnight, the dial state resets on January 1, and the date utility has rollover, leap-year, and DST coverage.
@@ -512,7 +568,7 @@ Review Worker errors and credential age monthly. Run `npm run dashboard:check` b
 
 ## 13. Security and rotation
 
-Never commit `.dev.vars`, `.env`, downloaded service-account JSON, API keys, OAuth tokens, private keys, Cloudflare API tokens, or `ADMIN_SYNC_TOKEN`. The public serializer uses an explicit allowlist and cannot return contact details, account names, campaign names, Sheet contents, credentials, or raw upstream errors.
+Never commit `.dev.vars`, `.env`, downloaded service-account JSON, API keys, OAuth tokens, private keys, Cloudflare API tokens, `ADMIN_SYNC_TOKEN`, or `ACTIVE_REALTY_PROGRESS_TOKEN`. The public serializer uses an explicit allowlist and cannot return contact details, account names, campaign names, Sheet contents, shell-progress ingest metadata, credentials, or raw upstream errors.
 
 Any credential pasted into chat, committed, logged, or shown in a screenshot must be treated as exposed and rotated. Removing it from a file or deleting a message does not revoke it.
 
@@ -525,7 +581,7 @@ The marketing funnel uses a browser-side Google Maps key for Places autocomplete
 - `CLOUDFLARE_API_TOKEN`, limited to the required Worker script and route permissions
 - `CLOUDFLARE_ACCOUNT_ID`
 
-Runtime API credentials remain Worker secrets and are not managed by GitHub Actions. The workflow does not touch Cloudflare Pages deployment.
+Runtime API credentials remain Worker secrets and are not managed by this repository's GitHub Actions. The workflow does not touch Cloudflare Pages deployment. The separate `iDroza/activerealty-com` publisher stores only its matching bearer value under the repository secret name `DROZQ_SHELL_PROGRESS_TOKEN`.
 
 ## 15. Rollback
 

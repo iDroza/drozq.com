@@ -7,7 +7,7 @@
   var REQUEST_TIMEOUT_MS = 10000;
   var STALE_AFTER_MS = 5 * 60 * 1000;
   var TEAM_STALE_AFTER_MS = 15 * 60 * 1000;
-  var SHEETS_STALE_AFTER_MS = 15 * 60 * 1000;
+  var ACTIVE_REALTY_STALE_AFTER_MS = 12 * 60 * 60 * 1000;
   var SEARCH_STALE_AFTER_MS = 26 * 60 * 60 * 1000;
   var metricConfig = {
     callsToday: { source: "Follow Up Boss", format: "count" },
@@ -38,8 +38,8 @@
     teamSalesYtd: { source: "FUB Deals Leaderboard", format: "count", staleAfterMs: TEAM_STALE_AFTER_MS },
     teamVolumeYtd: { source: "FUB Deals Leaderboard", format: "currencyWhole", staleAfterMs: TEAM_STALE_AFTER_MS },
     teamActiveAgentsYtd: { source: "FUB Deals Leaderboard", format: "count", staleAfterMs: TEAM_STALE_AFTER_MS },
-    shellPagesRemaining: { source: "Google Sheets", format: "count", staleAfterMs: SHEETS_STALE_AFTER_MS },
-    setsRemaining: { source: "Google Sheets", format: "count", staleAfterMs: SHEETS_STALE_AFTER_MS }
+    shellPagesRemaining: { source: "Active Realty", format: "count", staleAfterMs: ACTIVE_REALTY_STALE_AFTER_MS },
+    setsRemaining: { source: "Active Realty", format: "count", staleAfterMs: ACTIVE_REALTY_STALE_AFTER_MS }
   };
   var countFormatter = new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 0

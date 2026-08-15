@@ -23,7 +23,7 @@ interface MetricSpec {
 
 const FAST_STALE_MS = 5 * 60 * 1_000;
 const TEAM_STALE_MS = 15 * 60 * 1_000;
-const SHEETS_STALE_MS = 15 * 60 * 1_000;
+const ACTIVE_REALTY_STALE_MS = 12 * 60 * 60 * 1_000;
 const SEARCH_STALE_MS = 26 * 60 * 60 * 1_000;
 
 export const METRIC_KEYS = [
@@ -201,14 +201,14 @@ export const METRIC_SPECS = {
     staleAfterMs: TEAM_STALE_MS,
   },
   shellPagesRemaining: {
-    source: "google_sheets",
-    definition: "Incomplete shell pages remaining in the configured Google Sheet.",
-    staleAfterMs: SHEETS_STALE_MS,
+    source: "active_realty_repository",
+    definition: "Incomplete Active Realty shell pages remaining in the latest repository publication.",
+    staleAfterMs: ACTIVE_REALTY_STALE_MS,
   },
   setsRemaining: {
-    source: "google_sheets",
-    definition: "Work sets remaining in the configured Google Sheet.",
-    staleAfterMs: SHEETS_STALE_MS,
+    source: "active_realty_repository",
+    definition: "Active Realty work sets remaining in the latest repository publication.",
+    staleAfterMs: ACTIVE_REALTY_STALE_MS,
   },
 } as const satisfies Record<DashboardMetricKey, MetricSpec>;
 
@@ -251,6 +251,11 @@ const POSITION_METRICS = new Set<DashboardMetricKey>([
   "jtPositionRolling90d",
 ]);
 
+const ACTIVE_REALTY_PROGRESS_METRICS = new Set<DashboardMetricKey>([
+  "shellPagesRemaining",
+  "setsRemaining",
+]);
+
 const VALID_STATUSES = new Set<MetricStatus>([
   "ok",
   "stale",
@@ -273,6 +278,7 @@ function validIsoDate(value: unknown): value is string {
 function sanitizeMetric(
   value: unknown,
   key: DashboardMetricKey,
+  allowLegacyGoogleSheetsSource = false,
 ): DashboardMetric | null {
   if (!isRecord(value)) {
     return null;
@@ -281,16 +287,25 @@ function sanitizeMetric(
   const rawValue = value["value"];
   const status = value["status"];
   const updatedAt = value["updatedAt"];
-  const maximum = CURRENCY_METRICS.has(key)
-    ? MAX_SPEND_USD
-    : RATE_METRICS.has(key)
-      ? 1
-      : POSITION_METRICS.has(key)
-        ? 1_000
-        : MAX_COUNT;
+  const maximum = ACTIVE_REALTY_PROGRESS_METRICS.has(key)
+    ? Number.MAX_SAFE_INTEGER
+    : CURRENCY_METRICS.has(key)
+      ? MAX_SPEND_USD
+      : RATE_METRICS.has(key)
+        ? 1
+        : POSITION_METRICS.has(key)
+          ? 1_000
+          : MAX_COUNT;
+  const source = value["source"];
+  const validSource = source === spec.source ||
+    (
+      allowLegacyGoogleSheetsSource &&
+      ACTIVE_REALTY_PROGRESS_METRICS.has(key) &&
+      source === "google_sheets"
+    );
 
   if (
-    value["source"] !== spec.source ||
+    !validSource ||
     typeof status !== "string" ||
     !VALID_STATUSES.has(status as MetricStatus) ||
     (rawValue !== null &&
@@ -436,7 +451,7 @@ export function sanitizeStoredSnapshot(value: unknown): DashboardSnapshot | null
       metrics[key] = unavailableMetric(key);
       continue;
     }
-    const metric = sanitizeMetric(raw, key);
+    const metric = sanitizeMetric(raw, key, true);
     if (metric === null) {
       return null;
     }

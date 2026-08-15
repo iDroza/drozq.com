@@ -114,6 +114,16 @@ assert.match(javascript, /"\/api\/dashboard\/active-bootstrap\.js"/u);
 assert.match(javascript, /__ACTIVE_REALTY_DASHBOARD_SNAPSHOT__/u);
 assert.match(javascript, /Object\.keys\(value\.metrics\)\.length === metricKeys\.length/u);
 assert.match(javascript, /15000/u, "visible polling interval must be 15 seconds");
+assert.match(
+  javascript,
+  /ACTIVE_REALTY_STALE_AFTER_MS = 12 \* 60 \* 60 \* 1000/u,
+  "repository progress must use the 12-hour freshness policy",
+);
+assert.doesNotMatch(
+  `${html}\n${javascript}`,
+  /Google Sheets/iu,
+  "the live production source must no longer be labeled Google Sheets",
+);
 assert.match(javascript, /document\.visibilityState/u, "hidden pages must pause polling");
 assert.doesNotMatch(
   javascript,

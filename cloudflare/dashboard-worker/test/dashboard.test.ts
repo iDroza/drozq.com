@@ -50,6 +50,12 @@ import {
   fetchGoogleSheetsMetrics,
   parseDirectCell,
 } from "../src/sources/google-sheets";
+import {
+  ACTIVE_REALTY_PROGRESS_KEY,
+  ACTIVE_REALTY_PROGRESS_MAX_BODY_BYTES,
+  fetchActiveRealtyProgressMetrics,
+  type ActiveRealtyProgressRecord,
+} from "../src/sources/active-realty-progress";
 import { handleRequest } from "../src/index";
 import {
   deriveTeamCommissionRoas,
@@ -67,6 +73,17 @@ import type {
 const NOW = new Date("2026-08-14T19:00:00.000Z");
 const DAY_START = "2026-08-14T07:00:00.000Z";
 const MONTH_START = "2026-08-01T07:00:00.000Z";
+const PROGRESS_TOKEN = "test-active-realty-progress-token";
+const VALID_PROGRESS_RECORD = {
+  schemaVersion: 1,
+  sourceRepo: "iDroza/activerealty-com",
+  sourceRef: "refs/heads/main",
+  sourceSha: "abcdef0123456789abcdef0123456789abcdef01",
+  runId: "9876543210",
+  publishedAt: "2026-08-14T18:30:00.000Z",
+  shellPagesRemaining: 37,
+  setsRemaining: 4,
+} as const satisfies ActiveRealtyProgressRecord;
 
 function successful(value: number): MetricFetchResult {
   return { kind: "ok", value, durationMs: 5, responseStatus: 200 };
@@ -140,6 +157,27 @@ function jsonResponse(payload: object, status = 200): Response {
   });
 }
 
+function progressRequest(
+  body: string,
+  token: string | null = PROGRESS_TOKEN,
+): Request {
+  const headers = new Headers({ "Content-Type": "application/json" });
+  if (token !== null) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+  return new Request(
+    "https://drozq.com/api/dashboard/admin/shell-progress",
+    { method: "POST", headers, body },
+  );
+}
+
+function progressJsonRequest(
+  payload: unknown,
+  token: string | null = PROGRESS_TOKEN,
+): Request {
+  return progressRequest(JSON.stringify(payload), token);
+}
+
 function collection(name: string, rows: unknown[]): Response {
   return jsonResponse({
     [name]: rows,
@@ -188,6 +226,7 @@ beforeEach(async () => {
     env.DASHBOARD_KV.delete("dashboard:fub:team:v3"),
     env.DASHBOARD_KV.delete("dashboard:fub:team:v4"),
     env.DASHBOARD_KV.delete("dashboard:sync:lease:v2"),
+    env.DASHBOARD_KV.delete(ACTIVE_REALTY_PROGRESS_KEY),
   ]);
 });
 
@@ -1047,6 +1086,276 @@ describe("Google Sheets production queue", () => {
   });
 });
 
+describe("Active Realty shell-progress receiver", () => {
+  it("rejects missing and invalid authentication without writing", async () => {
+    for (const token of [null, "wrong-progress-token"]) {
+      const response = await handleRequest(
+        progressJsonRequest(VALID_PROGRESS_RECORD, token),
+        withSecrets({ ACTIVE_REALTY_PROGRESS_TOKEN: PROGRESS_TOKEN }),
+      );
+      expect(response.status).toBe(401);
+      expect(response.headers.get("Cache-Control")).toBe("no-store");
+      expect(response.headers.has("Access-Control-Allow-Origin")).toBe(false);
+      expect(await response.json()).toEqual({ ok: false, error: "unauthorized" });
+      expect(await env.DASHBOARD_KV.get(ACTIVE_REALTY_PROGRESS_KEY)).toBeNull();
+    }
+  });
+
+  it("rejects malformed, non-object, and incomplete JSON without writing", async () => {
+    const incomplete = { ...VALID_PROGRESS_RECORD } as Record<string, unknown>;
+    delete incomplete["setsRemaining"];
+    const requests = [
+      progressRequest("{"),
+      progressJsonRequest([]),
+      progressJsonRequest(incomplete),
+    ];
+    for (const request of requests) {
+      const response = await handleRequest(
+        request,
+        withSecrets({ ACTIVE_REALTY_PROGRESS_TOKEN: PROGRESS_TOKEN }),
+      );
+      expect(response.status).toBe(400);
+      expect(response.headers.get("Cache-Control")).toBe("no-store");
+      expect(await env.DASHBOARD_KV.get(ACTIVE_REALTY_PROGRESS_KEY)).toBeNull();
+    }
+  });
+
+  it("rejects oversized bodies before parsing without writing", async () => {
+    const response = await handleRequest(
+      progressRequest("x".repeat(ACTIVE_REALTY_PROGRESS_MAX_BODY_BYTES + 1)),
+      withSecrets({ ACTIVE_REALTY_PROGRESS_TOKEN: PROGRESS_TOKEN }),
+    );
+    expect(response.status).toBe(413);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+    expect(await response.json()).toEqual({
+      ok: false,
+      error: "payload_too_large",
+    });
+    expect(await env.DASHBOARD_KV.get(ACTIVE_REALTY_PROGRESS_KEY)).toBeNull();
+  });
+
+  it("rejects additional fields without writing", async () => {
+    const response = await handleRequest(
+      progressJsonRequest({ ...VALID_PROGRESS_RECORD, unexpected: true }),
+      withSecrets({ ACTIVE_REALTY_PROGRESS_TOKEN: PROGRESS_TOKEN }),
+    );
+    expect(response.status).toBe(400);
+    expect(await env.DASHBOARD_KV.get(ACTIVE_REALTY_PROGRESS_KEY)).toBeNull();
+  });
+
+  it("rejects negative, fractional, and unsafe counts without writing", async () => {
+    const invalidCounts = [
+      { shellPagesRemaining: -1 },
+      { shellPagesRemaining: 1.5 },
+      { shellPagesRemaining: Number.MAX_SAFE_INTEGER + 1 },
+      { setsRemaining: -1 },
+      { setsRemaining: 1.5 },
+      { setsRemaining: Number.MAX_SAFE_INTEGER + 1 },
+    ];
+    for (const invalid of invalidCounts) {
+      const response = await handleRequest(
+        progressJsonRequest({ ...VALID_PROGRESS_RECORD, ...invalid }),
+        withSecrets({ ACTIVE_REALTY_PROGRESS_TOKEN: PROGRESS_TOKEN }),
+      );
+      expect(response.status).toBe(400);
+      expect(await env.DASHBOARD_KV.get(ACTIVE_REALTY_PROGRESS_KEY)).toBeNull();
+    }
+  });
+
+  it("rejects wrong schema version, repository, ref, SHA, timestamp, and run ID", async () => {
+    const invalidPayloads = [
+      { ...VALID_PROGRESS_RECORD, schemaVersion: 2 },
+      { ...VALID_PROGRESS_RECORD, sourceRepo: "iDroza/not-active-realty" },
+      { ...VALID_PROGRESS_RECORD, sourceRef: "refs/heads/develop" },
+      { ...VALID_PROGRESS_RECORD, sourceSha: "ABCDEF0123456789ABCDEF0123456789ABCDEF01" },
+      { ...VALID_PROGRESS_RECORD, publishedAt: "2026-02-30T12:00:00.000Z" },
+      { ...VALID_PROGRESS_RECORD, publishedAt: "2026-08-14T12:00:00-07:00" },
+      { ...VALID_PROGRESS_RECORD, runId: "0" },
+      { ...VALID_PROGRESS_RECORD, runId: "01" },
+      { ...VALID_PROGRESS_RECORD, runId: 123 },
+    ];
+    for (const payload of invalidPayloads) {
+      const response = await handleRequest(
+        progressJsonRequest(payload),
+        withSecrets({ ACTIVE_REALTY_PROGRESS_TOKEN: PROGRESS_TOKEN }),
+      );
+      expect(response.status).toBe(400);
+      expect(response.headers.get("Cache-Control")).toBe("no-store");
+      expect(await env.DASHBOARD_KV.get(ACTIVE_REALTY_PROGRESS_KEY)).toBeNull();
+    }
+  });
+
+  it("writes exactly the sanitized record for a valid delivery", async () => {
+    const response = await handleRequest(
+      progressJsonRequest(VALID_PROGRESS_RECORD),
+      withSecrets({ ACTIVE_REALTY_PROGRESS_TOKEN: PROGRESS_TOKEN }),
+    );
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+    expect(response.headers.has("Access-Control-Allow-Origin")).toBe(false);
+    expect(await response.json()).toEqual({
+      ok: true,
+      idempotent: false,
+      record: VALID_PROGRESS_RECORD,
+    });
+    const stored = await env.DASHBOARD_KV.get(ACTIVE_REALTY_PROGRESS_KEY);
+    expect(stored).toBe(JSON.stringify(VALID_PROGRESS_RECORD));
+    expect(Object.keys(JSON.parse(stored ?? "null") as object)).toEqual([
+      "schemaVersion",
+      "sourceRepo",
+      "sourceRef",
+      "sourceSha",
+      "runId",
+      "publishedAt",
+      "shellPagesRemaining",
+      "setsRemaining",
+    ]);
+  });
+
+  it("treats an identical retry as idempotent", async () => {
+    const dashboardEnv = withSecrets({
+      ACTIVE_REALTY_PROGRESS_TOKEN: PROGRESS_TOKEN,
+    });
+    const first = await handleRequest(
+      progressJsonRequest(VALID_PROGRESS_RECORD),
+      dashboardEnv,
+    );
+    const second = await handleRequest(
+      progressJsonRequest(VALID_PROGRESS_RECORD),
+      dashboardEnv,
+    );
+    expect(first.status).toBe(200);
+    expect(second.status).toBe(200);
+    expect(await second.json()).toEqual({
+      ok: true,
+      idempotent: true,
+      record: VALID_PROGRESS_RECORD,
+    });
+    expect(await env.DASHBOARD_KV.get(ACTIVE_REALTY_PROGRESS_KEY))
+      .toBe(JSON.stringify(VALID_PROGRESS_RECORD));
+  });
+
+  it("rejects changed content for the same run ID without replacing KV", async () => {
+    const dashboardEnv = withSecrets({
+      ACTIVE_REALTY_PROGRESS_TOKEN: PROGRESS_TOKEN,
+    });
+    await handleRequest(progressJsonRequest(VALID_PROGRESS_RECORD), dashboardEnv);
+    const changed = {
+      ...VALID_PROGRESS_RECORD,
+      shellPagesRemaining: VALID_PROGRESS_RECORD.shellPagesRemaining + 1,
+    };
+    const response = await handleRequest(progressJsonRequest(changed), dashboardEnv);
+    expect(response.status).toBe(409);
+    expect(await response.json()).toEqual({
+      ok: false,
+      error: "run_id_conflict",
+    });
+    expect(await env.DASHBOARD_KV.get(ACTIVE_REALTY_PROGRESS_KEY))
+      .toBe(JSON.stringify(VALID_PROGRESS_RECORD));
+  });
+
+  it("compares run IDs losslessly and rejects an older delivery", async () => {
+    const dashboardEnv = withSecrets({
+      ACTIVE_REALTY_PROGRESS_TOKEN: PROGRESS_TOKEN,
+    });
+    const newer = { ...VALID_PROGRESS_RECORD, runId: "9007199254740993" };
+    const older = {
+      ...VALID_PROGRESS_RECORD,
+      runId: "9007199254740992",
+      sourceSha: "1234567890abcdef1234567890abcdef12345678",
+    };
+    const accepted = await handleRequest(progressJsonRequest(newer), dashboardEnv);
+    const rejected = await handleRequest(progressJsonRequest(older), dashboardEnv);
+    expect(accepted.status).toBe(200);
+    expect(rejected.status).toBe(409);
+    expect(await rejected.json()).toEqual({ ok: false, error: "stale_run_id" });
+    expect(await env.DASHBOARD_KV.get(ACTIVE_REALTY_PROGRESS_KEY))
+      .toBe(JSON.stringify(newer));
+  });
+
+  it("accepts increased counts from a newer run", async () => {
+    const dashboardEnv = withSecrets({
+      ACTIVE_REALTY_PROGRESS_TOKEN: PROGRESS_TOKEN,
+    });
+    await handleRequest(
+      progressJsonRequest({ ...VALID_PROGRESS_RECORD, runId: "100" }),
+      dashboardEnv,
+    );
+    const increased = {
+      ...VALID_PROGRESS_RECORD,
+      runId: "101",
+      sourceSha: "1234567890abcdef1234567890abcdef12345678",
+      shellPagesRemaining: VALID_PROGRESS_RECORD.shellPagesRemaining + 10,
+      setsRemaining: VALID_PROGRESS_RECORD.setsRemaining + 2,
+    };
+    const response = await handleRequest(
+      progressJsonRequest(increased),
+      dashboardEnv,
+    );
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      ok: true,
+      idempotent: false,
+      record: increased,
+    });
+    expect(await env.DASHBOARD_KV.get(ACTIVE_REALTY_PROGRESS_KEY))
+      .toBe(JSON.stringify(increased));
+  });
+
+  it("reads both metrics from KV with publishedAt as observedAt", async () => {
+    await env.DASHBOARD_KV.put(
+      ACTIVE_REALTY_PROGRESS_KEY,
+      JSON.stringify(VALID_PROGRESS_RECORD),
+    );
+    const result = await fetchActiveRealtyProgressMetrics(withSecrets({}));
+    expect(result.shellPagesRemaining).toMatchObject({
+      kind: "ok",
+      value: VALID_PROGRESS_RECORD.shellPagesRemaining,
+      observedAt: VALID_PROGRESS_RECORD.publishedAt,
+    });
+    expect(result.setsRemaining).toMatchObject({
+      kind: "ok",
+      value: VALID_PROGRESS_RECORD.setsRemaining,
+      observedAt: VALID_PROGRESS_RECORD.publishedAt,
+    });
+  });
+
+  it("preserves prior values as stale when progress KV is missing or corrupt", async () => {
+    const previous = makeSnapshot(new Date("2026-08-14T17:00:00.000Z"));
+    const invalidSchema = JSON.stringify({
+      ...VALID_PROGRESS_RECORD,
+      sourceRepo: "iDroza/not-active-realty",
+    });
+    for (const stored of [null, "{not-json", invalidSchema] as const) {
+      if (stored === null) {
+        await env.DASHBOARD_KV.delete(ACTIVE_REALTY_PROGRESS_KEY);
+      } else {
+        await env.DASHBOARD_KV.put(ACTIVE_REALTY_PROGRESS_KEY, stored);
+      }
+      const progress = await fetchActiveRealtyProgressMetrics(withSecrets({}));
+      const results = allSuccessfulResults();
+      results.shellPagesRemaining = progress.shellPagesRemaining;
+      results.setsRemaining = progress.setsRemaining;
+      const merged = mergeSnapshot(
+        previous,
+        results,
+        NOW,
+        getReportingPeriod(NOW, "America/Los_Angeles"),
+      );
+      expect(merged.metrics.shellPagesRemaining).toMatchObject({
+        value: previous.metrics.shellPagesRemaining.value,
+        updatedAt: previous.metrics.shellPagesRemaining.updatedAt,
+        status: "stale",
+      });
+      expect(merged.metrics.setsRemaining).toMatchObject({
+        value: previous.metrics.setsRemaining.value,
+        updatedAt: previous.metrics.setsRemaining.updatedAt,
+        status: "stale",
+      });
+    }
+  });
+});
+
 describe("snapshot merging and public contract", () => {
   it("preserves a previous valid value after a partial failure", () => {
     const previousTime = new Date("2026-08-14T18:00:00.000Z");
@@ -1068,7 +1377,7 @@ describe("snapshot merging and public contract", () => {
     expect(merged.metrics.freshSellerLeads).toMatchObject({ value: 4, status: "ok" });
   });
 
-  it("preserves the previous sets value when only that Sheet cell fails", () => {
+  it("preserves the previous sets value when only that progress metric fails", () => {
     const previousTime = new Date("2026-08-14T18:00:00.000Z");
     const previous = makeSnapshot(previousTime);
     const results = allSuccessfulResults();
@@ -1107,7 +1416,7 @@ describe("snapshot merging and public contract", () => {
     });
   });
 
-  it("uses error, not zero, when the sets cell fails on the first run", () => {
+  it("uses error, not zero, when the sets metric fails on the first run", () => {
     const results = allSuccessfulResults();
     results.setsRemaining = failed();
     const merged = mergeSnapshot(
@@ -1141,16 +1450,30 @@ describe("snapshot merging and public contract", () => {
     expect(publicSnapshot.metrics.callsToday.status).toBe("ok");
   });
 
-  it("uses the longer team and Search Console freshness policies", () => {
+  it("uses the longer team, repository, and Search Console freshness policies", () => {
     const snapshot = makeSnapshot(new Date("2026-08-13T12:00:00.000Z"));
     const afterSixteenMinutes = toPublicSnapshot(
       snapshot,
       new Date("2026-08-13T12:16:00.000Z"),
     );
     expect(afterSixteenMinutes.metrics.teamSalesYtd.status).toBe("stale");
-    expect(afterSixteenMinutes.metrics.shellPagesRemaining.status).toBe("stale");
-    expect(afterSixteenMinutes.metrics.setsRemaining.status).toBe("stale");
+    expect(afterSixteenMinutes.metrics.shellPagesRemaining.status).toBe("ok");
+    expect(afterSixteenMinutes.metrics.setsRemaining.status).toBe("ok");
     expect(afterSixteenMinutes.metrics.activeRealtyClicksRolling90d.status).toBe("ok");
+
+    const atTwelveHours = toPublicSnapshot(
+      snapshot,
+      new Date("2026-08-14T00:00:00.000Z"),
+    );
+    expect(atTwelveHours.metrics.shellPagesRemaining.status).toBe("ok");
+    expect(atTwelveHours.metrics.setsRemaining.status).toBe("ok");
+
+    const afterTwelveHours = toPublicSnapshot(
+      snapshot,
+      new Date("2026-08-14T00:00:00.001Z"),
+    );
+    expect(afterTwelveHours.metrics.shellPagesRemaining.status).toBe("stale");
+    expect(afterTwelveHours.metrics.setsRemaining.status).toBe("stale");
 
     const afterTwentySevenHours = toPublicSnapshot(
       snapshot,
@@ -1264,6 +1587,24 @@ describe("snapshot merging and public contract", () => {
     });
   });
 
+  it("normalizes legacy Google Sheets progress sources only in stored snapshots", () => {
+    const snapshot = makeSnapshot();
+    const legacy = JSON.parse(JSON.stringify(snapshot)) as DashboardSnapshot;
+    legacy.metrics.shellPagesRemaining.source = "google_sheets";
+    legacy.metrics.setsRemaining.source = "google_sheets";
+
+    expect(sanitizeSnapshot(legacy)).toBeNull();
+    const migrated = sanitizeStoredSnapshot(legacy);
+    expect(migrated?.metrics.shellPagesRemaining).toMatchObject({
+      value: snapshot.metrics.shellPagesRemaining.value,
+      source: "active_realty_repository",
+    });
+    expect(migrated?.metrics.setsRemaining).toMatchObject({
+      value: snapshot.metrics.setsRemaining.value,
+      source: "active_realty_repository",
+    });
+  });
+
   it("rejects an invalid manual-sync token", async () => {
     const response = await handleRequest(
       new Request("https://drozq.com/api/dashboard/admin/sync", {
@@ -1373,6 +1714,57 @@ describe("snapshot merging and public contract", () => {
       "personalDealsClosedYtd",
     ]) {
       expect(personalKey in payload.metrics).toBe(false);
+    }
+  });
+
+  it("never exposes shell-progress ingest metadata in public summaries", async () => {
+    const snapshot = makeSnapshot();
+    await env.DASHBOARD_KV.put(
+      SNAPSHOT_KEY,
+      JSON.stringify({
+        ...snapshot,
+        sourceRepo: VALID_PROGRESS_RECORD.sourceRepo,
+        sourceRef: VALID_PROGRESS_RECORD.sourceRef,
+        sourceSha: VALID_PROGRESS_RECORD.sourceSha,
+        runId: VALID_PROGRESS_RECORD.runId,
+        publishedAt: VALID_PROGRESS_RECORD.publishedAt,
+        schemaVersion: VALID_PROGRESS_RECORD.schemaVersion,
+        token: PROGRESS_TOKEN,
+        metrics: {
+          ...snapshot.metrics,
+          shellPagesRemaining: {
+            ...snapshot.metrics.shellPagesRemaining,
+            sourceSha: VALID_PROGRESS_RECORD.sourceSha,
+            runId: VALID_PROGRESS_RECORD.runId,
+          },
+        },
+      }),
+    );
+    await env.DASHBOARD_KV.put(
+      ACTIVE_REALTY_PROGRESS_KEY,
+      JSON.stringify(VALID_PROGRESS_RECORD),
+    );
+
+    for (const pathname of ["summary", "active-summary"]) {
+      const response = await handleRequest(
+        new Request(`https://drozq.com/api/dashboard/${pathname}`),
+        withSecrets({ ACTIVE_REALTY_PROGRESS_TOKEN: PROGRESS_TOKEN }),
+      );
+      expect(response.status).toBe(200);
+      const serialized = JSON.stringify(await response.json());
+      for (const privateField of [
+        "schemaVersion",
+        "sourceRepo",
+        "sourceRef",
+        "sourceSha",
+        "runId",
+        "publishedAt",
+        "token",
+      ]) {
+        expect(serialized).not.toContain(`\"${privateField}\"`);
+      }
+      expect(serialized).not.toContain(PROGRESS_TOKEN);
+      expect(serialized).not.toContain(VALID_PROGRESS_RECORD.sourceSha);
     }
   });
 

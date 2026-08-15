@@ -5,7 +5,8 @@ export type MetricSource =
   | "google_ads"
   | "combined"
   | "google_search_console"
-  | "google_sheets";
+  | "google_sheets"
+  | "active_realty_repository";
 
 export interface DashboardMetric {
   value: number | null;
@@ -122,6 +123,11 @@ export interface GoogleSheetsMetricResults {
   setsRemaining: MetricFetchResult;
 }
 
+export interface ActiveRealtyProgressMetricResults {
+  shellPagesRemaining: MetricFetchResult;
+  setsRemaining: MetricFetchResult;
+}
+
 export interface FollowUpBossTeamMetricResults {
   teamCommissionYtd: MetricFetchResult;
   teamSalesYtd: MetricFetchResult;
@@ -148,6 +154,7 @@ export interface RuntimeDependencies {
 
 export interface SecretBindings {
   ADMIN_SYNC_TOKEN?: string;
+  ACTIVE_REALTY_PROGRESS_TOKEN?: string;
   FUB_API_KEY?: string;
   FUB_TEAM_API_KEY?: string;
   FUB_ACCOUNT_HOST?: string;

@@ -15,10 +15,11 @@ import {
 } from "./snapshot";
 import { fetchFollowUpBossMetrics } from "./sources/follow-up-boss";
 import { fetchFollowUpBossTeamMetrics } from "./sources/follow-up-boss-team";
+import { fetchActiveRealtyProgressMetrics } from "./sources/active-realty-progress";
 import { fetchGoogleAdsMetrics } from "./sources/google-ads";
 import { fetchGoogleSearchConsoleMetrics } from "./sources/google-search-console";
-import { fetchGoogleSheetsMetrics } from "./sources/google-sheets";
 import type {
+  ActiveRealtyProgressMetricResults,
   DashboardEnv,
   DashboardMetric,
   DashboardMetricKey,
@@ -27,7 +28,6 @@ import type {
   FollowUpBossTeamMetricResults,
   GoogleAdsMetricResults,
   GoogleSearchConsoleMetricResults,
-  GoogleSheetsMetricResults,
   MetricFetchResult,
   RuntimeDependencies,
 } from "./types";
@@ -275,7 +275,7 @@ function searchConsoleFailure(): GoogleSearchConsoleMetricResults {
   };
 }
 
-function sheetsFailure(): GoogleSheetsMetricResults {
+function activeRealtyProgressFailure(): ActiveRealtyProgressMetricResults {
   return {
     shellPagesRemaining: unexpectedResult(),
     setsRemaining: unexpectedResult(),
@@ -293,7 +293,7 @@ export async function synchronizeDashboard(
   const yearToDatePeriod = getYearToDatePeriod(now, timeZone);
   const previous = await loadPreviousSnapshot(env);
 
-  const [fubSettled, adsSettled, searchSettled, teamSettled, sheetsSettled] =
+  const [fubSettled, adsSettled, searchSettled, teamSettled, progressSettled] =
     await Promise.allSettled([
       fetchFollowUpBossMetrics(env, timeZone, { ...dependencies, now }),
       fetchGoogleAdsMetrics(
@@ -311,7 +311,7 @@ export async function synchronizeDashboard(
         yearToDatePeriod,
         { ...dependencies, now },
       ),
-      fetchGoogleSheetsMetrics(env, { ...dependencies, now }),
+      fetchActiveRealtyProgressMetrics(env),
     ]);
   const fub = fubSettled.status === "fulfilled" ? fubSettled.value : fubFailure();
   const ads = adsSettled.status === "fulfilled" ? adsSettled.value : adsFailure();
@@ -324,9 +324,9 @@ export async function synchronizeDashboard(
   const team = teamSettled.status === "fulfilled"
     ? teamSettled.value
     : teamFailure();
-  const sheets = sheetsSettled.status === "fulfilled"
-    ? sheetsSettled.value
-    : sheetsFailure();
+  const progress = progressSettled.status === "fulfilled"
+    ? progressSettled.value
+    : activeRealtyProgressFailure();
   const results: MetricResultMap = {
     ...fub,
     ...ads,
@@ -336,7 +336,7 @@ export async function synchronizeDashboard(
     ),
     ...search,
     ...team,
-    ...sheets,
+    ...progress,
   };
 
   logMetricResults(results);

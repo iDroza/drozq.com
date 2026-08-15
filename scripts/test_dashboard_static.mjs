@@ -99,12 +99,12 @@ assert.match(html, /<h3>SETS REMAINING<\/h3>/u);
 assert.match(
   html,
   /data-metric="teamActiveAgentsYtd"[\s\S]*data-metric="shellPagesRemaining"[\s\S]*data-metric="setsRemaining"/u,
-  "Google Sheets metrics must remain the final dashboard row",
+  "Active Realty progress metrics must remain the final dashboard row",
 );
 assert.equal(
   (html.match(/class="metrics-grid metrics-grid--compact metrics-grid--two is-loading"/gu) ?? []).length,
   1,
-  "the final Google Sheets row must contain the two requested cards",
+  "the final Active Realty progress row must contain the two requested cards",
 );
 assert.match(
   html,
@@ -118,7 +118,7 @@ assert.match(javascript, /"\/api\/dashboard\/bootstrap\.js"/u);
 assert.match(javascript, /loadBootstrapSnapshot/u);
 assert.match(
   html,
-  /<script src="\/api\/dashboard\/bootstrap\.js" defer><\/script>[\s\S]*<script src="\/dashboard\/dashboard\.js\?v=20260815a" defer><\/script>/u,
+  /<script src="\/api\/dashboard\/bootstrap\.js" defer><\/script>[\s\S]*<script src="\/dashboard\/dashboard\.js\?v=20260815b" defer><\/script>/u,
   "the resilient snapshot bootstrap must load before the dashboard controller",
 );
 assert.doesNotMatch(
@@ -127,6 +127,16 @@ assert.doesNotMatch(
   "browser code must not call dashboard upstream data APIs",
 );
 assert.match(javascript, /15000/u, "visible polling interval must be 15 seconds");
+assert.match(
+  javascript,
+  /ACTIVE_REALTY_STALE_AFTER_MS = 12 \* 60 \* 60 \* 1000/u,
+  "repository progress must use the 12-hour freshness policy",
+);
+assert.doesNotMatch(
+  `${html}\n${javascript}`,
+  /Google Sheets/iu,
+  "the live production source must no longer be labeled Google Sheets",
+);
 assert.match(javascript, /document\.visibilityState/u, "hidden pages must pause polling");
 assert.match(html, /id="search-console-period">Last 3 months<\/p>/u);
 assert.doesNotMatch(html, /Rolling 90 days/iu);

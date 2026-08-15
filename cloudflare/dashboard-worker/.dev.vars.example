@@ -2,6 +2,7 @@
 # Replace every angle-bracket value. Never commit .dev.vars.
 
 ADMIN_SYNC_TOKEN="<long-random-manual-sync-token>"
+ACTIVE_REALTY_PROGRESS_TOKEN="<256-bit-active-realty-publisher-token>"
 
 FUB_API_KEY="<follow-up-boss-api-key>"
 FUB_TEAM_API_KEY="<optional-broker-or-owner-fallback-api-key>"
