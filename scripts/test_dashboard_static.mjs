@@ -59,11 +59,7 @@ assert.deepEqual(
   ],
   "the top row must be Google Ads spend, leads, CPC, and CPL",
 );
-assert.match(
-  html,
-  /metric-card metric-card--palette-white" data-metric="googleAdsSpendMtd"[\s\S]*metric-card metric-card--palette-paper" data-metric="googleAdsLeadsMtd"[\s\S]*metric-card metric-card--palette-mist" data-metric="googleAdsCostPerClickMtd"[\s\S]*metric-card metric-card--palette-graphite" data-metric="googleAdsCostPerLeadMtd"/u,
-  "the four Google Ads cards must preserve the palette test order",
-);
+assert.doesNotMatch(html, /metric-card--palette-/u, "temporary palette test classes must be removed");
 assert.deepEqual(
   metricMatches.slice(4, 8).map((match) => match[1]),
   ["callsToday", "appointmentsSetMtd", "totalDialsYtd", "personalDealsClosedYtd"],
@@ -140,26 +136,13 @@ assert.match(css, /@media \(min-width: 1180px\)[\s\S]*repeat\(4,/u);
 const googleAdsBaseRule = css.match(
   /\.metrics-grid--top \.metric-card\s*\{([^}]*)\}/u,
 )?.[1] ?? "";
-assert.match(googleAdsBaseRule, /background:\s*var\(--palette-surface\)/u);
-assert.match(googleAdsBaseRule, /border-top-color:\s*var\(--palette-rule\)/u);
-const paletteExpectations = [
-  ["white", "#ffffff", "#1a1816"],
-  ["paper", "#f4efe7", "#9a7b56"],
-  ["mist", "#e9eff2", "#738896"],
-  ["graphite", "#2a2a2a", "#f2f0ef"],
-];
-const googleAdsPaletteRules = paletteExpectations.map(([name, surface, rule]) => {
-  const paletteRule = css.match(
-    new RegExp(`\\.metrics-grid--top \\.metric-card--palette-${name}\\s*\\{([^}]*)\\}`, "u"),
-  )?.[1] ?? "";
-  assert.match(paletteRule, new RegExp(`--palette-surface:\\s*${surface}`, "u"));
-  assert.match(paletteRule, new RegExp(`--palette-rule:\\s*${rule}`, "u"));
-  return paletteRule;
-});
+assert.match(googleAdsBaseRule, /background:\s*#fff/u);
+assert.match(googleAdsBaseRule, /border-color:\s*#dedad5/u);
+assert.match(googleAdsBaseRule, /border-top-color:\s*#1a1816/u);
 assert.doesNotMatch(
-  googleAdsPaletteRules.join("\n"),
+  googleAdsBaseRule,
   /#d92228|#a92e2a|#42cc93|#dff6e8/u,
-  "Google Ads palette candidates must not reuse the red or rejected mint accents",
+  "Google Ads cards must not reuse the red or rejected mint accents",
 );
 assert.match(
   css,

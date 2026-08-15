@@ -256,85 +256,33 @@ a {
 }
 
 .metrics-grid--top .metric-card {
-  color: var(--palette-value);
-  background: var(--palette-surface);
-  border-color: var(--palette-border);
-  border-top-color: var(--palette-rule);
+  color: #1a1816;
+  background: #fff;
+  border-color: #dedad5;
+  border-top-color: #1a1816;
 }
 
 .metrics-grid--top .metric-card h2 {
-  color: var(--palette-heading);
+  color: #3f3a35;
 }
 
 .metrics-grid--top .metric-value {
-  color: var(--palette-value);
+  color: #1a1816;
 }
 
 .metrics-grid--top .metric-context,
 .metrics-grid--top .metric-source {
-  color: var(--palette-muted);
+  color: #6f6962;
 }
 
 .metrics-grid--top .metric-badge {
-  color: var(--palette-badge-text);
-  background: var(--palette-badge-surface);
-  border-color: var(--palette-badge-border);
+  color: #1a1816;
+  background: #f2f0ef;
+  border-color: #1a1816;
 }
 
 .metrics-grid--top .metric-skeleton {
-  background: var(--palette-skeleton);
-}
-
-.metrics-grid--top .metric-card--palette-white {
-  --palette-surface: #ffffff;
-  --palette-border: #dedad5;
-  --palette-rule: #1a1816;
-  --palette-heading: #3f3a35;
-  --palette-value: #1a1816;
-  --palette-muted: #6f6962;
-  --palette-badge-surface: #f2f0ef;
-  --palette-badge-text: #1a1816;
-  --palette-badge-border: #1a1816;
-  --palette-skeleton: #dedad5;
-}
-
-.metrics-grid--top .metric-card--palette-paper {
-  --palette-surface: #f4efe7;
-  --palette-border: #ddd1c2;
-  --palette-rule: #9a7b56;
-  --palette-heading: #4c3c2f;
-  --palette-value: #2e2924;
-  --palette-muted: #675b50;
-  --palette-badge-surface: #e8dccd;
-  --palette-badge-text: #5d4935;
-  --palette-badge-border: #9a7b56;
-  --palette-skeleton: #d6c7b5;
-}
-
-.metrics-grid--top .metric-card--palette-mist {
-  --palette-surface: #e9eff2;
-  --palette-border: #cbd7dd;
-  --palette-rule: #738896;
-  --palette-heading: #334952;
-  --palette-value: #1f2d34;
-  --palette-muted: #536872;
-  --palette-badge-surface: #d8e2e7;
-  --palette-badge-text: #334952;
-  --palette-badge-border: #738896;
-  --palette-skeleton: #c2d0d6;
-}
-
-.metrics-grid--top .metric-card--palette-graphite {
-  --palette-surface: #2a2a2a;
-  --palette-border: #494949;
-  --palette-rule: #f2f0ef;
-  --palette-heading: #f2f0ef;
-  --palette-value: #ffffff;
-  --palette-muted: #c9c5c0;
-  --palette-badge-surface: #3a3a3a;
-  --palette-badge-text: #ffffff;
-  --palette-badge-border: #beb8b0;
-  --palette-skeleton: #575757;
+  background: #dedad5;
 }
 
 .sync-row {
