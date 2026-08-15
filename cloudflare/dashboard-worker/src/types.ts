@@ -81,6 +81,7 @@ export type ErrorCategory =
   | "malformed_json"
   | "schema"
   | "no_data"
+  | "in_progress"
   | "conversion_action_not_found"
   | "storage"
   | "unexpected";

@@ -13,10 +13,11 @@ import type {
 
 const FUB_BASE_URL = "https://api.followupboss.com/v1";
 const FUB_ACTIVITY_STATE_KEY = "dashboard:fub:activity:v2";
-const FUB_DIAL_STATE_KEY = "dashboard:fub:dials:v1";
+const FUB_DIAL_STATE_KEY = "dashboard:fub:dials:v2";
 const PAGE_LIMIT = 100;
 const MAX_PAGES = 100;
 const MAX_DIAL_PAGES = 500;
+const DIAL_RECONCILIATION_PAGES_PER_SYNC = 8;
 const MAX_ACTIVITY_CONTACTS = 250;
 const ACTIVITY_OVERLAP_MS = 15 * 60 * 1_000;
 const FULL_RECONCILIATION_MS = 60 * 60 * 1_000;
@@ -40,14 +41,37 @@ interface FollowUpBossActivityState {
 }
 
 interface FollowUpBossDialState {
-  version: 1;
+  version: 2;
   localYear: string;
   dials: ActivityChannelState;
+  reconciliation: DialReconciliationState | null;
+}
+
+interface DialReconciliationState {
+  endAt: string;
+  nextCursor: string | null;
+  offset: number;
+  processedRows: number;
+  pagesScanned: number;
+  count: number;
+  seen: string[];
+  seenCursors: string[];
 }
 
 interface ActivityUpdate {
   result: MetricFetchResult;
   state: ActivityChannelState | null;
+}
+
+interface DialUpdate {
+  result: MetricFetchResult;
+  state: FollowUpBossDialState | null;
+}
+
+interface CollectionPage {
+  rows: unknown[];
+  total: number | null;
+  nextCursor: string | null;
 }
 
 interface FreshLeadCounts {
@@ -106,6 +130,52 @@ async function requestJson(
   return readBoundedJson(response);
 }
 
+function isValidCursor(value: unknown): value is string {
+  return typeof value === "string" && value.length > 0 && value.length <= 4_096;
+}
+
+async function fetchCollectionPage(
+  endpoint: string,
+  collectionNames: string[],
+  parameters: Record<string, string>,
+  headers: Headers,
+  source: string,
+  dependencies: RuntimeDependencies,
+  offset: number,
+  nextCursor: string | null,
+): Promise<CollectionPage> {
+  const url = new URL(`${FUB_BASE_URL}/${endpoint}`);
+  for (const [name, value] of Object.entries(parameters)) {
+    url.searchParams.set(name, value);
+  }
+  url.searchParams.set("limit", String(PAGE_LIMIT));
+  if (nextCursor === null) {
+    url.searchParams.set("offset", String(offset));
+  } else {
+    url.searchParams.set("next", nextCursor);
+  }
+
+  const payload = await requestJson(url, headers, source, dependencies);
+  const rows = responseCollection(payload, collectionNames);
+  let total: number | null = null;
+  let responseCursor: string | null = null;
+  if (isRecord(payload) && isRecord(payload["_metadata"])) {
+    const metadata = payload["_metadata"];
+    const rawTotal = metadata["total"];
+    if (rawTotal !== undefined) {
+      total = requireCount(rawTotal, "fub_collection_total");
+    }
+    const rawCursor = metadata["next"];
+    if (rawCursor !== undefined && rawCursor !== null && rawCursor !== "") {
+      if (!isValidCursor(rawCursor)) {
+        throw new UpstreamRequestError("schema");
+      }
+      responseCursor = rawCursor;
+    }
+  }
+  return { rows, total, nextCursor: responseCursor };
+}
+
 async function listCollection(
   endpoint: string,
   collectionNames: string[],
@@ -121,54 +191,35 @@ async function listCollection(
   const seenCursors = new Set<string>();
 
   for (let page = 0; page < maxPages; page += 1) {
-    const url = new URL(`${FUB_BASE_URL}/${endpoint}`);
-    for (const [name, value] of Object.entries(parameters)) {
-      url.searchParams.set(name, value);
-    }
-    url.searchParams.set("limit", String(PAGE_LIMIT));
-    if (nextCursor === null) {
-      url.searchParams.set("offset", String(offset));
-    } else {
-      url.searchParams.set("next", nextCursor);
-    }
-
-    const payload = await requestJson(url, headers, source, dependencies);
-    const pageRows = responseCollection(payload, collectionNames);
+    const result = await fetchCollectionPage(
+      endpoint,
+      collectionNames,
+      parameters,
+      headers,
+      source,
+      dependencies,
+      offset,
+      nextCursor,
+    );
+    const pageRows = result.rows;
     rows.push(...pageRows);
 
-    let total: number | null = null;
-    let responseCursor: string | null = null;
-    if (isRecord(payload) && isRecord(payload["_metadata"])) {
-      const metadata = payload["_metadata"];
-      const rawTotal = metadata["total"];
-      if (rawTotal !== undefined) {
-        total = requireCount(rawTotal, "fub_collection_total");
-      }
-      const rawCursor = metadata["next"];
-      if (rawCursor !== undefined && rawCursor !== null && rawCursor !== "") {
-        if (
-          typeof rawCursor !== "string" ||
-          rawCursor.length > 4_096 ||
-          seenCursors.has(rawCursor)
-        ) {
-          throw new UpstreamRequestError("schema");
-        }
-        responseCursor = rawCursor;
-      }
-    }
     if (
       pageRows.length === 0 ||
       pageRows.length < PAGE_LIMIT ||
-      (total !== null && rows.length >= total)
+      (result.total !== null && rows.length >= result.total)
     ) {
       return rows;
     }
-    if (responseCursor !== null) {
-      seenCursors.add(responseCursor);
-      nextCursor = responseCursor;
+    if (result.nextCursor !== null) {
+      if (seenCursors.has(result.nextCursor)) {
+        throw new UpstreamRequestError("schema");
+      }
+      seenCursors.add(result.nextCursor);
+      nextCursor = result.nextCursor;
     } else {
       nextCursor = null;
-      offset += pageRows.length;
+      offset = rows.length;
     }
   }
 
@@ -396,6 +447,15 @@ function okResult(value: number, started: number): MetricFetchResult {
   };
 }
 
+function inProgressResult(started: number): MetricFetchResult {
+  return {
+    kind: "error",
+    category: "in_progress",
+    durationMs: Date.now() - started,
+    responseStatus: null,
+  };
+}
+
 function errorResults(error: unknown, started: number): FollowUpBossMetricResults {
   return {
     callsToday: errorResult(error, started),
@@ -429,6 +489,12 @@ function blankChannel(dayStartAt: string): ActivityChannelState {
   };
 }
 
+function validHashedIds(value: unknown): value is string[] {
+  return Array.isArray(value) &&
+    value.length <= MAX_SEEN_ACTIVITY_IDS &&
+    value.every((item) => typeof item === "string" && /^[a-f0-9]{64}$/u.test(item));
+}
+
 function validChannel(value: unknown): value is ActivityChannelState {
   if (!isRecord(value)) {
     return false;
@@ -439,9 +505,37 @@ function validChannel(value: unknown): value is ActivityChannelState {
     (value["count"] as number) >= 0 &&
     isIsoUtcTimestamp(value["checkpointAt"]) &&
     isIsoUtcTimestamp(value["lastFullScanAt"]) &&
-    Array.isArray(seen) &&
-    seen.length <= MAX_SEEN_ACTIVITY_IDS &&
-    seen.every((item) => typeof item === "string" && /^[a-f0-9]{64}$/u.test(item))
+    validHashedIds(seen)
+  );
+}
+
+function validDialReconciliation(
+  value: unknown,
+): value is DialReconciliationState {
+  if (!isRecord(value)) {
+    return false;
+  }
+  const cursor = value["nextCursor"];
+  const seenCursors = value["seenCursors"];
+  return (
+    isIsoUtcTimestamp(value["endAt"]) &&
+    (cursor === null || isValidCursor(cursor)) &&
+    Number.isSafeInteger(value["offset"]) &&
+    (value["offset"] as number) >= 0 &&
+    (value["offset"] as number) <= MAX_DIAL_PAGES * PAGE_LIMIT &&
+    Number.isSafeInteger(value["processedRows"]) &&
+    (value["processedRows"] as number) >= 0 &&
+    (value["processedRows"] as number) <= MAX_DIAL_PAGES * PAGE_LIMIT &&
+    Number.isSafeInteger(value["pagesScanned"]) &&
+    (value["pagesScanned"] as number) >= 0 &&
+    (value["pagesScanned"] as number) < MAX_DIAL_PAGES &&
+    Number.isSafeInteger(value["count"]) &&
+    (value["count"] as number) >= 0 &&
+    validHashedIds(value["seen"]) &&
+    Array.isArray(seenCursors) &&
+    seenCursors.length <= MAX_DIAL_PAGES &&
+    seenCursors.every(isValidCursor) &&
+    new Set(seenCursors).size === seenCursors.length
   );
 }
 
@@ -500,16 +594,19 @@ function parseDialState(
 ): FollowUpBossDialState | null {
   if (
     !isRecord(value) ||
-    value["version"] !== 1 ||
+    value["version"] !== 2 ||
     value["localYear"] !== localYear ||
-    !validChannel(value["dials"])
+    !validChannel(value["dials"]) ||
+    (value["reconciliation"] !== null &&
+      !validDialReconciliation(value["reconciliation"]))
   ) {
     return null;
   }
   return {
-    version: 1,
+    version: 2,
     localYear,
     dials: value["dials"],
+    reconciliation: value["reconciliation"],
   };
 }
 
@@ -534,9 +631,10 @@ async function loadDialState(
     }));
   }
   return {
-    version: 1,
+    version: 2,
     localYear,
     dials: blankChannel(yearStartAt),
+    reconciliation: null,
   };
 }
 
@@ -717,57 +815,205 @@ async function updateActivity(
 }
 
 async function updateYtdDials(
-  previous: ActivityChannelState,
+  previous: FollowUpBossDialState,
   userId: string,
   yearStartAt: string,
   endAt: string,
   headers: Headers,
   dependencies: RuntimeDependencies,
-): Promise<ActivityUpdate> {
+): Promise<DialUpdate> {
   const started = Date.now();
   try {
     const nowMs = Date.parse(endAt);
     const shouldReconcile =
-      nowMs - Date.parse(previous.lastFullScanAt) >= DIAL_FULL_RECONCILIATION_MS;
+      previous.reconciliation !== null ||
+      nowMs - Date.parse(previous.dials.lastFullScanAt) >=
+        DIAL_FULL_RECONCILIATION_MS;
+    if (shouldReconcile) {
+      const scan = previous.reconciliation ?? {
+        endAt,
+        nextCursor: null,
+        offset: 0,
+        processedRows: 0,
+        pagesScanned: 0,
+        count: 0,
+        seen: [],
+        seenCursors: [],
+      } satisfies DialReconciliationState;
+      let nextCursor = scan.nextCursor;
+      let offset = scan.offset;
+      let processedRows = scan.processedRows;
+      let pagesScanned = scan.pagesScanned;
+      let count = scan.count;
+      const seen = new Set(scan.seen);
+      const seenCursors = new Set(scan.seenCursors);
+      const overlapCutoff = new Date(
+        Math.max(
+          Date.parse(yearStartAt),
+          Date.parse(scan.endAt) - ACTIVITY_OVERLAP_MS,
+        ),
+      ).toISOString();
+      let complete = false;
+
+      for (
+        let batchPage = 0;
+        batchPage < DIAL_RECONCILIATION_PAGES_PER_SYNC;
+        batchPage += 1
+      ) {
+        if (pagesScanned >= MAX_DIAL_PAGES) {
+          throw new UpstreamRequestError("schema");
+        }
+        const page = await fetchCollectionPage(
+          "calls",
+          ["calls"],
+          {
+            createdAfter: yearStartAt,
+            createdBefore: scan.endAt,
+            fields: "id,created,userId,isIncoming",
+          },
+          headers,
+          "follow_up_boss_dials_ytd",
+          dependencies,
+          offset,
+          nextCursor,
+        );
+        processedRows += page.rows.length;
+        pagesScanned += 1;
+        count = requireCount(
+          count + countOutboundCalls(
+            page.rows,
+            userId,
+            yearStartAt,
+            scan.endAt,
+          ),
+          "fub_dials_ytd",
+        );
+        const hashedIds = await mapWithConcurrency(
+          outboundCallIds(page.rows, userId, overlapCutoff, scan.endAt),
+          20,
+          (id) => hashRecordId("calls", id),
+        );
+        for (const id of hashedIds) {
+          seen.add(id);
+        }
+        if (
+          seen.size > MAX_SEEN_ACTIVITY_IDS ||
+          processedRows > MAX_DIAL_PAGES * PAGE_LIMIT
+        ) {
+          throw new UpstreamRequestError("schema");
+        }
+
+        complete = page.rows.length === 0 ||
+          page.rows.length < PAGE_LIMIT ||
+          (page.total !== null && processedRows >= page.total);
+        if (complete) {
+          break;
+        }
+        if (page.nextCursor !== null) {
+          if (seenCursors.has(page.nextCursor)) {
+            throw new UpstreamRequestError("schema");
+          }
+          seenCursors.add(page.nextCursor);
+          nextCursor = page.nextCursor;
+        } else {
+          nextCursor = null;
+          offset = processedRows;
+        }
+      }
+
+      if (complete) {
+        const dials: ActivityChannelState = {
+          count,
+          checkpointAt: scan.endAt,
+          lastFullScanAt: scan.endAt,
+          seen: [...seen],
+        };
+        return {
+          result: okResult(dials.count, started),
+          state: {
+            version: 2,
+            localYear: previous.localYear,
+            dials,
+            reconciliation: null,
+          },
+        };
+      }
+      if (pagesScanned >= MAX_DIAL_PAGES) {
+        throw new UpstreamRequestError("schema");
+      }
+      return {
+        result: inProgressResult(started),
+        state: {
+          version: 2,
+          localYear: previous.localYear,
+          dials: previous.dials,
+          reconciliation: {
+            endAt: scan.endAt,
+            nextCursor,
+            offset,
+            processedRows,
+            pagesScanned,
+            count,
+            seen: [...seen],
+            seenCursors: [...seenCursors],
+          },
+        },
+      };
+    }
+
     const incrementalCutoff = new Date(
       Math.max(
         Date.parse(yearStartAt),
-        Date.parse(previous.checkpointAt) - ACTIVITY_OVERLAP_MS,
+        Date.parse(previous.dials.checkpointAt) - ACTIVITY_OVERLAP_MS,
       ),
     ).toISOString();
-    const cutoffAt = shouldReconcile ? yearStartAt : incrementalCutoff;
     const rows = await listCollection(
       "calls",
       ["calls"],
       {
-        createdAfter: cutoffAt,
+        createdAfter: incrementalCutoff,
         createdBefore: endAt,
         fields: "id,created,userId,isIncoming",
       },
       headers,
       "follow_up_boss_dials_ytd",
       dependencies,
-      MAX_DIAL_PAGES,
+      DIAL_RECONCILIATION_PAGES_PER_SYNC,
     );
-    const seen = shouldReconcile ? new Set<string>() : new Set(previous.seen);
+    const seen = new Set(previous.dials.seen);
     const hashedIds = await mapWithConcurrency(
-      outboundCallIds(rows, userId, cutoffAt, endAt),
+      outboundCallIds(rows, userId, incrementalCutoff, endAt),
       20,
       (id) => hashRecordId("calls", id),
     );
+    let added = 0;
     for (const id of hashedIds) {
-      seen.add(id);
+      if (!seen.has(id)) {
+        seen.add(id);
+        added += 1;
+      }
     }
     if (seen.size > MAX_SEEN_ACTIVITY_IDS) {
       throw new UpstreamRequestError("schema");
     }
     const state: ActivityChannelState = {
-      count: requireCount(seen.size, "fub_dials_ytd"),
+      count: requireCount(
+        previous.dials.count + added,
+        "fub_dials_ytd",
+      ),
       checkpointAt: endAt,
-      lastFullScanAt: shouldReconcile ? endAt : previous.lastFullScanAt,
+      lastFullScanAt: previous.dials.lastFullScanAt,
       seen: [...seen],
     };
-    return { result: okResult(state.count, started), state };
+    return {
+      result: okResult(state.count, started),
+      state: {
+        version: 2,
+        localYear: previous.localYear,
+        dials: state,
+        reconciliation: null,
+      },
+    };
   } catch (error) {
     return { result: errorResult(error, started), state: null };
   }
@@ -892,7 +1138,7 @@ export async function fetchFollowUpBossMetrics(
     callsPromise,
     appointmentsPromise,
     updateYtdDials(
-      dialState.dials,
+      dialState,
       userId,
       windows.yearStartAt,
       windows.endAt,
@@ -1017,11 +1263,7 @@ export async function fetchFollowUpBossMetrics(
     try {
       await env.DASHBOARD_KV.put(
         FUB_DIAL_STATE_KEY,
-        JSON.stringify({
-          version: 1,
-          localYear: windows.localDate.slice(0, 4),
-          dials: nextDials,
-        } satisfies FollowUpBossDialState),
+        JSON.stringify(nextDials),
       );
     } catch {
       result.totalDialsYtd = {

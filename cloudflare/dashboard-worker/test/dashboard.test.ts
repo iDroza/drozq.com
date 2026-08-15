@@ -180,6 +180,7 @@ beforeEach(async () => {
     env.DASHBOARD_KV.delete(SNAPSHOT_KEY),
     env.DASHBOARD_KV.delete("dashboard:fub:activity:v2"),
     env.DASHBOARD_KV.delete("dashboard:fub:dials:v1"),
+    env.DASHBOARD_KV.delete("dashboard:fub:dials:v2"),
     env.DASHBOARD_KV.delete("dashboard:google_ads:accounts:v2"),
     env.DASHBOARD_KV.delete("dashboard:search_console:aggregate:v1"),
     env.DASHBOARD_KV.delete("dashboard:fub:team:v1"),
@@ -318,12 +319,7 @@ describe("Follow Up Boss normalization", () => {
 
   it("uses FUB keyset cursors for deep YTD dial pagination", async () => {
     const dialRequests: Array<{ next: string | null; offset: string | null }> = [];
-    const firstDialPage = Array.from({ length: 100 }, (_, index) => ({
-      id: index + 1,
-      created: "2026-08-14T18:00:00.000Z",
-      userId: 659,
-      isIncoming: false,
-    }));
+    const totalDials = 801;
     const fetcher = async (input: RequestInfo | URL): Promise<Response> => {
       const url = new URL(String(input));
       if (url.pathname.endsWith("/me")) {
@@ -338,29 +334,27 @@ describe("Follow Up Boss normalization", () => {
           offset: url.searchParams.get("offset"),
         };
         dialRequests.push(request);
-        if (request.next === null) {
-          return jsonResponse({
-            calls: firstDialPage,
-            _metadata: {
-              total: 101,
-              limit: 100,
-              offset: 0,
-              next: "cursor-page-2",
-            },
-          });
+        const pageIndex = request.next === null
+          ? 0
+          : Number(/^cursor-page-(\d+)$/u.exec(request.next)?.[1]);
+        if (!Number.isSafeInteger(pageIndex) || pageIndex < 0) {
+          return new Response("", { status: 400 });
         }
-        if (request.next === "cursor-page-2") {
-          return jsonResponse({
-            calls: [{
-              id: 101,
-              created: "2026-08-14T18:01:00.000Z",
-              userId: 659,
-              isIncoming: false,
-            }],
-            _metadata: { total: 101, limit: 100, next: null },
-          });
-        }
-        return new Response("", { status: 400 });
+        const firstId = pageIndex * 100 + 1;
+        const pageSize = Math.min(100, totalDials - pageIndex * 100);
+        const calls = Array.from({ length: pageSize }, (_, index) => ({
+          id: firstId + index,
+          created: "2026-08-14T18:00:00.000Z",
+          userId: 659,
+          isIncoming: false,
+        }));
+        const next = firstId + pageSize - 1 < totalDials
+          ? `cursor-page-${pageIndex + 1}`
+          : null;
+        return jsonResponse({
+          calls,
+          _metadata: { total: totalDials, limit: 100, next },
+        });
       }
       if (url.pathname.endsWith("/calls")) {
         return collection("calls", []);
@@ -373,17 +367,44 @@ describe("Follow Up Boss normalization", () => {
       }
       return new Response("", { status: 404 });
     };
-    const result = await fetchFollowUpBossMetrics(
-      withSecrets({ FUB_API_KEY: "test-fub-key" }),
+    const dashboardEnv = withSecrets({ FUB_API_KEY: "test-fub-key" });
+    const first = await fetchFollowUpBossMetrics(
+      dashboardEnv,
+      "America/Los_Angeles",
+      { fetcher, sleep: noDelay, now: NOW },
+    );
+    const partialState = JSON.parse(
+      (await env.DASHBOARD_KV.get("dashboard:fub:dials:v2")) ?? "null",
+    ) as {
+      version?: number;
+      reconciliation?: {
+        pagesScanned?: number;
+        nextCursor?: string;
+        count?: number;
+        seen?: string[];
+      };
+    } | null;
+    const second = await fetchFollowUpBossMetrics(
+      dashboardEnv,
       "America/Los_Angeles",
       { fetcher, sleep: noDelay, now: NOW },
     );
 
-    expect(result.totalDialsYtd).toMatchObject({ kind: "ok", value: 101 });
-    expect(dialRequests).toEqual([
-      { next: null, offset: "0" },
-      { next: "cursor-page-2", offset: null },
-    ]);
+    expect(first.totalDialsYtd).toMatchObject({
+      kind: "error",
+      category: "in_progress",
+    });
+    expect(partialState?.version).toBe(2);
+    expect(partialState?.reconciliation).toMatchObject({
+      pagesScanned: 8,
+      nextCursor: "cursor-page-8",
+      count: 800,
+    });
+    expect(partialState?.reconciliation?.seen).toHaveLength(0);
+    expect(second.totalDialsYtd).toMatchObject({ kind: "ok", value: 801 });
+    expect(dialRequests).toHaveLength(9);
+    expect(dialRequests[0]).toEqual({ next: null, offset: "0" });
+    expect(dialRequests[8]).toEqual({ next: "cursor-page-8", offset: null });
   });
 });
 

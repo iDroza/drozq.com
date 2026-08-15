@@ -92,7 +92,7 @@ The activity definitions are deliberate:
 - Appointments are records created during the current local month whose `createdById` matches the API-key user. The assignee does not change who set the appointment.
 - Today, month, and year boundaries use `REPORTING_TIME_ZONE`, currently `America/Los_Angeles`.
 
-Follow Up Boss does not permit this non-owner key to use the account-level agent-activity report or webhooks. The Worker therefore uses the documented REST resources directly. Collection scans prefer Follow Up Boss keyset `next` cursors and retain guarded offset pagination only for endpoints that omit a cursor. This is required for annual call histories beyond the API's deep-offset boundary. Call, text, and email IDs are hashed before deduplication state is stored in KV. No message content, person name, email address, phone number, or contact record is persisted. Daily message activity fully reconciles at least hourly. The year-to-date dial counter fully reconciles every six hours and uses 15-minute-overlap incremental scans between reconciliations. This keeps the annual count correct without rescanning the whole year every minute.
+Follow Up Boss does not permit this non-owner key to use the account-level agent-activity report or webhooks. The Worker therefore uses the documented REST resources directly. Collection scans prefer Follow Up Boss keyset `next` cursors and retain guarded offset pagination only for endpoints that omit a cursor. This is required for annual call histories beyond the API's deep-offset boundary. Call, text, and email IDs are hashed before deduplication state is stored in KV. No message content, person name, email address, phone number, or contact record is persisted. Daily message activity fully reconciles at least hourly. The year-to-date dial counter fully reconciles every six hours and uses 15-minute-overlap incremental scans between reconciliations. Full dial reconciliations are resumable and process at most eight call pages per one-minute cron invocation, safely below Cloudflare's per-invocation external-subrequest ceiling after the other dashboard sources are included. KV temporarily retains the opaque FUB page cursor, a candidate running count, and hashed call IDs only from the 15-minute overlap edge. A candidate count is promoted atomically only after the fixed year-to-date window is complete, so the dashboard never displays a partial annual total. This keeps the annual count correct without rescanning the whole year every minute.
 
 The year-to-date team row uses the same all-pipeline, Everyone view as:
 
@@ -314,7 +314,7 @@ Put the returned namespace ID into the `DASHBOARD_KV` binding. Do not rename the
 
 - `dashboard:snapshot:v2`: sanitized public snapshot
 - `dashboard:fub:activity:v2`: counts, checkpoints, and hashed daily message IDs only
-- `dashboard:fub:dials:v1`: the current year, checkpoints, count, and hashed outbound-call IDs only
+- `dashboard:fub:dials:v2`: the current year, stable checkpoints and count, hashed outbound-call IDs, and resumable reconciliation cursor state
 - `dashboard:fub:team:v4`: five-minute sanitized team totals, resolved personal user ID, and personal closed-deal count only
 - `dashboard:google_ads:accounts:v2`: short-lived leaf account ID cache
 - `dashboard:search_console:aggregate:v1`: hourly sanitized property aggregates only
@@ -472,7 +472,7 @@ Upstream requests retry no more than three times, respect `Retry-After`, and oth
 - Confirm records are being saved to Follow Up Boss under that user's ID.
 - Compare total dials against outbound call records only. Incoming calls do not count.
 - Automated action-plan and campaign messages are intentionally excluded.
-- Run a protected sync. The hourly message reconciliation and six-hour year-to-date dial reconciliation correct late-arriving or edited records.
+- Run a protected sync. The hourly message reconciliation and six-hour year-to-date dial reconciliation correct late-arriving or edited records. A full annual dial scan may need several one-minute cron invocations; its prior complete value stays stale until the candidate scan is atomically promoted.
 
 ### Follow Up Boss team totals look low
 
