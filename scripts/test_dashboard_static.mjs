@@ -136,9 +136,9 @@ assert.match(css, /@media \(min-width: 1180px\)[\s\S]*repeat\(4,/u);
 const googleAdsBaseRule = css.match(
   /\.metrics-grid--top \.metric-card\s*\{([^}]*)\}/u,
 )?.[1] ?? "";
-assert.match(googleAdsBaseRule, /background:\s*#fff/u);
-assert.match(googleAdsBaseRule, /border-color:\s*#dedad5/u);
-assert.match(googleAdsBaseRule, /border-top-color:\s*#1a1816/u);
+assert.match(googleAdsBaseRule, /background:\s*#2a2a2a/u);
+assert.match(googleAdsBaseRule, /border-color:\s*#494949/u);
+assert.match(googleAdsBaseRule, /border-top-color:\s*#000/u);
 assert.doesNotMatch(
   googleAdsBaseRule,
   /#d92228|#a92e2a|#42cc93|#dff6e8/u,

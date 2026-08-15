@@ -256,33 +256,33 @@ a {
 }
 
 .metrics-grid--top .metric-card {
-  color: #1a1816;
-  background: #fff;
-  border-color: #dedad5;
-  border-top-color: #1a1816;
+  color: #fff;
+  background: #2a2a2a;
+  border-color: #494949;
+  border-top-color: #000;
 }
 
 .metrics-grid--top .metric-card h2 {
-  color: #3f3a35;
+  color: #f2f0ef;
 }
 
 .metrics-grid--top .metric-value {
-  color: #1a1816;
+  color: #fff;
 }
 
 .metrics-grid--top .metric-context,
 .metrics-grid--top .metric-source {
-  color: #6f6962;
+  color: #c9c5c0;
 }
 
 .metrics-grid--top .metric-badge {
-  color: #1a1816;
-  background: #f2f0ef;
-  border-color: #1a1816;
+  color: #fff;
+  background: #3a3a3a;
+  border-color: #beb8b0;
 }
 
 .metrics-grid--top .metric-skeleton {
-  background: #dedad5;
+  background: #575757;
 }
 
 .sync-row {
