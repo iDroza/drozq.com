@@ -117,6 +117,8 @@ async function listCollection(
 ): Promise<unknown[]> {
   const rows: unknown[] = [];
   let offset = 0;
+  let nextCursor: string | null = null;
+  const seenCursors = new Set<string>();
 
   for (let page = 0; page < maxPages; page += 1) {
     const url = new URL(`${FUB_BASE_URL}/${endpoint}`);
@@ -124,17 +126,34 @@ async function listCollection(
       url.searchParams.set(name, value);
     }
     url.searchParams.set("limit", String(PAGE_LIMIT));
-    url.searchParams.set("offset", String(offset));
+    if (nextCursor === null) {
+      url.searchParams.set("offset", String(offset));
+    } else {
+      url.searchParams.set("next", nextCursor);
+    }
 
     const payload = await requestJson(url, headers, source, dependencies);
     const pageRows = responseCollection(payload, collectionNames);
     rows.push(...pageRows);
 
     let total: number | null = null;
+    let responseCursor: string | null = null;
     if (isRecord(payload) && isRecord(payload["_metadata"])) {
-      const rawTotal = payload["_metadata"]["total"];
+      const metadata = payload["_metadata"];
+      const rawTotal = metadata["total"];
       if (rawTotal !== undefined) {
         total = requireCount(rawTotal, "fub_collection_total");
+      }
+      const rawCursor = metadata["next"];
+      if (rawCursor !== undefined && rawCursor !== null && rawCursor !== "") {
+        if (
+          typeof rawCursor !== "string" ||
+          rawCursor.length > 4_096 ||
+          seenCursors.has(rawCursor)
+        ) {
+          throw new UpstreamRequestError("schema");
+        }
+        responseCursor = rawCursor;
       }
     }
     if (
@@ -144,7 +163,13 @@ async function listCollection(
     ) {
       return rows;
     }
-    offset += pageRows.length;
+    if (responseCursor !== null) {
+      seenCursors.add(responseCursor);
+      nextCursor = responseCursor;
+    } else {
+      nextCursor = null;
+      offset += pageRows.length;
+    }
   }
 
   throw new UpstreamRequestError("schema");

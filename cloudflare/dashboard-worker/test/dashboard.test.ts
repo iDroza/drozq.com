@@ -315,6 +315,76 @@ describe("Follow Up Boss normalization", () => {
     expect(callStarts).toContain("2026-01-01T08:00:00.000Z");
     expect(callStarts).toContain("2026-08-14T18:45:00.000Z");
   });
+
+  it("uses FUB keyset cursors for deep YTD dial pagination", async () => {
+    const dialRequests: Array<{ next: string | null; offset: string | null }> = [];
+    const firstDialPage = Array.from({ length: 100 }, (_, index) => ({
+      id: index + 1,
+      created: "2026-08-14T18:00:00.000Z",
+      userId: 659,
+      isIncoming: false,
+    }));
+    const fetcher = async (input: RequestInfo | URL): Promise<Response> => {
+      const url = new URL(String(input));
+      if (url.pathname.endsWith("/me")) {
+        return jsonResponse({ id: 659 });
+      }
+      if (
+        url.pathname.endsWith("/calls") &&
+        url.searchParams.get("createdAfter") === "2026-01-01T08:00:00.000Z"
+      ) {
+        const request = {
+          next: url.searchParams.get("next"),
+          offset: url.searchParams.get("offset"),
+        };
+        dialRequests.push(request);
+        if (request.next === null) {
+          return jsonResponse({
+            calls: firstDialPage,
+            _metadata: {
+              total: 101,
+              limit: 100,
+              offset: 0,
+              next: "cursor-page-2",
+            },
+          });
+        }
+        if (request.next === "cursor-page-2") {
+          return jsonResponse({
+            calls: [{
+              id: 101,
+              created: "2026-08-14T18:01:00.000Z",
+              userId: 659,
+              isIncoming: false,
+            }],
+            _metadata: { total: 101, limit: 100, next: null },
+          });
+        }
+        return new Response("", { status: 400 });
+      }
+      if (url.pathname.endsWith("/calls")) {
+        return collection("calls", []);
+      }
+      if (url.pathname.endsWith("/appointments")) {
+        return collection("appointments", []);
+      }
+      if (url.pathname.endsWith("/people")) {
+        return collection("people", []);
+      }
+      return new Response("", { status: 404 });
+    };
+    const result = await fetchFollowUpBossMetrics(
+      withSecrets({ FUB_API_KEY: "test-fub-key" }),
+      "America/Los_Angeles",
+      { fetcher, sleep: noDelay, now: NOW },
+    );
+
+    expect(result.totalDialsYtd).toMatchObject({ kind: "ok", value: 101 });
+    expect(dialRequests).toEqual([
+      { next: null, offset: "0" },
+      { next: "cursor-page-2", offset: null },
+    ]);
+  });
 });
 
 describe("upstream retry policy", () => {
