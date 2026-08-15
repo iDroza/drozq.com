@@ -255,6 +255,36 @@ a {
   animation: skeleton-pulse 1.4s ease-in-out infinite;
 }
 
+.metrics-grid--top .metric-card {
+  color: #1a1816;
+  background: #dff6e8;
+  border-color: #a9ddbf;
+  border-top-color: #42cc93;
+}
+
+.metrics-grid--top .metric-card h2 {
+  color: #193b2d;
+}
+
+.metrics-grid--top .metric-value {
+  color: #1a1816;
+}
+
+.metrics-grid--top .metric-context,
+.metrics-grid--top .metric-source {
+  color: #355a49;
+}
+
+.metrics-grid--top .metric-badge {
+  color: #193b2d;
+  background: #c9edd8;
+  border-color: #42cc93;
+}
+
+.metrics-grid--top .metric-skeleton {
+  background: #a9ddbf;
+}
+
 .sync-row {
   display: flex;
   min-height: 48px;

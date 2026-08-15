@@ -15,12 +15,12 @@ const expectedMetrics = [
   "googleAdsLeadsMtd",
   "googleAdsCostPerClickMtd",
   "googleAdsCostPerLeadMtd",
-  "freshSellerLeads",
-  "freshBuyerLeads",
-  "totalDialsYtd",
-  "personalDealsClosedYtd",
   "callsToday",
   "appointmentsSetMtd",
+  "totalDialsYtd",
+  "personalDealsClosedYtd",
+  "freshSellerLeads",
+  "freshBuyerLeads",
   "textsToday",
   "emailsToday",
   "googleAdsSpendYtd",
@@ -61,13 +61,13 @@ assert.deepEqual(
 );
 assert.deepEqual(
   metricMatches.slice(4, 8).map((match) => match[1]),
-  ["freshSellerLeads", "freshBuyerLeads", "totalDialsYtd", "personalDealsClosedYtd"],
-  "the second row must be leads, YTD dials, and Joshua's YTD closed deals",
+  ["callsToday", "appointmentsSetMtd", "totalDialsYtd", "personalDealsClosedYtd"],
+  "the second row must be calls, appointments, YTD dials, and Joshua's YTD closed deals",
 );
 assert.deepEqual(
   metricMatches.slice(8, 12).map((match) => match[1]),
-  ["callsToday", "appointmentsSetMtd", "textsToday", "emailsToday"],
-  "the third black row must preserve the daily activity cards",
+  ["freshSellerLeads", "freshBuyerLeads", "textsToday", "emailsToday"],
+  "the third black row must be seller leads, buyer leads, texts, and emails",
 );
 assert.equal(
   (html.match(/class="metrics-grid metrics-grid--compact is-loading"/gu) ?? []).length,
@@ -82,7 +82,7 @@ assert.match(html, /<h2>GOOGLE ADS CPC<\/h2>/u);
 assert.match(html, /<h2>GOOGLE ADS CPL<\/h2>/u);
 assert.match(html, /<h2>TOTAL DIALS MADE THIS YEAR<\/h2>/u);
 assert.match(html, /<h2>DEALS CLOSED THIS YEAR<\/h2>/u);
-assert.match(html, /Year to date &middot; #1 correlation to deals/u);
+assert.match(html, /Year to date &middot; Correlated to deals/u);
 assert.match(html, /Year to date &middot; Joshua only/u);
 assert.match(html, /<h2>TEXTS SENT<\/h2>/u, "texts card must keep TEXTS SENT");
 assert.match(html, /<h2>EMAILS SENT<\/h2>/u, "emails card must keep EMAILS SENT");
@@ -132,6 +132,12 @@ assert.doesNotMatch(html, /Rolling 90 days/iu);
 assert.match(javascript, /snapshot\.rolling90DayPeriod\.startDate/u);
 assert.match(javascript, /metric-value--very-long/u, "long values need overflow-safe sizing");
 assert.match(css, /@media \(min-width: 1180px\)[\s\S]*repeat\(4,/u);
+const googleAdsCardRule = css.match(
+  /\.metrics-grid--top \.metric-card\s*\{([^}]*)\}/u,
+)?.[1] ?? "";
+assert.match(googleAdsCardRule, /background:\s*#dff6e8/u);
+assert.match(googleAdsCardRule, /border-top-color:\s*#42cc93/u);
+assert.doesNotMatch(googleAdsCardRule, /#d92228|#a92e2a/u);
 assert.match(
   css,
   /@media \(min-width: 1180px\)[\s\S]*\.dashboard-splash\s*\{[\s\S]*min-height: calc\(100vh - 136px\)/u,
