@@ -85,7 +85,7 @@ async function sendFunnelReport(env, seed) {
 // it is still recoverable from Cloudflare's function logs, a lead is never
 // silently dropped.
 async function deliverLead(env, lead) {
-  const { emailContent, zapierPayload, fubEvent, logLine, reportOnly } = lead;
+  const { emailContent, zapierPayload, fubEvent, logLine } = lead;
   const tasks = [];
   let channels = 0;
 
@@ -93,7 +93,7 @@ async function deliverLead(env, lead) {
   const FROM_EMAIL = env.FROM_EMAIL;
   const MAILCHANNELS_API_KEY = env.MAILCHANNELS_API_KEY;
 
-  if (!reportOnly && TO_EMAIL && FROM_EMAIL && MAILCHANNELS_API_KEY) {
+  if (TO_EMAIL && FROM_EMAIL && MAILCHANNELS_API_KEY) {
     channels++;
     // DKIM-sign the alert when the platform key exists (same domain key as
     // updates@); the HTML part is the branded v2.1 template, the plaintext
@@ -131,11 +131,11 @@ async function deliverLead(env, lead) {
         console.error("LEAD_EMAIL_THREW MailChannels " + ((e && e.message) || e) + " | " + logLine);
       })
     );
-  } else if (!reportOnly) {
+  } else {
     console.error("LEAD_EMAIL_SKIPPED MailChannels not configured (need TO_EMAIL + FROM_EMAIL + MAILCHANNELS_API_KEY) | " + logLine);
   }
 
-  if (!reportOnly && env.ZAPIER_WEBHOOK_URL) {
+  if (env.ZAPIER_WEBHOOK_URL) {
     channels++;
     tasks.push(
       fetchWithTimeout(env.ZAPIER_WEBHOOK_URL, {
@@ -157,7 +157,7 @@ async function deliverLead(env, lead) {
   // by email and logs a lead event that can trigger FUB action plans / lead routing.
   // The FollowUpBoss Widget Tracker pixel already on the site then matches on-site
   // activity to this person's record.
-  if (!reportOnly && env.FOLLOWUPBOSS_API_KEY && fubEvent) {
+  if (env.FOLLOWUPBOSS_API_KEY && fubEvent) {
     channels++;
     tasks.push(
       fetchWithTimeout("https://api.followupboss.com/v1/events", {
@@ -181,7 +181,7 @@ async function deliverLead(env, lead) {
     );
   }
 
-  if (!reportOnly && channels === 0) {
+  if (channels === 0) {
     // No delivery channel at all: log the full lead so Joshua can recover it
     // from the Cloudflare Pages function logs. The visitor still got a 200.
     console.error("LEAD_NOT_DELIVERED no channel configured; recoverable lead below | " + logLine);
@@ -203,7 +203,7 @@ async function deliverLead(env, lead) {
   // binding + EMAIL_SECRET, so behavior is byte-identical until those exist.
   // New addresses get sequence step 0 instantly; existing or unsubscribed
   // addresses are never touched. See functions/_lib/enroll.js.
-  if (!reportOnly && env.EMAIL_DB && env.EMAIL_SECRET && lead.subscriberSeed) {
+  if (env.EMAIL_DB && env.EMAIL_SECRET && lead.subscriberSeed) {
     tasks.push(
       enrollSubscriber(env, lead.subscriberSeed).catch((e) => {
         console.error("LEAD_ENROLL_THREW " + ((e && e.message) || e) + " | " + logLine);
@@ -268,17 +268,6 @@ export async function onRequestPost(context) {
     const buyTimeline = String(formData.get("buy_timeline") || "").trim();
     const buyProcess = String(formData.get("buy_process") || "").trim();
     const gclid = String(formData.get("gclid") || "").trim();
-    const deliveryScope = String(formData.get("delivery_scope") || "").trim();
-    const sourceHost = String(formData.get("source_host") || "").trim().toLowerCase();
-    const requestOrigin = String(request.headers.get("origin") || "").trim().toLowerCase();
-    // ActiveRealty.com's Sierra form already creates the CRM record. Its cloned
-    // Drozq funnel calls this endpoint only for the instant valuation report.
-    // Browser-controlled Origin plus the explicit host marker prevents ordinary
-    // Drozq submissions from suppressing their normal alert, Zapier, FUB, and
-    // email-sequence delivery paths.
-    const reportOnly = deliveryScope === "report_only" &&
-      sourceHost === "activerealty.com" &&
-      (requestOrigin === "https://www.activerealty.com" || requestOrigin === "https://activerealty.com");
 
     // 4) Validation. Email + phone + consent are the hard requirements: they are
     // what makes a lead contactable and compliant. Name is captured when present
@@ -520,8 +509,7 @@ Consent: ${consent}
 
     // 10) Accept now, deliver after. The visitor's 200 does not depend on email
     // or Zapier succeeding, so a delivery outage can never break the funnel.
-    if (reportOnly) console.log("ACTIVE_FUNNEL_REPORT_RELAY " + logLine);
-    context.waitUntil(deliverLead(env, { emailContent, zapierPayload, fubEvent, logLine, subscriberSeed, reportSeed, reportOnly }));
+    context.waitUntil(deliverLead(env, { emailContent, zapierPayload, fubEvent, logLine, subscriberSeed, reportSeed }));
 
     return json({ ok: true }, 200);
   } catch (err) {
