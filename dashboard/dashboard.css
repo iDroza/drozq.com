@@ -348,6 +348,15 @@ a {
   letter-spacing: 0.12em;
 }
 
+.section-footnote {
+  margin: 14px 0 0;
+  color: #6f6962;
+  font-size: 0.7rem;
+  line-height: 1.6;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .metrics-grid--compact .metric-card {
   min-height: 150px;
 }

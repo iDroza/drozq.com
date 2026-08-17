@@ -9,6 +9,11 @@
   var TEAM_STALE_AFTER_MS = 15 * 60 * 1000;
   var ACTIVE_REALTY_STALE_AFTER_MS = 12 * 60 * 60 * 1000;
   var SEARCH_STALE_AFTER_MS = 26 * 60 * 60 * 1000;
+  // Realtor MVIP is a flat retainer with no API; its spend folds into the
+  // aggregate YTD numbers here, client-side, on top of the worker snapshot.
+  var MVIP_MONTHLY_SPEND_USD = 15000;
+  // Sales attribution: repeat business / referrals = 10%, advertising = 90%.
+  var ADVERTISING_SALES_SHARE = 0.9;
   var metricConfig = {
     callsToday: { source: "Follow Up Boss", format: "count" },
     textsToday: { source: "Follow Up Boss", format: "count" },
@@ -22,10 +27,10 @@
     googleAdsLeadsMtd: { source: "Google Ads", format: "conversion" },
     googleAdsCostPerClickMtd: { source: "Google Ads", format: "currency" },
     googleAdsCostPerLeadMtd: { source: "Google Ads", format: "currency" },
-    googleAdsSpendYtd: { source: "Google Ads", format: "currency" },
+    googleAdsSpendYtd: { source: "Google Ads + Realtor MVIP", format: "currency" },
     googleAdsLeadsYtd: { source: "Google Ads", format: "conversion" },
     googleAdsCostPerLeadYtd: { source: "Google Ads", format: "currency" },
-    teamCommissionRoasYtd: { source: "FUB + Google Ads", format: "ratio" },
+    teamCommissionRoasYtd: { source: "FUB + ad channels", format: "ratio" },
     activeRealtyClicksRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
     activeRealtyImpressionsRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
     activeRealtyCtrRolling90d: { source: "Search Console", format: "percent", staleAfterMs: SEARCH_STALE_AFTER_MS },
@@ -202,10 +207,42 @@
     });
   }
 
+  function mvipSpendYtd() {
+    return MVIP_MONTHLY_SPEND_USD * (new Date().getMonth() + 1);
+  }
+
+  function adjustMetrics(metrics) {
+    var adjusted = {};
+    Object.keys(metrics).forEach(function (key) {
+      adjusted[key] = metrics[key];
+    });
+    var adsSpend = metrics.googleAdsSpendYtd;
+    if (!isMetric(adsSpend) || adsSpend.value === null) {
+      return adjusted;
+    }
+    var totalSpend = adsSpend.value + mvipSpendYtd();
+    adjusted.googleAdsSpendYtd = {
+      value: totalSpend,
+      updatedAt: adsSpend.updatedAt,
+      status: adsSpend.status
+    };
+    var commission = metrics.teamCommissionYtd;
+    var roas = metrics.teamCommissionRoasYtd;
+    if (isMetric(commission) && commission.value !== null && isMetric(roas) && totalSpend > 0) {
+      adjusted.teamCommissionRoasYtd = {
+        value: (commission.value * ADVERTISING_SALES_SHARE) / totalSpend,
+        updatedAt: roas.updatedAt || commission.updatedAt,
+        status: roas.status
+      };
+    }
+    return adjusted;
+  }
+
   function renderSnapshot(snapshot) {
     currentSnapshot = snapshot;
+    var metrics = adjustMetrics(snapshot.metrics);
     Object.keys(metricConfig).forEach(function (key) {
-      renderMetric(key, snapshot.metrics[key]);
+      renderMetric(key, metrics[key]);
     });
     markGridsReady();
 
