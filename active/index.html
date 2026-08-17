@@ -12,10 +12,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#1a1816">
     <link rel="canonical" href="https://drozq.com/active">
-    <link rel="stylesheet" href="/dashboard/dashboard.css?v=20260815a">
+    <link rel="stylesheet" href="/dashboard/dashboard.css?v=20260817a">
     <link rel="stylesheet" href="/active/active.css?v=20260814a">
     <script src="/api/dashboard/active-bootstrap.js" defer></script>
-    <script src="/active/active.js?v=20260815b" defer></script>
+    <script src="/active/active.js?v=20260817a" defer></script>
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
@@ -135,37 +135,71 @@
             </div>
           </section>
 
+          <section class="dashboard-section" aria-labelledby="active-mvip-advertising-title">
+            <div class="dashboard-section__heading">
+              <h2 id="active-mvip-advertising-title">Realtor MVIP Advertising</h2>
+              <p>Flat monthly program</p>
+            </div>
+            <div class="metrics-grid metrics-grid--compact">
+              <article class="metric-card metric-card--secondary">
+                <div class="metric-card__head"><h3>SPEND</h3></div>
+                <p class="metric-value metric-value--long">$15,000/mo</p>
+                <p class="metric-context">Flat monthly retainer</p>
+                <p class="metric-source">Realtor.com MVIP</p>
+              </article>
+              <article class="metric-card metric-card--secondary">
+                <div class="metric-card__head"><h3>LEADS</h3></div>
+                <p class="metric-value">&ndash;</p>
+                <p class="metric-context">Reporting coming online</p>
+                <p class="metric-source">Realtor.com MVIP &middot; not available</p>
+              </article>
+              <article class="metric-card metric-card--secondary">
+                <div class="metric-card__head"><h3>CPL</h3></div>
+                <p class="metric-value">&ndash;</p>
+                <p class="metric-context">Reporting coming online</p>
+                <p class="metric-source">Realtor.com MVIP &middot; not available</p>
+              </article>
+              <article class="metric-card metric-card--secondary">
+                <div class="metric-card__head"><h3>% OF SALES</h3></div>
+                <p class="metric-value">&ndash;</p>
+                <p class="metric-context">Reporting coming online</p>
+                <p class="metric-source">Realtor.com MVIP &middot; not available</p>
+              </article>
+            </div>
+          </section>
+
           <section class="dashboard-section" aria-labelledby="active-advertising-title">
             <div class="dashboard-section__heading">
               <h2 id="active-advertising-title">Aggregate Advertising</h2>
-              <p>Year to date &middot; all accounts</p>
+              <p>Year to date &middot; Google Ads + Realtor MVIP</p>
             </div>
             <div class="metrics-grid metrics-grid--compact is-loading" aria-busy="true" aria-live="polite">
               <article class="metric-card metric-card--secondary" data-metric="googleAdsSpendYtd">
                 <div class="metric-card__head"><h3>SPEND</h3><span class="metric-badge" data-badge hidden>STALE</span></div>
-                <p class="metric-value" data-value aria-label="Year-to-date Google Ads spend loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
-                <p class="metric-context">Year to date &middot; all accounts</p>
-                <p class="metric-source" data-source>Google Ads &middot; loading</p>
+                <p class="metric-value" data-value aria-label="Year-to-date advertising spend loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+                <p class="metric-context">Year to date &middot; Google Ads + Realtor MVIP</p>
+                <p class="metric-source" data-source>Google Ads + Realtor MVIP &middot; loading</p>
               </article>
               <article class="metric-card metric-card--secondary" data-metric="googleAdsLeadsYtd">
                 <div class="metric-card__head"><h3>CONVERSIONS</h3><span class="metric-badge" data-badge hidden>STALE</span></div>
                 <p class="metric-value" data-value aria-label="Year-to-date Google Ads conversions loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
-                <p class="metric-context">Year to date &middot; all accounts</p>
+                <p class="metric-context">Year to date &middot; Google Ads</p>
                 <p class="metric-source" data-source>Google Ads &middot; loading</p>
               </article>
               <article class="metric-card metric-card--secondary" data-metric="googleAdsCostPerLeadYtd">
                 <div class="metric-card__head"><h3>COST / CONVERSION</h3><span class="metric-badge" data-badge hidden>STALE</span></div>
                 <p class="metric-value" data-value aria-label="Year-to-date Google Ads cost per conversion loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
-                <p class="metric-context">Year to date &middot; all accounts</p>
+                <p class="metric-context">Year to date &middot; Google Ads</p>
                 <p class="metric-source" data-source>Google Ads &middot; loading</p>
               </article>
               <article class="metric-card metric-card--secondary" data-metric="teamCommissionRoasYtd">
                 <div class="metric-card__head"><h3>BLENDED ROAS</h3><span class="metric-badge" data-badge hidden>STALE</span></div>
                 <p class="metric-value" data-value aria-label="Year-to-date blended commission ROAS loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
-                <p class="metric-context">YTD gross commission / ad spend</p>
-                <p class="metric-source" data-source>FUB + Google Ads &middot; loading</p>
+                <p class="metric-context">90% attributed commission / all ad spend</p>
+                <p class="metric-source" data-source>FUB + ad channels &middot; loading</p>
               </article>
             </div>
+            <p class="section-footnote">Sales attribution &middot; Repeat business / referrals = 10% of sales &middot; Advertising = 90% of sales &middot; Blended ROAS is measured on the advertising share</p>
           </section>
 
           <section class="dashboard-section" aria-labelledby="active-team-performance-title">
