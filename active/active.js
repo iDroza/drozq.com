@@ -9,9 +9,11 @@
   var TEAM_STALE_AFTER_MS = 15 * 60 * 1000;
   var ACTIVE_REALTY_STALE_AFTER_MS = 12 * 60 * 60 * 1000;
   var SEARCH_STALE_AFTER_MS = 26 * 60 * 60 * 1000;
-  // Realtor MVIP is a flat retainer with no API; its spend folds into the
-  // aggregate YTD numbers here, client-side, on top of the worker snapshot.
+  // Realtor MVIP is a flat retainer with no API; its spend and its 115
+  // leads/mo program average fold into the aggregate YTD numbers here,
+  // client-side, on top of the worker snapshot.
   var MVIP_MONTHLY_SPEND_USD = 15000;
+  var MVIP_MONTHLY_LEADS_AVG = 115;
   // Sales attribution: repeat business / referrals = 10%, advertising = 90%.
   var ADVERTISING_SALES_SHARE = 0.9;
   var metricConfig = {
@@ -20,8 +22,8 @@
     googleAdsCostPerClickMtd: { source: "Google Ads", format: "currency" },
     googleAdsCostPerLeadMtd: { source: "Google Ads", format: "currency" },
     googleAdsSpendYtd: { source: "Google Ads + Realtor MVIP", format: "currency" },
-    googleAdsLeadsYtd: { source: "Google Ads", format: "conversion" },
-    googleAdsCostPerLeadYtd: { source: "Google Ads", format: "currency" },
+    googleAdsLeadsYtd: { source: "Google Ads + Realtor MVIP", format: "conversion" },
+    googleAdsCostPerLeadYtd: { source: "Google Ads + Realtor MVIP", format: "currency" },
     teamCommissionRoasYtd: { source: "FUB + ad channels", format: "ratio" },
     activeRealtyClicksRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
     activeRealtyImpressionsRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
@@ -199,24 +201,46 @@
     return MVIP_MONTHLY_SPEND_USD * (new Date().getMonth() + 1);
   }
 
+  function mvipLeadsYtd() {
+    return MVIP_MONTHLY_LEADS_AVG * (new Date().getMonth() + 1);
+  }
+
   function adjustMetrics(metrics) {
     var adjusted = {};
     Object.keys(metrics).forEach(function (key) {
       adjusted[key] = metrics[key];
     });
     var adsSpend = metrics.googleAdsSpendYtd;
-    if (!isMetric(adsSpend) || adsSpend.value === null) {
-      return adjusted;
+    var totalSpend = null;
+    if (isMetric(adsSpend) && adsSpend.value !== null) {
+      totalSpend = adsSpend.value + mvipSpendYtd();
+      adjusted.googleAdsSpendYtd = {
+        value: totalSpend,
+        updatedAt: adsSpend.updatedAt,
+        status: adsSpend.status
+      };
     }
-    var totalSpend = adsSpend.value + mvipSpendYtd();
-    adjusted.googleAdsSpendYtd = {
-      value: totalSpend,
-      updatedAt: adsSpend.updatedAt,
-      status: adsSpend.status
-    };
+    var adsLeads = metrics.googleAdsLeadsYtd;
+    var totalLeads = null;
+    if (isMetric(adsLeads) && adsLeads.value !== null) {
+      totalLeads = adsLeads.value + mvipLeadsYtd();
+      adjusted.googleAdsLeadsYtd = {
+        value: totalLeads,
+        updatedAt: adsLeads.updatedAt,
+        status: adsLeads.status
+      };
+    }
+    var costPerLead = metrics.googleAdsCostPerLeadYtd;
+    if (isMetric(costPerLead) && totalSpend !== null && totalLeads !== null && totalLeads > 0) {
+      adjusted.googleAdsCostPerLeadYtd = {
+        value: totalSpend / totalLeads,
+        updatedAt: costPerLead.updatedAt || adsLeads.updatedAt,
+        status: costPerLead.status
+      };
+    }
     var commission = metrics.teamCommissionYtd;
     var roas = metrics.teamCommissionRoasYtd;
-    if (isMetric(commission) && commission.value !== null && isMetric(roas) && totalSpend > 0) {
+    if (isMetric(commission) && commission.value !== null && isMetric(roas) && totalSpend !== null && totalSpend > 0) {
       adjusted.teamCommissionRoasYtd = {
         value: (commission.value * ADVERTISING_SALES_SHARE) / totalSpend,
         updatedAt: roas.updatedAt || commission.updatedAt,
