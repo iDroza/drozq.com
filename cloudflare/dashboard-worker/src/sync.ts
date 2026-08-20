@@ -164,9 +164,16 @@ async function loadPreviousSnapshot(env: DashboardEnv): Promise<DashboardSnapsho
       );
     }
     return snapshot;
-  } catch {
+  } catch (error) {
     console.error(
-      JSON.stringify({ source: "dashboard_kv", category: "malformed_json", status: null }),
+      JSON.stringify({
+        source: "dashboard_kv",
+        category: "malformed_json",
+        status: null,
+        detail: error instanceof Error
+          ? `${error.name}: ${error.message}`
+          : String(error),
+      }),
     );
     return null;
   }

@@ -94,6 +94,7 @@ const sectionTitles = [
 ].map((match) => match[1]);
 assert.deepEqual(sectionTitles, [
   "Organic Search",
+  "Realtor MVIP Advertising",
   "Aggregate Advertising",
   "Team Performance",
   "Production Queue",

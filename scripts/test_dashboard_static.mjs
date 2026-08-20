@@ -118,7 +118,7 @@ assert.match(javascript, /"\/api\/dashboard\/bootstrap\.js"/u);
 assert.match(javascript, /loadBootstrapSnapshot/u);
 assert.match(
   html,
-  /<script src="\/api\/dashboard\/bootstrap\.js" defer><\/script>[\s\S]*<script src="\/dashboard\/dashboard\.js\?v=20260815b" defer><\/script>/u,
+  /<script src="\/api\/dashboard\/bootstrap\.js" defer><\/script>[\s\S]*<script src="\/dashboard\/dashboard\.js\?v=20260817b" defer><\/script>/u,
   "the resilient snapshot bootstrap must load before the dashboard controller",
 );
 assert.doesNotMatch(

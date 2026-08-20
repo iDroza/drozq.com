@@ -1432,20 +1432,20 @@ describe("snapshot merging and public contract", () => {
     });
   });
 
-  it("marks an ok metric stale after more than five minutes", () => {
+  it("marks an ok metric stale after more than twenty-five minutes", () => {
     const snapshot = makeSnapshot(new Date("2026-08-14T18:00:00.000Z"));
     const publicSnapshot = toPublicSnapshot(
       snapshot,
-      new Date("2026-08-14T18:05:00.001Z"),
+      new Date("2026-08-14T18:25:00.001Z"),
     );
     expect(publicSnapshot.metrics.callsToday.status).toBe("stale");
   });
 
-  it("keeps a metric ok at exactly five minutes", () => {
+  it("keeps a metric ok at exactly twenty-five minutes", () => {
     const snapshot = makeSnapshot(new Date("2026-08-14T18:00:00.000Z"));
     const publicSnapshot = toPublicSnapshot(
       snapshot,
-      new Date("2026-08-14T18:05:00.000Z"),
+      new Date("2026-08-14T18:25:00.000Z"),
     );
     expect(publicSnapshot.metrics.callsToday.status).toBe("ok");
   });
@@ -1456,10 +1456,16 @@ describe("snapshot merging and public contract", () => {
       snapshot,
       new Date("2026-08-13T12:16:00.000Z"),
     );
-    expect(afterSixteenMinutes.metrics.teamSalesYtd.status).toBe("stale");
-    expect(afterSixteenMinutes.metrics.shellPagesRemaining.status).toBe("ok");
-    expect(afterSixteenMinutes.metrics.setsRemaining.status).toBe("ok");
-    expect(afterSixteenMinutes.metrics.activeRealtyClicksRolling90d.status).toBe("ok");
+    expect(afterSixteenMinutes.metrics.teamSalesYtd.status).toBe("ok");
+
+    const afterSeventySixMinutes = toPublicSnapshot(
+      snapshot,
+      new Date("2026-08-13T13:16:00.000Z"),
+    );
+    expect(afterSeventySixMinutes.metrics.teamSalesYtd.status).toBe("stale");
+    expect(afterSeventySixMinutes.metrics.shellPagesRemaining.status).toBe("ok");
+    expect(afterSeventySixMinutes.metrics.setsRemaining.status).toBe("ok");
+    expect(afterSeventySixMinutes.metrics.activeRealtyClicksRolling90d.status).toBe("ok");
 
     const atTwelveHours = toPublicSnapshot(
       snapshot,

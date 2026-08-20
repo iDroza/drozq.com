@@ -1,6 +1,6 @@
 # Drozq Operating Dashboard
 
-Last updated: August 15, 2026
+Last updated: August 20, 2026
 
 ## 1. Architecture
 
@@ -10,11 +10,13 @@ Last updated: August 15, 2026
 
 The separate `drozq-operating-dashboard` Cloudflare Worker owns all credentials and upstream requests. Its production route is restricted to `drozq.com/api/dashboard*`, so it cannot intercept the rest of the Pages site or the existing `/api/lead` and `/api/geo` Pages Functions.
 
-The Worker runs every minute, which is the fastest Cloudflare Cron Trigger interval:
+The Worker runs every ten minutes:
 
 ```text
-* * * * *
+*/10 * * * *
 ```
+
+The cadence is a Workers KV write budget, not a Cloudflare scheduling limit. The account is on the free plan, and KV allows 1,000 writes per day account-wide, resetting at 00:00 UTC. Each sync run writes the lease, the snapshot, and the Follow Up Boss activity and dial checkpoints (~4 writes), so `*/10` spends roughly 650 writes per day and leaves headroom for source-cache refreshes, ingest deliveries, and manual syncs. Tightening the schedule past `*/5` without Workers Paid exhausts the quota mid-day and every subsequent KV write fails until midnight UTC (see the 2026-08-20 incident in the troubleshooting runbook). The schedule lives in `wrangler.jsonc`, so `npx wrangler deploy` always reasserts it; never change the cadence only in the Cloudflare dashboard.
 
 Each synchronization runs five integrations concurrently: Follow Up Boss personal activity, the Follow Up Boss Deals Leaderboard, Google Ads, Google Search Console, and the KV-backed Active Realty repository publication. It merges successful results with the previous snapshot and writes `dashboard:snapshot:v2` to Workers KV. A failed metric retains its last valid value and becomes stale. A first-run failure is unavailable, never a false zero. The prior Google Sheets reader remains in the Worker as dormant rollback code, but normal synchronization does not call it.
 
@@ -35,7 +37,7 @@ Below it are five fixed rows, each capped at four metrics:
 
 The Active Realty view contains 22 company metrics. Its first row is month-to-date Google Ads spend, primary conversions, cost per click, and cost per conversion across all linked leaf accounts. Directly below it are both Search Console rows, followed by the year-to-date Ads row, the team row, and the two production values. Production Queue is enlarged and is always the final visible section.
 
-The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the one-minute schedule or the protected manual sync endpoint. Personal and Ads metrics become stale after five minutes, team metrics after 15 minutes, Active Realty repository progress after 12 hours, and Search Console metrics after 26 hours. The Active Realty workflow publishes every six hours as a heartbeat. Search Console is source-cached for 60 minutes because its reporting data is not real time. Team deal aggregates are source-cached for five minutes.
+The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the ten-minute schedule or the protected manual sync endpoint. Personal and Ads metrics become stale after 25 minutes (two missed runs), team metrics after 75 minutes, Active Realty repository progress after 12 hours, and Search Console metrics after 26 hours. The Active Realty workflow publishes every six hours as a heartbeat. Search Console is source-cached for 60 minutes because its reporting data is not real time. Team deal aggregates are source-cached for 30 minutes.
 
 There is no Claude, OpenAI, AI inference, model call, or other nondeterministic runtime dependency. This is a direct API-to-KV-to-dashboard pipeline.
 
@@ -92,7 +94,7 @@ The activity definitions are deliberate:
 - Appointments are records created during the current local month whose `createdById` matches the API-key user. The assignee does not change who set the appointment.
 - Today, month, and year boundaries use `REPORTING_TIME_ZONE`, currently `America/Los_Angeles`.
 
-Follow Up Boss does not permit this non-owner key to use the account-level agent-activity report or webhooks. The Worker therefore uses the documented REST resources directly. Collection scans prefer Follow Up Boss keyset `next` cursors and retain guarded offset pagination only for endpoints that omit a cursor. This is required for annual call histories beyond the API's deep-offset boundary. Call, text, and email IDs are hashed before deduplication state is stored in KV. No message content, person name, email address, phone number, or contact record is persisted. Daily message activity fully reconciles at least hourly. The year-to-date dial counter fully reconciles every six hours and uses 15-minute-overlap incremental scans between reconciliations. Full dial reconciliations are resumable and process at most eight call pages per one-minute cron invocation, safely below Cloudflare's per-invocation external-subrequest ceiling after the other dashboard sources are included. KV temporarily retains the opaque FUB page cursor, a candidate running count, and hashed call IDs only from the 15-minute overlap edge. A candidate count is promoted atomically only after the fixed year-to-date window is complete, so the dashboard never displays a partial annual total. This keeps the annual count correct without rescanning the whole year every minute.
+Follow Up Boss does not permit this non-owner key to use the account-level agent-activity report or webhooks. The Worker therefore uses the documented REST resources directly. Collection scans prefer Follow Up Boss keyset `next` cursors and retain guarded offset pagination only for endpoints that omit a cursor. This is required for annual call histories beyond the API's deep-offset boundary. Call, text, and email IDs are hashed before deduplication state is stored in KV. No message content, person name, email address, phone number, or contact record is persisted. Daily message activity fully reconciles at least hourly. The year-to-date dial counter fully reconciles every six hours and uses 15-minute-overlap incremental scans between reconciliations. Full dial reconciliations are resumable and process at most eight call pages per cron invocation, safely below Cloudflare's per-invocation external-subrequest ceiling after the other dashboard sources are included. KV temporarily retains the opaque FUB page cursor, a candidate running count, and hashed call IDs only from the 15-minute overlap edge. A candidate count is promoted atomically only after the fixed year-to-date window is complete, so the dashboard never displays a partial annual total. This keeps the annual count correct without rescanning the whole year on every invocation.
 
 The year-to-date team row uses the same all-pipeline, Everyone view as:
 
@@ -121,7 +123,7 @@ Set-Location ../..
 
 The fallback uses `FUB_CLOSED_DEAL_STAGE_NAMES`, which defaults to `Closed`, and sums `commissionValue` so its definition matches the leaderboard's gross commission. It is not used while the leaderboard endpoint is healthy. If both sources fail, previous valid team values become stale instead of silently shrinking to the current user's visible deals.
 
-Team aggregates and the authenticated user's credited closing count are cached for five minutes to avoid hammering the report endpoint while the Worker itself runs every minute. Change the cache interval with `FUB_TEAM_REFRESH_MINUTES`. The cache key includes the YTD date range, account host, and exclusion list, while the cache payload records the resolved personal user ID, so a year rollover or configuration change cannot reuse the wrong aggregate.
+Team aggregates and the authenticated user's credited closing count are cached for 30 minutes to avoid hammering the report endpoint and to keep the cache rewrite inside the KV write budget. Change the cache interval with `FUB_TEAM_REFRESH_MINUTES`. The cache key includes the YTD date range, account host, and exclusion list, while the cache payload records the resolved personal user ID, so a year rollover or configuration change cannot reuse the wrong aggregate.
 
 ## 4. Google Ads setup
 
@@ -236,7 +238,7 @@ Set-Location ../..
 Remove-Variable gsc
 ```
 
-The two property URLs and the 60-minute source refresh are non-secret variables in `wrangler.jsonc`. The one-minute Worker schedule can safely reuse the sanitized KV aggregate between upstream refreshes. The availability probe uses `dataState: final` so partial same-day rows do not shift the window ahead of the Search Console card. The property aggregate uses `dataState: all` within that finalized end date and refreshes the complete three-month window instead of incrementally adding daily values. The dashboard prints the exact start and end dates beneath the Organic Search heading so the comparison window is auditable.
+The two property URLs and the 60-minute source refresh are non-secret variables in `wrangler.jsonc`. The ten-minute Worker schedule can safely reuse the sanitized KV aggregate between upstream refreshes. The availability probe uses `dataState: final` so partial same-day rows do not shift the window ahead of the Search Console card. The property aggregate uses `dataState: all` within that finalized end date and refreshes the complete three-month window instead of incrementally adding daily values. The dashboard prints the exact start and end dates beneath the Organic Search heading so the comparison window is auditable.
 
 ## 6. Active Realty shell-progress bridge
 
@@ -265,7 +267,7 @@ The SHA must be 40 lowercase hexadecimal characters. The run ID must be a positi
 
 The receiver stores only the validated record at `dashboard:active-realty-progress:v1`. A retry with the same run ID and identical record succeeds with `idempotent: true`. The same run ID with different content and any lower run ID return `409` without replacing the record. The publisher workflow is the primary single writer, while the receiver check is defense in depth.
 
-The one-minute dashboard synchronization reads that KV record, revalidates it, and emits only `shellPagesRemaining`, `setsRemaining`, and the publication time into the existing metric merge. Missing or corrupt progress data is an error, never zero. Existing valid snapshot values remain visible as stale. Ingest metadata, repository fields, run IDs, and SHAs never enter either public dashboard response.
+The ten-minute dashboard synchronization reads that KV record, revalidates it, and emits only `shellPagesRemaining`, `setsRemaining`, and the publication time into the existing metric merge. Missing or corrupt progress data is an error, never zero. Existing valid snapshot values remain visible as stale. Ingest metadata, repository fields, run IDs, and SHAs never enter either public dashboard response.
 
 Generate one 256-bit token and install the same value through stdin in both systems. Do not print it or save it to either repository:
 
@@ -490,7 +492,7 @@ The response is the same sanitized snapshot contract as the public endpoint.
 
 ### `429` or transient `5xx`
 
-Upstream requests retry no more than three times, respect `Retry-After`, and otherwise use bounded exponential backoff with jitter. Persistent failure retains the last complete value as stale. Do not shorten the one-minute Cron because Cloudflare does not support a faster schedule and higher manual frequency can cause rate limits.
+Upstream requests retry no more than three times, respect `Retry-After`, and otherwise use bounded exponential backoff with jitter. Persistent failure retains the last complete value as stale. Do not shorten the ten-minute Cron on the free plan: the constraint is the KV 1,000-writes-per-day budget (see the architecture section and the 503 runbook entry below), and higher manual frequency can also cause upstream rate limits.
 
 ### Google Ads spend or leads look low
 
@@ -506,6 +508,14 @@ Upstream requests retry no more than three times, respect `Retry-After`, and oth
 - Confirm the OAuth user can open both exact configured properties in Search Console.
 - Keep `sc-domain:activerealty.com` and `https://justintye.com/` exact. A domain property and a URL-prefix property are not interchangeable.
 - Search Console metrics legitimately trail live traffic. Their saved values become stale only after 26 hours.
+
+### Shell-progress POST or sync returns `503 storage_unavailable` (KV write quota)
+
+A `503` from the authenticated shell-progress receiver while unauthenticated requests still return a fast `401` means the handler itself failed after auth, and the most likely cause is that `DASHBOARD_KV.put` is throwing. Since the logging fix of 2026-08-20 the rejection log line (`source: active_realty_progress_ingest`, `category: storage_write`) carries a `detail` field with the real exception text; read it in Workers Observability before assuming anything.
+
+`KV PUT failed ... limit exceeded` / error code `10048` means the account's Workers KV free-tier write quota (1,000 writes per day, account-wide, resets 00:00 UTC) is exhausted. Reads keep working, so auth, `GET` endpoints, and idempotent replays still succeed while every fresh write fails until midnight UTC.
+
+**Incident record, 2026-08-20.** The `iDroza/activerealty-com` "Publish shell progress to Drozq" workflow delivered successfully at 07:09 UTC and failed with `503` on every run from 13:13 UTC onward. No deploy, config, or code change was involved: the worker (then on a `*/2` schedule) was writing lease + snapshot + Follow Up Boss activity + dial checkpoints on every run, roughly 2,400 to 2,900 KV writes per day against the 1,000-per-day free cap, exhausting the quota around 11:00 UTC daily. Prior days had exceeded the cap without enforcement (an account-level Workers Paid entitlement had covered it); once the account was purely free-tier the cap became real and every afternoon delivery died. The receiver's bare `catch` collapsed the quota error into an anonymous `503`, which is why the failure looked like a mystery. Fix: cron `*/2` to `*/10`, `FUB_TEAM_REFRESH_MINUTES` 5 to 30, staleness thresholds raised to match (fast 25 min, team 75 min), and every storage `catch` now logs the underlying exception in `detail`. Alternative if faster refresh is ever needed again: Workers Paid ($5/month) removes the daily write cap, after which `*/2` and the five-minute policies can return.
 
 ### Active Realty progress is stale or missing
 
@@ -528,7 +538,7 @@ If the cutover commit is reverted, confirm the Sheets API, Viewer share, service
 - Confirm records are being saved to Follow Up Boss under that user's ID.
 - Compare total dials against outbound call records only. Incoming calls do not count.
 - Automated action-plan and campaign messages are intentionally excluded.
-- Run a protected sync. The hourly message reconciliation and six-hour year-to-date dial reconciliation correct late-arriving or edited records. A full annual dial scan may need several one-minute cron invocations; its prior complete value stays stale until the candidate scan is atomically promoted.
+- Run a protected sync. The hourly message reconciliation and six-hour year-to-date dial reconciliation correct late-arriving or edited records. A full annual dial scan may need several cron invocations; its prior complete value stays stale until the candidate scan is atomically promoted.
 
 ### Follow Up Boss team totals look low
 

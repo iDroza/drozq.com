@@ -144,12 +144,14 @@ function progressDeliveryLog(
   category: string,
   record: ActiveRealtyProgressRecord | null = null,
   idempotent: boolean | null = null,
+  detail: string | null = null,
 ): Record<string, string | number | boolean | null> {
   return {
     source: "active_realty_progress_ingest",
     outcome,
     category,
     idempotent,
+    detail,
     sourceSha: record?.sourceSha ?? null,
     runId: record?.runId ?? null,
     shellPagesRemaining: record?.shellPagesRemaining ?? null,
@@ -157,13 +159,20 @@ function progressDeliveryLog(
   };
 }
 
+function errorDetail(error: unknown): string {
+  return error instanceof Error
+    ? `${error.name}: ${error.message}`
+    : String(error);
+}
+
 function logProgressRejection(
   category: string,
   record: ActiveRealtyProgressRecord | null = null,
   severity: "warning" | "error" = "warning",
+  detail: string | null = null,
 ): void {
   const serialized = JSON.stringify(
-    progressDeliveryLog("rejected", category, record),
+    progressDeliveryLog("rejected", category, record, null, detail),
   );
   if (severity === "error") {
     console.error(serialized);
@@ -214,7 +223,7 @@ async function activeRealtyProgressResponse(
       logProgressRejection("oversized_body");
       return jsonResponse({ ok: false, error: "payload_too_large" }, 413);
     }
-    logProgressRejection("body_read", null, "error");
+    logProgressRejection("body_read", null, "error", errorDetail(error));
     return jsonResponse({ ok: false, error: "invalid_payload" }, 400);
   }
 
@@ -235,21 +244,23 @@ async function activeRealtyProgressResponse(
   let stored: string | null;
   try {
     stored = await env.DASHBOARD_KV.get(ACTIVE_REALTY_PROGRESS_KEY);
-  } catch {
-    logProgressRejection("storage_read", record, "error");
+  } catch (error) {
+    logProgressRejection("storage_read", record, "error", errorDetail(error));
     return jsonResponse({ ok: false, error: "storage_unavailable" }, 503);
   }
   if (stored !== null) {
     let existing: ActiveRealtyProgressRecord | null = null;
+    let storedFailure = "stored record failed validation";
     try {
       existing = sanitizeActiveRealtyProgressRecord(
         JSON.parse(stored) as unknown,
       );
-    } catch {
+    } catch (error) {
       // Invalid stored JSON is handled as a storage failure below.
+      storedFailure = errorDetail(error);
     }
     if (existing === null) {
-      logProgressRejection("stored_record_invalid", record, "error");
+      logProgressRejection("stored_record_invalid", record, "error", storedFailure);
       return jsonResponse({ ok: false, error: "storage_unavailable" }, 503);
     }
 
@@ -272,8 +283,8 @@ async function activeRealtyProgressResponse(
       ACTIVE_REALTY_PROGRESS_KEY,
       JSON.stringify(record),
     );
-  } catch {
-    logProgressRejection("storage_write", record, "error");
+  } catch (error) {
+    logProgressRejection("storage_write", record, "error", errorDetail(error));
     return jsonResponse({ ok: false, error: "storage_unavailable" }, 503);
   }
   return progressSuccessResponse(record, false);
@@ -289,9 +300,14 @@ async function acquireSyncLease(env: DashboardEnv): Promise<string | null> {
       expirationTtl: SYNC_LEASE_TTL_SECONDS,
     });
     return (await env.DASHBOARD_KV.get(SYNC_LEASE_KEY)) === token ? token : null;
-  } catch {
+  } catch (error) {
     console.error(
-      JSON.stringify({ source: "dashboard_sync_lease", category: "storage", status: null }),
+      JSON.stringify({
+        source: "dashboard_sync_lease",
+        category: "storage",
+        status: null,
+        detail: errorDetail(error),
+      }),
     );
     return null;
   }
@@ -302,9 +318,14 @@ async function releaseSyncLease(env: DashboardEnv, token: string): Promise<void>
     if ((await env.DASHBOARD_KV.get(SYNC_LEASE_KEY)) === token) {
       await env.DASHBOARD_KV.delete(SYNC_LEASE_KEY);
     }
-  } catch {
+  } catch (error) {
     console.error(
-      JSON.stringify({ source: "dashboard_sync_lease", category: "storage", status: null }),
+      JSON.stringify({
+        source: "dashboard_sync_lease",
+        category: "storage",
+        status: null,
+        detail: errorDetail(error),
+      }),
     );
   }
 }
@@ -441,9 +462,14 @@ async function runScheduledSync(env: DashboardEnv): Promise<void> {
   }
   try {
     await synchronizeDashboard(env);
-  } catch {
+  } catch (error) {
     console.error(
-      JSON.stringify({ source: "dashboard_sync", category: "unexpected", status: null }),
+      JSON.stringify({
+        source: "dashboard_sync",
+        category: "unexpected",
+        status: null,
+        detail: errorDetail(error),
+      }),
     );
   } finally {
     await releaseSyncLease(env, lease);
@@ -454,9 +480,14 @@ export default {
   async fetch(request: Request, env: DashboardEnv): Promise<Response> {
     try {
       return await handleRequest(request, env);
-    } catch {
+    } catch (error) {
       console.error(
-        JSON.stringify({ source: "dashboard_worker", category: "unexpected", status: null }),
+        JSON.stringify({
+          source: "dashboard_worker",
+          category: "unexpected",
+          status: null,
+          detail: errorDetail(error),
+        }),
       );
       return jsonResponse({ ok: false, error: "service_unavailable" }, 503);
     }

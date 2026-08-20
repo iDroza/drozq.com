@@ -21,8 +21,12 @@ interface MetricSpec {
   staleAfterMs: number;
 }
 
-const FAST_STALE_MS = 5 * 60 * 1_000;
-const TEAM_STALE_MS = 15 * 60 * 1_000;
+// Staleness must stay comfortably above the sync cadence (*/10 since the
+// 2026-08-20 KV write-quota incident) or cards flag STALE between normal runs:
+// fast metrics tolerate two missed runs, team metrics 2.5x their 30-minute
+// source cache.
+const FAST_STALE_MS = 25 * 60 * 1_000;
+const TEAM_STALE_MS = 75 * 60 * 1_000;
 const ACTIVE_REALTY_STALE_MS = 12 * 60 * 60 * 1_000;
 const SEARCH_STALE_MS = 26 * 60 * 60 * 1_000;
 

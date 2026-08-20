@@ -15,8 +15,13 @@
     }
   ],
   "triggers": {
+    // KV free tier allows 1,000 writes/day account-wide. Each sync run writes
+    // lease + snapshot + FUB activity + FUB dial state (~4 writes), so the
+    // cadence must keep runs*4 + source-cache refreshes well under the cap.
+    // */10 = 144 runs/day ~= 650 writes/day. Do not tighten below */5 without
+    // Workers Paid (the 2026-08-20 quota-exhaustion incident, DASHBOARD_SETUP.md §9).
     "crons": [
-      "* * * * *"
+      "*/10 * * * *"
     ]
   },
   "kv_namespaces": [
@@ -30,7 +35,7 @@
     "FUB_ACCOUNT_HOST": "activerealty.followupboss.com",
     "FUB_CLOSED_DEAL_STAGE_NAMES": "Closed",
     "FUB_TEAM_EXCLUDED_USER_NAMES": "Active Agents",
-    "FUB_TEAM_REFRESH_MINUTES": "5",
+    "FUB_TEAM_REFRESH_MINUTES": "30",
     "GOOGLE_ADS_API_VERSION": "v25",
     "GOOGLE_SEARCH_CONSOLE_ACTIVE_REALTY_SITE_URL": "sc-domain:activerealty.com",
     "GOOGLE_SEARCH_CONSOLE_JT_SITE_URL": "https://justintye.com/",
