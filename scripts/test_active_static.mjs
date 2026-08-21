@@ -32,6 +32,9 @@ const expectedMetrics = [
   "googleAdsCostPerLeadYtd",
   "teamCommissionRoasYtd",
   "advertisingCacYtd",
+  "closeRateYtd",
+  "commissionPerSaleYtd",
+  "advertisingNetYtd",
   "teamCommissionYtd",
   "teamSalesYtd",
   "teamVolumeYtd",
@@ -56,7 +59,7 @@ assert.deepEqual(
   expectedMetrics,
   "Active Realty metric cards must preserve the company dashboard row order",
 );
-assert.equal(metricMatches.length, 23, "company dashboard must contain exactly 23 cards");
+assert.equal(metricMatches.length, 26, "company dashboard must contain exactly 26 cards");
 assert.deepEqual(
   metricMatches.slice(0, 4).map((match) => match[1]),
   expectedMetrics.slice(0, 4),
@@ -116,7 +119,18 @@ assert.match(javascript, /"\/api\/dashboard\/active-bootstrap\.js"/u);
 assert.match(javascript, /__ACTIVE_REALTY_DASHBOARD_SNAPSHOT__/u);
 assert.match(javascript, /Object\.keys\(value\.metrics\)\.length === snapshotMetricKeys\.length/u);
 assert.match(html, /<h3>CAC<\/h3>/u, "aggregate advertising must carry the CAC card");
+assert.match(html, /<h3>CLOSE RATE<\/h3>/u);
+assert.match(html, /<h3>COMMISSION \/ SALE<\/h3>/u);
+assert.match(html, /<h3>NET FROM ADVERTISING<\/h3>/u);
 assert.match(javascript, /advertisingCacYtd/u, "CAC must be derived client-side");
+assert.match(
+  javascript,
+  /totalSpend \/ \(sales\.value \* ADVERTISING_SALES_SHARE\)/u,
+  "CAC must divide by the advertising-attributed share of sales",
+);
+assert.match(javascript, /closeRateYtd/u);
+assert.match(javascript, /commissionPerSaleYtd/u);
+assert.match(javascript, /advertisingNetYtd/u);
 assert.match(javascript, /15000/u, "visible polling interval must be 15 seconds");
 assert.match(
   javascript,

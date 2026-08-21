@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/dashboard/dashboard.css?v=20260817a">
     <link rel="stylesheet" href="/active/active.css?v=20260814a">
     <script src="/api/dashboard/active-bootstrap.js" defer></script>
-    <script src="/active/active.js?v=20260821" defer></script>
+    <script src="/active/active.js?v=20260821b" defer></script>
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
@@ -201,11 +201,29 @@
               <article class="metric-card metric-card--secondary" data-metric="advertisingCacYtd">
                 <div class="metric-card__head"><h3>CAC</h3><span class="metric-badge" data-badge hidden>STALE</span></div>
                 <p class="metric-value" data-value aria-label="Year-to-date customer acquisition cost loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
-                <p class="metric-context">All ad spend / closed sales year to date</p>
+                <p class="metric-context">All ad spend / advertising-attributed sales</p>
+                <p class="metric-source" data-source>FUB + ad channels &middot; loading</p>
+              </article>
+              <article class="metric-card metric-card--secondary" data-metric="closeRateYtd">
+                <div class="metric-card__head"><h3>CLOSE RATE</h3><span class="metric-badge" data-badge hidden>STALE</span></div>
+                <p class="metric-value" data-value aria-label="Year-to-date close rate loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+                <p class="metric-context">Closed sales / all leads year to date</p>
+                <p class="metric-source" data-source>FUB + ad channels &middot; loading</p>
+              </article>
+              <article class="metric-card metric-card--secondary" data-metric="commissionPerSaleYtd">
+                <div class="metric-card__head"><h3>COMMISSION / SALE</h3><span class="metric-badge" data-badge hidden>STALE</span></div>
+                <p class="metric-value" data-value aria-label="Year-to-date commission per sale loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+                <p class="metric-context">Gross commission / closed sales year to date</p>
+                <p class="metric-source" data-source>FUB Deals Leaderboard &middot; loading</p>
+              </article>
+              <article class="metric-card metric-card--secondary" data-metric="advertisingNetYtd">
+                <div class="metric-card__head"><h3>NET FROM ADVERTISING</h3><span class="metric-badge" data-badge hidden>STALE</span></div>
+                <p class="metric-value" data-value aria-label="Year-to-date net from advertising loading"><span class="metric-skeleton" aria-hidden="true"></span></p>
+                <p class="metric-context">90% attributed commission minus all ad spend</p>
                 <p class="metric-source" data-source>FUB + ad channels &middot; loading</p>
               </article>
             </div>
-            <p class="section-footnote">Sales attribution &middot; Repeat business / referrals = 10% of sales &middot; Advertising = 90% of sales &middot; Blended ROAS is measured on the advertising share &middot; CAC is blended across every closed sale</p>
+            <p class="section-footnote">Sales attribution &middot; Repeat business / referrals = 10% of sales &middot; Advertising = 90% of sales &middot; Blended ROAS, CAC, and Net are measured on the advertising share &middot; Close rate and commission per sale are blended across every lead and sale</p>
           </section>
 
           <section class="dashboard-section" aria-labelledby="active-team-performance-title">

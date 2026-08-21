@@ -25,9 +25,12 @@
     googleAdsLeadsYtd: { source: "Google Ads + Realtor MVIP", format: "conversion" },
     googleAdsCostPerLeadYtd: { source: "Google Ads + Realtor MVIP", format: "currency" },
     teamCommissionRoasYtd: { source: "FUB + ad channels", format: "ratio" },
-    // Derived client-side in adjustMetrics (never present in the worker snapshot):
-    // all YTD ad spend (Google Ads + MVIP) / all YTD closed sales.
+    // Derived client-side in adjustMetrics (never present in the worker snapshot).
+    // CAC = all YTD ad spend (Google Ads + MVIP) / advertising-attributed sales (90%).
     advertisingCacYtd: { source: "FUB + ad channels", format: "currency", derived: true, staleAfterMs: TEAM_STALE_AFTER_MS },
+    closeRateYtd: { source: "FUB + ad channels", format: "percentFine", derived: true, staleAfterMs: TEAM_STALE_AFTER_MS },
+    commissionPerSaleYtd: { source: "FUB Deals Leaderboard", format: "currencyWhole", derived: true, staleAfterMs: TEAM_STALE_AFTER_MS },
+    advertisingNetYtd: { source: "FUB + ad channels", format: "currencyWhole", derived: true, staleAfterMs: TEAM_STALE_AFTER_MS },
     activeRealtyClicksRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
     activeRealtyImpressionsRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
     activeRealtyCtrRolling90d: { source: "Search Console", format: "percent", staleAfterMs: SEARCH_STALE_AFTER_MS },
@@ -62,6 +65,11 @@
     style: "percent",
     minimumFractionDigits: 1,
     maximumFractionDigits: 1
+  });
+  var finePercentFormatter = new Intl.NumberFormat("en-US", {
+    style: "percent",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   });
   var decimalFormatter = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 1,
@@ -133,6 +141,9 @@
     }
     if (format === "percent") {
       return percentFormatter.format(value);
+    }
+    if (format === "percentFine") {
+      return finePercentFormatter.format(value);
     }
     if (format === "decimal") {
       return decimalFormatter.format(value);
@@ -251,14 +262,41 @@
         status: roas.status
       };
     }
-    // CAC: every YTD advertising dollar / every YTD closed sale.
+    // CAC: every YTD advertising dollar / the advertising-attributed share of sales.
     adjusted.advertisingCacYtd = { value: null, updatedAt: null, status: "error" };
     var sales = metrics.teamSalesYtd;
     if (isMetric(sales) && sales.value !== null && sales.value > 0 && totalSpend !== null) {
       adjusted.advertisingCacYtd = {
-        value: totalSpend / sales.value,
+        value: totalSpend / (sales.value * ADVERTISING_SALES_SHARE),
         updatedAt: sales.updatedAt || adsSpend.updatedAt,
         status: sales.status
+      };
+    }
+    // Close rate: every YTD closed sale / every YTD lead.
+    adjusted.closeRateYtd = { value: null, updatedAt: null, status: "error" };
+    if (isMetric(sales) && sales.value !== null && totalLeads !== null && totalLeads > 0) {
+      adjusted.closeRateYtd = {
+        value: sales.value / totalLeads,
+        updatedAt: sales.updatedAt || adsLeads.updatedAt,
+        status: sales.status
+      };
+    }
+    // Commission per sale: YTD gross commission / YTD closed sales.
+    adjusted.commissionPerSaleYtd = { value: null, updatedAt: null, status: "error" };
+    if (isMetric(commission) && commission.value !== null && isMetric(sales) && sales.value !== null && sales.value > 0) {
+      adjusted.commissionPerSaleYtd = {
+        value: commission.value / sales.value,
+        updatedAt: commission.updatedAt || sales.updatedAt,
+        status: commission.status
+      };
+    }
+    // Net from advertising: attributed commission minus every advertising dollar.
+    adjusted.advertisingNetYtd = { value: null, updatedAt: null, status: "error" };
+    if (isMetric(commission) && commission.value !== null && totalSpend !== null) {
+      adjusted.advertisingNetYtd = {
+        value: commission.value * ADVERTISING_SALES_SHARE - totalSpend,
+        updatedAt: commission.updatedAt || adsSpend.updatedAt,
+        status: commission.status
       };
     }
     return adjusted;
