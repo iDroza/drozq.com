@@ -31,6 +31,7 @@ const expectedMetrics = [
   "googleAdsLeadsYtd",
   "googleAdsCostPerLeadYtd",
   "teamCommissionRoasYtd",
+  "advertisingCacYtd",
   "teamCommissionYtd",
   "teamSalesYtd",
   "teamVolumeYtd",
@@ -55,7 +56,7 @@ assert.deepEqual(
   expectedMetrics,
   "Active Realty metric cards must preserve the company dashboard row order",
 );
-assert.equal(metricMatches.length, 22, "company dashboard must contain exactly 22 cards");
+assert.equal(metricMatches.length, 23, "company dashboard must contain exactly 23 cards");
 assert.deepEqual(
   metricMatches.slice(0, 4).map((match) => match[1]),
   expectedMetrics.slice(0, 4),
@@ -113,7 +114,9 @@ assert.match(
 assert.match(javascript, /"\/api\/dashboard\/active-summary"/u);
 assert.match(javascript, /"\/api\/dashboard\/active-bootstrap\.js"/u);
 assert.match(javascript, /__ACTIVE_REALTY_DASHBOARD_SNAPSHOT__/u);
-assert.match(javascript, /Object\.keys\(value\.metrics\)\.length === metricKeys\.length/u);
+assert.match(javascript, /Object\.keys\(value\.metrics\)\.length === snapshotMetricKeys\.length/u);
+assert.match(html, /<h3>CAC<\/h3>/u, "aggregate advertising must carry the CAC card");
+assert.match(javascript, /advertisingCacYtd/u, "CAC must be derived client-side");
 assert.match(javascript, /15000/u, "visible polling interval must be 15 seconds");
 assert.match(
   javascript,

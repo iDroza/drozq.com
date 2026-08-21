@@ -33,6 +33,9 @@
     googleAdsLeadsYtd: { source: "Google Ads + Realtor MVIP", format: "conversion" },
     googleAdsCostPerLeadYtd: { source: "Google Ads + Realtor MVIP", format: "currency" },
     teamCommissionRoasYtd: { source: "FUB + ad channels", format: "ratio" },
+    // Derived client-side in adjustMetrics (never present in the worker snapshot):
+    // all YTD ad spend (Google Ads + MVIP) / all YTD closed sales.
+    advertisingCacYtd: { source: "FUB + ad channels", format: "currency", derived: true, staleAfterMs: TEAM_STALE_AFTER_MS },
     activeRealtyClicksRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
     activeRealtyImpressionsRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
     activeRealtyCtrRolling90d: { source: "Search Console", format: "percent", staleAfterMs: SEARCH_STALE_AFTER_MS },
@@ -114,7 +117,7 @@
       return false;
     }
     return isPeriod(value.rolling90DayPeriod) && Object.keys(metricConfig).every(function (key) {
-      return isMetric(value.metrics[key]);
+      return metricConfig[key].derived === true || isMetric(value.metrics[key]);
     }) && isTimestamp(value.lastAttemptAt);
   }
 
@@ -257,6 +260,16 @@
         value: (commission.value * ADVERTISING_SALES_SHARE) / totalSpend,
         updatedAt: roas.updatedAt || commission.updatedAt,
         status: roas.status
+      };
+    }
+    // CAC: every YTD advertising dollar / every YTD closed sale.
+    adjusted.advertisingCacYtd = { value: null, updatedAt: null, status: "error" };
+    var sales = metrics.teamSalesYtd;
+    if (isMetric(sales) && sales.value !== null && sales.value > 0 && totalSpend !== null) {
+      adjusted.advertisingCacYtd = {
+        value: totalSpend / sales.value,
+        updatedAt: sales.updatedAt || adsSpend.updatedAt,
+        status: sales.status
       };
     }
     return adjusted;

@@ -27,6 +27,7 @@ const expectedMetrics = [
   "googleAdsLeadsYtd",
   "googleAdsCostPerLeadYtd",
   "teamCommissionRoasYtd",
+  "advertisingCacYtd",
   "activeRealtyClicksRolling90d",
   "activeRealtyImpressionsRolling90d",
   "activeRealtyCtrRolling90d",
@@ -48,7 +49,7 @@ assert.deepEqual(
   expectedMetrics,
   "dashboard metric cards must preserve the required row order",
 );
-assert.equal(metricMatches.length, 30, "dashboard must contain exactly 30 metric cards");
+assert.equal(metricMatches.length, 31, "dashboard must contain exactly 31 metric cards");
 assert.deepEqual(
   metricMatches.slice(0, 4).map((match) => match[1]),
   [
@@ -89,6 +90,8 @@ assert.match(html, /<h2>TEXTS SENT<\/h2>/u, "texts card must keep TEXTS SENT");
 assert.match(html, /<h2>EMAILS SENT<\/h2>/u, "emails card must keep EMAILS SENT");
 assert.match(html, /<h2 id="advertising-title">Aggregate Advertising<\/h2>/u);
 assert.match(html, /<h3>BLENDED ROAS<\/h3>/u);
+assert.match(html, /<h3>CAC<\/h3>/u, "aggregate advertising must carry the CAC card");
+assert.match(javascript, /advertisingCacYtd/u, "CAC must be derived client-side");
 assert.match(html, /<h3>GROSS COMMISSION<\/h3>/u);
 assert.match(html, /<h3 class="metric-row__title">ACTIVEREALTY\.COM<\/h3>/u);
 assert.match(html, /<h3 class="metric-row__title">JUSTINTYE\.COM<\/h3>/u);
@@ -118,7 +121,7 @@ assert.match(javascript, /"\/api\/dashboard\/bootstrap\.js"/u);
 assert.match(javascript, /loadBootstrapSnapshot/u);
 assert.match(
   html,
-  /<script src="\/api\/dashboard\/bootstrap\.js" defer><\/script>[\s\S]*<script src="\/dashboard\/dashboard\.js\?v=20260817b" defer><\/script>/u,
+  /<script src="\/api\/dashboard\/bootstrap\.js" defer><\/script>[\s\S]*<script src="\/dashboard\/dashboard\.js\?v=20260821" defer><\/script>/u,
   "the resilient snapshot bootstrap must load before the dashboard controller",
 );
 assert.doesNotMatch(

@@ -25,6 +25,9 @@
     googleAdsLeadsYtd: { source: "Google Ads + Realtor MVIP", format: "conversion" },
     googleAdsCostPerLeadYtd: { source: "Google Ads + Realtor MVIP", format: "currency" },
     teamCommissionRoasYtd: { source: "FUB + ad channels", format: "ratio" },
+    // Derived client-side in adjustMetrics (never present in the worker snapshot):
+    // all YTD ad spend (Google Ads + MVIP) / all YTD closed sales.
+    advertisingCacYtd: { source: "FUB + ad channels", format: "currency", derived: true, staleAfterMs: TEAM_STALE_AFTER_MS },
     activeRealtyClicksRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
     activeRealtyImpressionsRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
     activeRealtyCtrRolling90d: { source: "Search Console", format: "percent", staleAfterMs: SEARCH_STALE_AFTER_MS },
@@ -41,6 +44,7 @@
     setsRemaining: { source: "Active Realty", format: "count", staleAfterMs: ACTIVE_REALTY_STALE_AFTER_MS }
   };
   var metricKeys = Object.keys(metricConfig);
+  var snapshotMetricKeys = metricKeys.filter(function (key) { return metricConfig[key].derived !== true; });
   var countFormatter = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
   var currencyFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -102,9 +106,9 @@
     if (!isObject(value) || value.version !== 2 || !isObject(value.metrics)) {
       return false;
     }
-    return Object.keys(value.metrics).length === metricKeys.length &&
+    return Object.keys(value.metrics).length === snapshotMetricKeys.length &&
       isPeriod(value.rolling90DayPeriod) &&
-      metricKeys.every(function (key) { return isMetric(value.metrics[key]); }) &&
+      snapshotMetricKeys.every(function (key) { return isMetric(value.metrics[key]); }) &&
       isTimestamp(value.lastAttemptAt);
   }
 
@@ -245,6 +249,16 @@
         value: (commission.value * ADVERTISING_SALES_SHARE) / totalSpend,
         updatedAt: roas.updatedAt || commission.updatedAt,
         status: roas.status
+      };
+    }
+    // CAC: every YTD advertising dollar / every YTD closed sale.
+    adjusted.advertisingCacYtd = { value: null, updatedAt: null, status: "error" };
+    var sales = metrics.teamSalesYtd;
+    if (isMetric(sales) && sales.value !== null && sales.value > 0 && totalSpend !== null) {
+      adjusted.advertisingCacYtd = {
+        value: totalSpend / sales.value,
+        updatedAt: sales.updatedAt || adsSpend.updatedAt,
+        status: sales.status
       };
     }
     return adjusted;
