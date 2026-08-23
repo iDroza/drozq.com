@@ -37,7 +37,7 @@ Below it are five fixed rows, each capped at four metrics:
 
 The Active Realty view contains 22 company metrics. Its first row is month-to-date Google Ads spend, primary conversions, cost per click, and cost per conversion across all linked leaf accounts. Directly below it are both Search Console rows, followed by the year-to-date Ads row, the team row, and the two production values. Production Queue is enlarged and is always the final visible section.
 
-The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the ten-minute schedule or the protected manual sync endpoint. Personal and Ads metrics become stale after 25 minutes (two missed runs), team metrics after 75 minutes, Active Realty repository progress after 12 hours, and Search Console metrics after 26 hours. The Active Realty workflow publishes every six hours as a heartbeat. Search Console is source-cached for 60 minutes because its reporting data is not real time. Team deal aggregates are source-cached for 30 minutes.
+The page polls the saved summary every 15 seconds while visible. The public response has a 10-second cache policy. External APIs are still contacted only by the ten-minute schedule or the protected manual sync endpoint. Personal and Ads metrics become stale after 25 minutes (two missed runs), team metrics after 75 minutes, Active Realty repository progress after 12 hours, and Search Console metrics after 26 hours. Staleness is a Worker-side status only: neither page renders a STALE badge (removed 2026-08-22, see "Metric freshness display" below); the per-card source line carries the relative age instead. The Active Realty workflow publishes every six hours as a heartbeat. Search Console is source-cached for 60 minutes because its reporting data is not real time. Team deal aggregates are source-cached for 30 minutes.
 
 There is no Claude, OpenAI, AI inference, model call, or other nondeterministic runtime dependency. This is a direct API-to-KV-to-dashboard pipeline.
 
@@ -553,7 +553,15 @@ If the cutover commit is reverted, confirm the Sheets API, Viewer share, service
 
 ### Stale or missing metrics
 
-Personal and Ads metrics become stale after five minutes, team metrics after 15 minutes, Active Realty repository progress after 12 hours, and Search Console metrics after 26 hours. Check structured Worker logs for source, HTTP status, duration, and sanitized error category. A missing metric with no prior value is shown as unavailable, not zero. A partial failure does not erase other sources.
+The Worker marks a metric stale after 25 minutes for personal and Ads values, 75 minutes for team values, 12 hours for Active Realty repository progress, and 26 hours for Search Console. Check structured Worker logs for source, HTTP status, duration, and sanitized error category. A missing metric with no prior value is shown as unavailable, not zero. A partial failure does not erase other sources.
+
+### Metric freshness display
+
+Neither `/dashboard` nor `/active` renders a STALE badge. Both pages show freshness as the relative age on each card's source line ("Google Ads - updated 12m ago"), which is the honest read and never contradicts the sync row.
+
+The badge was removed on 2026-08-22. It had a second, duplicated staleness rule living client-side in `dashboard/dashboard.js` and `active/active.js` (`STALE_AFTER_MS` / `ADS_STALE_AFTER_MS` at five minutes, plus per-metric `staleAfterMs` overrides). When the 2026-08-20 KV write-quota incident moved the cron from `*/2` to `*/10` and raised the Worker thresholds to 25 / 75 minutes, that client copy was never raised, so every fast metric badged STALE for most of each ten-minute cycle even though the data was current and the age line said so. Both client copies of the thresholds are deleted; `MetricStatus` still carries `"stale"` end to end (`src/types.ts`, `snapshot.ts`, `sync.ts`) and both clients still accept it in the payload validator, so the API contract and the failed-source retention behavior are unchanged.
+
+If a visible freshness signal is ever wanted again, drive it from `metric.status` alone (one rule, Worker-side) rather than reintroducing a client-side clock.
 
 ### 30 to 180 day maintenance risks
 

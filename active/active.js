@@ -5,10 +5,6 @@
   var BOOTSTRAP_URL = "/api/dashboard/active-bootstrap.js";
   var POLL_INTERVAL_MS = 15000;
   var REQUEST_TIMEOUT_MS = 10000;
-  var ADS_STALE_AFTER_MS = 5 * 60 * 1000;
-  var TEAM_STALE_AFTER_MS = 15 * 60 * 1000;
-  var ACTIVE_REALTY_STALE_AFTER_MS = 12 * 60 * 60 * 1000;
-  var SEARCH_STALE_AFTER_MS = 26 * 60 * 60 * 1000;
   // Realtor MVIP is a flat retainer with no API; its spend and its 115
   // leads/mo program average fold into the aggregate YTD numbers here,
   // client-side, on top of the worker snapshot.
@@ -27,24 +23,24 @@
     teamCommissionRoasYtd: { source: "FUB + ad channels", format: "ratio" },
     // Derived client-side in adjustMetrics (never present in the worker snapshot).
     // CAC = all YTD ad spend (Google Ads + MVIP) / advertising-attributed sales (90%).
-    advertisingCacYtd: { source: "FUB + ad channels", format: "currency", derived: true, staleAfterMs: TEAM_STALE_AFTER_MS },
-    closeRateYtd: { source: "FUB + ad channels", format: "percentFine", derived: true, staleAfterMs: TEAM_STALE_AFTER_MS },
-    commissionPerSaleYtd: { source: "FUB Deals Leaderboard", format: "currencyWhole", derived: true, staleAfterMs: TEAM_STALE_AFTER_MS },
-    advertisingNetYtd: { source: "FUB + ad channels", format: "currencyWhole", derived: true, staleAfterMs: TEAM_STALE_AFTER_MS },
-    activeRealtyClicksRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
-    activeRealtyImpressionsRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
-    activeRealtyCtrRolling90d: { source: "Search Console", format: "percent", staleAfterMs: SEARCH_STALE_AFTER_MS },
-    activeRealtyPositionRolling90d: { source: "Search Console", format: "decimal", staleAfterMs: SEARCH_STALE_AFTER_MS },
-    jtClicksRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
-    jtImpressionsRolling90d: { source: "Search Console", format: "count", staleAfterMs: SEARCH_STALE_AFTER_MS },
-    jtCtrRolling90d: { source: "Search Console", format: "percent", staleAfterMs: SEARCH_STALE_AFTER_MS },
-    jtPositionRolling90d: { source: "Search Console", format: "decimal", staleAfterMs: SEARCH_STALE_AFTER_MS },
-    teamCommissionYtd: { source: "FUB Deals Leaderboard", format: "currencyWhole", staleAfterMs: TEAM_STALE_AFTER_MS },
-    teamSalesYtd: { source: "FUB Deals Leaderboard", format: "count", staleAfterMs: TEAM_STALE_AFTER_MS },
-    teamVolumeYtd: { source: "FUB Deals Leaderboard", format: "currencyWhole", staleAfterMs: TEAM_STALE_AFTER_MS },
-    teamActiveAgentsYtd: { source: "FUB Deals Leaderboard", format: "count", staleAfterMs: TEAM_STALE_AFTER_MS },
-    shellPagesRemaining: { source: "Active Realty", format: "count", staleAfterMs: ACTIVE_REALTY_STALE_AFTER_MS },
-    setsRemaining: { source: "Active Realty", format: "count", staleAfterMs: ACTIVE_REALTY_STALE_AFTER_MS }
+    advertisingCacYtd: { source: "FUB + ad channels", format: "currency", derived: true },
+    closeRateYtd: { source: "FUB + ad channels", format: "percentFine", derived: true },
+    commissionPerSaleYtd: { source: "FUB Deals Leaderboard", format: "currencyWhole", derived: true },
+    advertisingNetYtd: { source: "FUB + ad channels", format: "currencyWhole", derived: true },
+    activeRealtyClicksRolling90d: { source: "Search Console", format: "count" },
+    activeRealtyImpressionsRolling90d: { source: "Search Console", format: "count" },
+    activeRealtyCtrRolling90d: { source: "Search Console", format: "percent" },
+    activeRealtyPositionRolling90d: { source: "Search Console", format: "decimal" },
+    jtClicksRolling90d: { source: "Search Console", format: "count" },
+    jtImpressionsRolling90d: { source: "Search Console", format: "count" },
+    jtCtrRolling90d: { source: "Search Console", format: "percent" },
+    jtPositionRolling90d: { source: "Search Console", format: "decimal" },
+    teamCommissionYtd: { source: "FUB Deals Leaderboard", format: "currencyWhole" },
+    teamSalesYtd: { source: "FUB Deals Leaderboard", format: "count" },
+    teamVolumeYtd: { source: "FUB Deals Leaderboard", format: "currencyWhole" },
+    teamActiveAgentsYtd: { source: "FUB Deals Leaderboard", format: "count" },
+    shellPagesRemaining: { source: "Active Realty", format: "count" },
+    setsRemaining: { source: "Active Realty", format: "count" }
   };
   var metricKeys = Object.keys(metricConfig);
   var snapshotMetricKeys = metricKeys.filter(function (key) { return metricConfig[key].derived !== true; });
@@ -190,11 +186,7 @@
     var config = metricConfig[key];
     var valueNode = card.querySelector("[data-value]");
     var sourceNode = card.querySelector("[data-source]");
-    var badge = card.querySelector("[data-badge]");
     var displayValue = formatValue(metric.value, config.format);
-    var stale = metric.status === "stale" ||
-      (metric.updatedAt !== null && ageInMilliseconds(metric.updatedAt) > (config.staleAfterMs || ADS_STALE_AFTER_MS));
-
     valueNode.classList.toggle("metric-value--long", displayValue.length >= 11 && displayValue.length < 17);
     valueNode.classList.toggle("metric-value--very-long", displayValue.length >= 17);
     valueNode.textContent = displayValue;
@@ -202,7 +194,6 @@
     sourceNode.textContent = metric.value === null
       ? config.source + " \u00b7 not available"
       : config.source + " \u00b7 " + relativeAge(metric.updatedAt);
-    badge.hidden = !stale;
   }
 
   function markGridsReady() {

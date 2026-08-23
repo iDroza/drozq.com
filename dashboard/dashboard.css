@@ -187,18 +187,6 @@ a {
   background: #dedad5;
 }
 
-.metric-badge {
-  flex: 0 0 auto;
-  padding: 3px 6px 2px;
-  color: #f7d3d4;
-  border: 1px solid #d92228;
-  border-radius: 9999px;
-  font-size: 0.62rem;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.1em;
-}
-
 .metric-value {
   min-width: 0;
   min-height: 53px;
@@ -273,12 +261,6 @@ a {
 .metrics-grid--top .metric-context,
 .metrics-grid--top .metric-source {
   color: #c9c5c0;
-}
-
-.metrics-grid--top .metric-badge {
-  color: #fff;
-  background: #3a3a3a;
-  border-color: #beb8b0;
 }
 
 .metrics-grid--top .metric-skeleton {
