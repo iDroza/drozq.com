@@ -1,5 +1,6 @@
 import { CONFIG_DEFAULTS } from "./config";
 import {
+  getFixedStartPeriod,
   getReportingPeriod,
   getSearchConsoleThreeMonthPeriod,
   getYearToDatePeriod,
@@ -46,6 +47,10 @@ export const METRIC_KEYS = [
   "googleAdsSpendYtd",
   "googleAdsLeadsYtd",
   "googleAdsCostPerLeadYtd",
+  "sellerCampaignSpend",
+  "sellerCampaignCostPerClick",
+  "sellerCampaignCtr",
+  "sellerCampaignCostPerLead",
   "teamCommissionRoasYtd",
   "activeRealtyClicksRolling90d",
   "activeRealtyImpressionsRolling90d",
@@ -137,6 +142,26 @@ export const METRIC_SPECS = {
   googleAdsCostPerLeadYtd: {
     source: "google_ads",
     definition: "Year-to-date Google Ads cost divided by primary conversions across every accessible non-manager account.",
+    staleAfterMs: FAST_STALE_MS,
+  },
+  sellerCampaignSpend: {
+    source: "google_ads",
+    definition: "Google Ads cost of the JT and AR Sell | OC search campaigns combined (one lander on two domains) since their launch.",
+    staleAfterMs: FAST_STALE_MS,
+  },
+  sellerCampaignCostPerClick: {
+    source: "google_ads",
+    definition: "Combined seller-campaign cost divided by clicks since launch.",
+    staleAfterMs: FAST_STALE_MS,
+  },
+  sellerCampaignCtr: {
+    source: "google_ads",
+    definition: "Combined seller-campaign clicks divided by impressions since launch.",
+    staleAfterMs: FAST_STALE_MS,
+  },
+  sellerCampaignCostPerLead: {
+    source: "google_ads",
+    definition: "Combined seller-campaign cost divided by primary conversions since launch.",
     staleAfterMs: FAST_STALE_MS,
   },
   teamCommissionRoasYtd: {
@@ -241,6 +266,9 @@ const CURRENCY_METRICS = new Set<DashboardMetricKey>([
   "googleAdsCostPerLeadMtd",
   "googleAdsSpendYtd",
   "googleAdsCostPerLeadYtd",
+  "sellerCampaignSpend",
+  "sellerCampaignCostPerClick",
+  "sellerCampaignCostPerLead",
   "teamCommissionYtd",
   "teamVolumeYtd",
 ]);
@@ -248,6 +276,7 @@ const CURRENCY_METRICS = new Set<DashboardMetricKey>([
 const RATE_METRICS = new Set<DashboardMetricKey>([
   "activeRealtyCtrRolling90d",
   "jtCtrRolling90d",
+  "sellerCampaignCtr",
 ]);
 
 const POSITION_METRICS = new Set<DashboardMetricKey>([
@@ -401,11 +430,13 @@ export function sanitizeSnapshot(value: unknown): DashboardSnapshot | null {
   const reportingPeriod = sanitizePeriod(value["reportingPeriod"]);
   const rolling90DayPeriod = sanitizePeriod(value["rolling90DayPeriod"]);
   const yearToDatePeriod = sanitizePeriod(value["yearToDatePeriod"]);
+  const sellerCampaignPeriod = sanitizePeriod(value["sellerCampaignPeriod"]);
   const timestamps = snapshotTimestamps(value);
   if (
     reportingPeriod === null ||
     rolling90DayPeriod === null ||
     yearToDatePeriod === null ||
+    sellerCampaignPeriod === null ||
     timestamps === null
   ) {
     return null;
@@ -416,6 +447,7 @@ export function sanitizeSnapshot(value: unknown): DashboardSnapshot | null {
     reportingPeriod,
     rolling90DayPeriod,
     yearToDatePeriod,
+    sellerCampaignPeriod,
     ...timestamps,
   };
 }
@@ -464,6 +496,7 @@ export function sanitizeStoredSnapshot(value: unknown): DashboardSnapshot | null
   const referenceDate = new Date(`${reportingPeriod.endDate}T12:00:00.000Z`);
   const rolling90DayPeriod = sanitizePeriod(value["rolling90DayPeriod"]);
   const yearToDatePeriod = sanitizePeriod(value["yearToDatePeriod"]);
+  const sellerCampaignPeriod = sanitizePeriod(value["sellerCampaignPeriod"]);
   return {
     version: 2,
     metrics,
@@ -472,6 +505,12 @@ export function sanitizeStoredSnapshot(value: unknown): DashboardSnapshot | null
       getSearchConsoleThreeMonthPeriod(reportingPeriod.endDate),
     yearToDatePeriod: yearToDatePeriod ??
       getYearToDatePeriod(referenceDate, reportingPeriod.timeZone),
+    sellerCampaignPeriod: sellerCampaignPeriod ??
+      getFixedStartPeriod(
+        CONFIG_DEFAULTS.googleAdsSellerCampaignLaunchDate,
+        referenceDate,
+        reportingPeriod.timeZone,
+      ),
     ...timestamps,
   };
 }
@@ -492,6 +531,11 @@ export function createUnconfiguredSnapshot(
       getReportingPeriod(now, timeZone).endDate,
     ),
     yearToDatePeriod: getYearToDatePeriod(now, timeZone),
+    sellerCampaignPeriod: getFixedStartPeriod(
+      CONFIG_DEFAULTS.googleAdsSellerCampaignLaunchDate,
+      now,
+      timeZone,
+    ),
     lastAttemptAt: "1970-01-01T00:00:00.000Z",
     lastSuccessfulFullSyncAt: null,
   };
@@ -586,6 +630,7 @@ export function toActivePublicSnapshot(
     reportingPeriod: publicSnapshot.reportingPeriod,
     rolling90DayPeriod: publicSnapshot.rolling90DayPeriod,
     yearToDatePeriod: publicSnapshot.yearToDatePeriod,
+    sellerCampaignPeriod: publicSnapshot.sellerCampaignPeriod,
     lastAttemptAt: publicSnapshot.lastAttemptAt,
     lastSuccessfulFullSyncAt: publicSnapshot.lastSuccessfulFullSyncAt,
   };

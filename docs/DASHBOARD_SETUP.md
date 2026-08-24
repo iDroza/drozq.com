@@ -175,6 +175,30 @@ It is a business-level blended ratio, not campaign-attributed incremental ROAS. 
 
 The configured API version is `v25`. Review Google Ads API sunset notices before that version is retired and update only `GOOGLE_ADS_API_VERSION` after tests pass.
 
+### Seller campaign block (JT + AR "Sell | OC")
+
+`/dashboard` carries a second dark row directly under the Google Ads row: **SELLERS SPEND / CPC / CTR / CPL**. It is the combined performance of the two seller search campaigns, `JT | Sell | OC | Search` (justintye.com/sell) and `AR | Sell | OC | Search` (activerealty.com/sell), which are one lander on two domains, so they are reported as one campaign. The window is **since launch** (`GOOGLE_ADS_SELLER_CAMPAIGN_LAUNCH_DATE`, default `2026-08-17`, a non-secret var in `wrangler.jsonc`) through today; the snapshot exposes it as `sellerCampaignPeriod` and the cards print "Since Aug 17". `/active` does not receive these four metrics (they are omitted from `ACTIVE_METRIC_KEYS`).
+
+Each leaf account gets one extra GAQL query per sync alongside the account query:
+
+```sql
+SELECT
+  campaign.id,
+  campaign.name,
+  segments.date,
+  metrics.cost_micros,
+  metrics.impressions,
+  metrics.clicks,
+  metrics.conversions
+FROM campaign
+WHERE segments.date BETWEEN '<launch>' AND '<today>'
+  AND campaign.status != 'REMOVED'
+```
+
+Campaign selection (`isSellerCampaignName` in `src/sources/google-ads.ts`): with `GOOGLE_ADS_SELLER_CAMPAIGN_NAMES` set (comma-separated exact names, compared case- and whitespace-insensitively segment by segment) only those names count. Unset, the built-in rule accepts any `|`-delimited campaign name that carries a `JT` or `AR` segment, an `OC` segment, and a segment starting with `sell` (so `JT | Sell | OC | Search`, `AR | OC | Sellers`, and a future `AR | Sell | OC | Display` all qualify; `AR | Buy | OC | Search`, `JT Call Ads`, and `DSA General Site` do not). Spend is the exact `cost_micros` sum; CPC = spend / clicks; CTR = clicks / impressions; CPL = spend / primary `metrics.conversions`. Every ratio fails closed on a zero denominator.
+
+Failure posture is isolated from the all-account row: a rejected campaign query in any child makes only the four seller metrics unavailable (the previous values stay visible as stale), while a rejected account query still fails the whole Google Ads row as before. A sweep that matches no campaign publishes `no_data` (the cards show a dash), never a false `$0.00`, and before launch day the sweep is skipped entirely. Every sync logs `{"source":"google_ads_seller_campaigns","matchedCampaigns":[...]}` so a rename that breaks the match is visible in the Worker logs without exposing anything publicly (campaign names never enter KV or the public payload).
+
 ### Conversion action diagnostic
 
 The local diagnostic lists non-removed conversion actions across every discovered leaf account. It prints no OAuth credential, developer token, or refresh token:
@@ -485,10 +509,34 @@ The response is the same sanitized snapshot contract as the public endpoint.
 ### Google Ads `401` or `403`
 
 - Confirm client ID, client secret, and refresh token belong together.
-- Reauthorize with offline access if Google returns `invalid_grant`.
+- Reauthorize with offline access if Google returns `invalid_grant`. If Ads and Search Console fail together seven days after a mint, see the `invalid_grant` runbook entry below: the OAuth consent screen is in Testing.
 - Confirm the OAuth user still has access to the configured manager and children.
 - Confirm the developer token remains approved for the account hierarchy.
 - Confirm the login manager ID contains ten digits and no hyphens.
+
+### Google OAuth `400 invalid_grant` on both Ads and Search Console (7-day refresh tokens)
+
+Symptom: `google_ads_oauth` and `google_search_console_oauth` both log `status: 400, category: upstream` on every sync, every Google card goes stale at the same minute, and `lastSuccessfulFullSyncAt` stops advancing. This happened on 2026-08-21, exactly seven days after the 2026-08-14 token mint.
+
+Cause: both refresh tokens come from the same Desktop OAuth client (`scripts/.google_ads.json` + `scripts/.google_search_console.json`, project `220779520969`). While that project's OAuth consent screen has publishing status **Testing**, Google expires every refresh token after seven days by policy. `scripts/ads.py` (the drozq Google Ads pulls) dies at the same moment because it shares the token.
+
+Fix, in this order (re-minting alone only buys another seven days):
+
+1. Google Cloud Console > APIs & Services > OAuth consent screen (Google Auth Platform > Audience) for the project that owns the client > **Publish app** so the status reads **In production**. Verification is not required for the tokens to stop expiring; the consent screen simply shows the unverified-app interstitial to the authorizing user.
+2. Re-mint both tokens locally (each opens a consent screen in the browser, writes only the gitignored JSON file, prints nothing secret): `python scripts/google_ads_auth.py` and `python scripts/google_search_console_auth.py`.
+3. Install them without printing them:
+
+```powershell
+$ads = Get-Content -Raw scripts/.google_ads.json | ConvertFrom-Json
+$gsc = Get-Content -Raw scripts/.google_search_console.json | ConvertFrom-Json
+Set-Location cloudflare/dashboard-worker
+$ads.refresh_token | npx wrangler secret put GOOGLE_ADS_REFRESH_TOKEN
+$gsc.refresh_token | npx wrangler secret put GOOGLE_SEARCH_CONSOLE_REFRESH_TOKEN
+Set-Location ../..
+Remove-Variable ads, gsc
+```
+
+4. Wait for the next ten-minute cron (or run the authorized manual sync) and confirm the Google cards' age lines reset.
 
 ### `429` or transient `5xx`
 
@@ -565,7 +613,8 @@ If a visible freshness signal is ever wanted again, drive it from `metric.status
 
 ### 30 to 180 day maintenance risks
 
-- Google refresh tokens can be revoked by password, consent, or security changes. Monitor `authentication` errors.
+- Google refresh tokens can be revoked by password, consent, or security changes. Monitor `authentication` errors. A consent screen left in Testing status expires every refresh token after seven days (the 2026-08-21 outage); keep it published.
+- The seller campaign block depends on campaign names matching the JT / AR + OC + Sell* segment rule (or `GOOGLE_ADS_SELLER_CAMPAIGN_NAMES`). A rename shows up as `matchedCampaigns: []` in the logs and a dash on the cards.
 - Search Console property permissions or canonical property changes can revoke one site's data while the other remains healthy.
 - Search Console data availability can move by hours and recent values can remain preliminary. The Worker discovers the latest finalized date on every source refresh and re-queries the full Performance window, so it follows revisions without date-lag configuration.
 - Google Ads API versions are sunset periodically. Review the version before `v25` retirement.

@@ -124,6 +124,7 @@ a {
   gap: 12px;
 }
 
+.metrics-grid--seller,
 .metrics-grid--focus,
 .metrics-grid--continuation {
   margin-top: 12px;
@@ -431,6 +432,7 @@ button:focus-visible {
     gap: 16px;
   }
 
+  .metrics-grid--seller,
   .metrics-grid--focus,
   .metrics-grid--continuation {
     margin-top: 16px;

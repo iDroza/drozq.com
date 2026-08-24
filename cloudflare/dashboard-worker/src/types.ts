@@ -34,6 +34,10 @@ export interface DashboardSnapshot {
     googleAdsSpendYtd: DashboardMetric;
     googleAdsLeadsYtd: DashboardMetric;
     googleAdsCostPerLeadYtd: DashboardMetric;
+    sellerCampaignSpend: DashboardMetric;
+    sellerCampaignCostPerClick: DashboardMetric;
+    sellerCampaignCtr: DashboardMetric;
+    sellerCampaignCostPerLead: DashboardMetric;
     teamCommissionRoasYtd: DashboardMetric;
     activeRealtyClicksRolling90d: DashboardMetric;
     activeRealtyImpressionsRolling90d: DashboardMetric;
@@ -61,6 +65,11 @@ export interface DashboardSnapshot {
     timeZone: string;
   };
   yearToDatePeriod: {
+    startDate: string;
+    endDate: string;
+    timeZone: string;
+  };
+  sellerCampaignPeriod: {
     startDate: string;
     endDate: string;
     timeZone: string;
@@ -105,6 +114,10 @@ export interface GoogleAdsMetricResults {
   googleAdsSpendYtd: MetricFetchResult;
   googleAdsLeadsYtd: MetricFetchResult;
   googleAdsCostPerLeadYtd: MetricFetchResult;
+  sellerCampaignSpend: MetricFetchResult;
+  sellerCampaignCostPerClick: MetricFetchResult;
+  sellerCampaignCtr: MetricFetchResult;
+  sellerCampaignCostPerLead: MetricFetchResult;
 }
 
 export interface GoogleSearchConsoleMetricResults {
@@ -171,6 +184,8 @@ export interface SecretBindings {
   GOOGLE_ADS_CUSTOMER_ID?: string;
   GOOGLE_ADS_LOGIN_CUSTOMER_ID?: string;
   GOOGLE_ADS_LEAD_CONVERSION_ACTION_NAMES?: string;
+  GOOGLE_ADS_SELLER_CAMPAIGN_NAMES?: string;
+  GOOGLE_ADS_SELLER_CAMPAIGN_LAUNCH_DATE?: string;
   GOOGLE_SEARCH_CONSOLE_CLIENT_ID?: string;
   GOOGLE_SEARCH_CONSOLE_CLIENT_SECRET?: string;
   GOOGLE_SEARCH_CONSOLE_REFRESH_TOKEN?: string;

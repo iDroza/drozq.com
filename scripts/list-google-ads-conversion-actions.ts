@@ -33,6 +33,8 @@ async function main(): Promise<void> {
     loginCustomerId: normalizeCustomerId(setting("GOOGLE_ADS_LOGIN_CUSTOMER_ID")),
     apiVersion:
       setting("GOOGLE_ADS_API_VERSION") || CONFIG_DEFAULTS.googleAdsApiVersion,
+    sellerCampaignNames: [],
+    sellerCampaignLaunchDate: CONFIG_DEFAULTS.googleAdsSellerCampaignLaunchDate,
   };
 
   if (!/^\d{10}$/u.test(config.customerId)) {

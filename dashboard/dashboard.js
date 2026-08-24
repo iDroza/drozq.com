@@ -28,6 +28,13 @@
     googleAdsSpendYtd: { source: "Google Ads + Realtor MVIP", format: "currency" },
     googleAdsLeadsYtd: { source: "Google Ads + Realtor MVIP", format: "conversion" },
     googleAdsCostPerLeadYtd: { source: "Google Ads + Realtor MVIP", format: "currency" },
+    // The JT + AR "Sell | OC" search campaigns combined (one lander, two
+    // domains) since launch. Optional so a snapshot from a Worker that predates
+    // the block still renders everything else.
+    sellerCampaignSpend: { source: "Google Ads", format: "currency", optional: true },
+    sellerCampaignCostPerClick: { source: "Google Ads", format: "currency", optional: true },
+    sellerCampaignCtr: { source: "Google Ads", format: "percent", optional: true },
+    sellerCampaignCostPerLead: { source: "Google Ads", format: "currency", optional: true },
     teamCommissionRoasYtd: { source: "FUB + ad channels", format: "ratio" },
     // Derived client-side in adjustMetrics (never present in the worker snapshot).
     // CAC = all YTD ad spend (Google Ads + MVIP) / advertising-attributed sales (90%).
@@ -91,6 +98,7 @@
   var networkError = document.getElementById("network-error");
   var retryButton = document.getElementById("retry-dashboard");
   var searchConsolePeriod = document.getElementById("search-console-period");
+  var sellerContexts = document.querySelectorAll("[data-seller-context]");
 
   function isObject(value) {
     return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -121,7 +129,14 @@
       return false;
     }
     return isPeriod(value.rolling90DayPeriod) && Object.keys(metricConfig).every(function (key) {
-      return metricConfig[key].derived === true || isMetric(value.metrics[key]);
+      var config = metricConfig[key];
+      if (config.derived === true) {
+        return true;
+      }
+      if (config.optional === true && value.metrics[key] === undefined) {
+        return true;
+      }
+      return isMetric(value.metrics[key]);
     }) && isTimestamp(value.lastAttemptAt);
   }
 
@@ -130,6 +145,14 @@
       month: "short",
       day: "numeric",
       year: "numeric",
+      timeZone: "UTC"
+    }).format(new Date(value + "T12:00:00.000Z"));
+  }
+
+  function shortDate(value) {
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
       timeZone: "UTC"
     }).format(new Date(value + "T12:00:00.000Z"));
   }
@@ -308,9 +331,15 @@
     currentSnapshot = snapshot;
     var metrics = adjustMetrics(snapshot.metrics);
     Object.keys(metricConfig).forEach(function (key) {
-      renderMetric(key, metrics[key]);
+      renderMetric(key, metrics[key] || { value: null, updatedAt: null, status: "unconfigured" });
     });
     markGridsReady();
+
+    if (isPeriod(snapshot.sellerCampaignPeriod)) {
+      sellerContexts.forEach(function (node) {
+        node.textContent = "Since " + shortDate(snapshot.sellerCampaignPeriod.startDate) + " \u00b7 JT + AR";
+      });
+    }
 
     if (snapshot.lastAttemptAt === "1970-01-01T00:00:00.000Z") {
       syncStatus.textContent = "Synchronization pending";

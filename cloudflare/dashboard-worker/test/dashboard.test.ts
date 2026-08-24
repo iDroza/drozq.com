@@ -29,8 +29,11 @@ import {
 import {
   costMicrosToUsd,
   fetchGoogleAdsMetrics,
+  isSellerCampaignName,
+  parseGoogleAdsCampaignDailyPerformance,
   parseGoogleAdsDailyPerformance,
   sumMatchingLeadConversions,
+  sumSellerCampaignPerformance,
 } from "../src/sources/google-ads";
 import {
   fetchGoogleSearchConsoleMetrics,
@@ -119,6 +122,10 @@ function allSuccessfulResults(): MetricResultMap {
     googleAdsSpendYtd: successful(18400.5),
     googleAdsLeadsYtd: successful(721),
     googleAdsCostPerLeadYtd: successful(25.520804),
+    sellerCampaignSpend: successful(412.37),
+    sellerCampaignCostPerClick: successful(2.81),
+    sellerCampaignCtr: successful(0.0412),
+    sellerCampaignCostPerLead: successful(68.73),
     teamCommissionRoasYtd: successful(51.781207),
     activeRealtyClicksRolling90d: successful(11474),
     activeRealtyImpressionsRolling90d: successful(647748),
@@ -548,6 +555,7 @@ describe("Google Ads all-account aggregation", () => {
           { customerClient: { clientCustomer: "customers/4069972406" } },
         ] });
       }
+      expect(body.query).not.toContain("FROM campaign");
       expect(body.query).toContain("BETWEEN '2026-01-01' AND '2026-08-14'");
       queriedCustomers.push(customerId);
       const performance: Record<string, [string, number, number]> = {
@@ -597,6 +605,202 @@ describe("Google Ads all-account aggregation", () => {
     expect(result.googleAdsCostPerLeadYtd.kind === "ok"
       ? result.googleAdsCostPerLeadYtd.value
       : null).toBeCloseTo(22.076404794, 6);
+    expect(result.sellerCampaignSpend).toMatchObject({ kind: "error", category: "no_data" });
+  });
+
+  it("matches the JT and AR Sell | OC campaigns by segment rule or exact configured name", () => {
+    for (const name of [
+      "JT | Sell | OC | Search",
+      "AR | Sell | OC | Search",
+      "JT | OC | Sellers",
+      "ar|oc|sellers",
+      "AR | Sell | OC | Display",
+    ]) {
+      expect(isSellerCampaignName(name, [])).toBe(true);
+    }
+    for (const name of [
+      "AR | Buy | OC | Search",
+      "JT Call Ads",
+      "DSA General Site",
+      "Sellers OC JT",
+      "AR | Sell | LA | Search",
+    ]) {
+      expect(isSellerCampaignName(name, [])).toBe(false);
+    }
+    const configured = ["JT | Sell | OC | Search", "AR | Sell | OC | Search"];
+    expect(isSellerCampaignName("jt | sell | oc | search", configured)).toBe(true);
+    expect(isSellerCampaignName("AR | Sell | OC | Display", configured)).toBe(false);
+    expect(isSellerCampaignName("JT | OC | Sellers", configured)).toBe(false);
+  });
+
+  it("sums only the seller campaigns and rejects rows outside the launch window", () => {
+    const period = { startDate: "2026-08-17", endDate: "2026-08-24", timeZone: "America/Los_Angeles" };
+    const rows = parseGoogleAdsCampaignDailyPerformance([
+      { campaign: { id: "1", name: "JT | Sell | OC | Search" }, segments: { date: "2026-08-17" }, metrics: { costMicros: "100000000", impressions: "1000", clicks: "40", conversions: 2 } },
+      { campaign: { id: 2, name: "AR | OC | Sellers" }, segments: { date: "2026-08-18" }, metrics: { costMicros: "50000000", impressions: 500, clicks: 10, conversions: "0" } },
+      { campaign: { id: "3", name: "JT Call Ads" }, segments: { date: "2026-08-18" }, metrics: { costMicros: "999000000", impressions: 9, clicks: 9, conversions: 9 } },
+    ]);
+    const totals = sumSellerCampaignPerformance(rows, [], period);
+    expect(totals).toEqual({
+      campaignNames: ["AR | OC | Sellers", "JT | Sell | OC | Search"],
+      costMicros: 150000000n,
+      clicks: 50,
+      impressions: 1500,
+      conversions: 2,
+    });
+    expect(() => sumSellerCampaignPerformance(
+      parseGoogleAdsCampaignDailyPerformance([
+        { campaign: { id: "1", name: "JT | Sell | OC | Search" }, segments: { date: "2026-08-16" }, metrics: { costMicros: "1" } },
+      ]),
+      [],
+      period,
+    )).toThrow();
+    expect(() => parseGoogleAdsCampaignDailyPerformance([
+      { segments: { date: "2026-08-17" }, metrics: { costMicros: "1" } },
+    ])).toThrow();
+  });
+
+  it("combines the JT and AR seller campaigns across accounts since launch", async () => {
+    const later = new Date("2026-08-24T19:00:00.000Z");
+    const campaignQueries: string[] = [];
+    const fetcher = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+      const url = String(input);
+      if (url === "https://oauth2.googleapis.com/token") {
+        return jsonResponse({ access_token: "test-access-token-value", expires_in: 3600 });
+      }
+      const customerId = /customers\/(\d{10})\/googleAds:search/u.exec(url)?.[1] ?? "";
+      const body = JSON.parse(String(init?.body)) as { query: string };
+      if (body.query.includes("customer_client.client_customer")) {
+        return jsonResponse({ results: [
+          { customerClient: { clientCustomer: "customers/1975174499", manager: true } },
+          { customerClient: { clientCustomer: "customers/3351363652" } },
+          { customerClient: { clientCustomer: "customers/7216252244" } },
+          { customerClient: { clientCustomer: "customers/4069972406" } },
+        ] });
+      }
+      if (body.query.includes("FROM campaign")) {
+        expect(body.query).toContain("BETWEEN '2026-08-17' AND '2026-08-24'");
+        expect(body.query).toContain("campaign.status != 'REMOVED'");
+        campaignQueries.push(customerId);
+        const campaigns: Record<string, unknown[]> = {
+          "3351363652": [],
+          "7216252244": [
+            { campaign: { id: "11", name: "AR | Sell | OC | Search" }, segments: { date: "2026-08-17" }, metrics: { costMicros: "50000000", impressions: "500", clicks: "10", conversions: 0 } },
+            { campaign: { id: "12", name: "DSA General Site" }, segments: { date: "2026-08-17" }, metrics: { costMicros: "77000000", impressions: "700", clicks: "70", conversions: 7 } },
+          ],
+          "4069972406": [
+            { campaign: { id: "21", name: "JT | Sell | OC | Search" }, segments: { date: "2026-08-17" }, metrics: { costMicros: "60000000", impressions: "600", clicks: "25", conversions: 1 } },
+            { campaign: { id: "21", name: "JT | Sell | OC | Search" }, segments: { date: "2026-08-18" }, metrics: { costMicros: "40000000", impressions: "400", clicks: "15", conversions: 1 } },
+          ],
+        };
+        return jsonResponse({ results: campaigns[customerId] ?? [] });
+      }
+      return jsonResponse({ results: [{
+        segments: { date: "2026-08-17" },
+        metrics: { costMicros: "1000000", conversions: 1, clicks: 2 },
+      }] });
+    };
+    const result = await fetchGoogleAdsMetrics(
+      withSecrets({
+        GOOGLE_ADS_DEVELOPER_TOKEN: "test-developer-token",
+        GOOGLE_ADS_CLIENT_ID: "test-client-id",
+        GOOGLE_ADS_CLIENT_SECRET: "test-client-secret",
+        GOOGLE_ADS_REFRESH_TOKEN: "test-refresh-token",
+        GOOGLE_ADS_LOGIN_CUSTOMER_ID: "1975174499",
+      }),
+      getReportingPeriod(later, CONFIG_DEFAULTS.reportingTimeZone),
+      getYearToDatePeriod(later, CONFIG_DEFAULTS.reportingTimeZone),
+      { fetcher, sleep: noDelay, now: later },
+    );
+
+    expect(campaignQueries.sort()).toEqual(["3351363652", "4069972406", "7216252244"]);
+    expect(result.googleAdsSpendMtd).toMatchObject({ kind: "ok", value: 3 });
+    expect(result.sellerCampaignSpend).toMatchObject({ kind: "ok", value: 150 });
+    expect(result.sellerCampaignCostPerClick).toMatchObject({ kind: "ok", value: 3 });
+    expect(result.sellerCampaignCtr.kind === "ok" ? result.sellerCampaignCtr.value : null)
+      .toBeCloseTo(50 / 1500, 9);
+    expect(result.sellerCampaignCostPerLead).toMatchObject({ kind: "ok", value: 75 });
+  });
+
+  it("keeps the all-account totals when only the seller campaign sweep fails", async () => {
+    const later = new Date("2026-08-24T19:00:00.000Z");
+    const fetcher = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+      const url = String(input);
+      if (url === "https://oauth2.googleapis.com/token") {
+        return jsonResponse({ access_token: "test-access-token-value" });
+      }
+      const body = JSON.parse(String(init?.body)) as { query: string };
+      if (body.query.includes("customer_client.client_customer")) {
+        return jsonResponse({ results: [
+          { customerClient: { clientCustomer: "customers/1975174499", manager: true } },
+          { customerClient: { clientCustomer: "customers/3351363652" } },
+          { customerClient: { clientCustomer: "customers/7216252244" } },
+        ] });
+      }
+      if (body.query.includes("FROM campaign")) {
+        return url.includes("7216252244")
+          ? new Response("", { status: 503 })
+          : jsonResponse({ results: [
+              { campaign: { id: "1", name: "JT | Sell | OC | Search" }, segments: { date: "2026-08-17" }, metrics: { costMicros: "1000000", impressions: 10, clicks: 1, conversions: 1 } },
+            ] });
+      }
+      return jsonResponse({ results: [{
+        segments: { date: "2026-08-17" },
+        metrics: { costMicros: "1000000", conversions: 1, clicks: 2 },
+      }] });
+    };
+    const result = await fetchGoogleAdsMetrics(
+      withSecrets({
+        GOOGLE_ADS_DEVELOPER_TOKEN: "test-developer-token",
+        GOOGLE_ADS_CLIENT_ID: "test-client-id",
+        GOOGLE_ADS_CLIENT_SECRET: "test-client-secret",
+        GOOGLE_ADS_REFRESH_TOKEN: "test-refresh-token",
+        GOOGLE_ADS_LOGIN_CUSTOMER_ID: "1975174499",
+      }),
+      getReportingPeriod(later, CONFIG_DEFAULTS.reportingTimeZone),
+      getYearToDatePeriod(later, CONFIG_DEFAULTS.reportingTimeZone),
+      { fetcher, sleep: noDelay, now: later },
+    );
+    expect(result.googleAdsSpendMtd).toMatchObject({ kind: "ok", value: 2 });
+    expect(result.sellerCampaignSpend).toMatchObject({ kind: "error", category: "upstream" });
+    expect(result.sellerCampaignCtr).toMatchObject({ kind: "error", category: "upstream" });
+  });
+
+  it("publishes no_data instead of $0 when no seller campaign matches", async () => {
+    const later = new Date("2026-08-24T19:00:00.000Z");
+    const fetcher = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+      const url = String(input);
+      if (url === "https://oauth2.googleapis.com/token") {
+        return jsonResponse({ access_token: "test-access-token-value" });
+      }
+      const body = JSON.parse(String(init?.body)) as { query: string };
+      if (body.query.includes("customer_client.client_customer")) {
+        return jsonResponse({ results: [
+          { customerClient: { clientCustomer: "customers/1975174499", manager: true } },
+          { customerClient: { clientCustomer: "customers/3351363652" } },
+        ] });
+      }
+      if (body.query.includes("FROM campaign")) {
+        return jsonResponse({ results: [
+          { campaign: { id: "1", name: "Corona 2.12.25" }, segments: { date: "2026-08-17" }, metrics: { costMicros: "1000000", impressions: 10, clicks: 1, conversions: 1 } },
+        ] });
+      }
+      return jsonResponse({ results: [] });
+    };
+    const result = await fetchGoogleAdsMetrics(
+      withSecrets({
+        GOOGLE_ADS_DEVELOPER_TOKEN: "test-developer-token",
+        GOOGLE_ADS_CLIENT_ID: "test-client-id",
+        GOOGLE_ADS_CLIENT_SECRET: "test-client-secret",
+        GOOGLE_ADS_REFRESH_TOKEN: "test-refresh-token",
+        GOOGLE_ADS_LOGIN_CUSTOMER_ID: "1975174499",
+      }),
+      getReportingPeriod(later, CONFIG_DEFAULTS.reportingTimeZone),
+      getYearToDatePeriod(later, CONFIG_DEFAULTS.reportingTimeZone),
+      { fetcher, sleep: noDelay, now: later },
+    );
+    expect(result.googleAdsSpendMtd).toMatchObject({ kind: "ok", value: 0 });
+    expect(result.sellerCampaignSpend).toMatchObject({ kind: "error", category: "no_data" });
   });
 
   it("does not publish a partial all-account total when one child fails", async () => {
@@ -1513,6 +1717,7 @@ describe("snapshot merging and public contract", () => {
       "reportingPeriod",
       "rolling90DayPeriod",
       "yearToDatePeriod",
+      "sellerCampaignPeriod",
       "lastAttemptAt",
       "lastSuccessfulFullSyncAt",
     ]);
@@ -1572,9 +1777,25 @@ describe("snapshot merging and public contract", () => {
     delete legacy.metrics["googleAdsCostPerLeadMtd"];
     delete legacy.metrics["totalDialsYtd"];
     delete legacy.metrics["personalDealsClosedYtd"];
+    delete legacy.metrics["sellerCampaignSpend"];
+    delete legacy.metrics["sellerCampaignCtr"];
+    delete (legacy as { sellerCampaignPeriod?: unknown }).sellerCampaignPeriod;
     const migrated = sanitizeStoredSnapshot(legacy);
 
     expect(migrated?.rolling90DayPeriod).toEqual(snapshot.rolling90DayPeriod);
+    expect(migrated?.sellerCampaignPeriod).toEqual({
+      startDate: "2026-08-17",
+      endDate: "2026-08-17",
+      timeZone: "America/Los_Angeles",
+    });
+    expect(migrated?.metrics.sellerCampaignSpend).toMatchObject({
+      value: null,
+      status: "unconfigured",
+    });
+    expect(migrated?.metrics.sellerCampaignCtr).toMatchObject({
+      value: null,
+      status: "unconfigured",
+    });
     expect(migrated?.metrics.googleAdsCostPerClickMtd).toMatchObject({
       value: null,
       status: "unconfigured",
@@ -1640,7 +1861,7 @@ describe("snapshot merging and public contract", () => {
     const snapshot = createUnconfiguredSnapshot(NOW, "America/Los_Angeles");
     expect(sanitizeSnapshot(snapshot)).not.toBeNull();
     expect(snapshot.metrics.googleAdsSpendMtd.value).toBeNull();
-    expect(Object.keys(snapshot.metrics)).toHaveLength(30);
+    expect(Object.keys(snapshot.metrics)).toHaveLength(34);
   });
 
   it("serves only a cached sanitized summary with hardened headers", async () => {
@@ -1658,7 +1879,7 @@ describe("snapshot merging and public contract", () => {
     );
     expect(response.headers.has("Access-Control-Allow-Origin")).toBe(false);
     expect(payload.version).toBe(2);
-    expect(Object.keys(payload.metrics)).toHaveLength(30);
+    expect(Object.keys(payload.metrics)).toHaveLength(34);
   });
 
   it("serves the same sanitized snapshot through the browser bootstrap", async () => {
@@ -1694,7 +1915,7 @@ describe("snapshot merging and public contract", () => {
     expect(source).not.toContain("must-not-ship");
     const payload = JSON.parse(source.slice(prefix.length, -1)) as DashboardSnapshot;
     expect(sanitizeSnapshot(payload)).not.toBeNull();
-    expect(Object.keys(payload.metrics)).toHaveLength(30);
+    expect(Object.keys(payload.metrics)).toHaveLength(34);
   });
 
   it("serves an explicit company-safe metric allowlist for Active Realty", async () => {

@@ -1,5 +1,10 @@
-import { readReportingTimeZone } from "./config";
 import {
+  CONFIG_DEFAULTS,
+  readGoogleAdsConfig,
+  readReportingTimeZone,
+} from "./config";
+import {
+  getFixedStartPeriod,
   getReportingPeriod,
   getRollingPeriod,
   getSearchConsoleThreeMonthPeriod,
@@ -121,6 +126,12 @@ export function mergeSnapshot(
     now,
     reportingPeriod.timeZone,
   ),
+  sellerCampaignPeriod: DashboardSnapshot["sellerCampaignPeriod"] =
+    getFixedStartPeriod(
+      CONFIG_DEFAULTS.googleAdsSellerCampaignLaunchDate,
+      now,
+      reportingPeriod.timeZone,
+    ),
 ): DashboardSnapshot {
   const synchronizedAt = now.toISOString();
   const configured = Object.values(results).filter(
@@ -144,6 +155,7 @@ export function mergeSnapshot(
     reportingPeriod,
     rolling90DayPeriod,
     yearToDatePeriod,
+    sellerCampaignPeriod,
     lastAttemptAt: synchronizedAt,
     lastSuccessfulFullSyncAt: fullSyncSucceeded
       ? synchronizedAt
@@ -215,6 +227,10 @@ function adsFailure(): GoogleAdsMetricResults {
     googleAdsSpendYtd: unexpectedResult(),
     googleAdsLeadsYtd: unexpectedResult(),
     googleAdsCostPerLeadYtd: unexpectedResult(),
+    sellerCampaignSpend: unexpectedResult(),
+    sellerCampaignCostPerClick: unexpectedResult(),
+    sellerCampaignCtr: unexpectedResult(),
+    sellerCampaignCostPerLead: unexpectedResult(),
   };
 }
 
@@ -298,6 +314,11 @@ export async function synchronizeDashboard(
   const reportingPeriod = getReportingPeriod(now, timeZone);
   const rolling90DayPeriod = getRollingPeriod(now, timeZone, 90);
   const yearToDatePeriod = getYearToDatePeriod(now, timeZone);
+  const sellerCampaignPeriod = getFixedStartPeriod(
+    readGoogleAdsConfig(env).sellerCampaignLaunchDate,
+    now,
+    timeZone,
+  );
   const previous = await loadPreviousSnapshot(env);
 
   const [fubSettled, adsSettled, searchSettled, teamSettled, progressSettled] =
@@ -308,6 +329,7 @@ export async function synchronizeDashboard(
         reportingPeriod,
         yearToDatePeriod,
         { ...dependencies, now },
+        sellerCampaignPeriod,
       ),
       fetchGoogleSearchConsoleMetrics(
         env,
@@ -354,6 +376,7 @@ export async function synchronizeDashboard(
     reportingPeriod,
     searchConsolePeriod ?? previous?.rolling90DayPeriod ?? rolling90DayPeriod,
     yearToDatePeriod,
+    sellerCampaignPeriod,
   );
   await env.DASHBOARD_KV.put(SNAPSHOT_KEY, JSON.stringify(snapshot));
   return toPublicSnapshot(snapshot, now);

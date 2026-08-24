@@ -22,6 +22,10 @@ GOOGLE_ADS_REFRESH_TOKEN="<google-oauth-refresh-token>"
 GOOGLE_ADS_CUSTOMER_ID="<fallback-ten-digit-customer-id-without-hyphens>"
 GOOGLE_ADS_LOGIN_CUSTOMER_ID="<ten-digit-manager-id-without-hyphens>"
 GOOGLE_ADS_API_VERSION="v25"
+# Optional exact campaign names for the /dashboard seller block (comma-separated).
+# Unset = the built-in rule: a "|"-delimited name carrying JT or AR, OC, and a Sell* segment.
+GOOGLE_ADS_SELLER_CAMPAIGN_NAMES=""
+GOOGLE_ADS_SELLER_CAMPAIGN_LAUNCH_DATE="2026-08-17"
 
 GOOGLE_SEARCH_CONSOLE_CLIENT_ID="<google-oauth-client-id>"
 GOOGLE_SEARCH_CONSOLE_CLIENT_SECRET="<google-oauth-client-secret>"

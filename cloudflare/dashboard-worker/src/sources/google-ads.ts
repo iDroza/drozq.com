@@ -1,6 +1,7 @@
 import { readGoogleAdsConfig, type GoogleAdsConfig } from "../config";
 import { exchangeRefreshToken } from "../lib/google-auth";
 import { classifyHttpStatus, isRecord, readBoundedJson } from "../lib/http";
+import { getFixedStartPeriod } from "../lib/date";
 import { requireNonnegativeNumber, requireSpend } from "../lib/numeric";
 import { fetchWithRetry, UpstreamRequestError } from "../lib/retry";
 import type {
@@ -31,6 +32,20 @@ interface GoogleAdsPerformance {
 
 interface GoogleAdsDailyPerformance extends GoogleAdsPerformance {
   date: string;
+}
+
+export interface GoogleAdsCampaignDailyPerformance extends GoogleAdsDailyPerformance {
+  campaignId: string;
+  campaignName: string;
+  impressions: number;
+}
+
+export interface SellerCampaignTotals {
+  campaignNames: string[];
+  costMicros: bigint;
+  clicks: number;
+  impressions: number;
+  conversions: number;
 }
 
 interface CustomerClient {
@@ -96,6 +111,24 @@ SELECT
   metrics.clicks
 FROM customer
 WHERE segments.date BETWEEN '${reportingPeriod.startDate}' AND '${reportingPeriod.endDate}'
+`.trim();
+}
+
+export function buildCampaignPerformanceQuery(
+  period: DashboardSnapshot["sellerCampaignPeriod"],
+): string {
+  return `
+SELECT
+  campaign.id,
+  campaign.name,
+  segments.date,
+  metrics.cost_micros,
+  metrics.impressions,
+  metrics.clicks,
+  metrics.conversions
+FROM campaign
+WHERE segments.date BETWEEN '${period.startDate}' AND '${period.endDate}'
+  AND campaign.status != 'REMOVED'
 `.trim();
 }
 
@@ -188,6 +221,98 @@ export function parseGoogleAdsDailyPerformance(
       clicks: parseClicks(metrics["clicks"] ?? 0),
     };
   });
+}
+
+export function parseGoogleAdsCampaignDailyPerformance(
+  rows: unknown[],
+): GoogleAdsCampaignDailyPerformance[] {
+  return rows.map((row) => {
+    if (!isRecord(row) || !isRecord(row["campaign"])) {
+      throw new UpstreamRequestError("schema");
+    }
+    const [daily] = parseGoogleAdsDailyPerformance([row]);
+    if (daily === undefined || !isRecord(row["metrics"])) {
+      throw new UpstreamRequestError("schema");
+    }
+    const campaignId = row["campaign"]["id"];
+    const campaignName = row["campaign"]["name"];
+    if (
+      (typeof campaignId !== "string" && typeof campaignId !== "number") ||
+      typeof campaignName !== "string" ||
+      campaignName.trim() === ""
+    ) {
+      throw new UpstreamRequestError("schema");
+    }
+    return {
+      ...daily,
+      campaignId: String(campaignId),
+      campaignName,
+      impressions: parseClicks(row["metrics"]["impressions"] ?? 0),
+    };
+  });
+}
+
+function normalizeCampaignName(value: string): string {
+  return value
+    .split("|")
+    .map((segment) => segment.trim().replace(/\s+/gu, " ").toLocaleLowerCase("en-US"))
+    .join(" | ");
+}
+
+/**
+ * The seller block follows the two "Sell | OC" search campaigns (JT + AR), one
+ * lander on two domains. With explicit names configured only those match;
+ * otherwise a "|"-delimited campaign name qualifies when it carries a JT or AR
+ * segment, an OC segment, and a segment starting with "sell" (Sell, Sellers).
+ */
+export function isSellerCampaignName(
+  name: string,
+  configuredNames: string[],
+): boolean {
+  const normalized = normalizeCampaignName(name);
+  if (configuredNames.length > 0) {
+    return configuredNames.some(
+      (configured) => normalizeCampaignName(configured) === normalized,
+    );
+  }
+  const segments = normalized.split(" | ");
+  return (
+    segments.some((segment) => segment === "jt" || segment === "ar") &&
+    segments.includes("oc") &&
+    segments.some((segment) => segment.startsWith("sell"))
+  );
+}
+
+export function sumSellerCampaignPerformance(
+  rows: GoogleAdsCampaignDailyPerformance[],
+  configuredNames: string[],
+  period: DashboardSnapshot["sellerCampaignPeriod"],
+): SellerCampaignTotals {
+  const campaignNames = new Set<string>();
+  let costMicros = 0n;
+  let clicks = 0;
+  let impressions = 0;
+  let conversions = 0;
+  for (const row of rows) {
+    if (row.date < period.startDate || row.date > period.endDate) {
+      throw new UpstreamRequestError("schema");
+    }
+    if (!isSellerCampaignName(row.campaignName, configuredNames)) {
+      continue;
+    }
+    campaignNames.add(row.campaignName);
+    costMicros += row.costMicros;
+    clicks += row.clicks;
+    impressions += row.impressions;
+    conversions += row.conversions;
+  }
+  return {
+    campaignNames: [...campaignNames].sort(),
+    costMicros,
+    clicks: parseClicks(clicks),
+    impressions: parseClicks(impressions),
+    conversions: requireNonnegativeNumber(conversions, "google_ads_seller_conversions"),
+  };
 }
 
 function normalizeActionName(value: string): string {
@@ -513,11 +638,95 @@ function unconfigured(started: number): MetricFetchResult {
   };
 }
 
+type SellerCampaignMetricResults = Pick<
+  GoogleAdsMetricResults,
+  | "sellerCampaignSpend"
+  | "sellerCampaignCostPerClick"
+  | "sellerCampaignCtr"
+  | "sellerCampaignCostPerLead"
+>;
+
+function sellerResults(result: MetricFetchResult): SellerCampaignMetricResults {
+  return {
+    sellerCampaignSpend: result,
+    sellerCampaignCostPerClick: result,
+    sellerCampaignCtr: result,
+    sellerCampaignCostPerLead: result,
+  };
+}
+
+function ratioResult(
+  numerator: number,
+  denominator: number,
+  durationMs: number,
+): MetricFetchResult {
+  if (denominator <= 0) {
+    return { kind: "error", category: "no_data", durationMs, responseStatus: 200 };
+  }
+  const value = numerator / denominator;
+  if (!Number.isFinite(value) || value < 0) {
+    throw new UpstreamRequestError("schema");
+  }
+  return { kind: "ok", value, durationMs, responseStatus: 200 };
+}
+
+/**
+ * Seller-campaign metrics are best-effort on top of the all-account totals:
+ * a failed campaign query in any account makes only the seller block
+ * unavailable (the previous values stay visible as stale), and a sweep that
+ * matches no campaign publishes no_data rather than a false $0.
+ */
+export function deriveSellerCampaignMetrics(
+  campaignSettled: PromiseSettledResult<unknown[]>[],
+  configuredNames: string[],
+  period: DashboardSnapshot["sellerCampaignPeriod"],
+  started: number,
+): SellerCampaignMetricResults {
+  const durationMs = Date.now() - started;
+  try {
+    const rows: GoogleAdsCampaignDailyPerformance[] = [];
+    for (const item of campaignSettled) {
+      if (item.status === "rejected") {
+        throw item.reason;
+      }
+      rows.push(...parseGoogleAdsCampaignDailyPerformance(item.value));
+    }
+    const totals = sumSellerCampaignPerformance(rows, configuredNames, period);
+    console.log(JSON.stringify({
+      source: "google_ads_seller_campaigns",
+      matchedCampaigns: totals.campaignNames,
+      startDate: period.startDate,
+      endDate: period.endDate,
+      clicks: totals.clicks,
+      impressions: totals.impressions,
+      conversions: totals.conversions,
+    }));
+    if (totals.campaignNames.length === 0) {
+      return sellerResults({
+        kind: "error",
+        category: "no_data",
+        durationMs,
+        responseStatus: 200,
+      });
+    }
+    const spend = costMicrosToUsd(totals.costMicros);
+    return {
+      sellerCampaignSpend: { kind: "ok", value: spend, durationMs, responseStatus: 200 },
+      sellerCampaignCostPerClick: ratioResult(spend, totals.clicks, durationMs),
+      sellerCampaignCtr: ratioResult(totals.clicks, totals.impressions, durationMs),
+      sellerCampaignCostPerLead: ratioResult(spend, totals.conversions, durationMs),
+    };
+  } catch (error) {
+    return sellerResults(metricError(error, started));
+  }
+}
+
 export async function fetchGoogleAdsMetrics(
   env: DashboardEnv,
   reportingPeriod: DashboardSnapshot["reportingPeriod"],
   yearToDatePeriod: DashboardSnapshot["yearToDatePeriod"],
   dependencies: RuntimeDependencies = {},
+  sellerCampaignPeriod?: DashboardSnapshot["sellerCampaignPeriod"],
 ): Promise<GoogleAdsMetricResults> {
   const started = Date.now();
   const config = readGoogleAdsConfig(env);
@@ -530,6 +739,10 @@ export async function fetchGoogleAdsMetrics(
       googleAdsSpendYtd: unconfigured(started),
       googleAdsLeadsYtd: unconfigured(started),
       googleAdsCostPerLeadYtd: unconfigured(started),
+      sellerCampaignSpend: unconfigured(started),
+      sellerCampaignCostPerClick: unconfigured(started),
+      sellerCampaignCtr: unconfigured(started),
+      sellerCampaignCostPerLead: unconfigured(started),
     };
   }
 
@@ -550,17 +763,40 @@ export async function fetchGoogleAdsMetrics(
       now,
       dependencies,
     );
-    const query = buildAccountPerformanceQuery(yearToDatePeriod);
-    const settled = await Promise.allSettled(
-      customerIds.map((customerId) => queryGoogleAds(
-        accessToken,
-        config,
-        customerId,
-        query,
-        "google_ads_performance",
-        dependencies,
-      )),
+    const sellerPeriod = sellerCampaignPeriod ?? getFixedStartPeriod(
+      config.sellerCampaignLaunchDate,
+      now,
+      yearToDatePeriod.timeZone,
     );
+    const query = buildAccountPerformanceQuery(yearToDatePeriod);
+    const campaignQuery = buildCampaignPerformanceQuery(sellerPeriod);
+    // Before launch day there is nothing to sum: skip the campaign sweep and
+    // publish no_data instead of a false $0.
+    const sellerLaunched = sellerPeriod.startDate <= yearToDatePeriod.endDate;
+    const [settled, campaignSettled] = await Promise.all([
+      Promise.allSettled(
+        customerIds.map((customerId) => queryGoogleAds(
+          accessToken,
+          config,
+          customerId,
+          query,
+          "google_ads_performance",
+          dependencies,
+        )),
+      ),
+      sellerLaunched
+        ? Promise.allSettled(
+            customerIds.map((customerId) => queryGoogleAds(
+              accessToken,
+              config,
+              customerId,
+              campaignQuery,
+              "google_ads_seller_campaigns",
+              dependencies,
+            )),
+          )
+        : Promise.resolve(null),
+    ]);
     const rejected = settled.find(
       (item): item is PromiseRejectedResult => item.status === "rejected",
     );
@@ -572,6 +808,19 @@ export async function fetchGoogleAdsMetrics(
       }
       throw rejected.reason;
     }
+    const seller = campaignSettled === null
+      ? sellerResults({
+          kind: "error",
+          category: "no_data",
+          durationMs: Date.now() - started,
+          responseStatus: 200,
+        })
+      : deriveSellerCampaignMetrics(
+          campaignSettled,
+          config.sellerCampaignNames,
+          sellerPeriod,
+          started,
+        );
 
     let mtdCostMicros = 0n;
     let mtdConversions = 0;
@@ -689,6 +938,7 @@ export async function fetchGoogleAdsMetrics(
             durationMs,
             responseStatus: 200,
           },
+      ...seller,
     };
   } catch (error) {
     const metric = metricError(error, started);
@@ -700,6 +950,10 @@ export async function fetchGoogleAdsMetrics(
       googleAdsSpendYtd: metric,
       googleAdsLeadsYtd: metric,
       googleAdsCostPerLeadYtd: metric,
+      sellerCampaignSpend: metric,
+      sellerCampaignCostPerClick: metric,
+      sellerCampaignCtr: metric,
+      sellerCampaignCostPerLead: metric,
     };
   }
 }

@@ -9,6 +9,9 @@ export const CONFIG_DEFAULTS = Object.freeze({
   googleAdsApiVersion: "v25",
   googleAdsCustomerId: "8004133723",
   googleAdsLeadConversionActionNames: "generate_lead",
+  // The JT + AR "Sell | OC" search campaigns share one lander on two domains
+  // (justintye.com/sell + activerealty.com/sell) and launched together.
+  googleAdsSellerCampaignLaunchDate: "2026-08-17",
   googleSearchConsoleActiveRealtySiteUrl: "sc-domain:activerealty.com",
   googleSearchConsoleJtSiteUrl: "https://justintye.com/",
   googleSearchConsoleRefreshMinutes: 60,
@@ -39,6 +42,8 @@ export interface GoogleAdsConfig {
   customerId: string;
   loginCustomerId: string;
   apiVersion: string;
+  sellerCampaignNames: string[];
+  sellerCampaignLaunchDate: string;
 }
 
 export interface GoogleSheetsConfig {
@@ -74,6 +79,17 @@ function boundedMinutes(value: string | undefined, fallback: number): number {
   const parsed = Number(cleaned);
   return Number.isSafeInteger(parsed) && parsed >= 1 && parsed <= 24 * 60
     ? parsed
+    : fallback;
+}
+
+function isoCalendarDate(value: string | undefined, fallback: string): string {
+  const cleaned = clean(value);
+  if (!/^\d{4}-\d{2}-\d{2}$/u.test(cleaned)) {
+    return fallback;
+  }
+  const parsed = Date.parse(`${cleaned}T12:00:00.000Z`);
+  return Number.isFinite(parsed) && new Date(parsed).toISOString().startsWith(cleaned)
+    ? cleaned
     : fallback;
 }
 
@@ -159,6 +175,13 @@ export function readGoogleAdsConfig(env: DashboardEnv): GoogleAdsConfig {
     loginCustomerId: normalizeCustomerId(clean(env.GOOGLE_ADS_LOGIN_CUSTOMER_ID)),
     apiVersion:
       clean(env.GOOGLE_ADS_API_VERSION) || CONFIG_DEFAULTS.googleAdsApiVersion,
+    sellerCampaignNames: parseCommaSeparated(
+      clean(env.GOOGLE_ADS_SELLER_CAMPAIGN_NAMES),
+    ),
+    sellerCampaignLaunchDate: isoCalendarDate(
+      env.GOOGLE_ADS_SELLER_CAMPAIGN_LAUNCH_DATE,
+      CONFIG_DEFAULTS.googleAdsSellerCampaignLaunchDate,
+    ),
   };
 }
 

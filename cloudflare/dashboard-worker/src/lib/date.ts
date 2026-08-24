@@ -238,6 +238,23 @@ export function getYearToDatePeriod(
   };
 }
 
+export function getFixedStartPeriod(
+  startDate: string,
+  now: Date,
+  timeZone: string,
+): DashboardSnapshot["sellerCampaignPeriod"] {
+  if (!isIsoCalendarDate(startDate)) {
+    throw new RangeError("invalid_fixed_start_date");
+  }
+  const end = calendarParts(now, timeZone);
+  const today = isoDate(end.year, end.month, end.day);
+  return {
+    startDate,
+    endDate: today < startDate ? startDate : today,
+    timeZone,
+  };
+}
+
 export function isIsoUtcTimestamp(value: unknown): value is string {
   if (
     typeof value !== "string" ||
