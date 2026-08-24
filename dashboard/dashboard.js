@@ -32,8 +32,8 @@
     // domains) since launch. Optional so a snapshot from a Worker that predates
     // the block still renders everything else.
     sellerCampaignSpend: { source: "Google Ads", format: "currency", optional: true },
+    sellerCampaignLeads: { source: "Google Ads", format: "conversion", optional: true },
     sellerCampaignCostPerClick: { source: "Google Ads", format: "currency", optional: true },
-    sellerCampaignCtr: { source: "Google Ads", format: "percent", optional: true },
     sellerCampaignCostPerLead: { source: "Google Ads", format: "currency", optional: true },
     teamCommissionRoasYtd: { source: "FUB + ad channels", format: "ratio" },
     // Derived client-side in adjustMetrics (never present in the worker snapshot).

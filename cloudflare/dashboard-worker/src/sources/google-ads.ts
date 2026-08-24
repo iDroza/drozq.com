@@ -642,7 +642,7 @@ type SellerCampaignMetricResults = Pick<
   GoogleAdsMetricResults,
   | "sellerCampaignSpend"
   | "sellerCampaignCostPerClick"
-  | "sellerCampaignCtr"
+  | "sellerCampaignLeads"
   | "sellerCampaignCostPerLead"
 >;
 
@@ -650,7 +650,7 @@ function sellerResults(result: MetricFetchResult): SellerCampaignMetricResults {
   return {
     sellerCampaignSpend: result,
     sellerCampaignCostPerClick: result,
-    sellerCampaignCtr: result,
+    sellerCampaignLeads: result,
     sellerCampaignCostPerLead: result,
   };
 }
@@ -713,7 +713,12 @@ export function deriveSellerCampaignMetrics(
     return {
       sellerCampaignSpend: { kind: "ok", value: spend, durationMs, responseStatus: 200 },
       sellerCampaignCostPerClick: ratioResult(spend, totals.clicks, durationMs),
-      sellerCampaignCtr: ratioResult(totals.clicks, totals.impressions, durationMs),
+      sellerCampaignLeads: {
+        kind: "ok",
+        value: totals.conversions,
+        durationMs,
+        responseStatus: 200,
+      },
       sellerCampaignCostPerLead: ratioResult(spend, totals.conversions, durationMs),
     };
   } catch (error) {
@@ -741,7 +746,7 @@ export async function fetchGoogleAdsMetrics(
       googleAdsCostPerLeadYtd: unconfigured(started),
       sellerCampaignSpend: unconfigured(started),
       sellerCampaignCostPerClick: unconfigured(started),
-      sellerCampaignCtr: unconfigured(started),
+      sellerCampaignLeads: unconfigured(started),
       sellerCampaignCostPerLead: unconfigured(started),
     };
   }
@@ -952,7 +957,7 @@ export async function fetchGoogleAdsMetrics(
       googleAdsCostPerLeadYtd: metric,
       sellerCampaignSpend: metric,
       sellerCampaignCostPerClick: metric,
-      sellerCampaignCtr: metric,
+      sellerCampaignLeads: metric,
       sellerCampaignCostPerLead: metric,
     };
   }

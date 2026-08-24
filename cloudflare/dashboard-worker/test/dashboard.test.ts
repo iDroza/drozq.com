@@ -124,7 +124,7 @@ function allSuccessfulResults(): MetricResultMap {
     googleAdsCostPerLeadYtd: successful(25.520804),
     sellerCampaignSpend: successful(412.37),
     sellerCampaignCostPerClick: successful(2.81),
-    sellerCampaignCtr: successful(0.0412),
+    sellerCampaignLeads: successful(6),
     sellerCampaignCostPerLead: successful(68.73),
     teamCommissionRoasYtd: successful(51.781207),
     activeRealtyClicksRolling90d: successful(11474),
@@ -717,8 +717,7 @@ describe("Google Ads all-account aggregation", () => {
     expect(result.googleAdsSpendMtd).toMatchObject({ kind: "ok", value: 3 });
     expect(result.sellerCampaignSpend).toMatchObject({ kind: "ok", value: 150 });
     expect(result.sellerCampaignCostPerClick).toMatchObject({ kind: "ok", value: 3 });
-    expect(result.sellerCampaignCtr.kind === "ok" ? result.sellerCampaignCtr.value : null)
-      .toBeCloseTo(50 / 1500, 9);
+    expect(result.sellerCampaignLeads).toMatchObject({ kind: "ok", value: 2 });
     expect(result.sellerCampaignCostPerLead).toMatchObject({ kind: "ok", value: 75 });
   });
 
@@ -763,7 +762,7 @@ describe("Google Ads all-account aggregation", () => {
     );
     expect(result.googleAdsSpendMtd).toMatchObject({ kind: "ok", value: 2 });
     expect(result.sellerCampaignSpend).toMatchObject({ kind: "error", category: "upstream" });
-    expect(result.sellerCampaignCtr).toMatchObject({ kind: "error", category: "upstream" });
+    expect(result.sellerCampaignLeads).toMatchObject({ kind: "error", category: "upstream" });
   });
 
   it("publishes no_data instead of $0 when no seller campaign matches", async () => {
@@ -1778,7 +1777,7 @@ describe("snapshot merging and public contract", () => {
     delete legacy.metrics["totalDialsYtd"];
     delete legacy.metrics["personalDealsClosedYtd"];
     delete legacy.metrics["sellerCampaignSpend"];
-    delete legacy.metrics["sellerCampaignCtr"];
+    delete legacy.metrics["sellerCampaignLeads"];
     delete (legacy as { sellerCampaignPeriod?: unknown }).sellerCampaignPeriod;
     const migrated = sanitizeStoredSnapshot(legacy);
 
@@ -1792,7 +1791,7 @@ describe("snapshot merging and public contract", () => {
       value: null,
       status: "unconfigured",
     });
-    expect(migrated?.metrics.sellerCampaignCtr).toMatchObject({
+    expect(migrated?.metrics.sellerCampaignLeads).toMatchObject({
       value: null,
       status: "unconfigured",
     });

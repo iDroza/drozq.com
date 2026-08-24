@@ -49,7 +49,7 @@ export const METRIC_KEYS = [
   "googleAdsCostPerLeadYtd",
   "sellerCampaignSpend",
   "sellerCampaignCostPerClick",
-  "sellerCampaignCtr",
+  "sellerCampaignLeads",
   "sellerCampaignCostPerLead",
   "teamCommissionRoasYtd",
   "activeRealtyClicksRolling90d",
@@ -154,9 +154,9 @@ export const METRIC_SPECS = {
     definition: "Combined seller-campaign cost divided by clicks since launch.",
     staleAfterMs: FAST_STALE_MS,
   },
-  sellerCampaignCtr: {
+  sellerCampaignLeads: {
     source: "google_ads",
-    definition: "Combined seller-campaign clicks divided by impressions since launch.",
+    definition: "Combined seller-campaign primary Google Ads conversions since launch.",
     staleAfterMs: FAST_STALE_MS,
   },
   sellerCampaignCostPerLead: {
@@ -276,7 +276,6 @@ const CURRENCY_METRICS = new Set<DashboardMetricKey>([
 const RATE_METRICS = new Set<DashboardMetricKey>([
   "activeRealtyCtrRolling90d",
   "jtCtrRolling90d",
-  "sellerCampaignCtr",
 ]);
 
 const POSITION_METRICS = new Set<DashboardMetricKey>([

@@ -36,7 +36,7 @@ export interface DashboardSnapshot {
     googleAdsCostPerLeadYtd: DashboardMetric;
     sellerCampaignSpend: DashboardMetric;
     sellerCampaignCostPerClick: DashboardMetric;
-    sellerCampaignCtr: DashboardMetric;
+    sellerCampaignLeads: DashboardMetric;
     sellerCampaignCostPerLead: DashboardMetric;
     teamCommissionRoasYtd: DashboardMetric;
     activeRealtyClicksRolling90d: DashboardMetric;
@@ -116,7 +116,7 @@ export interface GoogleAdsMetricResults {
   googleAdsCostPerLeadYtd: MetricFetchResult;
   sellerCampaignSpend: MetricFetchResult;
   sellerCampaignCostPerClick: MetricFetchResult;
-  sellerCampaignCtr: MetricFetchResult;
+  sellerCampaignLeads: MetricFetchResult;
   sellerCampaignCostPerLead: MetricFetchResult;
 }
 

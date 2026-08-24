@@ -229,7 +229,7 @@ function adsFailure(): GoogleAdsMetricResults {
     googleAdsCostPerLeadYtd: unexpectedResult(),
     sellerCampaignSpend: unexpectedResult(),
     sellerCampaignCostPerClick: unexpectedResult(),
-    sellerCampaignCtr: unexpectedResult(),
+    sellerCampaignLeads: unexpectedResult(),
     sellerCampaignCostPerLead: unexpectedResult(),
   };
 }
