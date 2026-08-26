@@ -499,9 +499,52 @@ export async function sendPayloadTo(env, sub, logId, payload) {
   return sendEmail(env, { to: sub.email, toName: first || sub.name || "", subject, html, text, unsubUrl: unsub });
 }
 
+// Columns added after the original schema, applied lazily from the paths that
+// need them (the tick, enrollment) so an existing database upgrades itself on
+// first use. "duplicate column" on re-runs is expected and swallowed; the
+// probe SELECT afterwards is what decides readiness. Cached per isolate once
+// ready; a failed probe is retried on the next call.
+//   email_log.retry_count      broadcast rows requeued by the tick reaper
+//   email_log.claimed_at       when a broadcast row went to 'sending'
+//   subscribers.step_attempts  failed sends of the current sequence step
+export const EMAIL_COLUMN_MIGRATIONS = [
+  "ALTER TABLE email_log ADD COLUMN retry_count INTEGER NOT NULL DEFAULT 0",
+  "ALTER TABLE email_log ADD COLUMN claimed_at TEXT",
+  "ALTER TABLE subscribers ADD COLUMN step_attempts INTEGER NOT NULL DEFAULT 0"
+];
+const columnsReady = new WeakSet();
+export async function ensureEmailColumns(env) {
+  const db = env && env.EMAIL_DB;
+  if (!db || typeof db.prepare !== "function") return false;
+  if (columnsReady.has(db)) return true;
+  for (const sql of EMAIL_COLUMN_MIGRATIONS) {
+    try { await db.prepare(sql).run(); } catch (e) {}
+  }
+  try {
+    await db.prepare("SELECT retry_count, claimed_at FROM email_log LIMIT 0").run();
+    await db.prepare("SELECT step_attempts FROM subscribers LIMIT 0").run();
+    columnsReady.add(db);
+    return true;
+  } catch (e) {
+    console.error("EMAIL_COLUMNS_NOT_READY " + ((e && e.message) || e));
+    return false;
+  }
+}
+
+// Was a failed send worth retrying? Network/timeout (status 0), 408, 429 and
+// every 5xx are transient; a 4xx from MailChannels (bad recipient, rejected
+// content) will fail the same way next time.
+export function isTransientSend(sent) {
+  if (!sent || sent.ok) return false;
+  const s = Number(sent.status || 0);
+  return s === 0 || s === 408 || s === 429 || s >= 500;
+}
+
 // Render + send one sequence step to a subscriber, with open/click tracking and
-// the unsubscribe footer, logging the send in email_log. Never throws.
-export async function sendSequenceStep(env, sub, step) {
+// the unsubscribe footer, logging the send in email_log. Never throws. The
+// optional `out` object receives { status, error, transient } so callers can
+// decide whether a failure deserves a retry (see tick.js / enroll.js).
+export async function sendSequenceStep(env, sub, step, out) {
   try {
     const first = firstNameOf(sub);
     const subject = personalize(step.subject(sub), sub);
@@ -539,9 +582,12 @@ export async function sendSequenceStep(env, sub, step) {
     await phCapture(sent.ok ? "email_sent" : "email_send_failed", sub.email, {
       kind: "sequence", ref: step.id, subject, sequence_id: sub.sequence_id
     });
+    if (out) { out.status = sent.status; out.error = sent.error || null; out.transient = isTransientSend(sent); }
     return sent.ok;
   } catch (e) {
     console.error("EMAIL_SEQ_STEP_THREW email=" + (sub && sub.email) + " step=" + (step && step.id) + " " + ((e && e.message) || e));
+    // A throw here is the database or the renderer, not the recipient: retry.
+    if (out) { out.status = 0; out.error = String((e && e.message) || e); out.transient = true; }
     return false;
   }
 }

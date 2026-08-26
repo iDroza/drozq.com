@@ -58,7 +58,16 @@ const STATEMENTS = [
 // error on re-runs is expected and swallowed.
 const MIGRATIONS = [
   "ALTER TABLE subscribers ADD COLUMN street TEXT",
-  "ALTER TABLE subscribers ADD COLUMN timeline TEXT"
+  "ALTER TABLE subscribers ADD COLUMN timeline TEXT",
+  // Retry bookkeeping (2026-08-26): also applied lazily by ensureEmailColumns
+  // in _lib/email.js from the tick and enrollment paths.
+  "ALTER TABLE email_log ADD COLUMN retry_count INTEGER NOT NULL DEFAULT 0",
+  "ALTER TABLE email_log ADD COLUMN claimed_at TEXT",
+  "ALTER TABLE subscribers ADD COLUMN step_attempts INTEGER NOT NULL DEFAULT 0",
+  // Guards added the same day (created lazily by their libs; listed here so
+  // a fresh init bootstraps them too).
+  "CREATE TABLE IF NOT EXISTS rate_limits (key TEXT PRIMARY KEY, window_start INTEGER NOT NULL, count INTEGER NOT NULL)",
+  "CREATE TABLE IF NOT EXISTS lead_submissions (id TEXT PRIMARY KEY, seen_at INTEGER NOT NULL)"
 ];
 
 export async function onRequestPost(context) {
@@ -69,7 +78,7 @@ export async function onRequestPost(context) {
     for (const m of MIGRATIONS) {
       try { await context.env.EMAIL_DB.prepare(m).run(); } catch (e) {}
     }
-    return json({ ok: true, tables: ["subscribers", "campaigns", "email_log"] });
+    return json({ ok: true, tables: ["subscribers", "campaigns", "email_log", "rate_limits", "lead_submissions"] });
   } catch (e) {
     console.error("EMAIL_INIT_FAILED " + ((e && e.message) || e));
     return json({ ok: false, error: String((e && e.message) || e) }, 500);

@@ -8,6 +8,7 @@
 // send/open/click totals so one call answers "how is the list doing".
 
 import { json, adminGate } from "../../_lib/admin.js";
+import { csvCell } from "../../_lib/csv.js";
 
 export async function onRequestGet(context) {
   const gate = adminGate(context);
@@ -44,12 +45,10 @@ export async function onRequestGet(context) {
 
     if (format === "csv") {
       const cols = ["id", "email", "first_name", "name", "source", "intent", "city", "street", "timeline", "status", "sequence_id", "sequence_step", "next_send_at", "created_at"];
-      const esc = (v) => {
-        const s = v == null ? "" : String(v);
-        return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-      };
+      // csvCell quotes per RFC 4180 and neutralizes formula-injection cells
+      // (a subscriber-supplied name starting with = + - @ tab or CR).
       const csv = [cols.join(",")]
-        .concat((rows.results || []).map((r) => cols.map((c) => esc(r[c])).join(",")))
+        .concat((rows.results || []).map((r) => cols.map((c) => csvCell(r[c])).join(",")))
         .join("\n");
       return new Response(csv, {
         status: 200,

@@ -1,4 +1,6 @@
-import { sendEmail } from "../_lib/email.js";
+import { sendEmail, validEmail } from "../_lib/email.js";
+import { maskEmail, maskAddress } from "../_lib/redact.js";
+import { enforceRateLimits, RATE_RULES } from "../_lib/ratelimit.js";
 import { renderValuationReport } from "../_lib/valuation_email.js";
 
 // /api/valuation - the 5-system home valuation aggregator powering /value/.
@@ -813,7 +815,7 @@ async function saveValuationLead(request, contact, addr) {
       let body = "";
       try { body = await resp.text(); } catch (e) {}
       console.error("VALUATION_LEAD_SAVE_REJECTED status=" + resp.status + " body=" + body.slice(0, 300) +
-        " email=" + contact.email + " address=" + (addr.fullAddress || "-"));
+        " email=" + maskEmail(contact.email) + " address=" + maskAddress(addr.fullAddress));
     }
   } catch (e) {
     console.error("VALUATION_LEAD_SAVE_FAILED " + ((e && e.message) || e));
@@ -833,8 +835,8 @@ async function sendReportEmail(env, contact, data) {
       text: report.text,
       unsubUrl: ""
     });
-    if (sent && sent.ok) console.log("VALUATION_REPORT_SENT to=" + contact.email + " addr=" + (data.formatted || "-"));
-    else console.error("VALUATION_REPORT_FAILED to=" + contact.email + " err=" + (sent && (sent.error || sent.status)));
+    if (sent && sent.ok) console.log("VALUATION_REPORT_SENT to=" + maskEmail(contact.email) + " addr=" + maskAddress(data.formatted));
+    else console.error("VALUATION_REPORT_FAILED to=" + maskEmail(contact.email) + " err=" + (sent && (sent.error || sent.status)));
   } catch (e) {
     console.error("VALUATION_REPORT_THREW " + ((e && e.message) || e));
   }
@@ -953,6 +955,20 @@ export async function onRequest(context) {
       error: "contact_required",
       message: "Submit your name, email, and phone to generate the valuation."
     }, 403);
+  }
+  // A malformed email saves nothing and spends nothing: the report, the drip,
+  // and the CRM merge all key on it, so it is worth a retry from the visitor.
+  if (!validEmail(contact.email)) {
+    return json({ ok: false, error: "invalid_email", message: "That email doesn't look right. Check it and try again." }, 400);
+  }
+  // Rate limit (per IP, plus the shared Rentcast spend cap). Sits after the
+  // honeypot + contact gate and BEFORE any upstream call or lead save, so a
+  // blocked request costs nothing and creates nothing. Internal compute-only
+  // calls (authenticated with EMAIL_SECRET, one per accepted funnel lead)
+  // are exempt: they all egress from Cloudflare and would share one IP.
+  if (!isInternal) {
+    const limited = await enforceRateLimits(context, RATE_RULES.valuation);
+    if (limited) return limited;
   }
 
   // From this point on the visitor has paid with their contact info, so the

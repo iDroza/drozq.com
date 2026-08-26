@@ -1,5 +1,7 @@
 import { enrollSubscriber } from "../_lib/enroll.js";
-import { renderLeadAlert, escapeHtml, sendEmail } from "../_lib/email.js";
+import { renderLeadAlert, escapeHtml, sendEmail, validEmail } from "../_lib/email.js";
+import { maskEmail, maskPhone, maskAddress } from "../_lib/redact.js";
+import { normalizeSubmissionId, rememberSubmission, pruneSubmissions } from "../_lib/idempotency.js";
 import { renderValuationReport, reportInputFromApiResponse } from "../_lib/valuation_email.js";
 
 const json = (data, status = 200) =>
@@ -62,18 +64,18 @@ async function sendFunnelReport(env, seed) {
     })
   }, 25000);
   if (!resp.ok) {
-    console.error("VALUATION_REPORT_FETCH_FAILED status=" + resp.status + " addr=" + seed.address);
+    console.error("VALUATION_REPORT_FETCH_FAILED status=" + resp.status + " addr=" + maskAddress(seed.address));
     return;
   }
   const data = await resp.json();
   if (!data || !data.ok) {
-    console.log("VALUATION_REPORT_NO_DATA addr=" + seed.address);
+    console.log("VALUATION_REPORT_NO_DATA addr=" + maskAddress(seed.address));
     return;
   }
   const report = renderValuationReport(reportInputFromApiResponse(data));
   const sent = await sendEmail(env, { to: seed.email, toName: seed.name || "", subject: report.subject, html: report.html, text: report.text, unsubUrl: "" });
-  if (sent && sent.ok) console.log("VALUATION_REPORT_SENT to=" + seed.email + " addr=" + seed.address);
-  else console.error("VALUATION_REPORT_FAILED to=" + seed.email + " err=" + (sent && (sent.error || sent.status)));
+  if (sent && sent.ok) console.log("VALUATION_REPORT_SENT to=" + maskEmail(seed.email) + " addr=" + maskAddress(seed.address));
+  else console.error("VALUATION_REPORT_FAILED to=" + maskEmail(seed.email) + " err=" + (sent && (sent.error || sent.status)));
 }
 
 // Deliver an accepted lead to every configured channel, best effort. CRITICAL
@@ -85,7 +87,10 @@ async function sendFunnelReport(env, seed) {
 // it is still recoverable from Cloudflare's function logs, a lead is never
 // silently dropped.
 async function deliverLead(env, lead) {
-  const { emailContent, zapierPayload, fubEvent, logLine } = lead;
+  // logLine is the FULL lead (recoverable); safeLine is the redacted shape
+  // (masked email, last four of the phone, no name). Only LEAD_NOT_DELIVERED,
+  // the no-channel recovery path, ever logs the full line.
+  const { emailContent, zapierPayload, fubEvent, logLine, safeLine } = lead;
   const tasks = [];
   let channels = 0;
 
@@ -125,14 +130,14 @@ async function deliverLead(env, lead) {
         if (!r.ok) {
           let body = "";
           try { body = await r.text(); } catch (e) {}
-          console.error("LEAD_EMAIL_FAILED MailChannels status=" + r.status + " body=" + body + " | " + logLine);
+          console.error("LEAD_EMAIL_FAILED MailChannels status=" + r.status + " body=" + body + " | " + safeLine);
         }
       }).catch((e) => {
-        console.error("LEAD_EMAIL_THREW MailChannels " + ((e && e.message) || e) + " | " + logLine);
+        console.error("LEAD_EMAIL_THREW MailChannels " + ((e && e.message) || e) + " | " + safeLine);
       })
     );
   } else {
-    console.error("LEAD_EMAIL_SKIPPED MailChannels not configured (need TO_EMAIL + FROM_EMAIL + MAILCHANNELS_API_KEY) | " + logLine);
+    console.error("LEAD_EMAIL_SKIPPED MailChannels not configured (need TO_EMAIL + FROM_EMAIL + MAILCHANNELS_API_KEY) | " + safeLine);
   }
 
   if (env.ZAPIER_WEBHOOK_URL) {
@@ -143,9 +148,9 @@ async function deliverLead(env, lead) {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(zapierPayload)
       }, 8000).then((r) => {
-        if (!r.ok) console.error("LEAD_ZAPIER_FAILED status=" + r.status + " | " + logLine);
+        if (!r.ok) console.error("LEAD_ZAPIER_FAILED status=" + r.status + " | " + safeLine);
       }).catch((e) => {
-        console.error("LEAD_ZAPIER_THREW " + ((e && e.message) || e) + " | " + logLine);
+        console.error("LEAD_ZAPIER_THREW " + ((e && e.message) || e) + " | " + safeLine);
       })
     );
   }
@@ -173,10 +178,10 @@ async function deliverLead(env, lead) {
         if (!r.ok) {
           let body = "";
           try { body = await r.text(); } catch (e) {}
-          console.error("LEAD_FUB_FAILED status=" + r.status + " body=" + body + " | " + logLine);
+          console.error("LEAD_FUB_FAILED status=" + r.status + " body=" + body + " | " + safeLine);
         }
       }).catch((e) => {
-        console.error("LEAD_FUB_THREW " + ((e && e.message) || e) + " | " + logLine);
+        console.error("LEAD_FUB_THREW " + ((e && e.message) || e) + " | " + safeLine);
       })
     );
   }
@@ -193,7 +198,7 @@ async function deliverLead(env, lead) {
   if (lead.reportSeed && env.EMAIL_SECRET) {
     tasks.push(
       sendFunnelReport(env, lead.reportSeed).catch((e) => {
-        console.error("VALUATION_REPORT_THREW " + ((e && e.message) || e) + " | " + logLine);
+        console.error("VALUATION_REPORT_THREW " + ((e && e.message) || e) + " | " + safeLine);
       })
     );
   }
@@ -206,7 +211,7 @@ async function deliverLead(env, lead) {
   if (env.EMAIL_DB && env.EMAIL_SECRET && lead.subscriberSeed) {
     tasks.push(
       enrollSubscriber(env, lead.subscriberSeed).catch((e) => {
-        console.error("LEAD_ENROLL_THREW " + ((e && e.message) || e) + " | " + logLine);
+        console.error("LEAD_ENROLL_THREW " + ((e && e.message) || e) + " | " + safeLine);
       })
     );
   }
@@ -280,6 +285,12 @@ export async function onRequestPost(context) {
     }
     if (consent !== "yes") {
       return json({ ok: false, error: "Consent required" }, 400);
+    }
+    // Email must at least be shaped like one (the drip, the CRM merge, and the
+    // report delivery all key on it). Phone stays lenient on purpose: the
+    // "0000000000" placeholder from One Tap must keep passing.
+    if (!validEmail(email)) {
+      return json({ ok: false, error: "invalid_email" }, 400);
     }
     const safeName = name || "Website Lead (name not provided)";
     const safeIntent = intent || "Website Lead";
@@ -464,6 +475,11 @@ Consent: ${consent}
       name: safeName, email, phone, intent: safeIntent,
       city, state, source: sourcePage, gclid, submitted_at: submittedAt
     });
+    // Redacted twin for every routine log line (see deliverLead).
+    const safeLine = JSON.stringify({
+      email: maskEmail(email), phone: maskPhone(phone), intent: safeIntent,
+      city, state, source: sourcePage, gclid, submitted_at: submittedAt
+    });
 
     // Email-platform enrollment seed. Field Notes subscribers are newsletter
     // members (welcome email only, per the /field-notes/ page promise); every
@@ -503,13 +519,28 @@ Consent: ${consent}
     // gets an empty-lead notification. Only real, contact-bearing submissions
     // are delivered.
     if (safeIntent === "Home Valuation View") {
-      console.log("LEAD_SOFT_SKIPPED " + logLine);
+      console.log("LEAD_SOFT_SKIPPED " + safeLine);
       return json({ ok: true }, 200);
+    }
+
+    // 9b) Idempotency. The funnel stamps every submit with a submission_id; a
+    // retry of an already-accepted id inside 15 minutes is acknowledged (so the
+    // client still redirects to /thank-you/) but delivers nothing: one alert,
+    // one CRM event, one enrollment per real submit. A dedupe-store failure
+    // resolves to "not a duplicate": the store can never cost a lead.
+    const submissionId = normalizeSubmissionId(formData.get("submission_id"));
+    if (submissionId) {
+      const seen = await rememberSubmission(env, submissionId, 15 * 60);
+      if (seen.duplicate) {
+        console.log("LEAD_DUPLICATE_SKIPPED id=" + submissionId + " " + safeLine);
+        return json({ ok: true, duplicate: true }, 200);
+      }
+      if (Math.random() < 0.02) context.waitUntil(pruneSubmissions(env, 86400));
     }
 
     // 10) Accept now, deliver after. The visitor's 200 does not depend on email
     // or Zapier succeeding, so a delivery outage can never break the funnel.
-    context.waitUntil(deliverLead(env, { emailContent, zapierPayload, fubEvent, logLine, subscriberSeed, reportSeed }));
+    context.waitUntil(deliverLead(env, { emailContent, zapierPayload, fubEvent, logLine, safeLine, subscriberSeed, reportSeed }));
 
     return json({ ok: true }, 200);
   } catch (err) {

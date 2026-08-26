@@ -7,6 +7,7 @@
 
 import { validEmail } from "../_lib/email.js";
 import { enrollSubscriber } from "../_lib/enroll.js";
+import { enforceRateLimits, RATE_RULES } from "../_lib/ratelimit.js";
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -37,6 +38,12 @@ export async function onRequestPost(context) {
 
     const email = String(fields.email || "").trim().toLowerCase();
     if (!validEmail(email)) return json({ ok: false, error: "invalid_email" }, 400);
+
+    // Rate limit (per IP): every accepted call sends a welcome email, so a
+    // loop hitting this endpoint is mail volume. After the honeypot and the
+    // format check, before anything is enrolled or sent.
+    const limited = await enforceRateLimits(context, RATE_RULES.subscribe);
+    if (limited) return limited;
 
     const name = String(fields.name || "").trim().slice(0, 200);
     const firstName = String(fields.first_name || "").trim().slice(0, 100) || (name ? name.split(/\s+/)[0] : "");

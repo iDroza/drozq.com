@@ -1,3 +1,7 @@
+import { validEmail } from "../_lib/email.js";
+import { maskEmail, maskAddress } from "../_lib/redact.js";
+import { enforceRateLimits, RATE_RULES } from "../_lib/ratelimit.js";
+
 // /api/netsheet - the property + tax intelligence behind /net-sheet/.
 //
 // A title company's net sheet starts with a blank "sale price" box. This one
@@ -413,7 +417,7 @@ async function saveNetSheetLead(request, contact, addr) {
       let body = "";
       try { body = await resp.text(); } catch (e) {}
       console.error("NETSHEET_LEAD_SAVE_REJECTED status=" + resp.status + " body=" + body.slice(0, 300) +
-        " email=" + contact.email + " address=" + (addr.fullAddress || "-"));
+        " email=" + maskEmail(contact.email) + " address=" + maskAddress(addr.fullAddress));
     }
   } catch (e) {
     console.error("NETSHEET_LEAD_SAVE_FAILED " + ((e && e.message) || e));
@@ -510,6 +514,16 @@ export async function onRequest(context) {
       error: "contact_required",
       message: "Submit your name, email, and phone to pull the property record."
     }, 403);
+  }
+  // A malformed email saves nothing and spends nothing; the visitor retries.
+  if (!validEmail(contact.email)) {
+    return json({ ok: false, error: "invalid_email", message: "That email doesn't look right. Check it and try again." }, 400);
+  }
+  // Rate limit (per IP, plus the Rentcast spend cap shared with /api/valuation).
+  // After the honeypot + contact gate, BEFORE any upstream call or lead save.
+  {
+    const limited = await enforceRateLimits(context, RATE_RULES.netsheet);
+    if (limited) return limited;
   }
 
   // Past this point the visitor has paid with contact info, so the lead must
