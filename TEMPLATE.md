@@ -274,6 +274,8 @@ Standard container max-widths used on the homepage:
 
 ## 3. Header
 
+**Synced from `/index.html` since 2026-08-26.** The `<header>` on every registered page sits between `<!-- DROZQ_HEADER_BEGIN -->` / `<!-- DROZQ_HEADER_END -->`, the mobile-drawer + More-popup script between `<!-- DROZQ_NAV_JS_BEGIN -->` / `<!-- DROZQ_NAV_JS_END -->`, and the head-level header-hide script between `<!-- DROZQ_HEADER_JS_BEGIN -->` / `<!-- DROZQ_HEADER_JS_END -->`. All three are registered blocks in `funnels.json#blocks`, so **a nav, logo, or phone change is: edit `/index.html`, run `python scripts/sync_funnels.py`, commit.** Never hand-edit these blocks on a sibling page (`--check` catches it as drift). The per-page `<style id="drozq-page-chrome">` block (Variant A/B below) is deliberately outside the markers and stays page-specific. The historical `scripts/nav_*.py` one-shots predate this and are no longer the way to change the nav.
+
 ```html
 <header class="pos_absolute top_0 left_0 right_0 bg_white h_48px md:h_64px
                ml_auto mr_auto ta_center z_100 fs_14px lh_1.5">
@@ -872,6 +874,8 @@ Default state: all collapsed (`aria-expanded="false"`, inline `max-height: 0`).
 
 ## 8. Footer (minimal conversion footer)
 
+**Synced from `/index.html` since 2026-08-26.** Every registered page carries the footer between `<!-- DROZQ_FOOTER_BEGIN -->` / `<!-- DROZQ_FOOTER_END -->`, registered in `funnels.json#blocks`. Change the identity line, address, phone, or social row in `/index.html` and run `python scripts/sync_funnels.py`; never edit a sibling page's footer by hand.
+
 ```html
 <footer id="footer" class="pt_48px md:pt_64px pb_48px md:pb_64px c_white bg_footerBg
                            ls_0.5px fs_10px lh_normal
@@ -1165,7 +1169,7 @@ if __name__ == "__main__":
     )
 ```
 
-`scaffold_page()` (in `scripts/scaffold_page.py`) reads `/index.html`, surgically replaces `<title>` / meta description / canonical / OG tags / Twitter tags / `<main>...</main>` body, leaves the funnel markers + footer + mobile-nav + funnel JS untouched, and writes the result to the target path. The funnel block is later filled in by the sync step (Step 3).
+`scaffold_page()` (in `scripts/scaffold_page.py`) reads `/index.html`, surgically replaces `<title>` / meta description / canonical / OG tags / Twitter tags / `<main>...</main>` body, leaves everything outside `<main>` untouched (so the new page inherits every synced marker pair: funnel HTML + JS, `DROZQ_HEADER_JS`, `DROZQ_HEADER`, `DROZQ_FOOTER`, `DROZQ_NAV_JS`), and writes the result to the target path. The synced blocks are kept aligned by the sync step (Step 3). A page that predates the chrome markers (or was hand-built) gets them via `python scripts/wrap_chrome_markers.py` (idempotent, count-guarded, refuses drifted pages).
 
 Then run:
 
@@ -1189,7 +1193,7 @@ The script appends the path to `funnels.json#pages`.
 python scripts/sync_funnels.py
 ```
 
-Expected output: `OK new-page-slug/index.html` (the new page's funnel block already matches /index.html because you copied it).
+Expected output: `OK new-page-slug/index.html` (the new page's funnel, header, footer, and nav blocks already match /index.html because you copied them).
 
 If you see `SYNCED`, that means the new page's funnel block had drift. The script overwrote it from /index.html. Fine.
 
@@ -1216,7 +1220,7 @@ Auto-commit per CLAUDE.md. Push to main. Cloudflare auto-deploys.
 python scripts/sync_funnels.py
 ```
 
-Pushes the updated funnel from /index.html to every page in `funnels.json`. One command. Commit + push.
+Pushes the updated funnel from /index.html to every page in `funnels.json`. One command. Commit + push. The same command propagates the header, footer, mobile-nav script, and header-hide script (all registered blocks), so a nav or footer edit on `/index.html` follows the exact same path.
 
 ---
 

@@ -10,6 +10,26 @@
       "name": "js",
       "beginMarker": "<!-- DROZQ_FUNNEL_JS_BEGIN",
       "endMarker": "<!-- DROZQ_FUNNEL_JS_END -->"
+    },
+    {
+      "name": "header_js",
+      "beginMarker": "<!-- DROZQ_HEADER_JS_BEGIN",
+      "endMarker": "<!-- DROZQ_HEADER_JS_END -->"
+    },
+    {
+      "name": "header",
+      "beginMarker": "<!-- DROZQ_HEADER_BEGIN",
+      "endMarker": "<!-- DROZQ_HEADER_END -->"
+    },
+    {
+      "name": "footer",
+      "beginMarker": "<!-- DROZQ_FOOTER_BEGIN",
+      "endMarker": "<!-- DROZQ_FOOTER_END -->"
+    },
+    {
+      "name": "nav_js",
+      "beginMarker": "<!-- DROZQ_NAV_JS_BEGIN",
+      "endMarker": "<!-- DROZQ_NAV_JS_END -->"
     }
   ],
   "pages": [
@@ -48,7 +68,7 @@
     "testimonials/003-riverside-first-home/index.html"
   ],
   "lastSync": "2026-08-26T01:50:20Z",
-  "notes": "Every page that carries the inline funnel must (a) contain the four DROZQ_FUNNEL markers in the same order as /index.html, (b) appear in `pages` above as a path relative to the repo root. Run `python scripts/sync_funnels.py` to propagate the funnel from index.html to every registered page. Source of truth is `source`; never hand-edit a synced page's funnel block.",
+  "notes": "Every registered page must contain every marker pair listed in `blocks` (funnel html + js, header_js in <head>, the <header>, the <footer>, and the mobile-nav/More-popup script), and appear in `pages` as a path relative to the repo root. Run `python scripts/sync_funnels.py` to propagate every block from index.html to every registered page; `--check` reports drift. Source of truth is `source`; never hand-edit a synced block on any other page. The per-page <style id=\"drozq-page-chrome\"> block (header Variant A/B) is deliberately NOT synced. Markers were installed 2026-08-26 by scripts/wrap_chrome_markers.py.",
   "pageSync": {
     "privacy/index.html": "2026-08-26T01:50:20Z",
     "terms/index.html": "2026-08-26T01:50:20Z",

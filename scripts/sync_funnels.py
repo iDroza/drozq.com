@@ -1,19 +1,25 @@
 """
 sync_funnels.py
-Source-of-truth funnel propagation.
+Source-of-truth propagation for every shared block on the template.
 
-Reads /index.html (the canonical homepage), extracts the funnel HTML and JS
-blocks between DROZQ_FUNNEL_*_BEGIN / END markers, and writes those blocks
-into every page registered in funnels.json.
+Reads /index.html (the canonical homepage), extracts every block listed in
+funnels.json#blocks between its DROZQ_*_BEGIN / END markers, and writes those
+blocks into every page registered in funnels.json. As of 2026-08-26 that is
+six blocks: the funnel HTML + JS, the head-level header-hide script
+(DROZQ_HEADER_JS), the <header> (DROZQ_HEADER), the <footer> (DROZQ_FOOTER),
+and the mobile-drawer / More-popup script (DROZQ_NAV_JS). Changing the nav,
+the phone number, the footer identity line, etc. is therefore: edit
+/index.html, run this script, commit.
 
 Usage:
     python scripts/sync_funnels.py            # sync all registered pages
     python scripts/sync_funnels.py --check    # report drift only, do not write
     python scripts/sync_funnels.py --add path # add a page to the registry
 
-Each registered page MUST already contain the same four markers. The script
+Each registered page MUST already contain every marker pair. The script
 will not insert markers into a page that doesn't have them, to avoid silent
-damage to surrounding markup.
+damage to surrounding markup (scripts/wrap_chrome_markers.py installs the
+chrome markers on a page that predates them).
 
 Run after any change to the homepage funnel HTML or JS. The script updates
 funnels.json with a `lastSync` timestamp and a per-page `syncedAt`.
@@ -91,8 +97,8 @@ def main() -> int:
         save_registry(reg)
         print(f"Added: {rel}")
         print("Run `python scripts/sync_funnels.py` to push the funnel into it. "
-              "Note: the target file must already contain the four DROZQ_FUNNEL "
-              "markers in the same order as index.html.")
+              "Note: the target file must already contain every DROZQ_* marker "
+              "pair listed in funnels.json#blocks (funnel, header, footer, nav).")
         return 0
 
     source_path = ROOT / reg["source"]

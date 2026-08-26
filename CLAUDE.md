@@ -54,11 +54,11 @@ When asked to create a new page, follow this protocol:
 
 - Head: GTM container snippet, favicons, viewport meta, canonical, OG/Twitter tags (rewrite the values).
 - Page-level `<style>` block (the Panda CSS utility-class soup at the top of the body line) — keep verbatim unless the page genuinely needs new styles.
-- Header (the realtor.com-clone nav with hamburger and More popup). Note: per `692fb46`, `a7fabbd`, `2cb191f`, the header for new visitors is hidden on desktop until they engage; this should carry across.
+- Header (the realtor.com-clone nav with hamburger and More popup), inside the `DROZQ_HEADER` markers (synced from `/index.html`; never customize it per page). Note: per `692fb46`, `a7fabbd`, `2cb191f`, the header for new visitors is hidden on desktop until they engage; the `DROZQ_HEADER_JS` head script carries that across.
 - Hero: the 3-tab funnel CTA bar (Sell / Buy / Sell & Buy). Page-specific copy and imagery go here.
 - Mid-page tabs section (the "My Home's Condition is..." switcher): optional but encouraged. Two `[role="tab"]` panels wired by the generic `wireTabs()`; the homepage runs Move-in ready (`sellTabBtn` → `sellTab`) and Needs work (`needsTabBtn` → `needsTab`), and BOTH open the Sell funnel (neither id contains `buy`). Retitle per page, but keep `buy`/`sellbuy` out of any panel you want to stay on Sell.
 - FAQ accordion: optional, page-specific questions.
-- Footer: the minimal conversion-page footer (brand logo, identity line, DRE, office address, phone, social, Privacy/Terms, copyright). Do not import the heavy legacy brand-mode footer.
+- Footer: the minimal conversion-page footer (brand logo, identity line, DRE, office address, phone, social, Privacy/Terms, copyright), inside the `DROZQ_FOOTER` markers (synced). Do not import the heavy legacy brand-mode footer.
 - Funnel overlay + funnel JS: inlined between the four `DROZQ_FUNNEL_*` markers. After scaffolding, register the page (see "Funnel sync registry" below).
 
 ### 2. Register the page in funnels.json
@@ -89,9 +89,11 @@ Paid landing pages (campaign destinations like `/relief/`) should carry `<meta n
 
 Cloudflare auto-deploys in 30-60s. Verify the page renders, the funnel opens from every CTA (hero tabs + mid-page tabs + any extra CTAs), submit redirects to `/thank-you/?ref=funnel`, and PostHog events fire (`funnel_open`, `funnel_step_advance`, `funnel_submit_success`).
 
-## Funnel sync registry
+## Funnel sync registry (also owns the header, footer, and nav since 2026-08-26)
 
 The funnel exists in exactly one place: `/index.html`, between the markers `<!-- DROZQ_FUNNEL_HTML_BEGIN -->` ... `<!-- DROZQ_FUNNEL_HTML_END -->` and `<!-- DROZQ_FUNNEL_JS_BEGIN -->` ... `<!-- DROZQ_FUNNEL_JS_END -->`. Every other page that carries the funnel imports those two blocks via the sync script.
+
+**The shared page chrome uses the same mechanism.** Until 2026-08-26 the header, footer, mobile-nav script, and the head-level header-hide script were hand-copied onto every page (they were byte-identical, but nothing enforced it). They are now four more registered blocks in `funnels.json#blocks`, each bounded by its own marker pair on every page: `DROZQ_HEADER_JS_BEGIN/END` (the `<head>` script that sets `data-drozq-header-hidden`), `DROZQ_HEADER_BEGIN/END` (the whole `<header>`, incl. the mobile drawer and the More popup), `DROZQ_FOOTER_BEGIN/END` (the whole `<footer>`), and `DROZQ_NAV_JS_BEGIN/END` (the mobile-drawer / More-popup / hash-tab `<script>` after the funnel JS). **Changing the nav, the header phone, the logo link, or the footer identity line is: edit `/index.html`, run `python scripts/sync_funnels.py`, commit.** Hand-editing any of those blocks on a sibling page is drift, exactly like the funnel. The per-page `<style id="drozq-page-chrome">` (Variant A/B header behavior) is deliberately NOT synced. `scripts/wrap_chrome_markers.py` installs the four marker pairs on a page that lacks them (idempotent, count-guarded, refuses a page whose block differs from `/index.html`); scaffolded pages inherit them automatically because `scaffold_page.py` only replaces `<main>`.
 
 **Files:**
 
@@ -103,16 +105,17 @@ The funnel exists in exactly one place: `/index.html`, between the markers `<!--
 | When | What to do |
 |---|---|
 | Changing the funnel (steps, validation, submit, tracking, copy) | Edit `/index.html` between the markers. Run `python scripts/sync_funnels.py` to push to all registered pages. Commit + push. |
+| Changing the header nav, header phone, mobile drawer, More popup, or footer | Same path: edit `/index.html` inside the `DROZQ_HEADER` / `DROZQ_NAV_JS` / `DROZQ_HEADER_JS` / `DROZQ_FOOTER` markers, run `python scripts/sync_funnels.py`, commit + push. |
 | Adding a new page that needs the funnel | Scaffold from `index.html`, copy the marker blocks verbatim, then `python scripts/sync_funnels.py --add <path>` and `python scripts/sync_funnels.py`. |
 | Confirming the registry is clean before a release | `python scripts/sync_funnels.py --check`. Exits non-zero if any registered page has drifted. |
 
 **Hard rules:**
 
-- Never hand-edit a synced page's funnel block. If you discover drift, fix `/index.html` and re-sync. Drift caught by `--check` is a regression, not a feature.
+- Never hand-edit a synced page's funnel, header, footer, or nav block. If you discover drift, fix `/index.html` and re-sync. Drift caught by `--check` is a regression, not a feature.
 - Editing `/index.html` is script-only for the minified `<body>` line: Python/PowerShell with `assert data.count(old) == N` count-guards + BOM preservation, never a blind Read/Edit (the line is ~97KB; the tools choke). Funnel CSS goes INSIDE the `DROZQ_FUNNEL_HTML` markers (it syncs). Verify via `window.openFunnel(addr, mode)` on a local server + an empty-field submit to confirm validation fires, never a real submit. Full recipe: `TEMPLATE.md` §9 "Working on the funnel safely."
 - Never split the funnel HTML and JS into separate sources. They co-evolve.
 - The funnel JS includes the Maps race guard, the Maps API loader, the gclid capture, `detectFunnelMode`, `openFunnel`, `attachSubmitHandler`, `showStep`, `wireTabs`, geo autofill, FAQ accordion wiring, the sticky mobile CTA bar, and the PostHog `track()` helper. All of this syncs together because it is one logical unit.
-- Mobile-nav script and other page-level UI live OUTSIDE the funnel JS markers (mobile nav is a separate `<script>` tag after `DROZQ_FUNNEL_JS_END`). New pages copy that block verbatim from the homepage scaffold but it does not sync.
+- Page-level UI (the homepage One Tap block, the hero-rotate block, each page's `drozq-page-chrome` style) lives OUTSIDE every marker pair and does not sync. The mobile-nav script is a separate `<script>` after `DROZQ_FUNNEL_JS_END`, but since 2026-08-26 it sits inside its own `DROZQ_NAV_JS` markers and DOES sync.
 
 ## Funnel architecture
 
