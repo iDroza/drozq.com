@@ -417,7 +417,7 @@ Style:
 | Button | Font | 700 18px (the site font stack: Galano Grotesque Alt) |
 | Button | Height | `54px` |
 | Button | Border-radius | `9999px` (right pill cap) |
-| Button | Text | "Run my Valuation" + a trailing arrow `<span class="d_none md:d_inline-flex ai_center">` holding a 20x20 white arrow svg (arrow hidden below `md`). Renamed from "See Plan" on the homepage 2026-06-13 (the unified-offer day); rolled to every template page 2026-07-14. The bespoke scoped pills (`legal-cta__pill`, `cf-cta-pill`, `ty-cta__pill` on /privacy/, /terms/, /testimonials/*, /thank-you/) carry the same label without the arrow span. |
+| Button | Text | "Run my Valuation" + a trailing arrow `<span class="d_none md:d_inline-flex ai_center">` holding a 20x20 white arrow svg (arrow hidden below `md`). Renamed from "See Plan" on the homepage 2026-06-13 (the unified-offer day); rolled to every template page 2026-07-14. **The Buy tabpanel's button reads "See Homes"** (same arrow span) since 2026-08-25 on every page with the hero tab bar; Sell and Sell & Buy keep "Run my Valuation". The bespoke scoped pills (`legal-cta__pill`, `cf-cta-pill`, `ty-cta__pill` on /privacy/, /terms/, /testimonials/*, /thank-you/) carry the same label without the arrow span. |
 
 Placeholders by mode:
 - Sell: "Enter the address you are selling"
@@ -603,15 +603,17 @@ Below the hero, the homepage runs a vertical rhythm of alternating bands. The pa
 
 ```
 [full-screen photo hero: min-height 100dvh, rotating photo ring, centered copy + tabs + pill]
-[white band + #d3cfca divider]: Five Steps timeline ("From first call to closing day.", verbatim /process/ proc-steps section)
-[white band]: 3-step strip ("Enter your selling address / Get your home's value / I handle the rest")
+[thin #f2f0ef strip + #d3cfca divider]: `#drozq-commit-strip`, four commitments in one line (15-minute callback, Live in 7 days, Every offer scored in writing, A written report every Friday), scoped CSS, 2x2 grid under 768px
+[white band]: 3-step strip ("Enter your address / Get the number, instantly / Keep it, or call me to sell")
 [light gray band #f2f0ef]: "The Hard Parts Are My Job, Not Yours" infographic
 [wide centered div max-w 1035]: market-trends map (self-hosted Irvine Google Map) + "real estate trends in Irvine, CA" stats
+[wide centered div max-w 1035]: `#home-proof`, "Closed, with the numbers left in." (three case-file cards with the dollar figure first + two named client quotes; no star rows, ever)
 [light gray band #f2f0ef]: "My Home's Condition is..." condition switcher (Move-in ready / Needs work, both open Sell)
-[white band]: "What I owe you"
+[white band + #d3cfca divider]: Five Steps timeline ("From first call to closing day.", verbatim /process/ proc-steps section; moved here from under the hero 2026-08-25)
+[white band]: "What I owe you" (`#what-i-owe-you`)
 [band]: brand wall, "Seen by every buyer, everywhere" (6 grayscale platform logos)
-[band]: FAQ, "Frequently asked: selling and buying in Irvine" (3 offer-aligned tabs)
-[light gray band #f2f0ef]: closing CTA, "Get started Today!"
+[band]: FAQ, "Frequently asked: selling and buying in Irvine" (4 offer-aligned questions, incl. "Do I have to be ready to sell?")
+[light gray band #f2f0ef]: closing CTA, "Still guessing what it's worth?" (Sell pill, placeholder "Enter the address you are selling", no city prefill)
 [dark footer #141f2a]
 ```
 
@@ -720,7 +722,7 @@ Standard h2:
 Examples observed:
 - "The Hard Parts Are My Job, Not Yours" — 32px / 800
 - "My Home's Condition is..." — 32px / 800
-- "Real reviews. Real outcomes." — 20px / 800
+- "Closed, with the numbers left in." — 24px mobile / 30px desktop / 800 (the proof block h2, same scale as "What I owe you")
 
 ### Body copy
 
@@ -747,7 +749,7 @@ These section patterns are reused 2+ times across the migrated content pages. Tr
 
 Two homepage-only sections built during the seller rebuild. Both are page-specific (custom imagery + their own JS after `DROZQ_FUNNEL_JS_END`, NOT synced), but they are canonical homepage furniture: copy them when a new page wants the same beat.
 
-- **Playbook carousel: DELETED 2026-07-20.** The "Sold in six weeks / Get my 5 playbooks" section (`#hpcar`) and its carousel style/script were removed per Joshua ("that shit looks tacky, that was a mistake; kill any reference of that from now on"). The six-weeks-guarantee + playbooks-bundle framing is dead copy going forward: do not reintroduce it in new sections or pages. Its slot now holds a copy of `/process/`'s Five Steps timeline (the scoped `proc-steps-css` / `.proc-tl-*` block, reused verbatim inside a white `bd-b_1px_solid_#d3cfca` band directly under the hero). The `playbook-*.{jpg,png}` slide images are now unreferenced (the funnel's `pb-*.webp` covers are separate and still live). The funnel's own playbook offer copy (value panel, submit button, FAQ, title tag) is pending Joshua's replacement direction.
+- **Playbook carousel: DELETED 2026-07-20.** The "Sold in six weeks / Get my 5 playbooks" section (`#hpcar`) and its carousel style/script were removed per Joshua ("that shit looks tacky, that was a mistake; kill any reference of that from now on"). The six-weeks-guarantee + playbooks-bundle framing is dead copy going forward: do not reintroduce it in new sections or pages. Its slot now holds a copy of `/process/`'s Five Steps timeline (the scoped `proc-steps-css` / `.proc-tl-*` block, reused verbatim inside a white `bd-b_1px_solid_#d3cfca` band; since 2026-08-25 that band sits directly above "What I owe you", and the slot under the hero holds the `#drozq-commit-strip` commitments strip instead). The `playbook-*.{jpg,png}` slide images are now unreferenced (the funnel's `pb-*.webp` covers are separate and still live). The funnel's own playbook offer copy (value panel, submit button, FAQ, title tag) is pending Joshua's replacement direction.
 - **Brand wall** ("Seen by every buyer, everywhere"). A single centered row of 6 grayscale platform logos (`brand_zillow`, `brand_redfin`, `brand_realtorcom`, `brand_google`, `brand_instagram`, `brand_youtube` in `/media/images/`), real official marks desaturated via CSS `filter: grayscale`. Container widens to ~1280px on desktop; logos render at 1.3x base. The promise: your listing is seen everywhere buyers look, no marketplace tax.
 
 ### Crosslink band (`xr-`): the sitewide interconnectivity component (2026-07-22)

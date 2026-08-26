@@ -255,8 +255,8 @@ SYSTEMS = [
         "You will never wonder what's happening with your listing. From day one, you receive scheduled updates: weekly during the listing period, every 48 hours during escrow, and immediately when anything changes. No \"I'll get back to you tomorrow\" voicemails. No silence between milestones.",
     ),
     (
-        "System 02", "The 48-hour launch playbook.",
-        "When you sign with me, your home is on the market within 48 to 72 hours. Photos, copy, syndication across the major platforms, social media campaigns, and a dedicated property landing page all launch on a fixed timeline. Every listing follows the same playbook so nothing gets missed and nothing happens late.",
+        "System 02", "The 7-day launch.",
+        "When you sign with me, your home is live within 7 days, often in 48 to 72 hours. Photos, copy, syndication across the major platforms, social media campaigns, and a dedicated property landing page all launch on a fixed timeline. Every listing runs the same sequence, on the same clock.",
     ),
     (
         "System 03", "The deal management protocol.",

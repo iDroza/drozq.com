@@ -92,7 +92,7 @@ FIVE_STEPS = """
   <div class="ta_center mb_40px md:mb_56px">
     <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">The Five Steps</p>
     <h2 id="five-steps-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">From first call to closing day.</h2>
-    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px max-w_640px m_0_auto">A clear path. No improvised steps, no surprises. Here is what working with me actually looks like.</p>
+    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px max-w_640px m_0_auto">A dated path from first call to wire, so you always know what happens next. Here is what working with me actually looks like.</p>
   </div>
 
   <div class="d_flex flex-d_column gap_24px md:gap_32px max-w_860px m_0_auto">
@@ -146,10 +146,10 @@ FIVE_STEPS = """
           <h3 class="fw_700 fs_20px md:fs_24px lh_28px md:lh_32px c_#1a1816 m_0">Launch</h3>
           <span class="d_inline-flex ai_center gap_6px c_#d92228 fs_12px md:fs_13px fw_700 ls_1px" style="text-transform:uppercase">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
-            48 to 72 hours
+            Within 7 days
           </span>
         </div>
-        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">Once you sign, your home is on the market in 48 to 72 hours. Professional photography, drone, walk-through video, MLS syndication, social campaigns, and a dedicated property page. All on a fixed timeline you can hold me to.</p>
+        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">Once you sign, your home is live within 7 days, often in 48 to 72 hours. Professional photography, drone, walk-through video, MLS syndication, social campaigns, and a dedicated property page. All on a fixed timeline you can hold me to.</p>
       </div>
     </article>
 

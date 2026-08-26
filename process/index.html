@@ -2745,7 +2745,7 @@
   <div class="ta_center mb_40px md:mb_56px">
     <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">The Five Steps</p>
     <h2 id="five-steps-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">From first call to closing day.</h2>
-    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px max-w_640px m_0_auto">A clear path. No improvised steps, no surprises. Here is what working with me actually looks like.</p>
+    <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px max-w_640px m_0_auto">A dated path from first call to wire, so you always know what happens next. Here is what working with me actually looks like.</p>
   </div>
 
   <style id="proc-steps-css">
@@ -2841,10 +2841,10 @@
             <h3>Launch</h3>
             <span class="proc-tl-chip">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
-              48 to 72 hours
+              Within 7 days
             </span>
           </div>
-          <p>Once you sign, your home is on the market in 48 to 72 hours. Professional photography, drone, walk-through video, MLS syndication, social campaigns, and a dedicated property page. All on a fixed timeline you can hold me to.</p>
+          <p>Once you sign, your home is live within 7 days, often in 48 to 72 hours. Professional photography, drone, walk-through video, MLS syndication, social campaigns, and a dedicated property page. All on a fixed timeline you can hold me to.</p>
         </article>
       </li>
 
@@ -2919,7 +2919,7 @@
         </li>
       </ul>
 
-      <h4 class="c_#1a1816 fs_16px sm:fs_20px fw_700 lh_24px sm:lh_30px ta_center pb_8px m_0">Enter your address for your home's premium valuation, instantly.</h4>
+      <h4 class="c_#1a1816 fs_16px sm:fs_20px fw_700 lh_24px sm:lh_30px ta_center pb_8px m_0">Enter your address for your instant home valuation.</h4>
       <div style="width:100%; max-width: 540px; margin: 0 auto;">
     <form class="pos_relative">
       <div class="pos_relative d_flex flex-d_column xs:flex-d_row ai_center bg-c_#fff mb_16px xs:mb_0 h_48px sm:h_auto bdr_30px bx-sh_0_1px_5px_rgba(0,_0,_0,_.11)">
@@ -4089,7 +4089,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       var DELIVERABLE = {
         sell: '<div class="funnel-vp-head">Free, the instant you finish</div>' +
           '<div class="funnel-vp-block"><div class="funnel-vp-eyebrow">Your instant home valuation</div>' +
-          '<div class="funnel-vp-title">What your home is really worth, to the penny</div>' +
+          '<div class="funnel-vp-title">What your home is really worth right now</div>' +
           '<ul class="funnel-vp-list"><li>Its true market value today, the number a real buyer pays</li>' +
           '<li>What it would cost to rebuild from the dirt up</li>' +
           '<li>A same-day cash offer, calculated to the dollar (if you want it)</li>' +
@@ -4346,8 +4346,14 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     }
 
     // 2. Visible "Irvine, CA" text nodes, TreeWalker over #__next subtree.
-    // Skip script/style/iframe descendants and any data-geo-static container
-    // (e.g. the Irvine market-trends readout, which is pinned to Irvine).
+    // OPT-IN since 2026-08-25: a text node swaps ONLY inside a container
+    // marked data-geo-swap, never inside footer/address, and never inside a
+    // data-geo-static element. Before this the walker rewrote every stray
+    // "Irvine, CA" on the site, which by then were all office addresses
+    // (footer, /contact/, /404.html, /privacy/, /terms/) and a review card
+    // city, so out-of-town visitors saw the Von Karman office relocated to
+    // their own city. No page currently opts in; the hook is kept for a
+    // future localized strip.
     var root = document.getElementById("__next") || document.body;
     var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode: function(node) {
@@ -4355,14 +4361,15 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
         // Skip text inside script/style/iframe descendants, and inside any element
         // marked data-geo-static (a city locked to its literal value, e.g. the
         // Irvine market-trends readout, which must read Irvine regardless of IP).
-        var p = node.parentNode;
+        var p = node.parentNode, inSwap = false;
         while (p && p !== root) {
           var tag = p.tagName;
-          if (tag === "SCRIPT" || tag === "STYLE" || tag === "IFRAME") return NodeFilter.FILTER_REJECT;
+          if (tag === "SCRIPT" || tag === "STYLE" || tag === "IFRAME" || tag === "FOOTER" || tag === "ADDRESS") return NodeFilter.FILTER_REJECT;
           if (p.nodeType === 1 && p.hasAttribute("data-geo-static")) return NodeFilter.FILTER_REJECT;
+          if (p.nodeType === 1 && p.hasAttribute("data-geo-swap")) inSwap = true;
           p = p.parentNode;
         }
-        return NodeFilter.FILTER_ACCEPT;
+        return inSwap ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
       }
     });
     var txt;

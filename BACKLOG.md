@@ -69,7 +69,6 @@ These were tracked in the now-deleted `REALTOR_CLEANUP_AUDIT.md`. The Done items
 
 ## Hygiene & polish
 
-- **`highlight-reviews.png` (204KB).** 1 ref on homepage. Convert to WebP or remove if the section is being rewritten.
 - **Prune dead funnel code.** Since the unified funnel (2026-06-13) always renders the sell entries, these are unused: `VALUEBAR.buy` / `VALUEBAR.sellandbuy`, `DELIVERABLE.buy` / `DELIVERABLE.sellandbuy`, the `DV_BODY` helper, and the `#funnel-overlay .funnel-dv-*` CSS block. Safe to delete from `/index.html` (between the funnel markers) and re-sync. Also unused: the dead `.funnel-h2-fit` CSS rule (its only usage was removed) can go too. (The never-referenced `trust*.webp` files were deleted in the 2026-07-09 declutter.)
 - **Skip-to-content link.** No `class="skip-link"` or skip-to-content anchor at the top of the body. Add for keyboard / screen-reader users.
 - **`<img>` width/height coverage.** Most images have explicit `width`/`height` attrs (good for CLS), but not 100%. Audit images that load without dimensions and add them.

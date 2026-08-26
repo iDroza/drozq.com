@@ -793,7 +793,7 @@ XREF = (
     '<span class="xr-go">See the breakdown &rarr;</span></a>'
     '<a class="xr-card" href="/process/"><p class="xr-eyebrow">The plan</p>'
     "<h3>How the sale actually runs</h3>"
-    "<p>Five steps from first call to closing day, with a written valuation in 24 hours and launch in 48 to 72.</p>"
+    "<p>Five steps from first call to closing day, with a written valuation in 24 hours and launch within 7 days.</p>"
     '<span class="xr-go">See the process &rarr;</span></a>'
     "</div></div></section>"
 )

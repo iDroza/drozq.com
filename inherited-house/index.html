@@ -3959,7 +3959,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       var DELIVERABLE = {
         sell: '<div class="funnel-vp-head">Free, the instant you finish</div>' +
           '<div class="funnel-vp-block"><div class="funnel-vp-eyebrow">Your instant home valuation</div>' +
-          '<div class="funnel-vp-title">What your home is really worth, to the penny</div>' +
+          '<div class="funnel-vp-title">What your home is really worth right now</div>' +
           '<ul class="funnel-vp-list"><li>Its true market value today, the number a real buyer pays</li>' +
           '<li>What it would cost to rebuild from the dirt up</li>' +
           '<li>A same-day cash offer, calculated to the dollar (if you want it)</li>' +
@@ -4216,8 +4216,14 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
     }
 
     // 2. Visible "Irvine, CA" text nodes, TreeWalker over #__next subtree.
-    // Skip script/style/iframe descendants and any data-geo-static container
-    // (e.g. the Irvine market-trends readout, which is pinned to Irvine).
+    // OPT-IN since 2026-08-25: a text node swaps ONLY inside a container
+    // marked data-geo-swap, never inside footer/address, and never inside a
+    // data-geo-static element. Before this the walker rewrote every stray
+    // "Irvine, CA" on the site, which by then were all office addresses
+    // (footer, /contact/, /404.html, /privacy/, /terms/) and a review card
+    // city, so out-of-town visitors saw the Von Karman office relocated to
+    // their own city. No page currently opts in; the hook is kept for a
+    // future localized strip.
     var root = document.getElementById("__next") || document.body;
     var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode: function(node) {
@@ -4225,14 +4231,15 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
         // Skip text inside script/style/iframe descendants, and inside any element
         // marked data-geo-static (a city locked to its literal value, e.g. the
         // Irvine market-trends readout, which must read Irvine regardless of IP).
-        var p = node.parentNode;
+        var p = node.parentNode, inSwap = false;
         while (p && p !== root) {
           var tag = p.tagName;
-          if (tag === "SCRIPT" || tag === "STYLE" || tag === "IFRAME") return NodeFilter.FILTER_REJECT;
+          if (tag === "SCRIPT" || tag === "STYLE" || tag === "IFRAME" || tag === "FOOTER" || tag === "ADDRESS") return NodeFilter.FILTER_REJECT;
           if (p.nodeType === 1 && p.hasAttribute("data-geo-static")) return NodeFilter.FILTER_REJECT;
+          if (p.nodeType === 1 && p.hasAttribute("data-geo-swap")) inSwap = true;
           p = p.parentNode;
         }
-        return NodeFilter.FILTER_ACCEPT;
+        return inSwap ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
       }
     });
     var txt;

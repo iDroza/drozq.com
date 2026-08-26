@@ -4,6 +4,33 @@ Chronological observations from PostHog about the homepage funnel. Newest at top
 
 ---
 
+## 2026-08-25: ads paused, thin sample; 22 of 54 homepage exits never left the hero
+
+Read taken for the homepage copy pass (raw HogQL, internal traffic counted,
+2026-07-26 to 2026-08-25). Google Ads: every campaign paused, $0 spend in the
+window, so this is organic + Joshua's own traffic: 78 homepage pageviews across
+67 sessions (49 desktop / 29 mobile), 3 funnel_open sessions (all sell, all
+desktop, all prefilled), 1 submit. Too small to judge the funnel.
+
+What the sample does say: of 54 tracked $pageleave events on `/`, 22 recorded a
+max scroll under 10% (they never got past the hero), while the rest scrolled
+deep (mobile median 59%, p75 99%; desktop median 41%, p75 100%). Read: the hero
+decides whether a visitor stays; the body copy only has to not lose the rest.
+
+Timeline answers (funnel_option_selected, sell step 1): "Yes, immediately" 2,
+"Yes, in 1-3 months" 1. Sitewide, `/testimonials/003-riverside-first-home/`
+produced 5 funnel_opens from 21 views with no submit.
+
+Shipped on this read (see CLAUDE.md "Homepage copy pass (2026-08-25)"): splash
+untouched; commitments strip under the hero; Five Steps moved below the
+condition switcher; proof block rebuilt on the sold-board numbers with no star
+rows; promise ladder unified (7-day launch, 15-minute callback); clone-leftover
+FAQ/closer copy replaced; FAQ 4 added; Buy tab CTA relabeled "See Homes"; the
+geo text-swap made opt-in after it was found rewriting the footer office
+address to the visitor's city. Next read: when the campaign relaunches, compare
+the under-10%-scroll share and sell open-to-submit (10.2% on the July ramp)
+against this baseline.
+
 ## 2026-07-01: paid ramp is live; sell funnel converting at ~10% open-to-submit; lead_confirmed is GTM-only (never a PostHog event)
 
 Weekly health read (raw HogQL, internal traffic counted). Week of 6/24-7/01 vs
