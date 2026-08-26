@@ -106,11 +106,10 @@ a {
 }
 
 .dashboard-heading h1 {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   flex: 1 1 auto;
-  flex-wrap: wrap;
   align-items: baseline;
-  justify-content: space-between;
   min-width: 0;
   margin: 0;
   color: #1a1816;
@@ -122,16 +121,30 @@ a {
   row-gap: 0.15em;
 }
 
-/* "drozq" sits flush left, "Operating Dashboard" flush right on the same
-   line; when the phone viewport cannot hold both, the title wraps to its own
-   line and stays right-aligned instead of squeezing the brand. */
+/* "drozq" sits flush left; "Operating Dashboard" is centered on the SAME
+   line, measured against the full row (a 1fr / auto / 1fr grid, so the title
+   lands at the true middle regardless of the brand's width). On a phone the
+   row cannot hold both, so the title drops to its own centered line. */
 .dashboard-heading__brand {
-  margin-right: auto;
+  grid-column: 1;
+  justify-self: start;
 }
 
 .dashboard-heading__title {
-  margin-left: auto;
-  text-align: right;
+  grid-column: 1;
+  justify-self: center;
+  text-align: center;
+  white-space: nowrap;
+}
+
+@media (min-width: 720px) {
+  .dashboard-heading h1 {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+
+  .dashboard-heading__title {
+    grid-column: 2;
+  }
 }
 
 .dashboard-splash {
