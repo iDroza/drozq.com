@@ -444,7 +444,7 @@ button:focus-visible {
   }
 
   /* Odd card count on the two-column tablet grid: CALLS MADE spans the first
-     row so the money pair (deals closed, income earned) and the activity pair
+     row so the money pair (income earned, deals closed) and the activity pair
      (appointments, dials) each sit side by side instead of leaving a hole. */
   .metrics-grid--focus .metric-card:first-child:nth-last-child(odd) {
     grid-column: span 2;
@@ -502,7 +502,7 @@ button:focus-visible {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  /* Five personal cards (calls, then deals closed + income earned on the
+  /* Five personal cards (calls, then income earned + deals closed on the
      left, appointments + dials on the right) sit on one row. */
   .metrics-grid--focus {
     grid-template-columns: repeat(5, minmax(0, 1fr));
