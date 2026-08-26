@@ -443,6 +443,12 @@ button:focus-visible {
     padding: 24px;
   }
 
+  /* Odd card count on the two-column tablet grid: the last card spans the
+     row instead of leaving a hole. */
+  .metrics-grid--focus .metric-card:last-child:nth-child(odd) {
+    grid-column: span 2;
+  }
+
   .metric-value {
     min-height: 68px;
     margin-top: 24px;
@@ -493,6 +499,16 @@ button:focus-visible {
 
   .metrics-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  /* Five personal cards (calls, appointments, dials, deals closed, income
+     earned) sit on one row so the money pair stays side by side. */
+  .metrics-grid--focus {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .metrics-grid--focus .metric-card:last-child:nth-child(odd) {
+    grid-column: auto;
   }
 
   .metrics-grid.metrics-grid--two {

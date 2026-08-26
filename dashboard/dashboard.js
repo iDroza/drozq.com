@@ -12,6 +12,9 @@
   var MVIP_MONTHLY_LEADS_AVG = 115;
   // Sales attribution: repeat business / referrals = 10%, advertising = 90%.
   var ADVERTISING_SALES_SHARE = 0.9;
+  // Joshua's take of his own gross commissionable income (the brokerage
+  // split). Income earned = his leaderboard gross commission x this share.
+  var PERSONAL_COMMISSION_SPLIT = 0.5;
   var metricConfig = {
     callsToday: { source: "Follow Up Boss", format: "count" },
     textsToday: { source: "Follow Up Boss", format: "count" },
@@ -21,6 +24,11 @@
     freshSellerLeads: { source: "Follow Up Boss", format: "count" },
     totalDialsYtd: { source: "Follow Up Boss", format: "count" },
     personalDealsClosedYtd: { source: "FUB Deals Leaderboard", format: "count" },
+    // Joshua's own YTD gross commission off his leaderboard row. Optional so a
+    // snapshot from a Worker that predates the metric still renders.
+    personalCommissionYtd: { source: "FUB Deals Leaderboard", format: "currencyWhole", optional: true },
+    // Derived client-side: personalCommissionYtd x PERSONAL_COMMISSION_SPLIT.
+    personalIncomeYtd: { source: "FUB Deals Leaderboard", format: "currencyWhole", derived: true },
     googleAdsSpendMtd: { source: "Google Ads", format: "currency" },
     googleAdsLeadsMtd: { source: "Google Ads", format: "conversion" },
     googleAdsCostPerClickMtd: { source: "Google Ads", format: "currency" },
@@ -94,6 +102,11 @@
   var bootstrapScript = null;
 
   var grids = document.querySelectorAll(".metrics-grid");
+  var incomeContext = document.querySelector('[data-metric="personalIncomeYtd"] [data-context]');
+  var splitFormatter = new Intl.NumberFormat("en-US", {
+    style: "percent",
+    maximumFractionDigits: 0
+  });
   var syncStatus = document.getElementById("sync-status");
   var networkError = document.getElementById("network-error");
   var retryButton = document.getElementById("retry-dashboard");
@@ -315,6 +328,18 @@
         status: commission.status
       };
     }
+    // Income earned: Joshua's own YTD gross commission at his split.
+    adjusted.personalIncomeYtd = { value: null, updatedAt: null, status: "error" };
+    var personalCommission = metrics.personalCommissionYtd;
+    if (isMetric(personalCommission) && personalCommission.value !== null) {
+      adjusted.personalIncomeYtd = {
+        value: personalCommission.value * PERSONAL_COMMISSION_SPLIT,
+        updatedAt: personalCommission.updatedAt,
+        status: personalCommission.status
+      };
+    } else if (isMetric(personalCommission)) {
+      adjusted.personalIncomeYtd.status = personalCommission.status;
+    }
     // Net from advertising: attributed commission minus every advertising dollar.
     adjusted.advertisingNetYtd = { value: null, updatedAt: null, status: "error" };
     if (isMetric(commission) && commission.value !== null && totalSpend !== null) {
@@ -327,12 +352,24 @@
     return adjusted;
   }
 
+  function renderIncomeContext(metrics) {
+    if (!incomeContext) {
+      return;
+    }
+    var gross = metrics.personalCommissionYtd;
+    var split = splitFormatter.format(PERSONAL_COMMISSION_SPLIT);
+    incomeContext.textContent = isMetric(gross) && gross.value !== null
+      ? "Joshua only \u00b7 " + split + " of " + wholeCurrencyFormatter.format(gross.value) + " gross"
+      : "Joshua only \u00b7 " + split + " of gross commission";
+  }
+
   function renderSnapshot(snapshot) {
     currentSnapshot = snapshot;
     var metrics = adjustMetrics(snapshot.metrics);
     Object.keys(metricConfig).forEach(function (key) {
       renderMetric(key, metrics[key] || { value: null, updatedAt: null, status: "unconfigured" });
     });
+    renderIncomeContext(metrics);
     markGridsReady();
 
     if (isPeriod(snapshot.sellerCampaignPeriod)) {

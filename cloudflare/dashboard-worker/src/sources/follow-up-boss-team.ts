@@ -12,7 +12,7 @@ import type {
 } from "../types";
 
 const FUB_API_BASE_URL = "https://api.followupboss.com/v1";
-const TEAM_CACHE_KEY = "dashboard:fub:team:v4";
+const TEAM_CACHE_KEY = "dashboard:fub:team:v5";
 const PAGE_LIMIT = 100;
 const MAX_PAGES = 100;
 
@@ -29,6 +29,7 @@ export interface LeaderboardTotals {
   volume: number;
   activeUserIds: string[];
   closedDealsByUserId: Record<string, number>;
+  closedCommissionByUserId: Record<string, number>;
 }
 
 interface DirectoryUser {
@@ -38,11 +39,12 @@ interface DirectoryUser {
 }
 
 interface TeamCache extends TeamDealTotals {
-  version: 4;
+  version: 5;
   configKey: string;
   fetchedAt: string;
   personalUserId: string;
   personalSales: number;
+  personalCommission: number;
 }
 
 function normalize(value: string): string {
@@ -118,6 +120,7 @@ export function parseDealsLeaderboard(payload: unknown): LeaderboardTotals {
   const totals = payload["totals"];
   const activeUserIds = new Set<string>();
   const closedDealsByUserId: Record<string, number> = {};
+  const closedCommissionByUserId: Record<string, number> = {};
   for (const row of payload["users"]) {
     if (!isRecord(row)) {
       throw new UpstreamRequestError("schema");
@@ -131,6 +134,10 @@ export function parseDealsLeaderboard(payload: unknown): LeaderboardTotals {
       activeUserIds.add(String(userId));
     }
     closedDealsByUserId[String(userId)] = closedDeals;
+    // Per-user gross commission credited by the leaderboard (the same field
+    // the report's agent rows show). Required, never defaulted: a missing
+    // value must surface as a schema failure, not a $0 income card.
+    closedCommissionByUserId[String(userId)] = requiredMoney(row["closedCommissionTotal"]);
   }
   return {
     commission: requiredMoney(totals["closedCommissionTotal"]),
@@ -138,6 +145,7 @@ export function parseDealsLeaderboard(payload: unknown): LeaderboardTotals {
     volume: requiredMoney(totals["closedPriceTotal"]),
     activeUserIds: [...activeUserIds],
     closedDealsByUserId,
+    closedCommissionByUserId,
   };
 }
 
@@ -411,13 +419,19 @@ export function aggregateClosedDeals(
   };
 }
 
-export function countPersonalClosedDeals(
+export interface PersonalDealTotals {
+  sales: number;
+  commission: number;
+}
+
+export function aggregatePersonalClosedDeals(
   deals: unknown[],
   stageIds: Set<number>,
   reportingPeriod: DashboardSnapshot["yearToDatePeriod"],
   userId: string,
-): number {
+): PersonalDealTotals {
   let sales = 0;
+  let commission = 0;
   for (const deal of deals) {
     if (!isRecord(deal) || typeof deal["status"] !== "string") {
       throw new UpstreamRequestError("schema");
@@ -436,9 +450,24 @@ export function countPersonalClosedDeals(
     requireCount(deal["id"], "fub_deal_id");
     if (dealUserIds(deal["users"]).includes(userId)) {
       sales += 1;
+      // The leaderboard credits every user on a deal with its full gross
+      // commission, so the fallback does the same (no per-user proration).
+      commission += requiredMoney(deal["commissionValue"]);
     }
   }
-  return requireCount(sales, "fub_personal_sales");
+  return {
+    sales: requireCount(sales, "fub_personal_sales"),
+    commission: requireSpend(commission),
+  };
+}
+
+export function countPersonalClosedDeals(
+  deals: unknown[],
+  stageIds: Set<number>,
+  reportingPeriod: DashboardSnapshot["yearToDatePeriod"],
+  userId: string,
+): number {
+  return aggregatePersonalClosedDeals(deals, stageIds, reportingPeriod, userId).sales;
 }
 
 function excludedUserIds(
@@ -470,12 +499,14 @@ function parseCache(
   refreshMs: number,
 ): TeamCache | null {
   if (
-    !isRecord(value) || value["version"] !== 4 || value["configKey"] !== configKey ||
+    !isRecord(value) || value["version"] !== 5 || value["configKey"] !== configKey ||
     typeof value["fetchedAt"] !== "string" || !Number.isFinite(Date.parse(value["fetchedAt"])) ||
     now.getTime() - Date.parse(value["fetchedAt"]) < 0 ||
     now.getTime() - Date.parse(value["fetchedAt"]) > refreshMs || !validTotals(value) ||
     typeof value["personalUserId"] !== "string" || !/^\d+$/u.test(value["personalUserId"]) ||
-    !Number.isSafeInteger(value["personalSales"]) || (value["personalSales"] as number) < 0
+    !Number.isSafeInteger(value["personalSales"]) || (value["personalSales"] as number) < 0 ||
+    typeof value["personalCommission"] !== "number" ||
+    !Number.isFinite(value["personalCommission"]) || value["personalCommission"] < 0
   ) {
     return null;
   }
@@ -494,7 +525,7 @@ function okResult(value: number, started: number, observedAt: string): MetricFet
 
 function toResults(
   totals: TeamDealTotals,
-  personalSales: number,
+  personal: PersonalDealTotals,
   started: number,
   observedAt: string,
 ): FollowUpBossTeamMetricResults {
@@ -503,7 +534,8 @@ function toResults(
     teamSalesYtd: okResult(totals.sales, started, observedAt),
     teamVolumeYtd: okResult(totals.volume, started, observedAt),
     teamActiveAgentsYtd: okResult(totals.activeAgents, started, observedAt),
-    personalDealsClosedYtd: okResult(personalSales, started, observedAt),
+    personalDealsClosedYtd: okResult(personal.sales, started, observedAt),
+    personalCommissionYtd: okResult(personal.commission, started, observedAt),
   };
 }
 
@@ -528,6 +560,7 @@ function allSame(result: MetricFetchResult): FollowUpBossTeamMetricResults {
     teamVolumeYtd: result,
     teamActiveAgentsYtd: result,
     personalDealsClosedYtd: result,
+    personalCommissionYtd: result,
   };
 }
 
@@ -537,17 +570,18 @@ async function writeCache(
   observedAt: string,
   totals: TeamDealTotals,
   personalUserId: string,
-  personalSales: number,
+  personal: PersonalDealTotals,
 ): Promise<void> {
   try {
     await env.DASHBOARD_KV.put(
       TEAM_CACHE_KEY,
       JSON.stringify({
-        version: 4,
+        version: 5,
         configKey,
         fetchedAt: observedAt,
         personalUserId,
-        personalSales,
+        personalSales: personal.sales,
+        personalCommission: personal.commission,
         ...totals,
       } satisfies TeamCache),
       { expirationTtl: 48 * 60 * 60 },
@@ -567,7 +601,7 @@ async function fetchBrokerFallback(
   reportingPeriod: DashboardSnapshot["yearToDatePeriod"],
   personalUserId: string | null,
   dependencies: RuntimeDependencies,
-): Promise<{ totals: TeamDealTotals; personalSales: number | null }> {
+): Promise<{ totals: TeamDealTotals; personal: PersonalDealTotals | null }> {
   const dedicatedKey = env.FUB_TEAM_API_KEY?.trim() ?? "";
   if (dedicatedKey === "" || config.closedDealStageNames.length === 0) {
     throw new UpstreamRequestError("configuration");
@@ -587,9 +621,9 @@ async function fetchBrokerFallback(
       reportingPeriod,
       excludedUserIds(directory, config.teamExcludedUserNames),
     ),
-    personalSales: personalUserId === null
+    personal: personalUserId === null
       ? null
-      : countPersonalClosedDeals(deals, stageIds, reportingPeriod, personalUserId),
+      : aggregatePersonalClosedDeals(deals, stageIds, reportingPeriod, personalUserId),
   };
 }
 
@@ -615,7 +649,12 @@ export async function fetchFollowUpBossTeamMetrics(
     if (stored !== null) {
       const cached = parseCache(JSON.parse(stored) as unknown, configKey, now, config.teamRefreshMs);
       if (cached !== null) {
-        return toResults(cached, cached.personalSales, started, cached.fetchedAt);
+        return toResults(
+          cached,
+          { sales: cached.personalSales, commission: cached.personalCommission },
+          started,
+          cached.fetchedAt,
+        );
       }
     }
   } catch {
@@ -669,12 +708,18 @@ export async function fetchFollowUpBossTeamMetrics(
     }
 
     let personalUserId: string | null = null;
-    let personalSales: number | null = null;
+    let personal: PersonalDealTotals | null = null;
     let personalSalesResult: MetricFetchResult;
+    let personalCommissionResult: MetricFetchResult;
     if (personalUserSettled.status === "fulfilled") {
       personalUserId = personalUserSettled.value;
-      personalSales = leaderboard.closedDealsByUserId[personalUserId] ?? 0;
-      personalSalesResult = okResult(personalSales, started, observedAt);
+      // A user absent from the leaderboard rows has closed nothing this year.
+      personal = {
+        sales: leaderboard.closedDealsByUserId[personalUserId] ?? 0,
+        commission: leaderboard.closedCommissionByUserId[personalUserId] ?? 0,
+      };
+      personalSalesResult = okResult(personal.sales, started, observedAt);
+      personalCommissionResult = okResult(personal.commission, started, observedAt);
     } else {
       const identityError = personalUserSettled.reason;
       console.warn(JSON.stringify({
@@ -689,18 +734,19 @@ export async function fetchFollowUpBossTeamMetrics(
           : null,
       }));
       personalSalesResult = errorResult(identityError, started);
+      personalCommissionResult = errorResult(identityError, started);
     }
 
-    if (totals !== null && personalUserId !== null && personalSales !== null) {
+    if (totals !== null && personalUserId !== null && personal !== null) {
       await writeCache(
         env,
         configKey,
         observedAt,
         totals,
         personalUserId,
-        personalSales,
+        personal,
       );
-      return toResults(totals, personalSales, started, observedAt);
+      return toResults(totals, personal, started, observedAt);
     }
     return {
       teamCommissionYtd: okResult(leaderboard.commission, started, observedAt),
@@ -708,6 +754,7 @@ export async function fetchFollowUpBossTeamMetrics(
       teamVolumeYtd: okResult(leaderboard.volume, started, observedAt),
       teamActiveAgentsYtd: activeAgentsResult,
       personalDealsClosedYtd: personalSalesResult,
+      personalCommissionYtd: personalCommissionResult,
     };
   } catch (leaderboardError) {
     console.warn(JSON.stringify({
@@ -732,22 +779,25 @@ export async function fetchFollowUpBossTeamMetrics(
         dependencies,
       );
       const observedAt = now.toISOString();
-      if (personalUserId !== null && fallback.personalSales !== null) {
+      if (personalUserId !== null && fallback.personal !== null) {
         await writeCache(
           env,
           configKey,
           observedAt,
           fallback.totals,
           personalUserId,
-          fallback.personalSales,
+          fallback.personal,
         );
         return toResults(
           fallback.totals,
-          fallback.personalSales,
+          fallback.personal,
           started,
           observedAt,
         );
       }
+      const personalFailure = personalUserSettled.status === "rejected"
+        ? errorResult(personalUserSettled.reason, started)
+        : errorResult(new UpstreamRequestError("no_data"), started);
       return {
         teamCommissionYtd: okResult(fallback.totals.commission, started, observedAt),
         teamSalesYtd: okResult(fallback.totals.sales, started, observedAt),
@@ -757,9 +807,8 @@ export async function fetchFollowUpBossTeamMetrics(
           started,
           observedAt,
         ),
-        personalDealsClosedYtd: personalUserSettled.status === "rejected"
-          ? errorResult(personalUserSettled.reason, started)
-          : errorResult(new UpstreamRequestError("no_data"), started),
+        personalDealsClosedYtd: personalFailure,
+        personalCommissionYtd: personalFailure,
       };
     } catch (fallbackError) {
       return allSame(errorResult(

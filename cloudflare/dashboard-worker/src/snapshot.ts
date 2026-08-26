@@ -40,6 +40,7 @@ export const METRIC_KEYS = [
   "freshSellerLeads",
   "totalDialsYtd",
   "personalDealsClosedYtd",
+  "personalCommissionYtd",
   "googleAdsSpendMtd",
   "googleAdsLeadsMtd",
   "googleAdsCostPerClickMtd",
@@ -107,6 +108,11 @@ export const METRIC_SPECS = {
   personalDealsClosedYtd: {
     source: "follow_up_boss",
     definition: "Year-to-date closed-deal count credited to the authenticated Follow Up Boss user in the Deals Leaderboard.",
+    staleAfterMs: TEAM_STALE_MS,
+  },
+  personalCommissionYtd: {
+    source: "follow_up_boss",
+    definition: "Year-to-date gross commission on closed deals credited to the authenticated Follow Up Boss user in the Deals Leaderboard. The dashboard derives income earned from it at the agent's commission split.",
     staleAfterMs: TEAM_STALE_MS,
   },
   googleAdsSpendMtd: {
@@ -269,6 +275,7 @@ const CURRENCY_METRICS = new Set<DashboardMetricKey>([
   "sellerCampaignSpend",
   "sellerCampaignCostPerClick",
   "sellerCampaignCostPerLead",
+  "personalCommissionYtd",
   "teamCommissionYtd",
   "teamVolumeYtd",
 ]);

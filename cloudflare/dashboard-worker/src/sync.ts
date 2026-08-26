@@ -282,6 +282,7 @@ function teamFailure(): FollowUpBossTeamMetricResults {
     teamVolumeYtd: unexpectedResult(),
     teamActiveAgentsYtd: unexpectedResult(),
     personalDealsClosedYtd: unexpectedResult(),
+    personalCommissionYtd: unexpectedResult(),
   };
 }
 

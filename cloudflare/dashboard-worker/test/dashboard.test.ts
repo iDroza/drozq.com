@@ -42,6 +42,7 @@ import {
 } from "../src/sources/google-search-console";
 import {
   aggregateClosedDeals,
+  aggregatePersonalClosedDeals,
   closedStageIds,
   countActiveLeaderboardAgents,
   countPersonalClosedDeals,
@@ -115,6 +116,7 @@ function allSuccessfulResults(): MetricResultMap {
     freshSellerLeads: successful(3),
     totalDialsYtd: successful(1842),
     personalDealsClosedYtd: successful(3),
+    personalCommissionYtd: successful(40605),
     googleAdsSpendMtd: successful(2362.175313),
     googleAdsLeadsMtd: successful(107),
     googleAdsCostPerClickMtd: successful(1.968479),
@@ -232,6 +234,7 @@ beforeEach(async () => {
     env.DASHBOARD_KV.delete("dashboard:fub:team:v2"),
     env.DASHBOARD_KV.delete("dashboard:fub:team:v3"),
     env.DASHBOARD_KV.delete("dashboard:fub:team:v4"),
+    env.DASHBOARD_KV.delete("dashboard:fub:team:v5"),
     env.DASHBOARD_KV.delete("dashboard:sync:lease:v2"),
     env.DASHBOARD_KV.delete(ACTIVE_REALTY_PROGRESS_KEY),
   ]);
@@ -981,10 +984,10 @@ describe("Follow Up Boss YTD team aggregation", () => {
       closedPriceAverage: "771406",
     },
     users: [
-      { userId: 1, closedDealCount: "39" },
-      { userId: 2, closedDealCount: "4" },
-      { userId: 3, closedDealCount: "1" },
-      { userId: 4, closedDealCount: "0" },
+      { userId: 1, closedDealCount: "39", closedCommissionTotal: "751120.00" },
+      { userId: 2, closedDealCount: "4", closedCommissionTotal: "61500" },
+      { userId: 3, closedDealCount: "1", closedCommissionTotal: 7200 },
+      { userId: 4, closedDealCount: "0", closedCommissionTotal: "0.00" },
     ],
   };
   const pipelines = [
@@ -1030,11 +1033,19 @@ describe("Follow Up Boss YTD team aggregation", () => {
       volume: 43198750,
       activeUserIds: ["1", "2", "3"],
       closedDealsByUserId: { "1": 39, "2": 4, "3": 1, "4": 0 },
+      closedCommissionByUserId: { "1": 751120, "2": 61500, "3": 7200, "4": 0 },
     });
   });
 
   it("rejects malformed leaderboard totals instead of publishing false zeros", () => {
     expect(() => parseDealsLeaderboard({ totals: {}, users: [] })).toThrow();
+  });
+
+  it("rejects a leaderboard user row without gross commission instead of a $0 income", () => {
+    expect(() => parseDealsLeaderboard({
+      ...leaderboard,
+      users: [{ userId: 1, closedDealCount: "39" }],
+    })).toThrow();
   });
 
   it("counts positive leaderboard users while excluding lenders and service accounts", () => {
@@ -1058,6 +1069,14 @@ describe("Follow Up Boss YTD team aggregation", () => {
     });
     expect(countPersonalClosedDeals(deals, stages, period, "659")).toBe(2);
     expect(countPersonalClosedDeals(deals, stages, period, "777")).toBe(1);
+    // Every credited user carries the deal's full gross commission, matching
+    // the leaderboard's per-user closedCommissionTotal semantics.
+    expect(aggregatePersonalClosedDeals(deals, stages, period, "659"))
+      .toEqual({ sales: 2, commission: 40605 });
+    expect(aggregatePersonalClosedDeals(deals, stages, period, "777"))
+      .toEqual({ sales: 1, commission: 22605 });
+    expect(aggregatePersonalClosedDeals(deals, stages, period, "888"))
+      .toEqual({ sales: 0, commission: 0 });
   });
 
   it("rejects a closed deal whose gross commission is missing", () => {
@@ -1110,8 +1129,10 @@ describe("Follow Up Boss YTD team aggregation", () => {
     expect(first.teamSalesYtd).toMatchObject({ kind: "ok", value: 56 });
     expect(first.teamActiveAgentsYtd).toMatchObject({ kind: "ok", value: 2 });
     expect(first.personalDealsClosedYtd).toMatchObject({ kind: "ok", value: 39 });
+    expect(first.personalCommissionYtd).toMatchObject({ kind: "ok", value: 751120 });
     expect(second.teamVolumeYtd).toMatchObject({ kind: "ok", value: 43198750 });
     expect(second.personalDealsClosedYtd).toMatchObject({ kind: "ok", value: 39 });
+    expect(second.personalCommissionYtd).toMatchObject({ kind: "ok", value: 751120 });
     expect(requests).toBe(3);
     expect(new Set(authorizationHeaders)).toEqual(
       new Set([`Basic ${btoa("test-personal-key:")}`]),
@@ -1145,6 +1166,31 @@ describe("Follow Up Boss YTD team aggregation", () => {
     expect(result.teamVolumeYtd).toMatchObject({ kind: "ok", value: 43198750 });
     expect(result.teamActiveAgentsYtd).toMatchObject({ kind: "error" });
     expect(result.personalDealsClosedYtd).toMatchObject({ kind: "error" });
+    expect(result.personalCommissionYtd).toMatchObject({ kind: "error" });
+  });
+
+  it("credits a user missing from the leaderboard rows with zero closings and zero commission", async () => {
+    const fetcher = async (input: RequestInfo | URL): Promise<Response> => {
+      const url = new URL(String(input));
+      if (url.pathname.endsWith("/deals/leaderboard")) {
+        return jsonResponse(leaderboard);
+      }
+      if (url.pathname.endsWith("/me")) {
+        return jsonResponse({ id: 659 });
+      }
+      if (url.pathname.endsWith("/users")) {
+        return collection("users", [{ id: 659, name: "Joshua Guerrero", role: "Agent" }]);
+      }
+      return new Response("", { status: 404 });
+    };
+    const result = await fetchFollowUpBossTeamMetrics(
+      withSecrets({ FUB_API_KEY: "test-personal-key" }),
+      period,
+      { fetcher, sleep: noDelay, now: NOW },
+    );
+    expect(result.personalDealsClosedYtd).toMatchObject({ kind: "ok", value: 0 });
+    expect(result.personalCommissionYtd).toMatchObject({ kind: "ok", value: 0 });
+    expect(result.teamCommissionYtd).toMatchObject({ kind: "ok", value: 952812 });
   });
 });
 
@@ -1776,6 +1822,7 @@ describe("snapshot merging and public contract", () => {
     delete legacy.metrics["googleAdsCostPerLeadMtd"];
     delete legacy.metrics["totalDialsYtd"];
     delete legacy.metrics["personalDealsClosedYtd"];
+    delete legacy.metrics["personalCommissionYtd"];
     delete legacy.metrics["sellerCampaignSpend"];
     delete legacy.metrics["sellerCampaignLeads"];
     delete (legacy as { sellerCampaignPeriod?: unknown }).sellerCampaignPeriod;
@@ -1808,6 +1855,10 @@ describe("snapshot merging and public contract", () => {
       status: "unconfigured",
     });
     expect(migrated?.metrics.personalDealsClosedYtd).toMatchObject({
+      value: null,
+      status: "unconfigured",
+    });
+    expect(migrated?.metrics.personalCommissionYtd).toMatchObject({
       value: null,
       status: "unconfigured",
     });
@@ -1860,7 +1911,7 @@ describe("snapshot merging and public contract", () => {
     const snapshot = createUnconfiguredSnapshot(NOW, "America/Los_Angeles");
     expect(sanitizeSnapshot(snapshot)).not.toBeNull();
     expect(snapshot.metrics.googleAdsSpendMtd.value).toBeNull();
-    expect(Object.keys(snapshot.metrics)).toHaveLength(34);
+    expect(Object.keys(snapshot.metrics)).toHaveLength(35);
   });
 
   it("serves only a cached sanitized summary with hardened headers", async () => {
@@ -1878,7 +1929,7 @@ describe("snapshot merging and public contract", () => {
     );
     expect(response.headers.has("Access-Control-Allow-Origin")).toBe(false);
     expect(payload.version).toBe(2);
-    expect(Object.keys(payload.metrics)).toHaveLength(34);
+    expect(Object.keys(payload.metrics)).toHaveLength(35);
   });
 
   it("serves the same sanitized snapshot through the browser bootstrap", async () => {
@@ -1914,7 +1965,7 @@ describe("snapshot merging and public contract", () => {
     expect(source).not.toContain("must-not-ship");
     const payload = JSON.parse(source.slice(prefix.length, -1)) as DashboardSnapshot;
     expect(sanitizeSnapshot(payload)).not.toBeNull();
-    expect(Object.keys(payload.metrics)).toHaveLength(34);
+    expect(Object.keys(payload.metrics)).toHaveLength(35);
   });
 
   it("serves an explicit company-safe metric allowlist for Active Realty", async () => {
@@ -1938,6 +1989,7 @@ describe("snapshot merging and public contract", () => {
       "freshSellerLeads",
       "totalDialsYtd",
       "personalDealsClosedYtd",
+      "personalCommissionYtd",
     ]) {
       expect(personalKey in payload.metrics).toBe(false);
     }
@@ -2011,6 +2063,7 @@ describe("snapshot merging and public contract", () => {
     expect(source).not.toContain("freshSellerLeads");
     expect(source).not.toContain("totalDialsYtd");
     expect(source).not.toContain("personalDealsClosedYtd");
+    expect(source).not.toContain("personalCommissionYtd");
   });
 
   it("returns a valid 503 payload when no snapshot exists", async () => {

@@ -1,12 +1,12 @@
 # Drozq Operating Dashboard
 
-Last updated: August 20, 2026
+Last updated: August 26, 2026
 
 ## 1. Architecture
 
 `/dashboard` is a static Cloudflare Pages page. It reads only sanitized aggregate data from the dashboard Worker and never contacts Follow Up Boss, Google Ads, Google Search Console, the Active Realty publisher, Google Sheets, or Google OAuth from the browser. Normal refreshes use `GET /api/dashboard/summary`. A same-origin `GET /api/dashboard/bootstrap.js` transport loads the same allowlisted snapshot before the controller runs and provides an automatic fallback when a browser, extension, or privacy layer blocks `fetch`.
 
-`/active` is the company-facing Active Realty view. It uses the same saved snapshot and visual system, but reads a separate explicit allowlist through `GET /api/dashboard/active-summary` and `GET /api/dashboard/active-bootstrap.js`. Those responses exclude calls, texts, emails, appointments, fresh buyer leads, fresh seller leads, personal year-to-date dials, and personal year-to-date closings at the Worker serialization boundary. The page is `noindex,nofollow,noarchive`, has no Drozq or individual-agent branding, and is not linked from public navigation or the sitemap.
+`/active` is the company-facing Active Realty view. It uses the same saved snapshot and visual system, but reads a separate explicit allowlist through `GET /api/dashboard/active-summary` and `GET /api/dashboard/active-bootstrap.js`. Those responses exclude calls, texts, emails, appointments, fresh buyer leads, fresh seller leads, personal year-to-date dials, personal year-to-date closings, and personal year-to-date gross commission at the Worker serialization boundary. The page is `noindex,nofollow,noarchive`, has no Drozq or individual-agent branding, and is not linked from public navigation or the sitemap.
 
 The separate `drozq-operating-dashboard` Cloudflare Worker owns all credentials and upstream requests. Its production route is restricted to `drozq.com/api/dashboard*`, so it cannot intercept the rest of the Pages site or the existing `/api/lead` and `/api/geo` Pages Functions.
 
@@ -23,7 +23,7 @@ Each synchronization runs five integrations concurrently: Follow Up Boss persona
 The desktop splash contains two black-card rows and ends exactly at the viewport fold:
 
 1. Top row: Google Ads spend, leads, cost per click, and cost per lead, all month to date across all linked leaf accounts
-2. Second row: fresh seller leads, fresh buyer leads, the authenticated user's outbound dials year to date, and that user's credited closed deals year to date
+2. Second row (five cards on desktop): calls made today, appointments set month to date, the authenticated user's outbound dials year to date, that user's credited closed deals year to date, and the income earned on them (the user's leaderboard gross commission at the 50% split, derived in `dashboard.js` from `personalCommissionYtd`; the split lives in `PERSONAL_COMMISSION_SPLIT`)
 
 A third black row starts after the desktop fold so it appears only on scroll. It preserves calls made today, appointments set month to date, texts sent today, and emails sent today. Mobile keeps the same semantic order in a single-column flow without a forced viewport-height spacer.
 
@@ -109,7 +109,7 @@ The Worker requests the report's aggregate endpoint with `FUB_API_KEY`, using `F
 - Volume: `totals.closedPriceTotal`
 - Active agents: positive per-user closed counts, excluding lenders and names in `FUB_TEAM_EXCLUDED_USER_NAMES`
 
-The personal dashboard also reads the authenticated user's own `closedDealCount` from the same leaderboard response. The user ID comes from `FUB_API_KEY` through `/v1/me`. This avoids mistaking the company total for Joshua's individual result. The Active Realty serializer excludes this personal metric.
+The personal dashboard also reads the authenticated user's own `closedDealCount` and `closedCommissionTotal` from the same leaderboard response (`personalDealsClosedYtd` and `personalCommissionYtd`). The user ID comes from `FUB_API_KEY` through `/v1/me`. This avoids mistaking the company total for Joshua's individual result. A user row without `closedCommissionTotal` is a schema failure, never a $0 income. The Active Realty serializer excludes both personal metrics. The browser derives the INCOME EARNED card as `personalCommissionYtd x 0.5` (Joshua's commission split); the Worker publishes only the gross figure.
 
 The default excluded service-account name is `Active Agents`. Change the comma-separated non-secret variable if the FUB user directory changes. Names are used only in memory for exclusion and are never stored in KV or exposed publicly.
 
@@ -121,9 +121,9 @@ npx wrangler secret put FUB_TEAM_API_KEY
 Set-Location ../..
 ```
 
-The fallback uses `FUB_CLOSED_DEAL_STAGE_NAMES`, which defaults to `Closed`, and sums `commissionValue` so its definition matches the leaderboard's gross commission. It is not used while the leaderboard endpoint is healthy. If both sources fail, previous valid team values become stale instead of silently shrinking to the current user's visible deals.
+The fallback uses `FUB_CLOSED_DEAL_STAGE_NAMES`, which defaults to `Closed`, and sums `commissionValue` so its definition matches the leaderboard's gross commission. For the personal figures it credits every user on a closed deal with the deal's full `commissionValue`, matching the leaderboard's per-user `closedCommissionTotal` semantics. It is not used while the leaderboard endpoint is healthy. If both sources fail, previous valid team values become stale instead of silently shrinking to the current user's visible deals.
 
-Team aggregates and the authenticated user's credited closing count are cached for 30 minutes to avoid hammering the report endpoint and to keep the cache rewrite inside the KV write budget. Change the cache interval with `FUB_TEAM_REFRESH_MINUTES`. The cache key includes the YTD date range, account host, and exclusion list, while the cache payload records the resolved personal user ID, so a year rollover or configuration change cannot reuse the wrong aggregate.
+Team aggregates and the authenticated user's credited closing count and gross commission are cached for 30 minutes to avoid hammering the report endpoint and to keep the cache rewrite inside the KV write budget. Change the cache interval with `FUB_TEAM_REFRESH_MINUTES`. The cache key includes the YTD date range, account host, and exclusion list, while the cache payload records the resolved personal user ID, so a year rollover or configuration change cannot reuse the wrong aggregate.
 
 ## 4. Google Ads setup
 
@@ -391,7 +391,7 @@ Put the returned namespace ID into the `DASHBOARD_KV` binding. Do not rename the
 - `dashboard:active-realty-progress:v1`: the exact validated repository progress record and no other publisher data
 - `dashboard:fub:activity:v2`: counts, checkpoints, and hashed daily message IDs only
 - `dashboard:fub:dials:v2`: the current year, stable checkpoints and count, hashed outbound-call IDs, and resumable reconciliation cursor state
-- `dashboard:fub:team:v4`: five-minute sanitized team totals, resolved personal user ID, and personal closed-deal count only
+- `dashboard:fub:team:v5`: sanitized team totals, resolved personal user ID, personal closed-deal count, and personal gross commission only (v4 entries are ignored and expire on their own)
 - `dashboard:google_ads:accounts:v2`: short-lived leaf account ID cache
 - `dashboard:search_console:aggregate:v1`: hourly sanitized property aggregates only
 - `dashboard:sync:lease:v2`: short-lived best-effort overlap guard
@@ -478,7 +478,7 @@ curl.exe -i https://drozq.com/api/dashboard/not-a-route
 curl.exe -i https://drozq.com/api/geo
 ```
 
-Both pages return `200`; uppercase page paths return `301` to their lowercase canonical paths. Health returns `200`. Summary endpoints return `200` or a first-run `503`, the JavaScript bootstrap returns `200`, the unauthenticated shell-progress POST returns `401` with `Cache-Control: no-store`, unknown dashboard routes return `404`, and the existing geo endpoint keeps its normal response. JSON summaries must include JSON content type, `nosniff`, and the documented 10-second cache policy without wildcard CORS. The Active Realty responses must contain exactly the 22 documented company metrics and none of the eight personal metric keys or any shell-progress ingest metadata.
+Both pages return `200`; uppercase page paths return `301` to their lowercase canonical paths. Health returns `200`. Summary endpoints return `200` or a first-run `503`, the JavaScript bootstrap returns `200`, the unauthenticated shell-progress POST returns `401` with `Cache-Control: no-store`, unknown dashboard routes return `404`, and the existing geo endpoint keeps its normal response. JSON summaries must include JSON content type, `nosniff`, and the documented 10-second cache policy without wildcard CORS. The Active Realty responses must contain exactly the 22 documented company metrics and none of the nine personal metric keys or any shell-progress ingest metadata.
 
 ## 11. Protected manual synchronization
 
@@ -594,7 +594,7 @@ If the cutover commit is reverted, confirm the Sheets API, Viewer share, service
 - Confirm the selected report shows the current year and the account's pipelines are marked closed correctly.
 - Gross commission, closed sales, and volume should match the report-level totals, not the current user's regular Deals list.
 - Active agents count positive leaderboard users after excluding lenders and `FUB_TEAM_EXCLUDED_USER_NAMES`. Keep the service-account exclusion list current.
-- Compare Joshua's personal closed-deal card with his own leaderboard row, not the 56-deal report total. `/v1/me` from `FUB_API_KEY` chooses that row.
+- Compare Joshua's personal closed-deal card with his own leaderboard row, not the 56-deal report total. `/v1/me` from `FUB_API_KEY` chooses that row. The INCOME EARNED card must equal half of that row's gross commission (its context line prints the gross figure it was derived from).
 - If the web report endpoint changes, configure `FUB_TEAM_API_KEY` with an Owner or Admin key so the documented Deals API fallback can take over.
 - The fallback alone uses `FUB_CLOSED_DEAL_STAGE_NAMES`; add renamed or alternate closed stages there.
 - If the brokerage transaction ledger is not maintained in FUB, do not configure this source. Move the team metrics to an authoritative ledger integration instead of publishing partial CRM data.

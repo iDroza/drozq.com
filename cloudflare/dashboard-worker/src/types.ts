@@ -27,6 +27,7 @@ export interface DashboardSnapshot {
     freshSellerLeads: DashboardMetric;
     totalDialsYtd: DashboardMetric;
     personalDealsClosedYtd: DashboardMetric;
+    personalCommissionYtd: DashboardMetric;
     googleAdsSpendMtd: DashboardMetric;
     googleAdsLeadsMtd: DashboardMetric;
     googleAdsCostPerClickMtd: DashboardMetric;
@@ -147,6 +148,7 @@ export interface FollowUpBossTeamMetricResults {
   teamVolumeYtd: MetricFetchResult;
   teamActiveAgentsYtd: MetricFetchResult;
   personalDealsClosedYtd: MetricFetchResult;
+  personalCommissionYtd: MetricFetchResult;
 }
 
 export interface FollowUpBossMetricResults {
