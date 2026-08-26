@@ -121,7 +121,7 @@ FIVE_STEPS = """
             At your home
           </span>
         </div>
-        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">I meet you at your home and walk every room. I tell you honestly what helps the sale and what hurts it. Most agents flatter you to win the listing. <strong class="c_#1a1816 fw_700">I don't.</strong></p>
+        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">I walk every room and price what I see. You leave with a written list: the repairs that pay for themselves at closing, the ones to skip, and the number your home clears if we touch nothing. <strong class="c_#1a1816 fw_700">Prep list and price in hand before you sign anything.</strong></p>
       </div>
     </article>
 
