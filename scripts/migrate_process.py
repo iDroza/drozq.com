@@ -107,7 +107,7 @@ FIVE_STEPS = """
             15 minutes
           </span>
         </div>
-        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">Fill out the form or call me at <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a>. We spend 15 minutes on the phone so I can understand your home, your timeline, and your goals. <strong class="c_#1a1816 fw_700">A real conversation.</strong></p>
+        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">Fill out the form or call me at <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a>. Fifteen minutes on your home, your timeline, and your number. <strong class="c_#1a1816 fw_700">You hang up knowing whether listing now makes sense.</strong></p>
       </div>
     </article>
 
@@ -135,7 +135,7 @@ FIVE_STEPS = """
             Within 24 hours
           </span>
         </div>
-        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">Within 24 hours, you get a real comparative market analysis. Recent comps, active competition, recommended price, and a clear pricing strategy. <strong class="c_#1a1816 fw_700">You decide if and when to list.</strong></p>
+        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">Within 24 hours you have my written analysis: the comps, the competition, the price, and your exact net. <strong class="c_#1a1816 fw_700">You decide if and when to list.</strong></p>
       </div>
     </article>
 
@@ -163,7 +163,7 @@ FIVE_STEPS = """
             30 to 45 days
           </span>
         </div>
-        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">Offers come in. I walk you through each one so the trade-offs are clear. Then I manage every inspection, contingency, and milestone through close. <strong class="c_#1a1816 fw_700">30 to 45 days later, the wire hits your account.</strong></p>
+        <p class="c_#3f4650 fs_15px md:fs_17px lh_24px md:lh_28px m_0">Every offer scored in writing: your net and its certainty to close. Then I carry every inspection, contingency, and milestone to the finish. <strong class="c_#1a1816 fw_700">30 to 45 days later, the wire hits your account.</strong></p>
       </div>
     </article>
 
@@ -172,7 +172,7 @@ FIVE_STEPS = """
   <div class="mt_40px md:mt_56px max-w_860px m_0_auto p_24px md:p_32px bg-c_#fbf8f4 bdr_16px ta_center">
     <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_8px" style="text-transform:uppercase">Total timeline</p>
     <p class="c_#1a1816 fs_24px md:fs_32px fw_800 lh_32px md:lh_40px mb_8px">Six to ten weeks from listing to keys.</p>
-    <p class="c_#3f4650 fs_15px md:fs_16px lh_24px m_0">In Orange County, a well-priced home typically goes under contract in 14 to 30 days, followed by 30 to 45 days of escrow. I build a specific timeline for your situation on the first call.</p>
+    <p class="c_#3f4650 fs_15px md:fs_16px lh_24px m_0">In Orange County a well-priced home goes under contract in 14 to 30 days, then 30 to 45 days of escrow. You get your own dated timeline on the first call.</p>
   </div>
 
 </section>
