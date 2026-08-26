@@ -98,6 +98,8 @@ PROPS = {
 def files():
     out = [os.path.join(ROOT, "index.html"), os.path.join(ROOT, "404.html")]
     out += sorted(glob.glob(os.path.join(ROOT, "*", "index.html")))
+    # /active/ and /dashboard/ are standalone ops shells (own CSS, no Panda soup); never patch them.
+    out = [f for f in out if os.path.basename(os.path.dirname(f)) not in ("active", "dashboard")]
     out += sorted(glob.glob(os.path.join(ROOT, "*", "*", "index.html")))
     return [f for f in out if "node_modules" not in f and os.path.isfile(f)]
 
