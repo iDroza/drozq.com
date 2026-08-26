@@ -603,7 +603,7 @@ Below the hero, the homepage runs a vertical rhythm of alternating bands. The pa
 
 ```
 [full-screen photo hero: min-height 100dvh, rotating photo ring, centered copy + tabs + pill]
-[white stat bar + #d3cfca divider]: `#drozq-commit-strip`, kicker "Hold me to these." over four big bold values with small red uppercase labels written to the seller's value equation, not the process ($0 out of pocket / 5 days to your first offer / Zero contractors you ever chase / 24 hrs your price, in writing (Joshua dropped the 3-for-3 record line from this bar 2026-08-25); the $0 label and the 5-day line are Joshua's own wording; Joshua 2026-08-25: "aim for what a home seller actually wants, do not hedge"), the activerealty.com/sell stat-row format per Joshua 2026-08-25; scoped CSS, 2x2 grid under 880px
+[white stat bar + #d3cfca divider]: `#drozq-commit-strip`, kicker "Hold me to these." over four big bold values with small red uppercase labels written to the seller's value equation, not the process ($0 out of pocket / 5 days to your first offer / Zero contractors you ever chase / Full price, not an as-is discount (Joshua's pick 2026-08-25 after dropping the 3-for-3 record line from this bar); the $0 label and the 5-day line are Joshua's own wording; Joshua 2026-08-25: "aim for what a home seller actually wants, do not hedge"), the activerealty.com/sell stat-row format per Joshua 2026-08-25; scoped CSS, 2x2 grid under 880px
 [white band]: 3-step strip ("Enter your address / Get the number, instantly / Keep it, or call me to sell")
 [light gray band #f2f0ef]: "The Hard Parts Are My Job, Not Yours" infographic
 [wide centered div max-w 1035]: market-trends map (self-hosted Irvine Google Map) + "real estate trends in Irvine, CA" stats
