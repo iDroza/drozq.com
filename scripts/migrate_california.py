@@ -46,7 +46,7 @@ def landing_form_pill(placeholder: str, value: str = "") -> str:
     <form class="pos_relative">
       <div class="pos_relative d_flex flex-d_column xs:flex-d_row ai_center bg-c_#fff mb_16px xs:mb_0 h_48px sm:h_auto bdr_30px bx-sh_0_1px_5px_rgba(0,_0,_0,_.11)">
         <input name="location" placeholder="{placeholder}" title="{placeholder}" autocomplete="off"
-               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_14px md:fs_18px"
+               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_16px md:fs_18px"
                value="{value}" aria-label="{placeholder}">
         <div class="w_100% xs:w_auto mr_0 md:mr_3px h_48px md:h_60px lh_48px md:lh_60px pos_absolute xs:pos_static top_60px xs:top_0">
           <button type="submit"
@@ -243,7 +243,7 @@ MID_TABS = f"""
         <li class="d_flex ai_flex-start gap_16px">
           <span class="flex-sh_0 d_inline-flex ai_center jc_center w_40px h_40px bdr_full bg-c_#fbe9ea c_#d92228 fw_700" aria-hidden="true">3</span>
           <div>
-            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">One agent. One phone. Same-hour replies.</h3>
+            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">One agent. One phone. Calls returned in 15 minutes.</h3>
             <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">You text me, I answer. Every offer, escrow question, and timeline shift routes through me on the same number.</p>
           </div>
         </li>

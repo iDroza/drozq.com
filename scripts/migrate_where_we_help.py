@@ -42,7 +42,7 @@ def landing_form_pill(placeholder: str, value: str = "") -> str:
     <form class="pos_relative">
       <div class="pos_relative d_flex flex-d_column xs:flex-d_row ai_center bg-c_#fff mb_16px xs:mb_0 h_48px sm:h_auto bdr_30px bx-sh_0_1px_5px_rgba(0,_0,_0,_.11)">
         <input name="location" placeholder="{placeholder}" title="{placeholder}" autocomplete="off"
-               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_14px md:fs_18px"
+               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_16px md:fs_18px"
                value="{value}" aria-label="{placeholder}">
         <div class="w_100% xs:w_auto mr_0 md:mr_3px h_48px md:h_60px lh_48px md:lh_60px pos_absolute xs:pos_static top_60px xs:top_0">
           <button type="submit"
@@ -108,49 +108,49 @@ HERO = f"""
 # tier: 1=Direct (OC), 2=Active (LA County), 3=Referral (everywhere else)
 CITIES = [
     # Orange County (Tier 1 - Direct service)
-    ("Irvine",            "Orange County",         "irvine.jpeg",          "Irvine, California",          1),
-    ("Newport Beach",     "Orange County",         "newport-beach.jpg",    "Newport Beach, California",   1),
-    ("Costa Mesa",        "Orange County",         "coasta-mesa.jpg",      "Costa Mesa, California",      1),
-    ("Mission Viejo",     "Orange County",         "mission-viejo.jpg",    "Mission Viejo, California",   1),
-    ("Laguna Niguel",     "Orange County",         "laguna-niguel.jpg",    "Laguna Niguel, California",   1),
-    ("Lake Forest",       "Orange County",         "lake-forest.jpeg",     "Lake Forest, California",     1),
+    ("Irvine",            "Orange County",         "irvine.webp",          "Irvine, California",          1),
+    ("Newport Beach",     "Orange County",         "newport-beach.webp",    "Newport Beach, California",   1),
+    ("Costa Mesa",        "Orange County",         "costa-mesa.webp",      "Costa Mesa, California",      1),
+    ("Mission Viejo",     "Orange County",         "mission-viejo.webp",    "Mission Viejo, California",   1),
+    ("Laguna Niguel",     "Orange County",         "laguna-niguel.webp",    "Laguna Niguel, California",   1),
+    ("Lake Forest",       "Orange County",         "lake-forest.webp",     "Lake Forest, California",     1),
     ("Laguna Hills",      "Orange County",         "laguna-hills.webp",    "Laguna Hills, California",    1),
     ("Tustin",            "Orange County",         "tustin.webp",          "Tustin, California",          1),
-    ("Anaheim",           "Orange County",         "anaheim.jpg",          "Anaheim, California",         1),
-    ("Fullerton",         "Orange County",         "fullerton.jpg",        "Fullerton, California",       1),
+    ("Anaheim",           "Orange County",         "anaheim.webp",          "Anaheim, California",         1),
+    ("Fullerton",         "Orange County",         "fullerton.webp",        "Fullerton, California",       1),
     ("Huntington Beach",  "Orange County",         "huntington-beach.webp","Huntington Beach, California",1),
-    ("Garden Grove",      "Orange County",         "garden-grove.jpg",     "Garden Grove, California",    1),
-    ("Santa Ana",         "Orange County",         "santa-ana.jpg",        "Santa Ana, California",       1),
-    ("Westminster",       "Orange County",         "westminster.jpg",      "Westminster, California",     1),
-    ("Yorba Linda",       "Orange County",         "yorba-linda.jpg",      "Yorba Linda, California",     1),
+    ("Garden Grove",      "Orange County",         "garden-grove.webp",     "Garden Grove, California",    1),
+    ("Santa Ana",         "Orange County",         "santa-ana.webp",        "Santa Ana, California",       1),
+    ("Westminster",       "Orange County",         "westminster.webp",      "Westminster, California",     1),
+    ("Yorba Linda",       "Orange County",         "yorba-linda.webp",      "Yorba Linda, California",     1),
     # Los Angeles County (Tier 2 - Active service)
     ("Los Angeles",       "Los Angeles County",    "los-angeles.webp",     "Los Angeles, California",     2),
-    ("Pasadena",          "Los Angeles County",    "pasadena.jpeg",        "Pasadena, California",        2),
-    ("Long Beach",        "Los Angeles County",    "long-beach.jpg",       "Long Beach, California",      2),
-    ("Santa Monica",      "Los Angeles County",    "santa-monica.jpg",     "Santa Monica, California",    2),
-    ("Torrance",          "Los Angeles County",    "torrance.jpg",         "Torrance, California",        2),
-    ("Redondo Beach",     "Los Angeles County",    "redondo-beach.jpg",    "Redondo Beach, California",   2),
+    ("Pasadena",          "Los Angeles County",    "pasadena.webp",        "Pasadena, California",        2),
+    ("Long Beach",        "Los Angeles County",    "long-beach.webp",       "Long Beach, California",      2),
+    ("Santa Monica",      "Los Angeles County",    "santa-monica.webp",     "Santa Monica, California",    2),
+    ("Torrance",          "Los Angeles County",    "torrance.webp",         "Torrance, California",        2),
+    ("Redondo Beach",     "Los Angeles County",    "redondo-beach.webp",    "Redondo Beach, California",   2),
     ("Burbank",           "Los Angeles County",    "burbank.webp",         "Burbank, California",         2),
     ("Glendale",          "Los Angeles County",    "glendale.webp",        "Glendale, California",        2),
-    ("Malibu",            "Los Angeles County",    "malibu.jpeg",          "Malibu, California",          2),
+    ("Malibu",            "Los Angeles County",    "malibu.webp",          "Malibu, California",          2),
     # Riverside County (Tier 3 - Referral)
-    ("Riverside",         "Riverside County",      "riverside.jpg",        "Riverside, California",       3),
-    ("Corona",            "Riverside County",      "Corona.webp",          "Corona, California",          3),
-    ("Murrieta",          "Riverside County",      "Murrieta.webp",        "Murrieta, California",        3),
+    ("Riverside",         "Riverside County",      "riverside.webp",        "Riverside, California",       3),
+    ("Corona",            "Riverside County",      "corona.webp",          "Corona, California",          3),
+    ("Murrieta",          "Riverside County",      "murrieta.webp",        "Murrieta, California",        3),
     ("Temecula",          "Riverside County",      "temecula.avif",        "Temecula, California",        3),
     ("Lake Elsinore",     "Riverside County",      "lake-elsinore.webp",   "Lake Elsinore, California",   3),
     # San Bernardino County (Tier 3 - Referral)
-    ("Rancho Cucamonga",  "San Bernardino County", "rancho-cucamonga.jpg", "Rancho Cucamonga, California",3),
-    ("Fontana",           "San Bernardino County", "fontana.jpg",          "Fontana, California",         3),
-    ("Chino",             "San Bernardino County", "chino.jpg",            "Chino, California",           3),
+    ("Rancho Cucamonga",  "San Bernardino County", "rancho-cucamonga.webp", "Rancho Cucamonga, California",3),
+    ("Fontana",           "San Bernardino County", "fontana.webp",          "Fontana, California",         3),
+    ("Chino",             "San Bernardino County", "chino.webp",            "Chino, California",           3),
     ("Chino Hills",       "San Bernardino County", "chino-hills.webp",     "Chino Hills, California",     3),
     # San Diego County (Tier 3 - Referral)
-    ("San Diego",         "San Diego County",      "san-diego.jpg",        "San Diego, California",       3),
+    ("San Diego",         "San Diego County",      "san-diego.webp",        "San Diego, California",       3),
     ("Carlsbad",          "San Diego County",      "carlsbad.webp",        "Carlsbad, California",        3),
-    ("Oceanside",         "San Diego County",      "oceanside.jpg",        "Oceanside, California",       3),
+    ("Oceanside",         "San Diego County",      "oceanside.webp",        "Oceanside, California",       3),
     # Ventura County (Tier 3 - Referral)
     ("Thousand Oaks",     "Ventura County",        "thousand-oaks.webp",   "Thousand Oaks, California",   3),
-    ("Simi Valley",       "Ventura County",        "simi-valley.jpg",      "Simi Valley, California",     3),
+    ("Simi Valley",       "Ventura County",        "simi-valley.webp",      "Simi Valley, California",     3),
 ]
 
 
@@ -169,7 +169,7 @@ def city_card(city: str, county: str, image: str, alt: str) -> str:
       <button type="submit"
               class="d_flex flex-d_column w_100% h_100% bd_1px_solid_#e5e5e5 bg_#fff bdr_16px ov_hidden cursor_pointer p_0 ta_left c_inherit hover:bd-c_#d92228 trs_all_.2s_ease">
         <div class="w_100% pos_relative" style="aspect-ratio: 4 / 3; overflow: hidden;">
-          <img src="/media/images/{image}" alt="{alt}" loading="lazy" decoding="async"
+          <img src="/media/images/cities/{image}" alt="{alt}" loading="lazy" decoding="async"
                width="320" height="240"
                style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;">
         </div>
@@ -331,7 +331,7 @@ MID_TABS = f"""
         <li class="d_flex ai_flex-start gap_16px">
           <span class="flex-sh_0 d_inline-flex ai_center jc_center w_40px h_40px bdr_full bg-c_#fbe9ea c_#d92228 fw_700" aria-hidden="true">3</span>
           <div>
-            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">One agent. One phone. Same-hour replies.</h3>
+            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">One agent. One phone. Calls returned in 15 minutes.</h3>
             <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">Every offer, escrow question, and timeline shift routes through me on the same number.</p>
           </div>
         </li>
@@ -404,7 +404,7 @@ FAQ_ITEMS = [
     ("Can you handle condos, townhomes, and multi-unit properties?",
      "Yes. I list single-family homes, condos, townhomes, and small multi-family properties (duplexes, triplexes, fourplexes) throughout Southern California. Each property type has its own pricing, marketing, and buyer pool, and I'll build a strategy around yours."),
     ("How fast can you get my home on the market?",
-     "For most listings, I can be on the MLS within 7 to 10 days of signing the listing agreement, sometimes faster if your home is already show-ready. That includes photography, staging consultation, listing prep, and marketing launch. If you need to move faster, let me know during our initial call and we'll compress the timeline."),
+     "Live within 48 hours of signing. That includes photography, staging consultation, listing prep, and marketing launch, all on a fixed timeline you can hold me to."),
 ]
 
 

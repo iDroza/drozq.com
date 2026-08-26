@@ -1,6 +1,6 @@
 # Backlog
 
-*Last reviewed: May 26, 2026*
+*Last reviewed: August 26, 2026*
 
 Active TODOs across drozq.com. Consolidated from prior audit docs (deleted as of this rev: `AUDIT-INDEX-2026-04-26.md`, `SEO-AUDIT-INDEX-2026-04-26.md`, `FAVICON_AUDIT.md`, `SPEED-AUDIT.md`, `CHANGES.md`, `REALTOR_CLEANUP_AUDIT.md`). Findings that were already DONE at consolidation time are not listed.
 
@@ -21,14 +21,13 @@ When something ships, remove the item from this file in the same commit. Don't l
 These move the needle the most. They are concentrated on `/index.html`.
 
 - **Headshot above the fold.** Joshua's `Waist.png` is referenced in JSON-LD schema but does not appear in the visible body. Add a hero block or aside that puts a face on the page.
-- **Stat callouts.** No specific Joshua stats on the homepage ("$58,250 negotiated for clients so far," "7 days to MLS," etc.). Pull from case files. Three callouts max.
 - **"About Joshua" callout.** Short bio block somewhere on the homepage. Year started (2024), brokerage (Real Brokerage), DRE, one-line philosophy. Builds trust + EAT signal.
 - **Service-area body section.** Visible content section naming Irvine + Orange County neighborhoods (Turtle Rock, Woodbridge, Northwood, Crystal Cove, etc.). Currently only in JSON-LD `areaServed`. Helps local SEO + visitor confidence.
 ---
 
 ## SEO / AI search
 
-- **Internal links footer block.** Only `/privacy/`, `/terms/`, and `/faq/` (via header) are linked from the homepage. Add a small internal-links section linking `/about/`, `/testimonials/`, `/field-notes/`, `/market-insights/`, `/the-process/`, `/where-we-help/`, `/contact/`. Important for crawl coverage. (Note: these are legacy brand-mode pages; they still exist and accept traffic.)
+- **Internal links footer block.** Only `/privacy/`, `/terms/`, and `/faq/` (via header) are linked from the homepage. Add a small internal-links section linking `/about/`, `/testimonials/`, `/field-notes/`, `/market-insights/`, `/process/`, `/where-we-help/`, `/contact/`. Important for crawl coverage. (Note: these are legacy brand-mode pages; they still exist and accept traffic.)
 - **Submit the sitemap in Search Console (Joshua, 30 seconds).** GSC ownership confirmed 2026-07-22 (domain already verified). In the drozq.com property: Sitemaps → enter `sitemap.xml` → Submit. The sitemap was refreshed the same day (22 URLs incl. `/terms/`, honest lastmod dates); robots.txt already advertises it.
 - **Bing Webmaster (30 seconds, after the sitemap).** bing.com/webmasters offers "Import from Google Search Console": one click, no token, imports the verified property and its sitemap.
 
@@ -47,7 +46,7 @@ These move the needle the most. They are concentrated on `/index.html`.
 
 Joshua ruled on the review's flagged decisions 2026-07-22: the funnel X shipped (quiet close, `funnel_close` event), the aggressive autofill-open listener stays (conversion play, accepted), and duplicate-lead retries stay as designed. Remaining:
 
-- **Email rows stuck in 'sending' have no reaper** if an isolate dies mid-send, and a failed sequence send skips that step permanently (claim-before-send has no retry queue). Both rare; add a reaper/requeue if send failures ever show up in `emailer.py log`.
+- (Reaper + per-step retries shipped 2026-08-26; see CLAUDE.md "Email platform".)
 
 ---
 
@@ -61,7 +60,7 @@ Joshua ruled on the review's flagged decisions 2026-07-22: the funnel X shipped 
 
 These were tracked in the now-deleted `REALTOR_CLEANUP_AUDIT.md`. The Done items have been folded into the "Realtor.com clone state" section of `CLAUDE.md`. What remains:
 
-- **Inline CSS purge.** The inline `<style>` block is ~157KB of Panda CSS utilities. Probably ~80% unused. Tree-shake against actual class usage and inline only what is needed. Biggest remaining perf win.
+- **Panda CSS tree-shake.** The soup is now ONE cached stylesheet (`/media/css/panda.css`, extracted 2026-08-26, so every navigation after the first is free), but it is still ~152 KB with most utilities unused. Tree-shake it against actual class usage across all pages (keep `@layer base` + the tokens), then re-run `scripts/extract_panda_css.py` and `panda_patch.py --check`.
 - **Header nav markup cleanup.** Dead `#top` links remain in the DOM even when the header is hidden for new visitors. Reduce DOM clutter by deleting the unused nav items (`Login`, dead "Reviews" link, etc.) rather than just hiding them.
 - **6-tile partner-agent grid.** Tracked under "Conversion / strategy" above (item: "Our partner agents are…" section). Reflagged here because it is also a clone leftover.
 
@@ -77,6 +76,14 @@ These were tracked in the now-deleted `REALTOR_CLEANUP_AUDIT.md`. The Done items
 - **Internal docs are publicly served.** No build step means everything tracked deploys: `CLAUDE.md`, `TEMPLATE.md`, `BACKLOG.md`, `notes/` (including the ad-strategy docs), and `scripts/*.py` are all fetchable at their drozq.com paths. No secrets are exposed (keys live in Cloudflare env vars / gitignored files), but the campaign strategy notes are competitive intel sitting on public URLs. Decide: accept as-is, or add a deploy exclusion (a build step or output-dir restructure that strips `notes/`, `scripts/`, and root `*.md` from the published site).
 
 ---
+
+## Joshua to-dos from the 2026-08-26 fix pass (dashboard side, not code)
+
+- **Enable "Places API (New)"** on the Maps key in Google Cloud (APIs & Services > Enable; add it to the key's API restrictions). Until then every page makes one failing autocomplete request and falls back to the legacy class (still works, still warns once).
+- **Cloudflare WAF rate-limiting rule** (Security > WAF > Rate limiting rules): `http.request.uri.path in {"/api/valuation" "/api/netsheet" "/api/subscribe"}` and method POST, e.g. 10 requests per 10 s per IP, block 10 minutes. The code-level limiter enforces the per-10-minute / per-day / global budgets the WAF cannot express.
+- `python scripts/emailer.py init` once, so the new email columns and the `rate_limits` / `lead_submissions` tables exist up front.
+- Optional GTM trigger exception `funnel_mode equals newsletter` if Field Notes sign-ups should not count as an Ads conversion.
+- The gate-page `lead_confirmed` events (valuation / net_sheet / newsletter) now flow into the GA4 `funnel_mode` dimension; check the Ads conversion column for the new modes after a week.
 
 ## When something here ships
 

@@ -2,7 +2,7 @@
 
 > **READ THIS BEFORE BUILDING OR EDITING ANY PAGE.** This is the canonical specification of what makes a Drozq page a Drozq page. The homepage at `/index.html` is the live reference; this doc explains what is in it and why. If you are spinning up a new page, follow the workflow at the bottom of this doc.
 
-*Last reviewed: May 23, 2026*
+*Last reviewed: August 26, 2026*
 
 ---
 
@@ -66,6 +66,8 @@ These tokens are declared in the inline `<style>` block at the top of `/index.ht
 Section background bands you will see on the homepage: `#f2f0ef` (slightly warmer light gray, used as alternating section bg) and white. The standard rhythm is white → `#f2f0ef` → white.
 
 ### Color discipline (every color maps to a token, no exceptions)
+
+**Muted text on a warm band is `#3f4650`, not `#757575`.** `c_#757575` (`--colors-text-secondary-light`) only clears WCAG AA on white. Inside `bg-c_#f2f0ef`, `#efe9e1`, or `#f7f7f7` bands (and any inline warm background) body copy and eyebrows use `c_#3f4650` (`--colors-text-secondary`). The nearest ancestor that declares a background decides: a white card inside a warm band is still white, so `c_#757575` stays inside `bg_#fff` cards. 55 instances across 24 pages were swapped 2026-08-26.
 
 Every color in a page's CSS and JS must resolve to a **named token from the table above**, or to a value **already established in `/index.html`** (the funnel ships a few non-table values: `#f0c9ca` light-red accent, `#ece8e2` warm divider/track, `#d3cfca` control border). **No ad-hoc hex codes.** "It looked about right" is how an off-brand brown (`#b08968`) once shipped as a chart color, alongside one-off grays (`#cfccc7`, `#8a8a8a`, `#efefef`); the tokens already cover every role, so an invented hex is never necessary, only drift.
 
@@ -134,6 +136,8 @@ Panda CSS class prefix maps directly: `md:py_48px` means "at min-width 768px, pa
 
 ### Mobile is the primary canvas
 
+**Every text input is `fs_16px` at base.** Below 16px iOS Safari zooms the page on focus and the pill jumps. The landing / closing address pills are `fs_16px md:fs_18px` on every page since 2026-08-26 (74 inputs across 27 pages, plus the `scripts/migrate_*.py` + `build_net_sheet.py` scaffolds). `fs_14px md:fs_18px` on an `<input>` is a regression.
+
 The majority of paid traffic and organic visits to drozq.com land on **mobile**. Every page is designed at **375px first**, then enhanced upward for tablet (**768px**) and desktop (**1440px**).
 
 Hard rules:
@@ -176,6 +180,15 @@ Standard container max-widths used on the homepage:
 ---
 
 ## 2. Page boilerplate (head block)
+
+**Since 2026-08-26 the compiled Panda utility soup is NOT inline.** Every page links `<link rel="stylesheet" href="/media/css/panda.css?v=<hash>">` at the exact position the ~152 KB `<style data-inlined="desktop">` block used to occupy (same cascade + `@layer` order), written and re-pointed by `scripts/extract_panda_css.py`; `_headers` caches it for a year and the hash busts it. Page-specific blocks (`drozq-page-chrome`, the Galano weight-700 override, `drozq-panda-patch`, scoped page CSS) stay inline. **Font preload, two lines, immediately before the first `<link rel="icon"`** on every page:
+
+```html
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/media/fonts/galano-grotesque-alt-regular.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/media/fonts/galano-grotesque-alt-bold.woff2">
+```
+
+`crossorigin` is mandatory on font preloads even same-origin or the browser fetches the file twice. New pages scaffolded from `index.html` inherit both.
 
 ```html
 <!DOCTYPE html>
@@ -518,6 +531,8 @@ Do **NOT** revert this to a single section. Three prior fix attempts (`md:jc_lef
 
 ### Hero (homepage exception)
 
+**The rotation is desktop-only and data-saver aware (2026-08-26).** `#drozq-hero-rotate-js` returns before creating the two `.drozq-hero-rot` layers or preloading anything unless `matchMedia('(min-width:768px)').matches` is true AND `navigator.connection.saveData` is falsy (the `prefers-reduced-motion` gate stays in front of both). Below 768px the splash is giem-01 only: the ring (4,141,176 bytes across 11 files) is never requested on a phone. The header scroll-reveal runs before the gate and is unaffected.
+
 The homepage hero is a different layout — a 2-column block where the tabs+pill sit on the left and an image sits on the right. It uses the original `max-w_772px` + `md:jc_left` + `md:pl_28px` pattern and is **not** subject to the split-hero rule. Treat the homepage hero as exempt; all other pages follow the two-section pattern above.
 
 ### Hero typography
@@ -531,6 +546,8 @@ The homepage hero is a different layout — a 2-column block where the tabs+pill
 The H1 on the current homepage reads "Irvine Homeowners! Do You Want Every Dollar It's Worth?", a seller-focused avatar call-out. New pages should rewrite the H1 to a page-specific angle (e.g., for a paid distressed-sellers landing: "Sell your Irvine home, on your timeline.").
 
 ### Hero opener copy rule (no exceptions)
+
+Applied 2026-08-26 to the last holdouts: `/testimonials/` (eyebrow deleted, subhead "Real transactions, real numbers, clients anonymized."), the three case files (the "Case File 00X · City · Client" label moved OUT of the opener into a `.cf-hero__badge-row` directly below the hero, and each H1 gained a one-sentence `.cf-hero__sub`), and `/thank-you/` (the "Request received" badge is gone; subhead "Your report is in your inbox, and you hear from me within 15 minutes, 7 days a week."). `.cf-hero__sub` / `.cf-hero__badge-row` are scoped rules just above `.cf-hero__scroll` in each case file; new case files scaffold them from 003.
 
 The hero is the first thing a visitor sees and the highest-leverage real estate on the page. Two elements only: a short **headline** and a short **subhead**. Nothing else above, between, or below them inside the text section.
 
@@ -756,6 +773,8 @@ Two homepage-only sections built during the seller rebuild. Both are page-specif
 
 ### Crosslink band (`xr-`): the sitewide interconnectivity component (2026-07-22)
 
+Rules added 2026-08-26: the `xr-head` sub line may carry ONE inline `.xr-a` link when a page needs an inbound link without a fourth card (`/about/` + `/contact/` link "the team behind every listing" to `/meet-the-team/` this way; keep at least one such link or the page goes orphan again). Card copy uses the promise-ladder canon ("with a written CMA in 24 hours and live within 48 hours of signing"; never "launch within 7 days"). Proof numbers reflect three closings ($58,250, 3 for 3).
+
 Every template page except `/`, `/sellers/`, `/privacy/`, `/terms/`, and `/404.html` carries one contextual crosslink band directly above its closing CTA section: a centered head (short h2 + one-line sub) over a 2-or-3-card grid of link cards, each card an eyebrow + title + one specific line + red arrow. The visual language is the `/sellers/` hub-card system verbatim; the classes are the scoped `.xr-*` set in each page's `<style id="drozq-xref-css">` block (self-contained per page, immune to the Panda no-op trap). `/sellers/` and `/buyers/` use their own `hub-*` classes instead (`/buyers/`' band is "Know the market you're buying into"). `/404.html` already carries its own quick-links section.
 
 Rules:
@@ -953,9 +972,14 @@ Full structure lives between `DROZQ_FUNNEL_HTML_BEGIN/END` in `/index.html` and 
 | Progress bar | `#funnel-progress` | 4px sticky top, `#f1efec` track, `#d92228` fill, width transitions over 250ms |
 | Valuebar (sticky) | `#funnel-valuebar` | One-line value reminder. Bg `#fbf8f4`, 12px text. Persists across steps. |
 | Step container | `#funnel-step-container` | Mobile: flex column. Desktop (`[data-mode]`, >=880px): centered symmetric split, `max-width:1080px`, two equal `1fr` cards. |
-| Form column | `#funnel-form-col` | Wraps all step divs + the timeline. RIGHT card in the desktop split. |
+| Form column | `#funnel-form-col` | Wraps the step counter + all step divs. RIGHT card in the desktop split. |
+| Step counter | `#funnel-stepcount` | First child of the form column: "Step N of X" (12px, 700, red uppercase, `aria-live="polite"`). `showStep` rewrites it from `FUNNEL_TOTAL_STEPS[mode]`, so Sell reads 1 of 3 and Buy / Sell & Buy read 1 of 4. Added 2026-08-26 at Joshua's ask. |
 | Steps | `.funnel-step[data-funnel][data-step]` | One div per step per funnel. Active step gets `.active`. |
 | Value panel | `#funnel-deliverable` | The unified value panel, identical for every mode: the instant-valuation block + the instant-delivery badge. LEFT card in the desktop split. See "unified split funnel" below. |
+
+### Dialog semantics (2026-08-26)
+
+The overlay is a real modal dialog: `<section id="funnel-overlay" role="dialog" aria-modal="true" aria-label="Your instant home valuation">`. `openFunnel` stores `document.activeElement` in `window.__drozqFunnelOpener`, and `showStep` calls `focusActiveStep()` (first input / select / textarea / non-back button inside the active step, `preventScroll`) so focus lands inside on open and on every advance. `window.closeFunnel(method)` (shared by the X and Esc) removes `is-open`, resets `aria-hidden` + body overflow, dual-fires `funnel_close {mode, method}`, and returns focus to the opener. A document `keydown` listener while the overlay is open handles Escape (close) and Tab / Shift+Tab (cycles through the overlay's visible focusables, so focus never leaks to the page behind). The in-funnel legal modal (`#drozq-legal-modal`) owns Esc/Tab while it is open; the funnel handler returns early then. All of it lives inside the funnel markers and syncs.
 
 ### The unified split funnel (THE STANDARD, 2026-06-13)
 
@@ -1227,6 +1251,14 @@ Pushes the updated funnel from /index.html to every page in `funnels.json`. One 
 ## 14. Anti-patterns
 
 Do not.
+
+- **A "things I won't do" block.** Six "NO" cards were the last one (`/los-angeles/`, killed 2026-08-26). Every commitment renders as a positive outcome with a number or a mechanism.
+- **Weaker duplicates of a canonical promise.** One launch line, one callback line, one CMA line, sitewide (CLAUDE.md "The promise ladder"). If a page needs the promise it copies the canon string verbatim.
+- **Third-person Joshua on a tool page.** `/value/` was the last; every surface speaks as "I".
+- **Vendor names in visible copy.** "Zestimate", "Redfin Estimate", "Zillow", "Rentcast", "API", and disclosed model weights are all plumbing. Say "the portal number", "the big portals", "my own valuation model".
+- **Force a 3-column grid at base.** `grid-tc_1fr_1fr_1fr` with no mobile variant squeezes three cells into 375px (the `/about/` stat grid, fixed 2026-08-26). Base is `grid-tc_1fr`; columns arrive at `md:`.
+- **Constructing `google.maps.places.Autocomplete` directly.** Use `window.drozqPlacesAttach` (CLAUDE.md "Places autocomplete"); the legacy class is the fallback inside it, not a starting point.
+- **Re-inlining the Panda soup.** It lives in `/media/css/panda.css`; a page carrying its own copy doubles the CSS and drifts.
 
 - Ship an unlinked logo. The Drozq logo in the header AND the footer must be wrapped in `<a href="/" aria-label="Drozq home">`. Universal back-to-home escape hatch.
 - Strip the Panda CSS utility-class soup. Even unused classes stay; the layer architecture depends on declaration order.

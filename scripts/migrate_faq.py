@@ -36,7 +36,7 @@ def landing_form_pill(placeholder: str, value: str = "") -> str:
     <form class="pos_relative">
       <div class="pos_relative d_flex flex-d_column xs:flex-d_row ai_center bg-c_#fff mb_16px xs:mb_0 h_48px sm:h_auto bdr_30px bx-sh_0_1px_5px_rgba(0,_0,_0,_.11)">
         <input name="location" placeholder="{placeholder}" title="{placeholder}" autocomplete="off"
-               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_14px md:fs_18px"
+               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_16px md:fs_18px"
                value="{value}" aria-label="{placeholder}">
         <div class="w_100% xs:w_auto mr_0 md:mr_3px h_48px md:h_60px lh_48px md:lh_60px pos_absolute xs:pos_static top_60px xs:top_0">
           <button type="submit"
@@ -197,8 +197,8 @@ CATEGORIES = [
             ),
             (
                 "How often will I hear from you?",
-                """More than you expect. My rule is simple: no client of mine ever waits more than a few hours for a response during normal hours. During active listing periods, expect regular updates even if there's nothing dramatic to report. I'd rather over-communicate than leave you wondering. Silence is where trust dies.""",
-                """More than you expect. My rule is simple: no client of mine ever waits more than a few hours for a response during normal hours. During active listing periods, expect regular updates even if there's nothing dramatic to report. I'd rather over-communicate than leave you wondering. Silence is where trust dies.""",
+                """More than you expect. My rule is simple: every call is returned within 15 minutes, 7 days a week. During active listing periods, expect regular updates even if there's nothing dramatic to report. I'd rather over-communicate than leave you wondering. Silence is where trust dies.""",
+                """More than you expect. My rule is simple: every call is returned within 15 minutes, 7 days a week. During active listing periods, expect regular updates even if there's nothing dramatic to report. I'd rather over-communicate than leave you wondering. Silence is where trust dies.""",
             ),
             (
                 "What if I'm not happy with how the listing is going?",
@@ -407,7 +407,7 @@ MID_TABS = f"""
         <li class="d_flex ai_flex-start gap_16px">
           <span class="flex-sh_0 d_inline-flex ai_center jc_center w_40px h_40px bdr_full bg-c_#fbe9ea c_#d92228 fw_700" aria-hidden="true">3</span>
           <div>
-            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">One agent. One phone. Same-hour replies.</h3>
+            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">One agent. One phone. Calls returned in 15 minutes.</h3>
             <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">Every offer, escrow question, and timeline shift routes through me on the same number.</p>
           </div>
         </li>
@@ -457,7 +457,7 @@ CLOSING_CTA = f"""
     <div class="ta_center max-w_640px m_0_auto">
       <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">Didn't see your question?</p>
       <h2 class="fw_800 op_0.87 c_#2b2b2b lh_40px md:lh_48px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">Drop your address. Ask whatever is on your mind.</h2>
-      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_32px">Tell me what you are thinking about and I'll come back within the hour with a real answer, not a sales pitch.</p>
+      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_32px">Tell me what you are thinking about and I'll come back within 15 minutes with a real answer and the records pulled.</p>
 
       <div id="faq-closing-cta" role="tabpanel" aria-labelledby="tab-sell" class="d_flex jc_center">
         <div style="width:100%; max-width: 540px;">{landing_form_pill("Enter your address")}</div>

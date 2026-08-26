@@ -213,7 +213,7 @@ MAIN_BODY = """
       <span class="ty-hero__badge-text">Request received</span>
     </div>
     <h1>Now we get to work.</h1>
-    <p class="ty-hero__sub">I review every request personally. Expect to hear from me within the hour during business hours, or first thing the next morning if it is late.</p>
+    <p class="ty-hero__sub">Your report is in your inbox, and you hear from me within 15 minutes, 7 days a week.</p>
   </div>
 </section>
 
@@ -345,10 +345,10 @@ if __name__ == "__main__":
     scaffold_page(
         target="thank-you/index.html",
         title="Thanks for reaching out | Drozq",
-        description="Your home valuation request was received. Joshua Guerrero personally reviews every request and follows up within the hour.",
+        description="Your home valuation request was received. Joshua Guerrero personally reviews every request and follows up within 15 minutes, 7 days a week.",
         canonical="/thank-you/",
         main_body_html=MAIN_BODY,
         og_title="Thanks for reaching out | Drozq",
-        og_description="Your home valuation request was received. Personal follow-up within the hour.",
+        og_description="Your home valuation request was received. Personal follow-up within 15 minutes, 7 days a week.",
         noindex=True,
     )

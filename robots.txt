@@ -1,5 +1,16 @@
 User-agent: *
 Allow: /
+Disallow: /scripts/
+Disallow: /notes/
+Disallow: /docs/
+Disallow: /workers/
+Disallow: /cloudflare/
+Disallow: /functions/
+Disallow: /funnels.json
+Disallow: /CLAUDE.md
+Disallow: /TEMPLATE.md
+Disallow: /BACKLOG.md
+Disallow: /AGENTS.md
 
 User-agent: Googlebot
 Allow: /

@@ -47,7 +47,7 @@ def landing_form_pill(placeholder: str, value: str = "") -> str:
     <form class="pos_relative">
       <div class="pos_relative d_flex flex-d_column xs:flex-d_row ai_center bg-c_#fff mb_16px xs:mb_0 h_48px sm:h_auto bdr_30px bx-sh_0_1px_5px_rgba(0,_0,_0,_.11)">
         <input name="location" placeholder="{placeholder}" title="{placeholder}" autocomplete="off"
-               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_14px md:fs_18px"
+               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_16px md:fs_18px"
                value="{value}" aria-label="{placeholder}">
         <div class="w_100% xs:w_auto mr_0 md:mr_3px h_48px md:h_60px lh_48px md:lh_60px pos_absolute xs:pos_static top_60px xs:top_0">
           <button type="submit"
@@ -137,7 +137,7 @@ THREE_LAYERS = """
       <article class="bg_#fff bdr_16px p_24px md:p_28px bd_1px_solid_#e5e5e5 d_flex flex-d_column gap_8px">
         <p class="c_#d92228 fs_11px fw_700 ls_2px m_0" style="text-transform:uppercase">Layer 03</p>
         <h3 class="fs_22px md:fs_24px fw_700 c_#1a1816 lh_1.25 m_0">Three operating systems</h3>
-        <p class="c_#757575 fs_13px md:fs_14px fw_700 m_0">Communication cadence &middot; 48-hour launch &middot; Deal management protocol</p>
+        <p class="c_#757575 fs_13px md:fs_14px fw_700 m_0">Communication cadence &middot; Live within 48 hours of signing &middot; Deal management protocol</p>
         <p class="fs_14px md:fs_15px lh_1.6 c_#3f4650 m_0">Nothing about how I work is improvised. Each system runs on every client so nothing slips.</p>
       </article>
 
@@ -188,8 +188,8 @@ LAYER_01 = """
 # Each partner: (subtitle, title, body, inline_svg)
 PARTNERS = [
     (
-        "The Brokerage", "Active Realty, Inc.",
-        "The licensed brokerage backing every transaction. Decades of collective experience, a deep network of California agents, and the institutional infrastructure that makes large transactions move smoothly. I'm an agent. They're the platform.",
+        "The Team", "Active Realty, Inc.",
+        "My team, operating inside the Real Brokerage platform. Decades of collective experience, a deep network of California agents, and the institutional infrastructure that makes large transactions move smoothly. I'm the agent. Active Realty is the team. Real is the platform.",
         '<svg viewBox="0 0 48 48" fill="none" width="38" height="38" aria-hidden="true"><path d="M8 42V20l16-12 16 12v22" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M18 42V28h12v14" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>',
     ),
     (
@@ -255,8 +255,8 @@ SYSTEMS = [
         "You will never wonder what's happening with your listing. From day one, you receive scheduled updates: weekly during the listing period, every 48 hours during escrow, and immediately when anything changes. No \"I'll get back to you tomorrow\" voicemails. No silence between milestones.",
     ),
     (
-        "System 02", "The 7-day launch.",
-        "When you sign with me, your home is live within 7 days, often in 48 to 72 hours. Photos, copy, syndication across the major platforms, social media campaigns, and a dedicated property landing page all launch on a fixed timeline. Every listing runs the same sequence, on the same clock.",
+        "System 02", "Live within 48 hours of signing.",
+        "When you sign with me, your home is live within 48 hours. Photos, copy, syndication across the major platforms, social media campaigns, and a dedicated property landing page all launch on a fixed timeline. Every listing runs the same sequence, on the same clock.",
     ),
     (
         "System 03", "The deal management protocol.",
@@ -343,7 +343,7 @@ MID_TABS = f"""
           <span class="flex-sh_0 d_inline-flex ai_center jc_center w_40px h_40px bdr_full bg-c_#fbe9ea c_#d92228 fw_700" aria-hidden="true">3</span>
           <div>
             <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">Three systems so nothing slips.</h3>
-            <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">Communication cadence, 48-hour launch, deal management protocol. Same playbook on every transaction.</p>
+            <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">Communication cadence, live within 48 hours of signing, deal management protocol. Same three systems on every transaction.</p>
           </div>
         </li>
       </ul>

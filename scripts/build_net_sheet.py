@@ -262,13 +262,14 @@ CSS = """<style id="ns-css">
 </style>"""
 
 
-def money_field(fid, label, hint="", value="0", prefix="$", suffix=""):
+def money_field(fid, label, hint="", value="0", prefix="$", suffix="", placeholder=""):
     pre = f"<i>{prefix}</i>" if prefix else ""
+    ph = f' placeholder="{placeholder}"' if placeholder else ""
     suf = f"<em>{suffix}</em>" if suffix else ""
     hint_html = f'<span class="ns-hint">{hint}</span>' if hint else ""
     return (
         f'<div class="ns-f"><label class="ns-lab" for="{fid}">{label}</label>'
-        f'<div class="ns-in">{pre}<input type="text" inputmode="decimal" id="{fid}" value="{value}">{suf}</div>'
+        f'<div class="ns-in">{pre}<input type="text" inputmode="decimal" id="{fid}" value="{value}"{ph}>{suf}</div>'
         f"{hint_html}</div>"
     )
 
@@ -345,9 +346,9 @@ TOOL = (
     # Group: seller-paid items
     '<div class="ns-group">'
     '<div class="ns-group-h"><h3>Seller-paid items</h3><b id="ns-o-items-h">&minus;$875</b></div>'
-    + money_field("ns-nhd", "Natural hazard disclosure report", "Required in California. Flood, fire, seismic, and the tax-district disclosure that names any Mello-Roos.", "150")
-    + money_field("ns-warranty", "Home warranty for the buyer", "Common ask in escrow. Cheap insurance against a repair request at the eleventh hour.", "600")
-    + money_field("ns-termite", "Termite inspection", "", "125")
+    + money_field("ns-nhd", "Natural hazard disclosure report", "Required in California. Flood, fire, seismic, and the tax-district disclosure that names any Mello-Roos. Typical $150.", "0", placeholder="150")
+    + money_field("ns-warranty", "Home warranty for the buyer", "Common ask in escrow. Cheap insurance against a repair request at the eleventh hour. Typical $600.", "0", placeholder="600")
+    + money_field("ns-termite", "Termite inspection", "Typical $125.", "0", placeholder="125")
     + money_field("ns-termite-work", "Section 1 termite work", "Active infestation and damage. Only known after the inspection; leave at zero until then.", "0")
     + money_field("ns-hoa-fees", "HOA demand and document fees", "The demand statement plus the resale package. Auto-filled at $400 when the record shows an association.", "0")
     + money_field("ns-retrofit", "Retrofit and point-of-sale compliance", "Smoke and CO alarms, water heater strapping, and any city report or low-flow requirement.", "0")
@@ -793,7 +794,7 @@ XREF = (
     '<span class="xr-go">See the breakdown &rarr;</span></a>'
     '<a class="xr-card" href="/process/"><p class="xr-eyebrow">The plan</p>'
     "<h3>How the sale actually runs</h3>"
-    "<p>Five steps from first call to closing day, with a written valuation in 24 hours and launch within 7 days.</p>"
+    "<p>Five steps from first call to closing day, with a written valuation in 24 hours and live within 48 hours of signing.</p>"
     '<span class="xr-go">See the process &rarr;</span></a>'
     "</div></div></section>"
 )
@@ -811,7 +812,7 @@ CLOSING_CTA = """
     <form class="pos_relative">
       <div class="pos_relative d_flex flex-d_column xs:flex-d_row ai_center bg-c_#fff mb_16px xs:mb_0 h_48px sm:h_auto bdr_30px bx-sh_0_1px_5px_rgba(0,_0,_0,_.11)">
         <input name="location" placeholder="Enter your address" title="Enter your address" autocomplete="off"
-               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_14px md:fs_18px"
+               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_16px md:fs_18px"
                value="" aria-label="Enter your address">
         <div class="w_100% xs:w_auto mr_0 md:mr_3px h_48px md:h_60px lh_48px md:lh_60px pos_absolute xs:pos_static top_60px xs:top_0">
           <button type="submit"

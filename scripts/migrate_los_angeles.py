@@ -32,7 +32,7 @@ def landing_form_pill(placeholder: str, value: str = "") -> str:
     <form class="pos_relative">
       <div class="pos_relative d_flex flex-d_column xs:flex-d_row ai_center bg-c_#fff mb_16px xs:mb_0 h_48px sm:h_auto bdr_30px bx-sh_0_1px_5px_rgba(0,_0,_0,_.11)">
         <input name="location" placeholder="{placeholder}" title="{placeholder}" autocomplete="off"
-               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_14px md:fs_18px"
+               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_16px md:fs_18px"
                value="{value}" aria-label="{placeholder}">
         <div class="w_100% xs:w_auto mr_0 md:mr_3px h_48px md:h_60px lh_48px md:lh_60px pos_absolute xs:pos_static top_60px xs:top_0">
           <button type="submit"
@@ -112,10 +112,10 @@ HOW_I_HELP = """
         <li class="d_flex ai_flex-start gap_12px py_12px fs_15px md:fs_16px lh_1.5 c_#2b2b2b"><span class="c_#0a801f fw_700 flex-sh_0">&#10003;</span><span>Clear guidance on which repairs return their cost and which to skip.</span></li>
       </ul>
       <ul class="li-s_none m_0 p_0">
-        <li class="d_flex ai_flex-start gap_12px py_12px fs_15px md:fs_16px lh_1.5 c_#2b2b2b"><span class="c_#0a801f fw_700 flex-sh_0">&#10003;</span><span>Vetted vendor network so you avoid predatory contractors.</span></li>
+        <li class="d_flex ai_flex-start gap_12px py_12px fs_15px md:fs_16px lh_1.5 c_#2b2b2b"><span class="c_#0a801f fw_700 flex-sh_0">&#10003;</span><span>My vetted contractor bench, at my cost.</span></li>
         <li class="d_flex ai_flex-start gap_12px py_12px fs_15px md:fs_16px lh_1.5 c_#2b2b2b"><span class="c_#0a801f fw_700 flex-sh_0">&#10003;</span><span>Pre-qualified buyers so you avoid last-minute back-outs.</span></li>
         <li class="d_flex ai_flex-start gap_12px py_12px fs_15px md:fs_16px lh_1.5 c_#2b2b2b"><span class="c_#0a801f fw_700 flex-sh_0">&#10003;</span><span>A closing date that actually fits your timeline.</span></li>
-        <li class="d_flex ai_flex-start gap_12px py_12px fs_15px md:fs_16px lh_1.5 c_#2b2b2b"><span class="c_#0a801f fw_700 flex-sh_0">&#10003;</span><span>One agent. One phone. Same-hour replies during business hours.</span></li>
+        <li class="d_flex ai_flex-start gap_12px py_12px fs_15px md:fs_16px lh_1.5 c_#2b2b2b"><span class="c_#0a801f fw_700 flex-sh_0">&#10003;</span><span>One agent. One phone. Every call returned in 15 minutes, 7 days a week.</span></li>
       </ul>
     </div>
 
@@ -288,7 +288,7 @@ MID_TABS = f"""
         <li class="d_flex ai_flex-start gap_16px">
           <span class="flex-sh_0 d_inline-flex ai_center jc_center w_40px h_40px bdr_full bg-c_#fbe9ea c_#d92228 fw_700" aria-hidden="true">3</span>
           <div>
-            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">One agent. One phone. Same-hour replies.</h3>
+            <h3 class="fs_16px lg:fs_20px fw_700 lh_24px lg:lh_24px mb_8px c_#1a1816">One agent. One phone. Calls returned in 15 minutes.</h3>
             <p class="c_#757575 fs_14px lg:fs_16px lh_21px lg:lh_24px m_0">You text me, I answer. Every offer, escrow question, and timeline shift routes through me on the same number.</p>
           </div>
         </li>
@@ -357,7 +357,7 @@ FAQ_ITEMS = [
     ("Which Los Angeles neighborhoods do you list in?",
      "I list throughout Los Angeles County, from the Westside to the South Bay to the San Fernando Valley and Northeast LA. If your home is in a submarket I have not personally closed in, I will tell you directly and either staff the listing accordingly or refer you to a trusted partner in my network. The goal is the right answer for your address, not the easiest answer for me."),
     ("Do all listing agents follow the same process?",
-     "No. Experience, marketing budget, and negotiation skill vary widely. My process starts with a no-pressure consultation, a real walk-through of your home, and a written pricing strategy with comp packets attached. You see the numbers and the marketing plan before you sign anything, so the decision is informed, not pressured."),
+     "No. Experience, marketing budget, and negotiation skill vary widely. My process starts with a straight conversation, a real walk-through of your home, and a written pricing strategy with comp packets attached. You see the numbers and the marketing plan before you sign anything, so the decision is informed, not pressured."),
     ("How long do Los Angeles home sales take right now?",
      "Most well-priced, well-marketed LA listings go under contract in 14 to 28 days and close within 30 to 45 days. I can also run faster private-sale or off-MLS timelines when your situation calls for one, and I will say so up front if that fits your case better than a public listing."),
     ("Do I have to pay anything upfront to list my home?",
@@ -406,7 +406,7 @@ if __name__ == "__main__":
     scaffold_page(
         target="los-angeles/index.html",
         title="Sell Your Los Angeles Home | Joshua Guerrero, Real Brokerage",
-        description="Selling a home in Los Angeles County? Joshua Guerrero, licensed CA REALTOR&reg; at Real Brokerage. Free CMA, sharp pricing, modern marketing. No 5-star fluff.",
+        description="Selling a home in Los Angeles County? Joshua Guerrero, licensed CA REALTOR&reg; at Real Brokerage. Free CMA, sharp pricing, modern marketing.",
         canonical="/los-angeles/",
         main_body_html=MAIN_BODY,
         og_title="Sell Your Los Angeles Home | Joshua Guerrero",

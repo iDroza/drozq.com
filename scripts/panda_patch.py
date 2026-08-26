@@ -163,15 +163,30 @@ def token_to_rule(tok):
     selector = "." + css_escape(tok) + suffix
     return (media, selector, decl)
 
-def scan(verbose=False):
-    """Return {file: {token: count}} of visual-intent classes with no definition."""
+def scan(verbose=False, ignore_patch=False):
+    """Return {file: {token: count}} of visual-intent classes with no definition.
+
+    ignore_patch=True treats the existing <style id="drozq-panda-patch"> block as
+    absent, so --apply / --css regenerate the FULL union of no-ops. Without it a
+    re-apply saw the current patch as "defined", built a block holding only the
+    newly missing tokens, and overwrote the full patch with it (2026-08-26)."""
     report = {}
     for f in files():
         d = open(f, encoding="utf-8-sig").read()
         defined = set()
         style_ranges = []
+        # Since 2026-08-26 the compiled Panda soup lives in /media/css/panda.css
+        # (scripts/extract_panda_css.py); a self-hosted stylesheet <link> counts
+        # as defined exactly like an inline <style> block.
+        for lm in re.finditer(r'<link rel="stylesheet" href="(/media/css/[^"?]+)', d):
+            css_file = os.path.join(ROOT, *lm.group(1).lstrip("/").split("/"))
+            if os.path.exists(css_file):
+                for cm in re.finditer(r"\.((?:\\.|[A-Za-z0-9_-])+)", open(css_file, encoding="utf-8").read()):
+                    defined.add(re.sub(r"\\(.)", r"\1", cm.group(1)))
         for m in re.finditer(r"<style[^>]*>(.*?)</style>", d, flags=re.S):
             style_ranges.append((m.start(), m.end()))
+            if ignore_patch and m.group(0).startswith('<style id="' + PATCH_ID + '">'):
+                continue
             for cm in re.finditer(r"\.((?:\\.|[A-Za-z0-9_-])+)", m.group(1)):
                 defined.add(re.sub(r"\\(.)", r"\1", cm.group(1)))
         zones = []
@@ -223,7 +238,7 @@ def build_css(tokens):
     return "\n".join(css), untranslatable
 
 def apply_patch():
-    report = scan()
+    report = scan(ignore_patch=True)
     union = set()
     for noop in report.values():
         union.update(noop)
@@ -272,7 +287,7 @@ if __name__ == "__main__":
     if "--apply" in sys.argv:
         apply_patch()
     elif "--css" in sys.argv:
-        report = scan()
+        report = scan(ignore_patch=True)
         union = set()
         for noop in report.values():
             union.update(noop)

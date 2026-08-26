@@ -27,7 +27,7 @@ PRESERVED + reframed:
 - Hero copy: "What's your home actually worth?" + sub.
 - "Why this matters: pricing wrong costs more than you think." block.
 - "After one 15-minute call." three-card grid (CMA / pricing strategy /
-  no-pressure path forward).
+  clear recommendation either way).
 - Direct contact section with phone, email, address, business hours.
 - Google Maps embed of the Irvine office.
 - Cross-link to /testimonials/ case files.
@@ -46,7 +46,7 @@ def landing_form_pill(placeholder: str, value: str = "") -> str:
     <form class="pos_relative">
       <div class="pos_relative d_flex flex-d_column xs:flex-d_row ai_center bg-c_#fff mb_16px xs:mb_0 h_48px sm:h_auto bdr_30px bx-sh_0_1px_5px_rgba(0,_0,_0,_.11)">
         <input name="location" placeholder="{placeholder}" title="{placeholder}" autocomplete="off"
-               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_14px md:fs_18px"
+               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_16px md:fs_18px"
                value="{value}" aria-label="{placeholder}">
         <div class="w_100% xs:w_auto mr_0 md:mr_3px h_48px md:h_60px lh_48px md:lh_60px pos_absolute xs:pos_static top_60px xs:top_0">
           <button type="submit"
@@ -143,7 +143,7 @@ DIRECT_CONTACT = f"""
         </div>
         <p class="c_#757575 fs_11px md:fs_12px fw_700 ls_1.5px m_0" style="text-transform:uppercase">Email</p>
         <p class="fs_18px md:fs_22px fw_700 c_#1a1816 lh_1.25 m_0">Josh@Drozq.com</p>
-        <p class="fs_13px md:fs_14px c_#3f4650 m_0">Reply within a few hours.</p>
+        <p class="fs_13px md:fs_14px c_#3f4650 m_0">Answered within 15 minutes, 7 days a week.</p>
       </a>
 
       <div class="bg-c_#f7f7f7 bdr_16px p_24px md:p_28px bd_1px_solid_#e5e5e5 d_flex flex-d_column gap_8px ta_center">
@@ -195,7 +195,7 @@ WHAT_YOU_GET = [
     ),
     (
         '<svg viewBox="0 0 48 48" fill="none" width="38" height="38" aria-hidden="true"><path d="M10 12h28M10 24h28M10 36h18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="38" cy="36" r="4" stroke="currentColor" stroke-width="2.4"/></svg>',
-        "A no-pressure path forward.",
+        "A clear recommendation, either way.",
         "If it makes sense to list, we list. If it doesn't, you walk away with better information than you came in with. That's it.",
     ),
 ]
