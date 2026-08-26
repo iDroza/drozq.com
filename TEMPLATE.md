@@ -603,7 +603,7 @@ Below the hero, the homepage runs a vertical rhythm of alternating bands. The pa
 
 ```
 [full-screen photo hero: min-height 100dvh, rotating photo ring, centered copy + tabs + pill]
-[thin #f2f0ef strip + #d3cfca divider]: `#drozq-commit-strip`, four commitments in one line (15-minute callback, Live in 7 days, Every offer scored in writing, A written report every Friday), scoped CSS, 2x2 grid under 768px
+[white stat bar + #d3cfca divider]: `#drozq-commit-strip`, kicker "Commitments you can hold me to." over four big bold values with small red uppercase labels (15 min / 7 days / 100% / Friday), the activerealty.com/sell stat-row format per Joshua 2026-08-25; scoped CSS, 2x2 grid under 880px
 [white band]: 3-step strip ("Enter your address / Get the number, instantly / Keep it, or call me to sell")
 [light gray band #f2f0ef]: "The Hard Parts Are My Job, Not Yours" infographic
 [wide centered div max-w 1035]: market-trends map (self-hosted Irvine Google Map) + "real estate trends in Irvine, CA" stats
