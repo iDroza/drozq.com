@@ -106,12 +106,32 @@ a {
 }
 
 .dashboard-heading h1 {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  min-width: 0;
   margin: 0;
   color: #1a1816;
-  font-size: clamp(2rem, 9vw, 3rem);
+  font-size: clamp(1.5rem, 6.4vw, 3rem);
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.035em;
+  column-gap: 0.5em;
+  row-gap: 0.15em;
+}
+
+/* "drozq" sits flush left, "Operating Dashboard" flush right on the same
+   line; when the phone viewport cannot hold both, the title wraps to its own
+   line and stays right-aligned instead of squeezing the brand. */
+.dashboard-heading__brand {
+  margin-right: auto;
+}
+
+.dashboard-heading__title {
+  margin-left: auto;
+  text-align: right;
 }
 
 .dashboard-splash {
