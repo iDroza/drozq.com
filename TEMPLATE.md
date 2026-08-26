@@ -607,7 +607,7 @@ Below the hero, the homepage runs a vertical rhythm of alternating bands. The pa
 [white band]: 3-step strip ("Enter your address / Get the number, instantly / Keep it, or call me to sell")
 [light gray band #f2f0ef]: "The Hard Parts Are My Job, Not Yours" infographic
 [wide centered div max-w 1035]: market-trends map (self-hosted Irvine Google Map) + "real estate trends in Irvine, CA" stats
-[wide centered div max-w 1035]: `#home-proof`, "Closed, with the numbers left in." (three case-file cards with the dollar figure first + two named client quotes; no star rows, ever)
+[wide centered div max-w 1035]: `#home-proof`, "Closed, with the numbers left in." (three case-file cards with the dollar figure first, no stars; two named client quotes below, each with its five gold stars)
 [light gray band #f2f0ef]: "My Home's Condition is..." condition switcher (Move-in ready / Needs work, both open Sell)
 [white band + #d3cfca divider]: Five Steps timeline ("From first call to closing day.", verbatim /process/ proc-steps section; moved here from under the hero 2026-08-25)
 [white band]: "What I owe you" (`#what-i-owe-you`)
