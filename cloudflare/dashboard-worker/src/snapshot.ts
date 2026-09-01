@@ -1,6 +1,6 @@
 import { CONFIG_DEFAULTS } from "./config";
 import {
-  getFixedStartPeriod,
+  getSellerCampaignPeriod,
   getReportingPeriod,
   getSearchConsoleThreeMonthPeriod,
   getYearToDatePeriod,
@@ -152,22 +152,22 @@ export const METRIC_SPECS = {
   },
   sellerCampaignSpend: {
     source: "google_ads",
-    definition: "Google Ads cost of the JT and AR Sell | OC search campaigns combined (one lander on two domains) since their launch.",
+    definition: "Google Ads cost of the JT and AR Sell | OC search campaigns combined (one lander on two domains), month to date (never before launch day).",
     staleAfterMs: FAST_STALE_MS,
   },
   sellerCampaignCostPerClick: {
     source: "google_ads",
-    definition: "Combined seller-campaign cost divided by clicks since launch.",
+    definition: "Combined seller-campaign cost divided by clicks, month to date.",
     staleAfterMs: FAST_STALE_MS,
   },
   sellerCampaignLeads: {
     source: "google_ads",
-    definition: "Combined seller-campaign primary Google Ads conversions since launch.",
+    definition: "Combined seller-campaign primary Google Ads conversions, month to date.",
     staleAfterMs: FAST_STALE_MS,
   },
   sellerCampaignCostPerLead: {
     source: "google_ads",
-    definition: "Combined seller-campaign cost divided by primary conversions since launch.",
+    definition: "Combined seller-campaign cost divided by primary conversions, month to date.",
     staleAfterMs: FAST_STALE_MS,
   },
   teamCommissionRoasYtd: {
@@ -512,7 +512,7 @@ export function sanitizeStoredSnapshot(value: unknown): DashboardSnapshot | null
     yearToDatePeriod: yearToDatePeriod ??
       getYearToDatePeriod(referenceDate, reportingPeriod.timeZone),
     sellerCampaignPeriod: sellerCampaignPeriod ??
-      getFixedStartPeriod(
+      getSellerCampaignPeriod(
         CONFIG_DEFAULTS.googleAdsSellerCampaignLaunchDate,
         referenceDate,
         reportingPeriod.timeZone,
@@ -537,7 +537,7 @@ export function createUnconfiguredSnapshot(
       getReportingPeriod(now, timeZone).endDate,
     ),
     yearToDatePeriod: getYearToDatePeriod(now, timeZone),
-    sellerCampaignPeriod: getFixedStartPeriod(
+    sellerCampaignPeriod: getSellerCampaignPeriod(
       CONFIG_DEFAULTS.googleAdsSellerCampaignLaunchDate,
       now,
       timeZone,

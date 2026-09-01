@@ -4,6 +4,7 @@ import { CONFIG_DEFAULTS } from "../src/config";
 import {
   getActivityWindows,
   getReportingPeriod,
+  getSellerCampaignPeriod,
   getRollingPeriod,
   getSearchConsoleThreeMonthPeriod,
   getYearToDatePeriod,
@@ -663,7 +664,7 @@ describe("Google Ads all-account aggregation", () => {
     ])).toThrow();
   });
 
-  it("combines the JT and AR seller campaigns across accounts since launch", async () => {
+  it("combines the JT and AR seller campaigns across accounts, month to date clamped to launch", async () => {
     const later = new Date("2026-08-24T19:00:00.000Z");
     const campaignQueries: string[] = [];
     const fetcher = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
@@ -722,6 +723,22 @@ describe("Google Ads all-account aggregation", () => {
     expect(result.sellerCampaignCostPerClick).toMatchObject({ kind: "ok", value: 3 });
     expect(result.sellerCampaignLeads).toMatchObject({ kind: "ok", value: 2 });
     expect(result.sellerCampaignCostPerLead).toMatchObject({ kind: "ok", value: 75 });
+  });
+
+  it("builds the seller window as month to date, never before launch day", () => {
+    const tz = "America/Los_Angeles";
+    // Launch month: the window opens on launch day, not the 1st.
+    expect(getSellerCampaignPeriod("2026-08-17", new Date("2026-08-24T19:00:00.000Z"), tz))
+      .toEqual({ startDate: "2026-08-17", endDate: "2026-08-24", timeZone: tz });
+    // A later month: plain month to date, the August spend no longer counts.
+    expect(getSellerCampaignPeriod("2026-08-17", new Date("2026-09-01T19:00:00.000Z"), tz))
+      .toEqual({ startDate: "2026-09-01", endDate: "2026-09-01", timeZone: tz });
+    expect(getSellerCampaignPeriod("2026-08-17", new Date("2026-09-15T19:00:00.000Z"), tz))
+      .toEqual({ startDate: "2026-09-01", endDate: "2026-09-15", timeZone: tz });
+    // Before launch: an empty window pinned to launch day (the sweep is skipped).
+    expect(getSellerCampaignPeriod("2026-08-17", new Date("2026-08-10T19:00:00.000Z"), tz))
+      .toEqual({ startDate: "2026-08-17", endDate: "2026-08-17", timeZone: tz });
+    expect(() => getSellerCampaignPeriod("2026-8-17", new Date(), tz)).toThrow();
   });
 
   it("keeps the all-account totals when only the seller campaign sweep fails", async () => {

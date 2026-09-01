@@ -4,7 +4,7 @@ import {
   readReportingTimeZone,
 } from "./config";
 import {
-  getFixedStartPeriod,
+  getSellerCampaignPeriod,
   getReportingPeriod,
   getRollingPeriod,
   getSearchConsoleThreeMonthPeriod,
@@ -127,7 +127,7 @@ export function mergeSnapshot(
     reportingPeriod.timeZone,
   ),
   sellerCampaignPeriod: DashboardSnapshot["sellerCampaignPeriod"] =
-    getFixedStartPeriod(
+    getSellerCampaignPeriod(
       CONFIG_DEFAULTS.googleAdsSellerCampaignLaunchDate,
       now,
       reportingPeriod.timeZone,
@@ -315,7 +315,7 @@ export async function synchronizeDashboard(
   const reportingPeriod = getReportingPeriod(now, timeZone);
   const rolling90DayPeriod = getRollingPeriod(now, timeZone, 90);
   const yearToDatePeriod = getYearToDatePeriod(now, timeZone);
-  const sellerCampaignPeriod = getFixedStartPeriod(
+  const sellerCampaignPeriod = getSellerCampaignPeriod(
     readGoogleAdsConfig(env).sellerCampaignLaunchDate,
     now,
     timeZone,

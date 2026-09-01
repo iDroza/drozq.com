@@ -37,7 +37,7 @@
     googleAdsLeadsYtd: { source: "Google Ads + Realtor MVIP", format: "conversion" },
     googleAdsCostPerLeadYtd: { source: "Google Ads + Realtor MVIP", format: "currency" },
     // The JT + AR "Sell | OC" search campaigns combined (one lander, two
-    // domains) since launch. Optional so a snapshot from a Worker that predates
+    // domains) month to date (clamped to launch day in the launch month). Optional so a snapshot from a Worker that predates
     // the block still renders everything else.
     sellerCampaignSpend: { source: "Google Ads", format: "currency", optional: true },
     sellerCampaignLeads: { source: "Google Ads", format: "conversion", optional: true },
@@ -374,7 +374,9 @@
 
     if (isPeriod(snapshot.sellerCampaignPeriod)) {
       sellerContexts.forEach(function (node) {
-        node.textContent = "Since " + shortDate(snapshot.sellerCampaignPeriod.startDate) + " \u00b7 JT + AR";
+        // Month to date, except in the launch month where the window opens on
+        // launch day rather than the 1st, which the card says out loud.
+        node.textContent = (/-01$/.test(snapshot.sellerCampaignPeriod.startDate) ? "Month to date" : "Since " + shortDate(snapshot.sellerCampaignPeriod.startDate)) + " \u00b7 JT + AR";
       });
     }
 

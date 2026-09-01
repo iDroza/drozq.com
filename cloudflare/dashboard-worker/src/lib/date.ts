@@ -255,6 +255,31 @@ export function getFixedStartPeriod(
   };
 }
 
+/**
+ * The seller-campaign window: month to date, clamped so it never starts
+ * before launch day. In the launch month the window runs launch -> today; in
+ * every later month it is the plain calendar month to date, matching the
+ * Google Ads MTD row above it.
+ */
+export function getSellerCampaignPeriod(
+  launchDate: string,
+  now: Date,
+  timeZone: string,
+): DashboardSnapshot["sellerCampaignPeriod"] {
+  if (!isIsoCalendarDate(launchDate)) {
+    throw new RangeError("invalid_fixed_start_date");
+  }
+  const end = calendarParts(now, timeZone);
+  const today = isoDate(end.year, end.month, end.day);
+  const monthStart = isoDate(end.year, end.month, 1);
+  const startDate = monthStart < launchDate ? launchDate : monthStart;
+  return {
+    startDate,
+    endDate: today < startDate ? startDate : today,
+    timeZone,
+  };
+}
+
 export function isIsoUtcTimestamp(value: unknown): value is string {
   if (
     typeof value !== "string" ||

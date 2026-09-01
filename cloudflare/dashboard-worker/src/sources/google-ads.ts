@@ -1,7 +1,7 @@
 import { readGoogleAdsConfig, type GoogleAdsConfig } from "../config";
 import { exchangeRefreshToken } from "../lib/google-auth";
 import { classifyHttpStatus, isRecord, readBoundedJson } from "../lib/http";
-import { getFixedStartPeriod } from "../lib/date";
+import { getSellerCampaignPeriod } from "../lib/date";
 import { requireNonnegativeNumber, requireSpend } from "../lib/numeric";
 import { fetchWithRetry, UpstreamRequestError } from "../lib/retry";
 import type {
@@ -768,7 +768,7 @@ export async function fetchGoogleAdsMetrics(
       now,
       dependencies,
     );
-    const sellerPeriod = sellerCampaignPeriod ?? getFixedStartPeriod(
+    const sellerPeriod = sellerCampaignPeriod ?? getSellerCampaignPeriod(
       config.sellerCampaignLaunchDate,
       now,
       yearToDatePeriod.timeZone,
