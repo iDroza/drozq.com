@@ -3,6 +3,7 @@ import { renderLeadAlert, escapeHtml, sendEmail, validEmail } from "../_lib/emai
 import { maskEmail, maskPhone, maskAddress } from "../_lib/redact.js";
 import { normalizeSubmissionId, rememberSubmission, pruneSubmissions } from "../_lib/idempotency.js";
 import { renderValuationReport, reportInputFromApiResponse } from "../_lib/valuation_email.js";
+import { pushLeadToFello, felloReady } from "../_lib/fello.js";
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -212,6 +213,19 @@ async function deliverLead(env, lead) {
     tasks.push(
       enrollSubscriber(env, lead.subscriberSeed).catch((e) => {
         console.error("LEAD_ENROLL_THREW " + ((e && e.message) || e) + " | " + safeLine);
+      })
+    );
+  }
+
+  // Fello (best effort, additive, not a delivery channel). Gated on
+  // FELLO_API_KEY so behavior is byte-identical until the key is set. Every
+  // real lead becomes (or tags) a Fello contact carrying the canonical tag
+  // vocabulary + the confirmed street address, so Fello's home-value dashboard
+  // and nurture take over the long tail. See functions/_lib/fello.js.
+  if (felloReady(env) && lead.felloSeed) {
+    tasks.push(
+      pushLeadToFello(env, lead.felloSeed).catch((e) => {
+        console.error("LEAD_FELLO_THREW " + ((e && e.message) || e) + " | " + safeLine);
       })
     );
   }
@@ -498,6 +512,22 @@ Consent: ${consent}
       page_url: pageUrl || sourcePage || null
     };
 
+    // Fello contact seed (pushed best-effort in deliverLead when FELLO_API_KEY
+    // is set). pushLeadToFello decides what to skip: newsletter sign-ups, the
+    // retired soft-save, and leads that originated in Fello (never loop).
+    const felloSeed = {
+      email,
+      name: safeName,
+      phone: phoneNorm.valid ? phoneNorm.e164 : "",
+      address: fullAddress || [streetAddress, [city, state, zip].filter(Boolean).join(", ")].filter(Boolean).join(", "),
+      intent: safeIntent,
+      timeline,
+      sourcePage: sourcePage || pageUrl,
+      gclid,
+      referralSource,
+      createdAt: new Date().toISOString()
+    };
+
     // Instant-report delivery: sell-side funnel leads with a real address get
     // their valuation report emailed the moment they submit ("both land in
     // your inbox"). /value/ leads are excluded here because /api/valuation
@@ -540,7 +570,7 @@ Consent: ${consent}
 
     // 10) Accept now, deliver after. The visitor's 200 does not depend on email
     // or Zapier succeeding, so a delivery outage can never break the funnel.
-    context.waitUntil(deliverLead(env, { emailContent, zapierPayload, fubEvent, logLine, safeLine, subscriberSeed, reportSeed }));
+    context.waitUntil(deliverLead(env, { emailContent, zapierPayload, fubEvent, logLine, safeLine, subscriberSeed, reportSeed, felloSeed }));
 
     return json({ ok: true }, 200);
   } catch (err) {

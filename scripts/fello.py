@@ -26,6 +26,10 @@ Usage (run from the repo root):
     python scripts/fello.py property add <contactId> "<address>"
     python scripts/fello.py property archive <propertyId>
     python scripts/fello.py verify <signature-header> < body.json   # HMAC check for a captured webhook
+    python scripts/fello.py calllist [--days 90] [--limit 100] [--fresh] [--csv]
+                                        # the ranked Fello engagement call list (hot first) via
+                                        # https://drozq.com/api/fello/engagement; needs the EMAIL_SECRET
+                                        # in scripts/.email_secret (or DROZQ_EMAIL_SECRET)
 
 Every command prints the JSON response plus the rate-limit headers Fello
 returns (X-RateLimit-Remaining-10 / -Day). Exit code 1 on any non-2xx.
@@ -157,6 +161,57 @@ class Fello:
         return hmac.compare_digest(digest, signature.strip())
 
 
+def load_admin_secret() -> str:
+    import os
+    s = os.environ.get("DROZQ_EMAIL_SECRET", "").strip()
+    if s:
+        return s
+    f = ROOT / "scripts" / ".email_secret"
+    if f.exists():
+        return f.read_text(encoding="utf-8").strip()
+    sys.exit("fello.py calllist: needs the EMAIL_SECRET in scripts/.email_secret or DROZQ_EMAIL_SECRET")
+
+
+def calllist(args) -> int:
+    """The ranked engagement list from /api/fello/engagement, printed as a table."""
+    url = f"{args.base.rstrip('/')}/api/fello/engagement?days={args.days}&limit={args.limit}" + ("&fresh=1" if args.fresh else "")
+    req = urllib.request.Request(url, headers={"Authorization": "Bearer " + load_admin_secret(), "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=120) as r:
+            data = json.loads(r.read())
+    except urllib.error.HTTPError as e:
+        print("HTTP", e.code, e.read().decode("utf-8", "replace")[:500])
+        return 1
+    if not data.get("ok"):
+        print(json.dumps(data, indent=2))
+        return 1
+    s = data["summary"]
+    print(f"Fello engagement ({'cached' if data.get('cached') else 'fresh'}, generated {data.get('generatedAt')}): "
+          f"{s['leadsChecked']} leads checked, {s['matched']} in Fello, {s['hot']} hot, {s['warm']} warm, avg score {s['avgLeadScore']}")
+    rows = data.get("leads", [])
+    if args.csv:
+        import csv
+        out = Path.home() / "Downloads" / f"fello-calllist-{data.get('generatedAt','')[:10]}.csv"
+        cols = ["hot", "warm", "leadScore", "name", "email", "phone", "lastClickAt", "lastActivityAt", "dashboardClicks", "emailClicks", "dashboardViews", "signals", "properties", "intent", "city", "createdAt", "crmFields"]
+        with out.open("w", newline="", encoding="utf-8") as fh:
+            w = csv.writer(fh)
+            w.writerow(cols)
+            for l in rows:
+                w.writerow([l.get("hot"), l.get("warm"), l.get("leadScore"), l.get("name"), l.get("email"), l.get("phone"),
+                            l.get("lastClickAt"), l.get("lastActivityAt"), l.get("dashboardClicks"), l.get("emailClicks"), l.get("dashboardViews"),
+                            "; ".join(l.get("signals") or []), "; ".join(l.get("properties") or []), l.get("intent"), l.get("city"), l.get("createdAt"),
+                            json.dumps((l.get("crm") or {}).get("fields") or {})])
+        print("CSV:", out)
+    print(f"{'':2} {'score':>5} {'name':24} {'email':30} {'phone':15} {'last click':20} {'signals / values'}")
+    for l in rows:
+        flag = "HOT" if l.get("hot") else ("warm" if l.get("warm") else ("" if l.get("matched") else "n/a"))
+        vals = dict((l.get("crm") or {}).get("fields") or {})
+        extra = "; ".join((l.get("signals") or []) + [f"{k}={v}" for k, v in vals.items()])
+        print(f"{flag:4} {str(l.get('leadScore') if l.get('leadScore') is not None else '-'):>5} {str(l.get('name') or '')[:24]:24} {str(l.get('email'))[:30]:30} "
+              f"{str(l.get('phone') or '')[:15]:15} {str(l.get('lastClickAt') or '')[:20]:20} {extra[:80]}")
+    return 0
+
+
 def report(status: int, payload, hdrs: dict) -> int:
     print(f"HTTP {status}")
     if payload is not None:
@@ -242,7 +297,16 @@ def main(argv: list[str] | None = None) -> int:
     v = sub.add_parser("verify", help="verify a webhook signature against a body on stdin")
     v.add_argument("signature", help="value of the fello-webhook-signature header")
 
+    cl = sub.add_parser("calllist", help="ranked Fello engagement call list (hot first)")
+    cl.add_argument("--days", type=int, default=90)
+    cl.add_argument("--limit", type=int, default=100)
+    cl.add_argument("--fresh", action="store_true", help="bypass the 8-minute server cache")
+    cl.add_argument("--csv", action="store_true", help="write the list to Downloads as CSV")
+    cl.add_argument("--base", default="https://drozq.com")
+
     args = p.parse_args(argv)
+    if args.cmd == "calllist":
+        return calllist(args)
     api = Fello(load_secret())
 
     if args.cmd == "probe":

@@ -6,7 +6,8 @@ export type MetricSource =
   | "combined"
   | "google_search_console"
   | "google_sheets"
-  | "active_realty_repository";
+  | "active_realty_repository"
+  | "fello";
 
 export interface DashboardMetric {
   value: number | null;
@@ -54,6 +55,9 @@ export interface DashboardSnapshot {
     teamActiveAgentsYtd: DashboardMetric;
     shellPagesRemaining: DashboardMetric;
     setsRemaining: DashboardMetric;
+    felloHotLeads7d: DashboardMetric;
+    felloLeadsScored: DashboardMetric;
+    felloAvgLeadScore: DashboardMetric;
   };
   reportingPeriod: {
     startDate: string;
@@ -151,6 +155,12 @@ export interface FollowUpBossTeamMetricResults {
   personalCommissionYtd: MetricFetchResult;
 }
 
+export interface FelloMetricResults {
+  felloHotLeads7d: MetricFetchResult;
+  felloLeadsScored: MetricFetchResult;
+  felloAvgLeadScore: MetricFetchResult;
+}
+
 export interface FollowUpBossMetricResults {
   callsToday: MetricFetchResult;
   textsToday: MetricFetchResult;
@@ -169,6 +179,7 @@ export interface RuntimeDependencies {
 
 export interface SecretBindings {
   ADMIN_SYNC_TOKEN?: string;
+  DROZQ_EMAIL_SECRET?: string;
   ACTIVE_REALTY_PROGRESS_TOKEN?: string;
   FUB_API_KEY?: string;
   FUB_TEAM_API_KEY?: string;

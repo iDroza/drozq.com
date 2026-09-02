@@ -325,7 +325,7 @@ LIMITS = """
     <div class="fl-head"><h2 id="fello-lim-title">The limitations, stated flat.</h2><p>What these keys cannot do, so nothing gets designed around a door that is not there.</p></div>
     <ol class="fl-list">
       <li><strong>No list, search, filter, or export.</strong> Reads are one contact at a time by email or id. "Pull my whole Fello database" is not an API job; use the in-app export or the Follow Up Boss sync.</li>
-      <li><strong>No home value, equity, mortgage, or property facts.</strong> The AVM, the equity estimate, the likely-to-sell signal, and the enriched home facts never leave Fello through this API. Properties come back as a parsed address only.</li>
+      <li><strong>No home value, equity, mortgage, or property facts through the API.</strong> The AVM, the equity estimate, the likely-to-sell signal, and the enriched home facts never leave Fello through these twelve endpoints. Properties come back as a parsed address only. The way out is the native Follow Up Boss sync, mapped to custom fields, read back through FUB (see below).</li>
       <li><strong>No outbound actions.</strong> Nothing sends an email, a postcard, or a Felix call, and nothing starts a workflow directly. Tags are the only handle into Fello's automations.</li>
       <li><strong>No notes, no timeline writes, no lead-score writes.</strong> The lead score is read-only and the CRM fields are a fixed five-field link, not custom fields.</li>
       <li><strong>No sandbox.</strong> A dev host is listed in the docs but no test account exists, so every call hits the live account. Duplicate email returns 400 and creates nothing; a changed email creates a second person.</li>
@@ -342,27 +342,55 @@ LIMITS = """
 BUILD = """
 <section id="build" aria-labelledby="fello-build-title" class="bg_#fff py_48px md:py_64px">
   <div class="fl-wrap">
-    <div class="fl-head"><h2 id="fello-build-title">What gets built with it.</h2><p>In priority order. The native Follow Up Boss sync already carries contacts both ways; this is what the API adds on top.</p></div>
+    <div class="fl-head"><h2 id="fello-build-title">Wired, as of September 2, 2026.</h2><p>All four steps are live on the site. The native Follow Up Boss sync carries the dollar figures; this is everything the API adds on top.</p></div>
     <div class="fl-grid fl-grid--2">
       <div class="fl-card fl-card--warm">
-        <p class="fl-eyebrow">01</p>
+        <p class="fl-eyebrow">01 &middot; Live</p>
         <h3>Every drozq lead into Fello, the moment it lands</h3>
-        <p>One more best-effort channel in the lead handler, gated on a FELLO_API_KEY env var exactly like Follow Up Boss: email, name, phone, the confirmed street address, tags for the funnel mode and timeline, and CRM link fields pointing at the FUB record. From there Fello's home-value dashboard and monthly nurture own the long tail.</p>
+        <p>The lead handler pushes each real lead (funnel, valuation, net sheet, One Tap) as a Fello contact: name, E.164 phone, the confirmed street address, CRM link fields, and the tag vocabulary. A repeat email gets its tags appended and the address attached instead of a duplicate. Newsletter sign-ups never go.</p>
       </div>
       <div class="fl-card fl-card--warm">
-        <p class="fl-eyebrow">02</p>
-        <h3>A webhook receiver at /api/fello/webhook</h3>
-        <p>Signature-verified with the client secret, 2xx in under 5 seconds, the work behind waitUntil. Form submissions become drozq leads (alert, FUB event, drip). Dashboard clicks, email clicks, postcard scans, and Felix handoffs page Joshua and tag the person hot. Unsubscribes pause the drozq drip. Enrichment and detail changes refresh Follow Up Boss.</p>
+        <p class="fl-eyebrow">02 &middot; Live</p>
+        <h3>The webhook receiver at /api/fello/webhook</h3>
+        <p>Signature-verified, 200 in milliseconds, work behind the response. Fello form submissions become drozq leads (alert, Follow Up Boss event, drip). Dashboard clicks, email clicks, postcard scans, and Felix handoffs send a hot alert with score, phone, and property, and tag the FUB person. Unsubscribes pause the drozq drip. Enrichment, detail changes, and tags refresh the FUB person quietly.</p>
       </div>
       <div class="fl-card fl-card--warm">
-        <p class="fl-eyebrow">03</p>
+        <p class="fl-eyebrow">03 &middot; Live</p>
         <h3>One tag vocabulary</h3>
-        <p>Mode, timeline, page of origin, campaign. Decided once, applied by the lead handler on every push, because tags are the only lever the API gives into Fello's segments and workflows.</p>
+        <p>Drozq Website, then Seller or Buyer, then the mode (Sell, Buy, Sell + Buy, Valuation, Net Sheet, One Tap), the timeline bucket (Now, 1-3 mo, 4+ mo, Curious), the page of origin, and Paid: Google when a click id is present. Applied on every push, so Fello segments and workflows key off the same words.</p>
       </div>
       <div class="fl-card fl-card--warm">
-        <p class="fl-eyebrow">04</p>
-        <h3>Lead score on the operating dashboard</h3>
-        <p>The dashboard already knows every lead by email. One read each, well inside the limits, ranks the call list by Fello engagement: dashboard clicks and email clicks first, then score.</p>
+        <p class="fl-eyebrow">04 &middot; Live</p>
+        <h3>Engagement on the operating dashboard</h3>
+        <p>The newest hundred leads are swept through Fello every ten minutes and ranked hot first: a dashboard or email click inside seven days, then views, then lead score. Three numbers on the dashboard, the named call list in the CLI, and the Fello home value and equity attached per lead the moment the Follow Up Boss field mapping is on.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="values" aria-labelledby="fello-values-title" class="bg-c_#f2f0ef py_48px md:py_64px">
+  <div class="fl-wrap">
+    <div class="fl-head"><h2 id="fello-values-title">Where the home values actually come out.</h2><p>Fello holds the AVM, estimated equity, mortgage balance, rate, and refinance savings per property. They leave through these doors and no others.</p></div>
+    <div class="fl-grid fl-grid--2">
+      <div class="fl-card">
+        <p class="fl-eyebrow">The sanctioned path</p>
+        <h3>Fello to Follow Up Boss, then the FUB API</h3>
+        <p>Connect Follow Up Boss inside Fello with the personal FUB owner key. In Field Mapping, map Home Value, Estimated Equity, Mortgage Balance, Lead Score, and Intent to new FUB custom fields. From that moment the engagement endpoint reads those fields per lead and the call list prints them. Enable the Fello embedded app in FUB and every contact record shows the AVM, price history, ownership, owner match, and equity on a card.</p>
+      </div>
+      <div class="fl-card">
+        <p class="fl-eyebrow">What the events carry</p>
+        <h3>The visitor's own answers, not the AVM</h3>
+        <p>A form submission arrives with everything the homeowner typed: beds, baths, square feet, year built, conditions, remodels, HOA, pool, sale timeline, buying with selling, remarks, and what they think the home is worth. The receiver forwards all of it into the lead record.</p>
+      </div>
+      <div class="fl-card">
+        <p class="fl-eyebrow">The signal leak</p>
+        <h3>Fello's auto tags</h3>
+        <p>Within a minute of creating a contact, Fello tagged the test record FELLO TARGET HOMEOWNER ORANGE and FELLO HIGH OWNER MATCH. High equity is in the same family. These ride the contact read and the tags webhook, and the call list shows them as signals.</p>
+      </div>
+      <div class="fl-card">
+        <p class="fl-eyebrow">The counterweight</p>
+        <h3>The site already values any address</h3>
+        <p>The instant valuation and the net sheet compute their own numbers for every address a lead gives. Fello's job is the nurture behind the number: the living dashboard, the monthly email, the postcards, Felix.</p>
       </div>
     </div>
   </div>
@@ -372,7 +400,7 @@ BUILD = """
 CLI = """
 <section id="cli" aria-labelledby="fello-cli-title" class="fl-dark py_48px md:py_64px">
   <div class="fl-wrap">
-    <div class="fl-head"><h2 id="fello-cli-title">The keys are already usable.</h2><p>scripts/fello.py reads the gitignored secret file and wraps all twelve endpoints plus the webhook signature check.</p></div>
+    <div class="fl-head"><h2 id="fello-cli-title">The keys are already usable.</h2><p>scripts/fello.py reads the gitignored secret file and wraps all twelve endpoints, the webhook signature check, and the ranked call list.</p></div>
     <div class="fl-code"><pre><span class="c"># key check + live rate-limit budget</span>
 python scripts/fello.py probe
 
@@ -390,7 +418,10 @@ python scripts/fello.py tags add &lt;contactId&gt; "HOT LEAD"
 python scripts/fello.py property add &lt;contactId&gt; "2 Main St, Irvine, CA 92614"
 
 <span class="c"># verify a captured webhook (body on stdin)</span>
-python scripts/fello.py verify "&lt;fello-webhook-signature&gt;" &lt; body.json</pre></div>
+python scripts/fello.py verify "&lt;fello-webhook-signature&gt;" &lt; body.json
+
+<span class="c"># the ranked engagement call list (hot first), values attached once FUB is mapped</span>
+python scripts/fello.py calllist --csv</pre></div>
   </div>
 </section>
 """

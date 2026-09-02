@@ -21,6 +21,7 @@ import {
 import { fetchFollowUpBossMetrics } from "./sources/follow-up-boss";
 import { fetchFollowUpBossTeamMetrics } from "./sources/follow-up-boss-team";
 import { fetchActiveRealtyProgressMetrics } from "./sources/active-realty-progress";
+import { fetchFelloMetrics } from "./sources/fello";
 import { fetchGoogleAdsMetrics } from "./sources/google-ads";
 import { fetchGoogleSearchConsoleMetrics } from "./sources/google-search-console";
 import type {
@@ -29,6 +30,7 @@ import type {
   DashboardMetric,
   DashboardMetricKey,
   DashboardSnapshot,
+  FelloMetricResults,
   FollowUpBossMetricResults,
   FollowUpBossTeamMetricResults,
   GoogleAdsMetricResults,
@@ -299,6 +301,14 @@ function searchConsoleFailure(): GoogleSearchConsoleMetricResults {
   };
 }
 
+function felloFailure(): FelloMetricResults {
+  return {
+    felloHotLeads7d: unexpectedResult(),
+    felloLeadsScored: unexpectedResult(),
+    felloAvgLeadScore: unexpectedResult(),
+  };
+}
+
 function activeRealtyProgressFailure(): ActiveRealtyProgressMetricResults {
   return {
     shellPagesRemaining: unexpectedResult(),
@@ -322,7 +332,7 @@ export async function synchronizeDashboard(
   );
   const previous = await loadPreviousSnapshot(env);
 
-  const [fubSettled, adsSettled, searchSettled, teamSettled, progressSettled] =
+  const [fubSettled, adsSettled, searchSettled, teamSettled, progressSettled, felloSettled] =
     await Promise.allSettled([
       fetchFollowUpBossMetrics(env, timeZone, { ...dependencies, now }),
       fetchGoogleAdsMetrics(
@@ -342,6 +352,7 @@ export async function synchronizeDashboard(
         { ...dependencies, now },
       ),
       fetchActiveRealtyProgressMetrics(env),
+      fetchFelloMetrics(env, { ...dependencies, now }),
     ]);
   const fub = fubSettled.status === "fulfilled" ? fubSettled.value : fubFailure();
   const ads = adsSettled.status === "fulfilled" ? adsSettled.value : adsFailure();
@@ -357,6 +368,9 @@ export async function synchronizeDashboard(
   const progress = progressSettled.status === "fulfilled"
     ? progressSettled.value
     : activeRealtyProgressFailure();
+  const fello = felloSettled.status === "fulfilled"
+    ? felloSettled.value
+    : felloFailure();
   const results: MetricResultMap = {
     ...fub,
     ...ads,
@@ -367,6 +381,7 @@ export async function synchronizeDashboard(
     ...search,
     ...team,
     ...progress,
+    ...fello,
   };
 
   logMetricResults(results);

@@ -62,6 +62,7 @@ import {
   type ActiveRealtyProgressRecord,
 } from "../src/sources/active-realty-progress";
 import { handleRequest } from "../src/index";
+import { fetchFelloMetrics, parseFelloEngagement } from "../src/sources/fello";
 import {
   deriveTeamCommissionRoas,
   mergeSnapshot,
@@ -144,6 +145,9 @@ function allSuccessfulResults(): MetricResultMap {
     teamActiveAgentsYtd: successful(2),
     shellPagesRemaining: successful(1191),
     setsRemaining: successful(120),
+    felloHotLeads7d: successful(4),
+    felloLeadsScored: successful(38),
+    felloAvgLeadScore: successful(61.5),
   };
 }
 
@@ -1622,6 +1626,60 @@ describe("Active Realty shell-progress receiver", () => {
   });
 });
 
+describe("Fello engagement readback", () => {
+  it("parses the engagement summary and bounds the score", () => {
+    expect(parseFelloEngagement({ ok: true, summary: { hot: 3, matched: 20, avgLeadScore: 57.5 } }))
+      .toEqual({ hot: 3, matched: 20, avgLeadScore: 57.5 });
+    expect(parseFelloEngagement({ ok: true, summary: { hot: 0, matched: 0, avgLeadScore: null } }))
+      .toEqual({ hot: 0, matched: 0, avgLeadScore: null });
+    expect(() => parseFelloEngagement({ ok: false })).toThrow();
+    expect(() => parseFelloEngagement({ ok: true, summary: { hot: 5, matched: 2, avgLeadScore: 10 } })).toThrow();
+    expect(() => parseFelloEngagement({ ok: true, summary: { hot: 1, matched: 2, avgLeadScore: 140 } })).toThrow();
+    expect(() => parseFelloEngagement({ ok: true, summary: { hot: -1, matched: 2, avgLeadScore: 1 } })).toThrow();
+  });
+
+  it("is unconfigured without the admin secret and never touches the network", async () => {
+    let calls = 0;
+    const result = await fetchFelloMetrics(withSecrets({}), {
+      fetcher: async () => { calls += 1; return jsonResponse({}); },
+      sleep: noDelay,
+    });
+    expect(calls).toBe(0);
+    expect(result.felloHotLeads7d.kind).toBe("unconfigured");
+    expect(result.felloAvgLeadScore.kind).toBe("unconfigured");
+  });
+
+  it("reads the three numbers through the site endpoint with the bearer secret", async () => {
+    const seen: string[] = [];
+    const result = await fetchFelloMetrics(withSecrets({ DROZQ_EMAIL_SECRET: "s3cret" }), {
+      fetcher: async (input, init) => {
+        seen.push(String(input));
+        expect(new Headers(init?.headers).get("Authorization")).toBe("Bearer s3cret");
+        return jsonResponse({ ok: true, summary: { hot: 2, matched: 31, avgLeadScore: 48.2 } });
+      },
+      sleep: noDelay,
+    });
+    expect(seen).toEqual(["https://drozq.com/api/fello/engagement?days=90&limit=100"]);
+    expect(result.felloHotLeads7d).toMatchObject({ kind: "ok", value: 2 });
+    expect(result.felloLeadsScored).toMatchObject({ kind: "ok", value: 31 });
+    expect(result.felloAvgLeadScore).toMatchObject({ kind: "ok", value: 48.2 });
+  });
+
+  it("reports no_data for the average when nothing is scored and classifies auth failures", async () => {
+    const empty = await fetchFelloMetrics(withSecrets({ DROZQ_EMAIL_SECRET: "s" }), {
+      fetcher: async () => jsonResponse({ ok: true, summary: { hot: 0, matched: 0, avgLeadScore: null } }),
+      sleep: noDelay,
+    });
+    expect(empty.felloLeadsScored).toMatchObject({ kind: "ok", value: 0 });
+    expect(empty.felloAvgLeadScore).toMatchObject({ kind: "error", category: "no_data" });
+    const denied = await fetchFelloMetrics(withSecrets({ DROZQ_EMAIL_SECRET: "wrong" }), {
+      fetcher: async () => jsonResponse({ ok: false, error: "unauthorized" }, 401),
+      sleep: noDelay,
+    });
+    expect(denied.felloHotLeads7d).toMatchObject({ kind: "error", category: "authentication" });
+  });
+});
+
 describe("snapshot merging and public contract", () => {
   it("preserves a previous valid value after a partial failure", () => {
     const previousTime = new Date("2026-08-14T18:00:00.000Z");
@@ -1928,7 +1986,7 @@ describe("snapshot merging and public contract", () => {
     const snapshot = createUnconfiguredSnapshot(NOW, "America/Los_Angeles");
     expect(sanitizeSnapshot(snapshot)).not.toBeNull();
     expect(snapshot.metrics.googleAdsSpendMtd.value).toBeNull();
-    expect(Object.keys(snapshot.metrics)).toHaveLength(35);
+    expect(Object.keys(snapshot.metrics)).toHaveLength(38);
   });
 
   it("serves only a cached sanitized summary with hardened headers", async () => {
@@ -1946,7 +2004,7 @@ describe("snapshot merging and public contract", () => {
     );
     expect(response.headers.has("Access-Control-Allow-Origin")).toBe(false);
     expect(payload.version).toBe(2);
-    expect(Object.keys(payload.metrics)).toHaveLength(35);
+    expect(Object.keys(payload.metrics)).toHaveLength(38);
   });
 
   it("serves the same sanitized snapshot through the browser bootstrap", async () => {
@@ -1982,7 +2040,7 @@ describe("snapshot merging and public contract", () => {
     expect(source).not.toContain("must-not-ship");
     const payload = JSON.parse(source.slice(prefix.length, -1)) as DashboardSnapshot;
     expect(sanitizeSnapshot(payload)).not.toBeNull();
-    expect(Object.keys(payload.metrics)).toHaveLength(35);
+    expect(Object.keys(payload.metrics)).toHaveLength(38);
   });
 
   it("serves an explicit company-safe metric allowlist for Active Realty", async () => {

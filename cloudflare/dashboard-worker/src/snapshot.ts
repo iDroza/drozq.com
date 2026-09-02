@@ -67,6 +67,9 @@ export const METRIC_KEYS = [
   "teamActiveAgentsYtd",
   "shellPagesRemaining",
   "setsRemaining",
+  "felloHotLeads7d",
+  "felloLeadsScored",
+  "felloAvgLeadScore",
 ] as const satisfies readonly DashboardMetricKey[];
 
 export const METRIC_SPECS = {
@@ -245,6 +248,21 @@ export const METRIC_SPECS = {
     definition: "Active Realty work sets remaining in the latest repository publication.",
     staleAfterMs: ACTIVE_REALTY_STALE_MS,
   },
+  felloHotLeads7d: {
+    source: "fello",
+    definition: "drozq.com leads from the last 90 days whose Fello contact clicked a home-value dashboard or email call to action inside the last seven days.",
+    staleAfterMs: FAST_STALE_MS,
+  },
+  felloLeadsScored: {
+    source: "fello",
+    definition: "drozq.com leads from the last 90 days (newest 100) that Fello knows and scores.",
+    staleAfterMs: FAST_STALE_MS,
+  },
+  felloAvgLeadScore: {
+    source: "fello",
+    definition: "Average Fello lead score (0 to 100) across the scored drozq.com leads.",
+    staleAfterMs: FAST_STALE_MS,
+  },
 } as const satisfies Record<DashboardMetricKey, MetricSpec>;
 
 const INTEGER_METRICS = new Set<DashboardMetricKey>([
@@ -264,6 +282,8 @@ const INTEGER_METRICS = new Set<DashboardMetricKey>([
   "teamActiveAgentsYtd",
   "shellPagesRemaining",
   "setsRemaining",
+  "felloHotLeads7d",
+  "felloLeadsScored",
 ]);
 
 const CURRENCY_METRICS = new Set<DashboardMetricKey>([
