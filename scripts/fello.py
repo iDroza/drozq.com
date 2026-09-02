@@ -96,7 +96,7 @@ class Fello:
         if query:
             url += "?" + urllib.parse.urlencode({k: v for k, v in query.items() if v is not None})
         data = None
-        headers = {"x-api-key": self.key, "Accept": "application/json"}
+        headers = {"x-api-key": self.key, "Accept": "application/json", "User-Agent": "drozq-fello-cli/1.0"}
         if body is not None:
             data = json.dumps(body).encode("utf-8")
             headers["Content-Type"] = "application/json"
@@ -175,7 +175,8 @@ def load_admin_secret() -> str:
 def calllist(args) -> int:
     """The ranked engagement list from /api/fello/engagement, printed as a table."""
     url = f"{args.base.rstrip('/')}/api/fello/engagement?days={args.days}&limit={args.limit}" + ("&fresh=1" if args.fresh else "")
-    req = urllib.request.Request(url, headers={"Authorization": "Bearer " + load_admin_secret(), "Accept": "application/json"})
+    # The zone blocks python-urllib's default browser signature (Cloudflare 1010); name the client like emailer.py does.
+    req = urllib.request.Request(url, headers={"Authorization": "Bearer " + load_admin_secret(), "Accept": "application/json", "User-Agent": "drozq-fello-cli/1.0"})
     try:
         with urllib.request.urlopen(req, timeout=120) as r:
             data = json.loads(r.read())
