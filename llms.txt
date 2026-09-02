@@ -26,6 +26,7 @@
 ## Buy-side resources
 
 - [For buyers](https://drozq.com/buyers/): the closing-cost estimator fed by today's live 30-year rate, payment-first budgeting, and how a search runs.
+- [Homes for sale](https://drozq.com/homes/): every Orange County and Los Angeles listing live from the CRMLS feed (map, filters, photos, price history), with a showing within 24 hours of asking.
 
 ## Proof
 

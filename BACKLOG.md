@@ -22,7 +22,7 @@ These move the needle the most. They are concentrated on `/index.html`.
 
 - **Headshot above the fold.** Joshua's `Waist.png` is referenced in JSON-LD schema but does not appear in the visible body. Add a hero block or aside that puts a face on the page.
 - **"About Joshua" callout.** Short bio block somewhere on the homepage. Year started (2024), brokerage (Real Brokerage), DRE, one-line philosophy. Builds trust + EAT signal.
-- **IDX home search (the Buy tab's "See Homes" currently opens a form, not homes).** Plan + paperwork map in `notes/idx/idx-access-plan.md` (2026-09-02). Step 1 is free and same-day: a Matrix IDX frame on a new `/homes/` page. Step 2 is the Trestle RESO feed (about $100/mo) with Real's broker approval, then a native `/homes/` search + indexable listing pages on the template.
+- **IDX home search (the Buy tab's "See Homes" currently opens a form, not homes).** Plan + paperwork map in `notes/idx/idx-access-plan.md` (2026-09-02). Step 1 SHIPPED 2026-09-02: `/homes/` carries the Matrix IDX frame (`scripts/build_homes.py`). Step 2 is the Trestle RESO feed (about $100/mo) with Real's broker approval, then a native `/homes/` search + indexable listing pages on the template.
 - **Service-area body section.** Visible content section naming Irvine + Orange County neighborhoods (Turtle Rock, Woodbridge, Northwood, Crystal Cove, etc.). Currently only in JSON-LD `areaServed`. Helps local SEO + visitor confidence.
 ---
 
