@@ -66,9 +66,10 @@
     "short-sale/index.html",
     "net-sheet/index.html",
     "testimonials/003-riverside-first-home/index.html",
-    "homes/index.html"
+    "homes/index.html",
+    "fello/index.html"
   ],
-  "lastSync": "2026-09-02T19:17:34Z",
+  "lastSync": "2026-09-02T21:31:43Z",
   "notes": "Every registered page must contain every marker pair listed in `blocks` (funnel html + js, header_js in <head>, the <header>, the <footer>, and the mobile-nav/More-popup script), and appear in `pages` as a path relative to the repo root. Run `python scripts/sync_funnels.py` to propagate every block from index.html to every registered page; `--check` reports drift. Source of truth is `source`; never hand-edit a synced block on any other page. The per-page <style id=\"drozq-page-chrome\"> block (header Variant A/B) is deliberately NOT synced. Markers were installed 2026-08-26 by scripts/wrap_chrome_markers.py.",
   "pageSync": {
     "privacy/index.html": "2026-08-26T22:45:39Z",

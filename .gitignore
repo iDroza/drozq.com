@@ -62,3 +62,6 @@ cloudflare/dashboard-worker/worker-configuration.d.ts
 .dev.vars
 .dev.vars.*
 !.dev.vars.example
+
+# Fello Custom App credentials (API key + webhook HMAC client secret) - NEVER commit
+scripts/.fello_secret

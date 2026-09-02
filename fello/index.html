@@ -1,0 +1,2762 @@
+<!DOCTYPE html>
+<html lang="en-US"><head><meta charset="utf-8"><!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KVV3R96P');</script><!-- End Google Tag Manager --><!-- begin Widget Tracker Code --><script>(function(w,i,d,g,e,t){w["WidgetTrackerObject"]=g;(w[g]=w[g]||function(){(w[g].q=w[g].q||[]).push(arguments);}),(w[g].ds=1*new Date());(e="script"),(t=d.createElement(e)),(e=d.getElementsByTagName(e)[0]);t.async=1;t.src=i;e.parentNode.insertBefore(t,e);})(window,"https://widgetbe.com/agent",document,"widgetTracker");window.widgetTracker("create", "WT-AETGAYMU");window.widgetTracker("send", "pageview");</script><!-- end Widget Tracker Code --><title>Fello API capabilities | drozq.com internal</title><meta name="description" content="Internal reference: every record the Fello API can read or write, every webhook it pushes, the rate limits, and what gets built on drozq.com with it."><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#d92228"><!-- Replace content value with verification token from Google Search Console --><link rel="canonical" href="https://drozq.com/fello/"><meta name="robots" content="noindex,follow"><meta property="og:url" content="https://drozq.com/fello/"><meta property="og:title" content="Fello API capabilities"><meta property="og:description" content="Internal reference: every record the Fello API can read or write, every webhook it pushes, the rate limits, and what gets built on drozq.com with it."><meta property="og:image" content="https://drozq.com/preview.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:site_name" content="Drozq"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Fello API capabilities"><meta name="twitter:description" content="Internal reference: every record the Fello API can read or write, every webhook it pushes, the rate limits, and what gets built on drozq.com with it."><meta name="twitter:image" content="https://drozq.com/preview.png"><link rel="preload" as="font" type="font/woff2" crossorigin href="/media/fonts/galano-grotesque-alt-regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="/media/fonts/galano-grotesque-alt-bold.woff2"><link rel="icon" type="image/png" href="/favicon-96x96.png?v=20260506" sizes="96x96"><link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260506"><link rel="shortcut icon" href="/favicon.ico?v=20260506"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260506"><meta name="apple-mobile-web-app-title" content="Drozq"><link rel="manifest" href="/site.webmanifest?v=20260506"><link rel="stylesheet" href="/media/css/panda.css?v=bd57b8071f"><script type="application/ld+json">{"@context":"https://schema.org","@type":"RealEstateAgent","name":"Joshua Guerrero","alternateName":"Drozq","image":"https://drozq.com/media/images/joshua-navy-suit.webp","url":"https://drozq.com/","telephone":"+1-949-438-5948","email":"josh@drozq.com","address":{"@type":"PostalAddress","streetAddress":"17875 Von Karman Ave, Suite 150","addressLocality":"Irvine","addressRegion":"CA","postalCode":"92614","addressCountry":"US"},"areaServed":[{"@type":"City","name":"Irvine","@id":"https://www.wikidata.org/wiki/Q5074"},{"@type":"Place","name":"Turtle Rock, Irvine"},{"@type":"Place","name":"Woodbridge, Irvine"},{"@type":"Place","name":"Northwood, Irvine"},{"@type":"Place","name":"Quail Hill, Irvine"},{"@type":"Place","name":"Shady Canyon, Irvine"},{"@type":"Place","name":"University Park, Irvine"},{"@type":"City","name":"Newport Beach"},{"@type":"City","name":"Tustin"},{"@type":"City","name":"Costa Mesa"},{"@type":"City","name":"Long Beach"},{"@type":"City","name":"Corona"},{"@type":"AdministrativeArea","name":"Orange County, California"},{"@type":"AdministrativeArea","name":"Southern California"}],"priceRange":"$$$","description":"Solo Irvine listing agent specializing in seller representation across Southern California. Licensed CA REALTOR® at Real Brokerage Technologies.","hasCredential":{"@type":"EducationalOccupationalCredential","credentialCategory":"license","recognizedBy":{"@type":"Organization","name":"California Department of Real Estate"},"identifier":"DRE# 02267255"},"memberOf":{"@type":"Organization","name":"Real Brokerage Technologies"},"sameAs":["https://www.zillow.com/profile/ImJoshua","https://www.facebook.com/Drozq","https://www.instagram.com/drozq","https://www.youtube.com/@drozq","https://www.linkedin.com/in/guerrero-joshua/"],"@id":"https://drozq.com/#realestateagent","geo":{"@type":"GeoCoordinates","latitude":33.6846,"longitude":-117.8265},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"08:00","closes":"20:00"}],"knowsAbout":["Residential real estate sales","Home valuation","Listing agent services","Irvine California real estate market","Orange County real estate","First-time home sellers","Home pricing strategy","Real estate negotiation"]}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","@id":"https://drozq.com/#localbusiness","name":"Drozq - Joshua Guerrero, Irvine Listing Agent","image":"https://drozq.com/media/images/joshua-navy-suit.webp","url":"https://drozq.com/","telephone":"+1-949-438-5948","email":"josh@drozq.com","priceRange":"$$$","address":{"@type":"PostalAddress","streetAddress":"17875 Von Karman Ave, Suite 150","addressLocality":"Irvine","addressRegion":"CA","postalCode":"92614","addressCountry":"US"},"geo":{"@type":"GeoCoordinates","latitude":33.6846,"longitude":-117.8265},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"08:00","closes":"20:00"}],"areaServed":{"@type":"City","name":"Irvine"},"sameAs":["https://www.zillow.com/profile/ImJoshua","https://www.facebook.com/Drozq","https://www.instagram.com/drozq","https://www.youtube.com/@drozq","https://www.linkedin.com/in/guerrero-joshua/"]}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","@id":"https://drozq.com/#website","url":"https://drozq.com/","name":"Drozq - Joshua Guerrero, Irvine REALTOR®","description":"Irvine listing agent specializing in seller representation across Orange County","publisher":{"@id":"https://drozq.com/#localbusiness"},"inLanguage":"en-US"}</script><!-- DROZQ_HEADER_JS_BEGIN --><script>(function(){try{var r=localStorage.getItem('drozq_header_revealed')==='1';if(!r)document.documentElement.setAttribute('data-drozq-header-hidden','1');}catch(e){}})();</script><!-- DROZQ_HEADER_JS_END --><style>@font-face{font-family:GalanoGrotesque;font-weight:700;src:url("/media/fonts/galano-grotesque-alt-bold.woff2") format("woff2"),url("/media/fonts/galano-grotesque-alt-bold.woff") format("woff");font-display:swap}:root,html{--global-font-body:GalanoGrotesque,"Helvetica Neue",Helvetica,Arial,sans-serif;--fonts-sans:GalanoGrotesque,"Helvetica Neue",Helvetica,Arial,sans-serif}</style>
+<style id="drozq-page-chrome">@layer base{#__next>header{position:fixed !important;top:0;left:0;right:0}}#__next>header{box-shadow:0 1px 5px rgba(0,0,0,.11)}body{padding-top:48px}@media(min-width:768px){body{padding-top:64px}}section[aria-labelledby=fello-hero-title]{background:#f2f0ef;padding-top:56px;padding-bottom:40px}@media(min-width:768px){section[aria-labelledby=fello-hero-title]{padding-top:84px;padding-bottom:56px}}[id]{scroll-margin-top:80px}.fl-wrap{max-width:1035px;margin:0 auto;padding:0 32px;box-sizing:border-box}@media(min-width:1024px){.fl-wrap{padding:0 16px}}.fl-head{max-width:720px;margin:0 auto 28px;text-align:center}.fl-head h2{font-weight:800;opacity:.87;color:#2b2b2b;font-size:26px;line-height:34px;letter-spacing:.3px;margin:0 0 10px}.fl-head p{color:#3f4650;font-size:16px;line-height:26px;margin:0}@media(min-width:768px){.fl-head h2{font-size:32px;line-height:40px}}.fl-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:1035px;margin:0 auto}.fl-stat{background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:20px 16px;text-align:center}.fl-stat b{display:block;color:#1a1816;font-size:28px;line-height:32px;font-weight:800;letter-spacing:.3px}.fl-stat span{display:block;color:#d92228;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-top:8px}@media(min-width:768px){.fl-stats{grid-template-columns:repeat(4,1fr);gap:20px}.fl-stat b{font-size:36px;line-height:40px}}.fl-note{max-width:720px;margin:20px auto 0;text-align:center;color:#3f4650;font-size:14px;line-height:22px}.fl-note code,.fl-inline{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;background:#f2f0ef;border:1px solid #e5e5e5;border-radius:6px;padding:1px 6px;color:#1a1816}.fl-grid{display:grid;grid-template-columns:1fr;gap:16px}@media(min-width:768px){.fl-grid--2{grid-template-columns:1fr 1fr;gap:20px}.fl-grid--3{grid-template-columns:1fr 1fr 1fr;gap:20px}}.fl-card{background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:24px;box-sizing:border-box}.fl-card--warm{background:#fbf8f4;border-color:#ece8e2}.fl-eyebrow{color:#d92228;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin:0 0 8px}.fl-card h3{color:#1a1816;font-size:19px;line-height:26px;font-weight:700;margin:0 0 8px}.fl-card p{color:#3f4650;font-size:15px;line-height:23px;margin:0 0 10px}.fl-card p:last-child{margin-bottom:0}.fl-card ul{margin:0;padding:0 0 0 18px;color:#3f4650;font-size:15px;line-height:23px}.fl-card li{margin:0 0 6px}.fl-card li strong,.fl-list li strong{color:#1a1816}.fl-pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:9999px;padding:4px 10px;margin:0 6px 8px 0}.fl-pill--live{background:#e8f5ec;color:#0a801f}.fl-pill--soon{background:#f2f0ef;color:#3f4650}.fl-pill--get{background:#e8f5ec;color:#0a801f}.fl-pill--post{background:#fbe9ea;color:#d92228}.fl-pill--patch,.fl-pill--put{background:#fff3e0;color:#8a5a00}.fl-pill--del{background:#1a1816;color:#fff}.fl-table-wrap{border:1px solid #e5e5e5;border-radius:16px;background:#fff;overflow:hidden}.fl-table{width:100%;border-collapse:collapse;font-size:14px;line-height:21px}.fl-table thead{display:none}.fl-table,.fl-table tbody,.fl-table tr,.fl-table td{display:block}.fl-table tr{padding:16px;border-bottom:1px solid #e5e5e5}.fl-table tr:last-child{border-bottom:0}.fl-table td{padding:0 0 8px;color:#3f4650}.fl-table td:last-child{padding-bottom:0}.fl-table td:empty{display:none}.fl-table td[data-l]::before{content:attr(data-l);display:block;color:#1a1816;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin:0 0 2px}.fl-table td.fl-td-m{padding-bottom:10px}.fl-table code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;color:#1a1816;word-break:break-all}@media(min-width:768px){.fl-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.fl-table{display:table;min-width:720px}.fl-table tbody{display:table-row-group}.fl-table tr{display:table-row;padding:0}.fl-table td{display:table-cell;padding:12px 16px;border-bottom:1px solid #e5e5e5;vertical-align:top}.fl-table td:empty{display:table-cell}.fl-table td[data-l]::before{display:none}.fl-table td.fl-td-m{padding-bottom:12px}.fl-table thead{display:table-header-group}.fl-table th{background:#f2f0ef;color:#1a1816;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-align:left;padding:12px 16px;border-bottom:1px solid #e5e5e5}.fl-table tr:last-child td{border-bottom:0}.fl-table td:first-child{white-space:nowrap}.fl-table code{white-space:nowrap;word-break:normal}}.fl-list{max-width:820px;margin:0 auto;padding:0;list-style:none;counter-reset:fl}.fl-list li{position:relative;background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:20px 20px 20px 68px;margin:0 0 12px;color:#3f4650;font-size:15px;line-height:23px;counter-increment:fl}.fl-list li::before{content:counter(fl,decimal-leading-zero);position:absolute;left:20px;top:18px;width:32px;height:32px;border-radius:9999px;background:#fbe9ea;color:#d92228;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center}.fl-dark{background:#1a1816;color:#fff}.fl-dark .fl-head h2{color:#fff;opacity:1}.fl-dark .fl-head p{color:#beb8b0}.fl-code{background:#2b2b2b;border:1px solid #3f4650;border-radius:16px;padding:20px;overflow-x:auto;max-width:820px;margin:0 auto;box-sizing:border-box}.fl-code pre{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:21px;color:#f2f0ef;white-space:pre}.fl-code .c{color:#beb8b0}.fl-kv{display:grid;grid-template-columns:1fr;gap:6px 16px;margin:0;font-size:14px;line-height:22px}@media(min-width:768px){.fl-kv{grid-template-columns:auto 1fr}}.fl-kv dt{color:#1a1816;font-weight:700;margin:0}.fl-kv dd{color:#3f4650;margin:0 0 6px}@media(min-width:768px){.fl-kv dd{margin-bottom:0}}</style>
+<style id="drozq-panda-patch">
+/* Compiled by scripts/panda_patch.py: utilities used in page markup that the
+   inherited Panda soup never defined. Do not hand-edit; re-run --apply. */
+.\[\&\:hover\]\:bg_\#a92e2a:hover { background: #a92e2a; }
+.\[\&_img\]\:obj-p_50\%_55\% img { object-position: 50% 55%; }
+.as_flex-start { align-self: flex-start; }
+.bd_1px_solid_\#d92228 { border: 1px solid #d92228; }
+.bd_1px_solid_\#e5e5e5 { border: 1px solid #e5e5e5; }
+.bg-c_\#fbe9ea { background-color: #fbe9ea; }
+.bg-c_\#fdecec { background-color: #fdecec; }
+.bx-sh_0_8px_24px_rgba\(30\,_47\,_73\,_0\.08\) { box-shadow: 0 8px 24px rgba(30, 47, 73, 0.08); }
+.c_\#0a801f { color: #0a801f; }
+.fs_26px { font-size: 26px; }
+.fs_36px { font-size: 36px; }
+.gap_x_40px { column-gap: 40px; }
+.gap_y_0 { row-gap: 0; }
+.gap_y_4px { row-gap: 4px; }
+.hover\:bd-c_\#d92228:hover { border-color: #d92228; }
+.lh_1\.1 { line-height: 1.1; }
+.lh_1\.65 { line-height: 1.65; }
+.lh_1\.7 { line-height: 1.7; }
+.ls_0\.3px { letter-spacing: 0.3px; }
+.ls_2px { letter-spacing: 2px; }
+.max-w_1200px { max-width: 1200px; }
+.max-w_780px { max-width: 780px; }
+.max-w_820px { max-width: 820px; }
+.op_0\.5 { opacity: 0.5; }
+.p_6px_12px { padding: 6px 12px; }
+.py_10px { padding-top: 10px; padding-bottom: 10px; }
+.py_12px { padding-top: 12px; padding-bottom: 12px; }
+.trs_all_\.2s_ease { transition: all .2s ease; }
+.w_44px { width: 44px; }
+@media (max-width: 480px) {
+  .\[\&_img\]\:\[\@media_\(max-width\:_480px\)\]\:obj-p_center img { object-position: center; }
+}
+@media screen and (min-width: 480px) {
+  .xs\:grid-tc_1fr_1fr { grid-template-columns: 1fr 1fr; }
+}
+@media screen and (min-width: 768px) {
+  .md\:fs_17px { font-size: 17px; }
+  .md\:fs_34px { font-size: 34px; }
+  .md\:fs_44px { font-size: 44px; }
+  .md\:grid-tc_1fr_1fr_1fr { grid-template-columns: 1fr 1fr 1fr; }
+  .md\:lh_44px { line-height: 44px; }
+  .md\:mb_40px { margin-bottom: 40px; }
+  .md\:mb_56px { margin-bottom: 56px; }
+  .md\:mt_40px { margin-top: 40px; }
+  .md\:p_28px { padding: 28px; }
+  .md\:pr_24px { padding-right: 24px; }
+  .md\:py_32px { padding-top: 32px; padding-bottom: 32px; }
+  .md\:py_56px { padding-top: 56px; padding-bottom: 56px; }
+  .md\:w_280px { width: 280px; }
+}
+@media screen and (min-width: 992px) {
+  .lg\:grid-tc_1fr_1fr_1fr { grid-template-columns: 1fr 1fr 1fr; }
+  .lg\:grid-tc_220px_1fr { grid-template-columns: 220px 1fr; }
+  .lg\:py_48px { padding-top: 48px; padding-bottom: 48px; }
+  .lg\:py_72px { padding-top: 72px; padding-bottom: 72px; }
+}
+</style>
+</head><body><!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KVV3R96P" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><!-- End Google Tag Manager (noscript) --><a href="#" tabindex="-1" aria-hidden="true" rel="nofollow" style="opacity: 0.01; position: absolute; z-index: -999; width: 54px; height: 22px;">___</a><div style="opacity: 0.01; position: absolute; z-index: -1000; width: 54px; height: 22px;"></div><div id="x-amz-cf-id" data-id="mfkwNA2DXBs428htEjgdEo5KwUJ3eDVVcVtlc1LIySBpmbvE24-2Fw=="></div><div id="__next"><!-- DROZQ_HEADER_BEGIN --><header class="pos_absolute top_0 left_0 right_0 bg_white h_48px md:h_64px ml_auto mr_auto ta_center z_100 fs_14px lh_1.5"><nav class="h_inherit"><div class="d_block md:d_none"><div class="d_block h_100% pos_fixed w_60% top_0 left_0 bg_white trs_transform_0.2s_ease-out [&amp;_ul_li_a]:op_0.87 [&amp;_ul_li_a]:d_flex [&amp;_ul_li_a]:ai_center [&amp;_ul_li_a]:c_textSecondary [&amp;_ul_li_a]:ta_left [&amp;_ul_li_a]:p_0_24px [&amp;_ul_li_a]:lh_2.9 [&amp;_ul_li_a]:ls_0.5px [&amp;_ul_li_a]:fs_14px [&amp;_ul_li_a]:fw_400 [&amp;_ul_li_a]:[&amp;:focus,_&amp;:hover]:bg_backgroundLighterGray p_8px_0_0 op_0 vis_hidden trf_translateX(-100%) z_0" data-testid="sidebar" data-active="false"><ul data-testid="mobile-nav-items"><li><a href="/value/" class="d_flex ai_center gap_3"><span>Home Value</span></a></li><li><a href="/rates/" class="d_flex ai_center gap_3"><span>Mortgage Rates</span></a></li><li><a href="/prices/" class="d_flex ai_center gap_3"><span>Home Prices</span></a></li><li><a href="/buyers/" class="d_flex ai_center gap_3"><span>For Buyers</span></a></li><li><a href="/sellers/" class="d_flex ai_center gap_3"><span>For Sellers</span></a></li><li><a href="/sold/" class="d_flex ai_center gap_3"><span>Sold</span></a></li><li><a href="/faq/" class="d_flex ai_center gap_3"><span>FAQ</span></a></li></ul></div><div class="pos_fixed top_0 left_0 right_0 bottom_0 bg_rgba(0,_0,_0,_0.5) trs_opacity_.1s z_98 op_0 vis_hidden"></div></div><div class="pos_relative max-w_8xl mx_auto px_4 md:px_6 lg:px_8 pr_16px md:pr_16px lg:pr_16px xl:pr_16px pl_16px md:pl_16px lg:pl_16px xl:pl_16px d_flex h_48px md:h_64px jc_space-between ai_center m_auto max-w_auto md:max-w_752px lg:max-w_972px xl:max-w_1035px"><div class="d_flex ai_center flex-sh_0 mt_3px md:mt_0px"><div class="d_block md:d_none"><button type="button" id="drozq-hamburger" class="mt_5px mr_8px bg_transparent_none filter_brightness(0)" aria-label="mobile side navigation toggler"><img src="/media/icons/menu_icon.svg" alt="Open menu" width="18" height="15" decoding="async"></button></div><span data-testid="brand-link" class="lh_48px md:lh_64px c_var(--colors-text-body) fs_16px md:fs_24px fw_800 ls_0.5px md:ls_normal td_none hover:td_none [&amp;_img]:max-w_auto [&amp;_img]:md:max-w_170px [&amp;_img]:h_16px [&amp;_img]:md:h_24px [&amp;_img]:mb_0px [&amp;_img]:md:mb_8px"><a href="/" aria-label="Drozq home"><img src="/media/images/brand-header-logo.png" alt="Drozq logo, Joshua Guerrero, Irvine listing agent" width="284" height="40" style="width:auto" decoding="async"></a></span></div><div class="d_block md:d_none"><a href="tel:9494385948" data-testid="call-us-link" class="d_flex op_0.87 c_var(--colors-text-body) ls_0.5px td_none filter_brightness(0) hover:td_none [&amp;_img]:mt_-2px [&amp;_img]:mr_10px"><img src="/media/icons/phone.svg" alt="Call Joshua Guerrero" width="16" height="16" style="align-self:center;height:16px" decoding="async"> <span class="h_24px lh_24px op_0.87 d_inline-block va_middle hover:td_none">Call me</span></a></div><div class="d_none md:d_block drozq-header-content"><ul class="d_flex jc_flex-end ai_center h_100% w_100%"><li class="pt_23px pb_20px [&amp;:hover]:bd-b_3px_solid_var(--colors-primary) [&amp;:hover]:pb_17px ta_left pos_relative" id="drozq-more-li"><a id="drozq-more-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" tabindex="0" class="cursor_default d_inline-flex ai_center pl_14px pr_14px">More <span class="d_inline-block c_var(--colors-text-body) w_0 h_0 mt_-2px ml_4px va_middle bd-t_4px_dashed bd-r_4px_solid_transparent bd-l_4px_solid_transparent"></span></a><ul id="drozq-more-menu" role="menu" aria-labelledby="drozq-more-toggle"><li role="none"><a role="menuitem" href="/value/">Home Value</a></li><li role="none"><a role="menuitem" href="/rates/">Mortgage Rates</a></li><li role="none"><a role="menuitem" href="/prices/">Home Prices</a></li><li role="none"><a role="menuitem" href="/buyers/">For Buyers</a></li><li role="none"><a role="menuitem" href="/sellers/">For Sellers</a></li><li role="none"><a role="menuitem" href="/sold/">Sold</a></li><li role="none"><a role="menuitem" href="/faq/">FAQ</a></li></ul></li><li class="pt_20px pb_20px [&amp;:hover]:bd-b_3px_solid_var(--colors-primary) [&amp;:hover]:pt_19px [&amp;:hover]:pb_16px d_none lg:d_list-item"><a href="tel:9494385948" class="pl_14px fs_18px hover:tsh_0_0_0.5px_var(--colors-white)">(949) 438-5948</a></li></ul></div></div></nav></header><!-- DROZQ_HEADER_END --><main class="ov_hidden">
+
+<div class="pos_relative ov_hidden">
+  <section aria-labelledby="fello-hero-title" class="pos_relative z_1 c_textBody pt_48px xs:pt_80px pb_24px md:pb_32px">
+    <div class="w_100% max-w_860px pl_32px pr_32px bx-s_border-box mx_auto ta_center">
+      <h1 id="fello-hero-title" class="fw_800 op_0.87 c_#2b2b2b lh_36px md:lh_44px fs_28px md:fs_36px ls_0.3px mb_16px">Fello, wired to drozq.</h1>
+      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px max-w_640px m_0_auto">Every record the Fello API can read or write, every event it pushes, and the limits that decide what gets built.</p>
+    </div>
+  </section>
+</div>
+
+<section id="status" aria-label="Fello API at a glance" class="bg_#fff py_48px md:py_64px">
+  <div class="fl-wrap">
+    <div class="fl-stats">
+      <div class="fl-stat"><b>12</b><span>Endpoints, total</span></div>
+      <div class="fl-stat"><b>10</b><span>Webhook events, live</span></div>
+      <div class="fl-stat"><b>350,000</b><span>Requests a day</span></div>
+      <div class="fl-stat"><b>100</b><span>Reads per 10 seconds</span></div>
+    </div>
+    <p class="fl-note">Key verified live on September 2, 2026: <code>GET /webhooks</code> answered 200 with zero subscriptions registered, and the same call with no key answered 401. Base URL <code>https://api.fello.ai/public/v1</code>, one header, <code>x-api-key</code>. The client secret never touches an API call; it is the HMAC key that proves an inbound webhook came from Fello.</p>
+  </div>
+</section>
+
+<section id="directions" aria-labelledby="fello-dir-title" class="bg-c_#f2f0ef py_48px md:py_64px">
+  <div class="fl-wrap">
+    <div class="fl-head"><h2 id="fello-dir-title">Three directions. That is the whole API.</h2><p>Fello's API is a contact-sync API, not a data API. Feed it, read one record at a time, and listen.</p></div>
+    <div class="fl-grid fl-grid--3">
+      <div class="fl-card">
+        <p class="fl-eyebrow">Push in</p>
+        <h3>What I can write</h3>
+        <ul>
+          <li><strong>A contact:</strong> email (required), full name, phone, tags, one property address, an assigned user.</li>
+          <li><strong>CRM link fields:</strong> name, url, source, stage, created date. Five fields, meant to point back at the Follow Up Boss record.</li>
+          <li><strong>Tags:</strong> append, replace the whole set, or remove. Tags are the only lever into Fello's segments and workflows.</li>
+          <li><strong>Properties:</strong> attach by free-text address (Fello parses and enriches it in the background), archive to pull it out of workflows.</li>
+          <li><strong>Record status:</strong> Active or Monitored. Permanent delete.</li>
+        </ul>
+      </div>
+      <div class="fl-card">
+        <p class="fl-eyebrow">Pull out</p>
+        <h3>What I can read</h3>
+        <ul>
+          <li><strong>One contact at a time</strong>, by email or by Fello id. There is no list, search, filter, or export.</li>
+          <li><strong>Identity + hygiene:</strong> name, phone, email, email status (Valid, Invalid, Pending), record status, created date, proof-of-consent URL.</li>
+          <li><strong>Engagement counters:</strong> form submissions, email sends, opens, clicks, dashboard views, dashboard clicks, each with its last date.</li>
+          <li><strong>Lead score</strong> (0 to 100, read-only) and the tag set.</li>
+          <li><strong>Properties:</strong> parsed address (unit, street, city, county, state, ZIP) and the property id. Address only, no value, no facts.</li>
+        </ul>
+      </div>
+      <div class="fl-card">
+        <p class="fl-eyebrow">Hear back</p>
+        <h3>What Fello pushes to me</h3>
+        <ul>
+          <li><strong>Ten live events</strong> over HTTPS webhooks: a form submitted, a dashboard or email CTA clicked, a postcard scanned, an unsubscribe, an enrichment, a detail change, tags added or removed, a Felix AI handoff.</li>
+          <li><strong>Three per event</strong>, HMAC-signed with the client secret, 2xx expected within 5 seconds, retried for hours, then dropped.</li>
+          <li><strong>Announced, not live:</strong> dashboard viewed, assigned user changed, note added.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="endpoints" aria-labelledby="fello-ep-title" class="bg_#fff py_48px md:py_64px">
+  <div class="fl-wrap">
+    <div class="fl-head"><h2 id="fello-ep-title">All twelve endpoints.</h2><p>Base <span class="fl-inline">https://api.fello.ai/public/v1</span>, JSON in and out, <span class="fl-inline">x-api-key</span> on every call.</p></div>
+    <div class="fl-table-wrap">
+      <table class="fl-table">
+        <thead><tr><th>Method</th><th>Path</th><th>What it does</th><th>Notes</th></tr></thead>
+        <tbody>
+<tr><td class="fl-td-m"><span class="fl-pill fl-pill--post">POST</span></td><td data-l="Path"><code>/contact</code></td><td data-l="What it does">Create a contact with basic details, tags, one address, CRM link fields, assigned user.</td><td data-l="Notes">Returns the full record plus warnings such as InvalidInputAddress. Duplicate email: 400 DuplicateContact.</td></tr>
+<tr><td class="fl-td-m"><span class="fl-pill fl-pill--get">GET</span></td><td data-l="Path"><code>/contact?emailId= | ?contactId=</code></td><td data-l="What it does">Read one contact: identity, status, tags, engagement, properties, CRM fields, lead score.</td><td data-l="Notes">The only read. 404 ContactDoesNotExist.</td></tr>
+<tr><td class="fl-td-m"><span class="fl-pill fl-pill--patch">PATCH</span></td><td data-l="Path"><code>/contact/{contactId}</code></td><td data-l="What it does">Update name, phone, email, CRM fields, assigned user, record status.</td><td data-l="Notes">Only the fields sent are touched.</td></tr>
+<tr><td class="fl-td-m"><span class="fl-pill fl-pill--del">DELETE</span></td><td data-l="Path"><code>/contact/{contactId}</code></td><td data-l="What it does">Delete the contact and everything attached to it.</td><td data-l="Notes">Permanent. Does not propagate through the FUB sync.</td></tr>
+<tr><td class="fl-td-m"><span class="fl-pill fl-pill--post">POST</span></td><td data-l="Path"><code>/contact/{contactId}/tags</code></td><td data-l="What it does">Append tags.</td><td data-l="Notes">Existing tags untouched.</td></tr>
+<tr><td class="fl-td-m"><span class="fl-pill fl-pill--put">PUT</span></td><td data-l="Path"><code>/contact/{contactId}/tags</code></td><td data-l="What it does">Replace the whole tag set.</td><td data-l="Notes">Overwrites.</td></tr>
+<tr><td class="fl-td-m"><span class="fl-pill fl-pill--del">DELETE</span></td><td data-l="Path"><code>/contact/{contactId}/tags</code></td><td data-l="What it does">Remove the listed tags.</td><td data-l="Notes">Others stay.</td></tr>
+<tr><td class="fl-td-m"><span class="fl-pill fl-pill--post">POST</span></td><td data-l="Path"><code>/contact/{contactId}/property</code></td><td data-l="What it does">Attach a property by address (max 128 chars).</td><td data-l="Notes">Enrichment lands seconds later. 400 InvalidAddress / DuplicateProperty.</td></tr>
+<tr><td class="fl-td-m"><span class="fl-pill fl-pill--post">POST</span></td><td data-l="Path"><code>/contact/property/{propertyId}/archive</code></td><td data-l="What it does">Archive a property so it leaves active workflows.</td><td data-l="Notes">404 PropertyDoesNotExist.</td></tr>
+<tr><td class="fl-td-m"><span class="fl-pill fl-pill--get">GET</span></td><td data-l="Path"><code>/webhooks</code></td><td data-l="What it does">List subscriptions: id, url, event, status (Active, Removed, Failing).</td><td></td></tr>
+<tr><td class="fl-td-m"><span class="fl-pill fl-pill--post">POST</span></td><td data-l="Path"><code>/webhooks</code></td><td data-l="What it does">Subscribe a URL to one event type.</td><td data-l="Notes">HTTPS only. Max 3 per event.</td></tr>
+<tr><td class="fl-td-m"><span class="fl-pill fl-pill--del">DELETE</span></td><td data-l="Path"><code>/webhooks/{subscriptionId}</code></td><td data-l="What it does">Unsubscribe.</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fl-note">Errors come back as <code>{code, message}</code>: ContactDoesNotExist, PropertyDoesNotExist, InvalidAddress, DuplicateProperty, DuplicateContact, InvalidRequest (with a data object explaining the validation), 429 on a rate-limit breach, 5xx on Fello's side.</p>
+  </div>
+</section>
+
+<section id="record" aria-labelledby="fello-rec-title" class="bg-c_#f2f0ef py_48px md:py_64px">
+  <div class="fl-wrap">
+    <div class="fl-head"><h2 id="fello-rec-title">The contact record, field by field.</h2><p>Everything a single read returns. This is the entire data surface.</p></div>
+    <div class="fl-grid fl-grid--2">
+      <div class="fl-card">
+        <p class="fl-eyebrow">Identity</p>
+        <dl class="fl-kv">
+          <dt>contactId</dt><dd>Fello's id. Needed for every update, tag, and property call.</dd>
+          <dt>name, phone, email</dt><dd>Phone must match a North American pattern; email is the duplicate key.</dd>
+          <dt>emailStatus</dt><dd>Valid, Invalid, or Pending (validation runs after the write).</dd>
+          <dt>recordStatus</dt><dd>Active or Monitored.</dd>
+          <dt>createdAt</dt><dd>ISO timestamp.</dd>
+          <dt>assignedUserEmailId</dt><dd>The Fello user who owns the contact.</dd>
+          <dt>proofOfConsentUrl</dt><dd>Fello's consent record for the contact.</dd>
+          <dt>tags</dt><dd>Free-text strings, e.g. HOT LEAD.</dd>
+        </dl>
+      </div>
+      <div class="fl-card">
+        <p class="fl-eyebrow">Engagement</p>
+        <dl class="fl-kv">
+          <dt>leadScore</dt><dd>0 to 100. Read-only.</dd>
+          <dt>numOfFormSubmissions</dt><dd>+ lastFormSubmissionDate</dd>
+          <dt>numOfEmailSends</dt><dd>+ lastEmailSentDate</dd>
+          <dt>numOfEmailOpens</dt><dd>+ lastEmailOpenDate</dd>
+          <dt>numOfEmailClicks</dt><dd>+ lastEmailClickDate</dd>
+          <dt>numOfDashboardViews</dt><dd>+ lastDashboardViewedDate</dd>
+          <dt>numOfDashboardClicks</dt><dd>+ lastDashboardClickedDate</dd>
+        </dl>
+      </div>
+      <div class="fl-card">
+        <p class="fl-eyebrow">Properties</p>
+        <dl class="fl-kv">
+          <dt>propertyId</dt><dd>Needed to archive.</dd>
+          <dt>address</dt><dd>aptOrUnitNumber, streetAddress, city, county, state, zip. Parsed by Fello from the free-text address you sent.</dd>
+        </dl>
+        <p style="margin-top:12px">No value, no equity, no mortgage, no beds or baths. Fello's home intelligence stays inside Fello and the Follow Up Boss sync.</p>
+      </div>
+      <div class="fl-card">
+        <p class="fl-eyebrow">CRM link</p>
+        <dl class="fl-kv">
+          <dt>crmFields.name</dt><dd>e.g. FollowUpBoss</dd>
+          <dt>crmFields.url</dt><dd>Deep link to the CRM record.</dd>
+          <dt>crmFields.source</dt><dd>e.g. drozq.com</dd>
+          <dt>crmFields.stage</dt><dd>e.g. Lead</dd>
+          <dt>crmFields.createdDate</dt><dd>ISO timestamp.</dd>
+        </dl>
+        <p style="margin-top:12px">Five fields, fixed. Not a custom-field store.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="webhooks" aria-labelledby="fello-wh-title" class="bg_#fff py_48px md:py_64px">
+  <div class="fl-wrap">
+    <div class="fl-head"><h2 id="fello-wh-title">Ten events Fello will push. Three more promised.</h2><p>Each arrives as a JSON POST with an events array; the body is signed with the client secret in the <span class="fl-inline">fello-webhook-signature</span> header.</p></div>
+    <div class="fl-grid fl-grid--3">
+<div class="fl-card"><span class="fl-pill fl-pill--live">Live</span><h3><code class="fl-inline">FormSubmission</code></h3><p>A contact submits any Fello form (landing page, widget, dashboard form).</p><p><strong>On drozq:</strong> Run it through the drozq lead pipeline: alert, Follow Up Boss event, drip enrollment.</p></div>
+<div class="fl-card"><span class="fl-pill fl-pill--live">Live</span><h3><code class="fl-inline">DashboardClick</code></h3><p>A contact clicks a call to action inside their home-value dashboard.</p><p><strong>On drozq:</strong> Hot signal. Text Joshua, tag the FUB person.</p></div>
+<div class="fl-card"><span class="fl-pill fl-pill--live">Live</span><h3><code class="fl-inline">EmailClick</code></h3><p>A contact clicks a call to action in a Fello email.</p><p><strong>On drozq:</strong> Hot signal. Same handling as a dashboard click.</p></div>
+<div class="fl-card"><span class="fl-pill fl-pill--live">Live</span><h3><code class="fl-inline">PostcardScan</code></h3><p>A contact scans or types a postcard URL.</p><p><strong>On drozq:</strong> Hot signal from the mail campaign, if postcards ever run.</p></div>
+<div class="fl-card"><span class="fl-pill fl-pill--live">Live</span><h3><code class="fl-inline">ContactUnsubscribed</code></h3><p>A contact opts out of Fello communications.</p><p><strong>On drozq:</strong> Pause the drozq drip for the same email.</p></div>
+<div class="fl-card"><span class="fl-pill fl-pill--live">Live</span><h3><code class="fl-inline">ContactEnriched</code></h3><p>Fello finishes enriching a contact with new data.</p><p><strong>On drozq:</strong> Refresh the FUB record.</p></div>
+<div class="fl-card"><span class="fl-pill fl-pill--live">Live</span><h3><code class="fl-inline">ContactDetailsUpdated</code></h3><p>Name, email, or phone changed in Fello.</p><p><strong>On drozq:</strong> Mirror to FUB.</p></div>
+<div class="fl-card"><span class="fl-pill fl-pill--live">Live</span><h3><code class="fl-inline">TagsAdded</code></h3><p>One or more tags added.</p><p><strong>On drozq:</strong> Keep tag state in sync with the CRM.</p></div>
+<div class="fl-card"><span class="fl-pill fl-pill--live">Live</span><h3><code class="fl-inline">TagsRemoved</code></h3><p>One or more tags removed.</p><p><strong>On drozq:</strong> Same.</p></div>
+<div class="fl-card"><span class="fl-pill fl-pill--live">Live</span><h3><code class="fl-inline">FelixAIHandoff</code></h3><p>Felix AI hands a conversation to a human.</p><p><strong>On drozq:</strong> Highest-priority alert: a live conversation is waiting.</p></div>
+<div class="fl-card fl-card--warm"><span class="fl-pill fl-pill--soon">Announced</span><h3>Dashboard Viewed</h3><p>Listed by Fello as coming soon. Not subscribable yet.</p></div>
+<div class="fl-card fl-card--warm"><span class="fl-pill fl-pill--soon">Announced</span><h3>Assigned User Changed</h3><p>Listed by Fello as coming soon. Not subscribable yet.</p></div>
+<div class="fl-card fl-card--warm"><span class="fl-pill fl-pill--soon">Announced</span><h3>Note Added</h3><p>Listed by Fello as coming soon. Not subscribable yet.</p></div>
+    </div>
+    <p class="fl-note">Delivery contract: answer 2xx within 5 seconds (the docs say 10 in one place and 5 in another, so build for 5) and do the real work afterwards. Anything else is retried at varying intervals for up to 8 hours, then the event is gone. A URL that keeps failing is unsubscribed automatically with an email notice. The docs publish only sample payload shapes, so capture real payloads on a catch-all URL before writing parsers.</p>
+  </div>
+</section>
+
+<section id="limits" aria-labelledby="fello-lim-title" class="bg-c_#f2f0ef py_48px md:py_64px">
+  <div class="fl-wrap">
+    <div class="fl-head"><h2 id="fello-lim-title">The limitations, stated flat.</h2><p>What these keys cannot do, so nothing gets designed around a door that is not there.</p></div>
+    <ol class="fl-list">
+      <li><strong>No list, search, filter, or export.</strong> Reads are one contact at a time by email or id. "Pull my whole Fello database" is not an API job; use the in-app export or the Follow Up Boss sync.</li>
+      <li><strong>No home value, equity, mortgage, or property facts.</strong> The AVM, the equity estimate, the likely-to-sell signal, and the enriched home facts never leave Fello through this API. Properties come back as a parsed address only.</li>
+      <li><strong>No outbound actions.</strong> Nothing sends an email, a postcard, or a Felix call, and nothing starts a workflow directly. Tags are the only handle into Fello's automations.</li>
+      <li><strong>No notes, no timeline writes, no lead-score writes.</strong> The lead score is read-only and the CRM fields are a fixed five-field link, not custom fields.</li>
+      <li><strong>No sandbox.</strong> A dev host is listed in the docs but no test account exists, so every call hits the live account. Duplicate email returns 400 and creates nothing; a changed email creates a second person.</li>
+      <li><strong>Webhooks are best-effort.</strong> Three subscriptions per event, HTTPS only, sample payloads only, a retry window measured in hours. A receiver that is down long enough loses events.</li>
+      <li><strong>One key is the whole account.</strong> No scopes, no per-app permissions, no IP allow-list. The key lives in Cloudflare env vars and a gitignored file, nowhere else.</li>
+      <li><strong>Enrichment is asynchronous.</strong> Read a contact right after creating it and the email status can be Pending with an empty enrichment; give it a few seconds.</li>
+      <li><strong>Rate limits are generous but real.</strong> 100 reads and 50 writes per sliding 10 seconds per app, 350,000 calls a day per account, 429 with back-off on breach. Fello raises limits on request.</li>
+      <li><strong>Deletes are permanent and never cross the Follow Up Boss sync.</strong> Fello's own guide says deletes do not propagate in either direction.</li>
+    </ol>
+  </div>
+</section>
+
+<section id="build" aria-labelledby="fello-build-title" class="bg_#fff py_48px md:py_64px">
+  <div class="fl-wrap">
+    <div class="fl-head"><h2 id="fello-build-title">What gets built with it.</h2><p>In priority order. The native Follow Up Boss sync already carries contacts both ways; this is what the API adds on top.</p></div>
+    <div class="fl-grid fl-grid--2">
+      <div class="fl-card fl-card--warm">
+        <p class="fl-eyebrow">01</p>
+        <h3>Every drozq lead into Fello, the moment it lands</h3>
+        <p>One more best-effort channel in the lead handler, gated on a FELLO_API_KEY env var exactly like Follow Up Boss: email, name, phone, the confirmed street address, tags for the funnel mode and timeline, and CRM link fields pointing at the FUB record. From there Fello's home-value dashboard and monthly nurture own the long tail.</p>
+      </div>
+      <div class="fl-card fl-card--warm">
+        <p class="fl-eyebrow">02</p>
+        <h3>A webhook receiver at /api/fello/webhook</h3>
+        <p>Signature-verified with the client secret, 2xx in under 5 seconds, the work behind waitUntil. Form submissions become drozq leads (alert, FUB event, drip). Dashboard clicks, email clicks, postcard scans, and Felix handoffs page Joshua and tag the person hot. Unsubscribes pause the drozq drip. Enrichment and detail changes refresh Follow Up Boss.</p>
+      </div>
+      <div class="fl-card fl-card--warm">
+        <p class="fl-eyebrow">03</p>
+        <h3>One tag vocabulary</h3>
+        <p>Mode, timeline, page of origin, campaign. Decided once, applied by the lead handler on every push, because tags are the only lever the API gives into Fello's segments and workflows.</p>
+      </div>
+      <div class="fl-card fl-card--warm">
+        <p class="fl-eyebrow">04</p>
+        <h3>Lead score on the operating dashboard</h3>
+        <p>The dashboard already knows every lead by email. One read each, well inside the limits, ranks the call list by Fello engagement: dashboard clicks and email clicks first, then score.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cli" aria-labelledby="fello-cli-title" class="fl-dark py_48px md:py_64px">
+  <div class="fl-wrap">
+    <div class="fl-head"><h2 id="fello-cli-title">The keys are already usable.</h2><p>scripts/fello.py reads the gitignored secret file and wraps all twelve endpoints plus the webhook signature check.</p></div>
+    <div class="fl-code"><pre><span class="c"># key check + live rate-limit budget</span>
+python scripts/fello.py probe
+
+<span class="c"># webhooks: list, subscribe every live event, unsubscribe</span>
+python scripts/fello.py webhooks
+python scripts/fello.py webhooks add-all https://drozq.com/api/fello/webhook
+python scripts/fello.py webhooks rm &lt;subscriptionId&gt;
+
+<span class="c"># contacts</span>
+python scripts/fello.py contact get someone@example.com
+python scripts/fello.py contact add someone@example.com --name "Full Name" \
+    --phone 9495551234 --address "1 Main St, Irvine, CA 92614" \
+    --tag "Drozq Website" --tag Seller --crm-source drozq.com
+python scripts/fello.py tags add &lt;contactId&gt; "HOT LEAD"
+python scripts/fello.py property add &lt;contactId&gt; "2 Main St, Irvine, CA 92614"
+
+<span class="c"># verify a captured webhook (body on stdin)</span>
+python scripts/fello.py verify "&lt;fello-webhook-signature&gt;" &lt; body.json</pre></div>
+  </div>
+</section>
+<style id="drozq-xref-css">.xr-band{padding:48px 0}.xr--warm{background:#f2f0ef}.xr--white{background:#fff}.xr-wrap{max-width:1035px;margin:0 auto;padding:0 32px;box-sizing:border-box}.xr-head{max-width:720px;margin:0 auto 28px;text-align:center}.xr-head h2{font-weight:800;opacity:.87;color:#2b2b2b;font-size:26px;line-height:34px;letter-spacing:.3px;margin:0 0 10px}.xr-head p{color:#3f4650;font-size:16px;line-height:26px;margin:0}.xr-grid{display:grid;grid-template-columns:1fr;gap:16px}.xr-card{display:block;background:#fff;border:1px solid #e5e5e5;border-radius:16px;padding:24px;text-decoration:none;color:inherit;transition:border-color .15s ease,transform .15s ease,box-shadow .15s ease;text-align:left;box-sizing:border-box}.xr--white .xr-card{background:#fbf8f4;border-color:#ece8e2}.xr-card:hover{border-color:#d92228;transform:translateY(-2px);box-shadow:0 8px 20px rgba(26,24,22,.08)}.xr-eyebrow{color:#d92228;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin:0 0 8px}.xr-card h3{color:#1a1816;font-size:19px;line-height:26px;font-weight:700;margin:0 0 8px}.xr-card p{color:#3f4650;font-size:15px;line-height:23px;margin:0 0 10px}.xr-go{color:#d92228;font-weight:700;font-size:14px}.xr-a{color:#d92228;font-weight:700;text-decoration:underline;text-underline-offset:2px}@media (min-width:768px){.xr-band{padding:64px 0}.xr-head h2{font-size:32px;line-height:40px}.xr-grid--2{grid-template-columns:1fr 1fr;gap:20px}.xr-grid--3{grid-template-columns:1fr 1fr 1fr;gap:20px}}</style>
+<section class="xr-band xr--white"><div class="xr-wrap"><div class="xr-head"><h2>The rest of the plumbing.</h2><p>Where Fello plugs into what already runs.</p></div><div class="xr-grid xr-grid--3">
+<a class="xr-card" href="/value/"><p class="xr-eyebrow">Instant</p><h3>The instant valuation</h3><p>The gated report every seller lead gets the moment they finish. Fello's dashboard picks up where it leaves off.</p><span class="xr-go">Open &rarr;</span></a>
+<a class="xr-card" href="/net-sheet/"><p class="xr-eyebrow">Tool</p><h3>The seller net sheet</h3><p>County record, taxes, payoff, and the exact net. Another address-led lead surface to feed Fello.</p><span class="xr-go">Open &rarr;</span></a>
+<a class="xr-card" href="/homes/"><p class="xr-eyebrow">Search</p><h3>Live MLS home search</h3><p>Buy-side leads from the IDX sign-up form, the same pipeline, the same tags.</p><span class="xr-go">Open &rarr;</span></a>
+</div></div></section>
+
+<section class="d_block pt_48px lg:pt_64px pb_48px lg:pb_64px bg-c_#f2f0ef">
+  <div class="max-w_1035px w_100% m_0_auto pl_32px lg:pl_16px pr_32px lg:pr_16px">
+    <div class="ta_center max-w_640px m_0_auto">
+      <p class="c_#d92228 fs_11px md:fs_12px fw_700 ls_1.5px mb_12px" style="text-transform:uppercase">Same door as every page</p>
+      <h2 class="fw_800 op_0.87 c_#2b2b2b lh_40px md:lh_48px fs_28px md:fs_36px ls_0.3px ta_center mb_16px">Still guessing what it's worth?</h2>
+      <p class="c_#3f4650 fs_16px md:fs_18px lh_28px md:lh_32px mb_32px">Enter the address and the instant valuation lands the moment you finish.</p>
+
+      <div id="fello-closing-cta" role="tabpanel" aria-labelledby="tab-sell" class="d_flex jc_center">
+        <div style="width:100%; max-width: 540px;">
+<form class="pos_relative">
+      <div class="pos_relative d_flex flex-d_column xs:flex-d_row ai_center bg-c_#fff mb_16px xs:mb_0 h_48px sm:h_auto bdr_30px bx-sh_0_1px_5px_rgba(0,_0,_0,_.11)">
+        <input name="location" placeholder="Enter the address you are selling" title="Enter the address you are selling" autocomplete="off"
+               class="w_100% bd_none bg-c_transparent -webkit-appearance_none flex_1 focus:ring_none h_48px md:h_60px lh_48px md:lh_60px pt_16px md:pt_0 pb_16px md:pb_0 pl_16px md:pl_32px pr_32px xs:pr_8px mb_16px xs:mb_0 bdr-tl_30px bdr-bl_30px fs_16px md:fs_18px"
+               value="" aria-label="Enter your address">
+        <div class="w_100% xs:w_auto mr_0 md:mr_3px h_48px md:h_60px lh_48px md:lh_60px pos_absolute xs:pos_static top_60px xs:top_0">
+          <button type="submit"
+                  class="bg_primary c_white cursor_pointer w_100% xs:w_145px md:w_auto h_48px md:h_54px fs_13px md:fs_18px fw_bold bdr_full px_0px md:px_28px ls_0.5px d_block md:d_inline-flex ai_center gap_0px md:gap_10px hover:bg_primaryHover">
+            Run my Valuation<span class="d_none md:d_inline-flex ai_center"><svg fill="none" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="m4.34063 10.8292h9.30837l-4.06671 4.0667c-.325.325-.325.8583 0 1.1833s.85001.325 1.17501 0l5.4917-5.4916c.325-.325.325-.85002 0-1.17502l-5.4917-5.49166c-.325-.32501-.85001-.32501-1.17501 0-.325.325-.325.85 0 1.17499l4.06671 4.06667h-9.30837c-.45834 0-.83334.375-.83334.83333 0 .45829.375.83329.83334.83329z" fill="#fff" fill-rule="evenodd"></path></svg></span>
+          </button>
+        </div>
+      </div>
+      <input type="hidden" name="gclid" value="">
+    </form>
+        </div>
+      </div>
+
+      <p class="c_#757575 fs_13px md:fs_14px lh_20px mt_24px ta_center">Or call direct: <a href="tel:9494385948" class="c_#d92228 fw_700"><strong>(949) 438-5948</strong></a></p>
+    </div>
+  </div>
+</section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Fello API capabilities","url":"https://drozq.com/fello/","description":"Internal reference for the Fello API on drozq.com.","isPartOf":{"@type":"WebSite","@id":"https://drozq.com/#website"}}</script></main><!-- DROZQ_FOOTER_BEGIN --><footer id="footer" class="pt_48px md:pt_64px pb_48px md:pb_64px c_white bg_footerBg ls_0.5px fs_10px lh_normal [&amp;_a]:c_white [&amp;_a]:td_none [&amp;_a]:bg-c_transparent [&amp;_a:hover]:td_underline [&amp;_a:focus]:ring_5px_auto_-webkit-focus-ring-color [&amp;_a:focus]:ring-o_-2px [&amp;_a:active,_&amp;_a:focus,_&amp;_a:visited]:c_white"><div class="pos_relative max-w_8xl mx_auto px_16px md:px_24px lg:max-w_1069px"><div class="d_flex flex-d_column ai_center jc_center ta_center gap_24px"><a href="/" aria-label="Drozq home"><img height="25" width="165" src="/media/images/brand-logo-white.png" alt="Drozq logo, Joshua Guerrero Irvine real estate" loading="lazy" decoding="async"></a><div class="d_flex flex-d_column gap_8px fs_14px lh_2"><div>Drozq.com &middot; Real Brokerage</div><div>California DRE #02267255</div><div>17875 Von Karman Ave, Suite 150, Irvine, CA 92614</div><div><a href="tel:9494385948" class="fw_bold">(949) 438-5948</a></div></div><div class="d_flex gap_24px ai_center jc_center mt_8px"><a aria-label="link to Zillow profile" title="Zillow" href="https://www.zillow.com/profile/ImJoshua" target="_blank" rel="nofollow noreferrer"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path fill="#FFF" fill-rule="evenodd" opacity=".87" d="M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zM12.21 6.52C12.28 6.51 12.31 6.53 12.35 6.57C12.55 6.8 13.18 7.57 13.41 7.85L13.45 7.89A0.07 0.07 0 0 1 13.43 8C12.03 9.1 10.47 10.65 9.59 11.76C9.58 11.78 9.59 11.78 9.6 11.78C11.12 11.13 14.68 10.08 16.28 9.79L16.28 7.76L10.01 2.8L3.72 7.76L3.72 9.98C5.67 8.82 10.17 7.03 12.21 6.52zM6.97 15.03A0.1 0.1 0 0 0 7.11 15.05C9.44 13.85 14.57 12.33 16.28 12.04L16.28 16.6L3.72 16.6L3.72 11.86C5.01 11.13 8.5 9.63 9.73 9.23C9.75 9.22 9.76 9.23 9.74 9.25C8.56 10.12 6.71 12.19 5.8 13.52C5.76 13.58 5.77 13.6 5.8 13.64L6.97 15.03z"></path></svg></a><a aria-label="link to Facebook social media" title="Facebook" href="https://www.facebook.com/Drozq/" target="_blank" rel="nofollow noreferrer"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path fill="#FFF" fill-rule="evenodd" d="M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm3.532-16.942L11.7 3.056c-2.059 0-3.39 1.341-3.39 3.418V8.05H6.47a.286.286 0 0 0-.288.283v2.283c0 .157.129.284.288.284H8.31v5.761c0 .157.129.283.288.283h2.404c.159 0 .288-.126.288-.283V10.9h2.154c.159 0 .288-.127.288-.284V8.333a.281.281 0 0 0-.084-.2.29.29 0 0 0-.204-.083h-2.154V6.714c0-.642.155-.968 1.006-.968h1.234a.286.286 0 0 0 .288-.284v-2.12a.286.286 0 0 0-.287-.284z" opacity=".87"></path></svg></a><a aria-label="link to Instagram social media" title="Instagram" href="https://www.instagram.com/drozq/" target="_blank" rel="nofollow noreferrer"><svg height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg"><path d="m10 20c-5.523 0-10-4.477-10-10s4.477-10 10-10 10 4.477 10 10-4.477 10-10 10zm0-15.693c1.854 0 2.074.007 2.806.04.79.036 1.524.195 2.088.759s.723 1.297.759 2.088c.033.732.04.952.04 2.806s-.007 2.074-.04 2.806c-.036.79-.195 1.524-.759 2.088s-1.297.723-2.088.759c-.732.033-.952.04-2.806.04s-2.074-.007-2.806-.04c-.79-.036-1.524-.195-2.088-.759s-.723-1.297-.759-2.088c-.033-.732-.04-.952-.04-2.806s.007-2.074.04-2.806c.036-.79.195-1.524.759-2.088s1.297-.723 2.088-.759c.732-.033.952-.04 2.806-.04zm0-1.251c-1.886 0-2.123.008-2.863.041-1.129.052-2.12.328-2.916 1.124s-1.072 1.787-1.124 2.916c-.033.74-.041.977-.041 2.863s.008 2.123.041 2.863c.052 1.129.328 2.12 1.124 2.916s1.787 1.072 2.916 1.124c.74.033.977.041 2.863.041s2.123-.008 2.863-.041c1.129-.052 2.12-.328 2.916-1.124s1.072-1.787 1.124-2.916c.033-.74.041-.977.041-2.863s-.008-2.123-.041-2.863c-.052-1.129-.328-2.12-1.124-2.916s-1.787-1.072-2.916-1.124c-.74-.033-.977-.041-2.863-.041zm0 3.378a3.566 3.566 0 1 0 0 7.132 3.566 3.566 0 0 0 0-7.132zm0 5.88a2.315 2.315 0 1 1 0-4.629 2.315 2.315 0 0 1 0 4.63zm3.707-5.188a.833.833 0 1 0 0-1.667.833.833 0 0 0 0 1.667z" fill="#fff" fill-rule="evenodd" opacity=".87"></path></svg></a><a aria-label="link to YouTube social media" title="YouTube" href="https://www.youtube.com/@drozq" target="_blank" rel="nofollow noreferrer"><svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 512 512" height="20" width="20" xmlns="http://www.w3.org/2000/svg" style="filter:invert(1);opacity:0.87"><path d="m256 0c141.29 0 256 114.71 256 256s-114.71 256-256 256-256-114.71-256-256 114.71-256 256-256zm153.315 178.978c-3.68-13.769-14.522-24.61-28.29-28.29-24.958-6.688-125.025-6.688-125.025-6.688s-100.067 0-125.025 6.688c-13.765 3.68-24.61 14.521-28.29 28.29-6.685 24.955-6.685 77.024-6.685 77.024s0 52.067 6.685 77.02c3.68 13.769 14.525 24.614 28.29 28.293 24.958 6.685 125.025 6.685 125.025 6.685s100.067 0 125.025-6.685c13.768-3.679 24.61-14.524 28.29-28.293 6.685-24.953 6.685-77.02 6.685-77.02s0-52.069-6.685-77.024zm-185.316 125.025v-96.002l83.137 48.001z"></path></svg></a><a aria-label="link to LinkedIn profile" title="LinkedIn" href="https://www.linkedin.com/in/guerrero-joshua/" target="_blank" rel="nofollow noreferrer"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path fill="#FFF" fill-rule="evenodd" opacity=".87" d="M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zM5.02 8.16h1.86v6.5H5.02zM5.95 5.13a1.08 1.08 0 1 1 0 2.16 1.08 1.08 0 0 1 0-2.16zM8.14 8.16h1.78v.89h.03c.25-.47.86-.97 1.76-.97 1.88 0 2.23 1.24 2.23 2.85v3.73h-1.86v-3.31c0-.79-.01-1.8-1.1-1.8-1.1 0-1.27.86-1.27 1.75v3.36H8.14z"></path></svg></a></div><div class="d_flex flex-wrap_wrap gap_16px ai_center jc_center fs_14px lh_2 fw_normal"><a href="/privacy/">Privacy Policy</a><span aria-hidden="true" class="op_0.5">&middot;</span><a href="/terms/">Terms of Service</a></div><div class="fs_12px lh_2 op_0.7 mt_8px">&copy; 2026 Drozq. All rights reserved.</div></div></div></footer><!-- DROZQ_FOOTER_END --></div><next-route-announcer><p aria-live="assertive" id="__next-route-announcer__" role="alert" style="border: 0px; clip: rect(0px, 0px, 0px, 0px); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap; overflow-wrap: normal;"></p></next-route-announcer>
+<!-- DROZQ_FUNNEL_HTML_BEGIN: synced from /index.html by scripts/sync_funnels.py. Do not edit outside the source. -->
+<section id="funnel-overlay" role="dialog" aria-modal="true" aria-label="Your instant home valuation" aria-hidden="true">
+  <input type="text" name="company_website" id="funnel-honeypot" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;top:-9999px;height:0;width:0;opacity:0" aria-hidden="true"><button type="button" id="funnel-close-x" aria-label="Close and return to the page">&times;</button>
+<style>
+#funnel-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #efe9e1;
+  overflow-y: auto;
+  font-family: GalanoGrotesque, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  flex-direction: column;
+}
+#funnel-overlay.is-open { display: flex; }
+#funnel-overlay #funnel-close-x { position: fixed; top: 58px; right: 14px; z-index: 20; background: transparent; border: none; font-size: 30px; line-height: 1; color: #8a857e; cursor: pointer; padding: 8px 10px; font-family: inherit; }
+#funnel-overlay #funnel-close-x:hover { color: #1a1816; }
+#funnel-overlay * { box-sizing: border-box; }
+#funnel-overlay button { font-family: inherit; }
+#funnel-overlay #funnel-progress {
+  height: 4px;
+  background: #f1efec;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+#funnel-overlay #funnel-progress-bar {
+  height: 100%;
+  background: #d92228;
+  width: 0; /* JS owns the width; showStep(1) sets it before the overlay is shown */
+  transition: width 250ms ease-out;
+}
+#funnel-overlay #funnel-step-container {
+  flex: 1;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 64px 24px 80px;
+  display: flex;
+  flex-direction: column;
+}
+#funnel-overlay .funnel-step { display: none; width: 100%; }
+#funnel-overlay .funnel-step.active {
+  display: block;
+  animation: funnelFunnelFade 200ms ease;
+}
+@keyframes funnelFunnelFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+#funnel-overlay #funnel-stepcount { text-align: center; color: #d92228; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin: 0 0 12px; }
+#funnel-overlay .funnel-subtitle {
+  text-align: center;
+  color: #6b6864;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+#funnel-overlay h2 {
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #2b2b2b;
+  text-align: center;
+  margin: 0 0 32px;
+  letter-spacing: -0.3px;
+}
+#funnel-overlay .funnel-input {
+  width: 100%;
+  height: 56px;
+  min-height: 48px;
+  border: 1px solid #d3cfca;
+  border-radius: 10px;
+  padding: 0 18px;
+  font-size: 16px;
+  color: #2b2b2b;
+  outline: none;
+  background: #ffffff;
+  margin-bottom: 12px;
+  font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+#funnel-overlay .funnel-input:focus { border-color: #d92228; }
+#funnel-overlay .funnel-cta {
+  display: block;
+  width: 100%;
+  height: 56px;
+  min-height: 48px;
+  background: #d92228;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 16px;
+  letter-spacing: 0.3px;
+  font-family: inherit;
+}
+#funnel-overlay .funnel-cta:hover { background: #b81d22; }
+#funnel-overlay .funnel-cta:disabled { background: #b81d22; opacity: 0.7; cursor: not-allowed; }
+#funnel-overlay .funnel-options { display: grid; gap: 12px; }
+#funnel-overlay .funnel-options-1col { grid-template-columns: 1fr; }
+#funnel-overlay .funnel-options-2col { grid-template-columns: 1fr; }
+@media (min-width: 640px) {
+  #funnel-overlay .funnel-options-2col { grid-template-columns: 1fr 1fr; }
+}
+#funnel-overlay .funnel-option {
+  min-height: 64px;
+  background: #ffffff;
+  border: 1px solid #e6e3df;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2b2b2b;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 150ms, box-shadow 150ms, transform 100ms, background 150ms;
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  font-family: inherit;
+}
+#funnel-overlay .funnel-option:hover {
+  border-color: #d92228;
+  box-shadow: 0 2px 8px rgba(217,34,40,0.10);
+}
+#funnel-overlay .funnel-option.is-selected {
+  border-color: #d92228;
+  background: #fff5f5;
+  transform: scale(0.99);
+}
+#funnel-overlay .funnel-error {
+  color: #d92228;
+  font-size: 13px;
+  margin-top: -4px;
+  margin-bottom: 8px;
+  min-height: 16px;
+}
+#funnel-overlay .funnel-fineprint {
+  font-size: 11px;
+  color: #6b6864;
+  text-align: center;
+  margin-top: 12px;
+  line-height: 1.5;
+}
+/* ---- In-funnel legal modal: privacy/terms shown in a scrollable popup, layered above the funnel so the visitor never leaves it ---- */
+#funnel-overlay .funnel-fineprint .funnel-legal-link { color: #3f4650; text-decoration: underline; cursor: pointer; }
+#funnel-overlay .funnel-fineprint .funnel-legal-link:hover { color: #1a1816; }
+.drozq-legal-modal { position: fixed; inset: 0; z-index: 100001; display: none; }
+.drozq-legal-modal.is-open { display: block; }
+.drozq-legal-backdrop { position: absolute; inset: 0; background: rgba(26,24,22,0.55); }
+.drozq-legal-panel { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: calc(100% - 32px); max-width: 640px; max-height: 82vh; background: #fff; border-radius: 14px; box-shadow: 0 24px 60px rgba(0,0,0,0.35); display: flex; flex-direction: column; overflow: hidden; }
+.drozq-legal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-bottom: 1px solid #ece7e1; flex: 0 0 auto; }
+.drozq-legal-title { font-size: 16px; font-weight: 800; color: #1a1816; margin: 0; }
+.drozq-legal-x { -webkit-appearance: none; appearance: none; border: 0; background: #f2f0ef; color: #1a1816; width: 34px; height: 34px; border-radius: 8px; font-size: 22px; line-height: 1; cursor: pointer; flex: 0 0 auto; }
+.drozq-legal-x:hover { background: #ece7e1; }
+.drozq-legal-body { padding: 18px; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; font-size: 12px; line-height: 1.6; color: #3f4650; }
+.drozq-legal-body h1, .drozq-legal-body h2, .drozq-legal-body h3 { font-size: 13px; font-weight: 800; color: #1a1816; margin: 18px 0 6px; }
+.drozq-legal-body > :first-child { margin-top: 0; }
+.drozq-legal-body section:first-child h2 { margin-top: 0; }
+.drozq-legal-body p { margin: 0 0 10px; }
+.drozq-legal-body a { color: #d92228; text-decoration: underline; }
+.drozq-legal-body strong { color: #1a1816; }
+.drozq-legal-body ul, .drozq-legal-body ol { margin: 0 0 10px; padding-left: 18px; }
+.drozq-legal-body li { margin: 0 0 4px; }
+.drozq-legal-body .drozq-legal-meta { font-size: 11px; color: #6b6864; margin: 0 0 14px; }
+.drozq-legal-loading { color: #6b6864; }
+/* ---- draft 3: symmetric split, breathing white cards, timeline under form (sell) ---- */
+#funnel-overlay .funnel-vp-head { font-size: 13px; font-weight: 800; letter-spacing: 0.7px; text-transform: uppercase; color: #d92228; margin: 0 0 18px; }
+#funnel-overlay .funnel-vp-block + .funnel-vp-block { padding-top: 22px; margin-top: 22px; border-top: 1px solid #ece7e1; }
+#funnel-overlay .funnel-vp-eyebrow { font-size: 11.5px; font-weight: 800; letter-spacing: 0.7px; text-transform: uppercase; color: #8a857e; margin: 0 0 8px; }
+#funnel-overlay .funnel-vp-title { font-size: 20px; line-height: 1.25; font-weight: 800; color: #2b2b2b; margin: 0 0 16px; }
+#funnel-overlay .funnel-vp-list { list-style: none; padding: 0; margin: 0 0 16px; }
+#funnel-overlay .funnel-vp-list li { position: relative; padding: 8px 0 8px 32px; font-size: 15px; line-height: 1.45; font-weight: 600; color: #2b2b2b; }
+#funnel-overlay .funnel-vp-list li::before { content: "\2713"; position: absolute; left: 0; top: 8px; width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 50%; background: #d92228; color: #fff; font-size: 12px; font-weight: 700; font-family: Arial, sans-serif; }
+#funnel-overlay .funnel-vp-note { font-size: 13px; line-height: 1.55; color: #6b6864; margin: 0; }
+#funnel-overlay .funnel-vp-covers { display: flex; gap: 7px; margin: 4px 0 14px; }
+#funnel-overlay .funnel-vp-covers img { width: 19%; height: auto; display: block; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.22)); }
+#funnel-overlay .funnel-vp-badge { display: flex; align-items: center; gap: 9px; margin-top: 20px; padding-top: 18px; border-top: 1px solid #ece7e1; color: #2b2b2b; font-size: 13px; font-weight: 700; letter-spacing: 0.2px; }
+#funnel-overlay .funnel-vp-badge::before { content: "\26A1"; color: #d92228; font-size: 16px; font-family: Arial, sans-serif; }
+
+
+
+#funnel-overlay #funnel-step-container[data-mode] { gap: 20px; }
+#funnel-overlay #funnel-step-container[data-mode] .funnel-deliverable { flex-direction: column; gap: 0; }
+
+#funnel-overlay #funnel-step-container[data-mode] .funnel-deliverable,
+#funnel-overlay #funnel-step-container[data-mode] #funnel-form-col { background: #ffffff; border: 1px solid #ece7e1; border-radius: 18px; padding: 28px; box-shadow: 0 10px 34px rgba(43,40,38,0.07); margin: 0; }
+@media (min-width: 880px) {
+  #funnel-overlay #funnel-step-container[data-mode] { max-width: 1080px; flex-direction: row; align-items: flex-start; gap: 28px; padding-top: 44px; padding-bottom: 64px; }
+  #funnel-overlay #funnel-step-container[data-mode] #funnel-form-col { flex: 1 1 0; min-width: 0; order: 2; padding: 38px; }
+  #funnel-overlay #funnel-step-container[data-mode] .funnel-deliverable { flex: 1 1 0; min-width: 0; order: 1; padding: 38px; }
+}
+@media (min-width: 768px) {
+  #funnel-overlay h2 { font-size: 36px; }
+  /* Buy submit-step header is the longest; at 36px it wrapped/stacked in the
+     720px container. Fit it to one centered line on desktop only (mobile keeps
+     the 28px base and is allowed to wrap). 27px + nowrap stays well within the
+     ~672px content width across system-font metrics. */
+  #funnel-overlay h2.funnel-h2-fit { font-size: 27px; white-space: nowrap; }
+  #funnel-overlay #funnel-step-container { padding-top: 96px; }
+}
+#funnel-overlay .funnel-back {
+  display: inline-block;
+  color: #6b6864;
+  font-size: 14px;
+  text-decoration: none;
+  margin-bottom: 16px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 4px 0;
+  transition: color 150ms;
+  font-family: inherit;
+}
+#funnel-overlay .funnel-back:hover { color: #2b2b2b; }
+
+/* ===== Trust + deliverable (sells the lead magnet) =====
+   Mobile-first. Sized so it never buries the step's action on small
+   screens: the persistent strip is one line; the deliverable card is
+   step-1 only; the assurance is two lines on the final step only. */
+#funnel-overlay #funnel-valuebar {
+  position: sticky;
+  top: 4px; /* sits directly under the 4px progress bar */
+  z-index: 1;
+  background: #fbf8f4;
+  border-bottom: 1px solid #efece7;
+  color: #6b6864;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  padding: 7px 16px;
+  letter-spacing: 0.2px;
+}
+#funnel-overlay #funnel-valuebar strong { color: #2b2b2b; font-weight: 700; }
+#funnel-overlay #funnel-valuebar .fv-dot { color: #d92228; padding: 0 6px; }
+
+#funnel-overlay .funnel-deliverable {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #fbf8f4;
+  border: 1px solid #ece8e2;
+  border-radius: 16px;
+  padding: 16px;
+  margin: 28px 0 0;
+  text-align: left;
+}
+@media (min-width: 560px) {
+  #funnel-overlay .funnel-deliverable { flex-direction: row; align-items: flex-start; padding: 22px; gap: 20px; }
+}
+#funnel-overlay .funnel-dv-visual {
+  flex: 0 0 auto;
+  width: 100%;
+  height: 78px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #e6e2dc;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  overflow: hidden;
+  padding-bottom: 10px;
+}
+@media (min-width: 560px) {
+  #funnel-overlay .funnel-dv-visual { width: 132px; height: 152px; }
+}
+#funnel-overlay .funnel-dv-visual .dv-bar { height: 18px; background: #d92228; margin-bottom: 9px; }
+#funnel-overlay .funnel-dv-visual .dv-line { height: 6px; border-radius: 3px; background: #e9e5df; margin: 7px 12px 0; }
+#funnel-overlay .funnel-dv-visual .dv-line.s { width: 45%; }
+#funnel-overlay .funnel-dv-visual .dv-chart { display: flex; align-items: flex-end; gap: 6px; height: 34px; margin: 10px 12px 0; }
+#funnel-overlay .funnel-dv-visual .dv-chart i { flex: 1; background: #f0c9ca; border-radius: 2px 2px 0 0; height: 45%; }
+#funnel-overlay .funnel-dv-visual .dv-chart i.t { background: #d92228; height: 100%; }
+#funnel-overlay .funnel-dv-visual .dv-chart i.m { height: 70%; }
+#funnel-overlay .funnel-dv-visual .dv-row { display: flex; align-items: center; gap: 8px; margin: 8px 12px 0; }
+#funnel-overlay .funnel-dv-visual .dv-row span { flex: 1; height: 6px; border-radius: 3px; background: #e9e5df; }
+#funnel-overlay .funnel-dv-visual .dv-row b { width: 30px; height: 14px; border-radius: 3px; background: #d92228; }
+#funnel-overlay .funnel-dv-visual .dv-track { display: flex; align-items: center; margin: 14px 12px 0; }
+#funnel-overlay .funnel-dv-visual .dv-track i { width: 12px; height: 12px; border-radius: 50%; background: #d92228; flex: 0 0 auto; }
+#funnel-overlay .funnel-dv-visual .dv-track i.o { background: #f0c9ca; }
+#funnel-overlay .funnel-dv-visual .dv-track span { flex: 1; height: 3px; background: #e9e5df; }
+
+#funnel-overlay .funnel-dv-body { flex: 1; min-width: 0; }
+#funnel-overlay .funnel-dv-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  color: #d92228; text-transform: uppercase; margin-bottom: 6px;
+}
+#funnel-overlay .funnel-dv-title {
+  font-size: clamp(15px, 4.2vw, 20px); font-weight: 700; color: #2b2b2b;
+  line-height: 1.25; margin: 0 0 10px;
+}
+#funnel-overlay .funnel-dv-list { list-style: none; margin: 0 0 12px; padding: 0; }
+#funnel-overlay .funnel-dv-list li {
+  position: relative; padding-left: 18px; font-size: 12.5px; line-height: 1.45;
+  color: #4a4844; margin-bottom: 5px;
+}
+#funnel-overlay .funnel-dv-list li::before {
+  content: ""; position: absolute; left: 2px; top: 6px; width: 6px; height: 6px;
+  background: #d92228; border-radius: 50%;
+}
+#funnel-overlay .funnel-dv-eta {
+  display: inline-block; font-size: 12px; font-weight: 700; color: #2b2b2b;
+  background: #fff; border: 1px solid #e2ddd6; border-radius: 999px;
+  padding: 6px 12px; margin-bottom: 10px;
+}
+#funnel-overlay .funnel-dv-proof {
+  font-size: 12px; line-height: 1.5; color: #6b6864; margin: 0;
+  border-left: 2px solid #d92228; padding-left: 10px;
+}
+/* The deliverable card is ONE shared slot rendered as the last child of the
+   step container, so it sits just below the active step's form on every step.
+   openFunnel fills it per mode; hidden until then so no empty box flashes. */
+#funnel-overlay #funnel-deliverable:empty { display: none; }
+#funnel-overlay .funnel-assurance {
+  margin-top: 16px; font-size: 12px; line-height: 1.55;
+  color: #6b6864; text-align: center;
+}
+#funnel-overlay .funnel-assurance strong { color: #2b2b2b; }
+
+/* Google Places dropdown must paint above the funnel overlay (z-index 9999). */
+.pac-container { z-index: 100000 !important; }
+.drozq-pac { position: absolute; background: #fff; border: 1px solid #d3cfca; border-top: none; border-radius: 0 0 10px 10px; box-shadow: 0 8px 24px rgba(26,24,22,0.12); font-family: GalanoGrotesque, "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; color: #2b2b2b; overflow: hidden; box-sizing: border-box; }
+.drozq-pac .pac-item { display: block; padding: 10px 14px 10px 32px; line-height: 1.35; cursor: pointer; border-top: 1px solid #ece7e1; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.drozq-pac .pac-item:first-child { border-top: none; }
+.drozq-pac .pac-item:hover, .drozq-pac .pac-item.pac-item-selected { background-color: #f7f7f7; }
+.drozq-pac .pac-item-query { font-weight: 700; color: #2b2b2b; }
+.drozq-pac .pac-item > span:last-child { color: #757575; font-size: 13px; }
+/* Google Places autocomplete dropdown styling to match sell.realtor.com. */
+.pac-container {
+  border: none;
+  box-shadow: none;
+  border-radius: 0 0 16px 16px;
+  margin-top: 0 !important;
+  font-family: inherit;
+  background: #ffffff !important;
+  padding: 0;
+}
+/* When the autocomplete dropdown is open, the input pill flattens its bottom corners
+   so it merges flush with the dropdown below. Together they form a single container:
+   pill provides the rounded top, dropdown provides the rounded bottom. */
+/* Pill wrapper: flatten only the bottom-LEFT corner so it merges with the dropdown.
+   The bottom-RIGHT stays rounded to match the See Plan button below. */
+form.pos_relative.is-pac-open > div {
+  border-bottom-left-radius: 0 !important;
+}
+form.pos_relative.is-pac-open input[name="location"] {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+/* Button retains its full pill roundness regardless of dropdown state. */
+form.pos_relative.is-pac-open button[type="submit"] {
+  border-radius: 9999px !important;
+}
+.pac-icon,
+.pac-icon-marker { display: none; }
+.pac-item {
+  padding: 6px 20px 6px 16px;
+  border-top: 1px solid #f0f0f0;
+  font-size: 14px;
+  line-height: 1.4;
+  cursor: pointer;
+  color: #666;
+  font-weight: 400;
+}
+/* Match the input's responsive padding-left so leading digits align. */
+@media (min-width: 768px) {
+  .pac-item { padding-left: 32px; }
+}
+.pac-item:first-child { border-top: none; }
+.pac-item:hover { background-color: #f7f7f7; }
+.pac-item-query {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+  padding-right: 4px;
+}
+.pac-matched { font-weight: 700; }
+.pac-item span:not(.pac-item-query):not(.pac-matched) {
+  color: #666;
+  font-size: 13px;
+  font-weight: 400;
+}
+.pac-container:after {
+  /* Google "powered by Google" footer. */
+  padding: 8px 16px;
+  background-position: right 16px center;
+}
+/* Reduce typed-text size in the landing-page address input to match Realtor's sizing. */
+form.pos_relative input[name="location"] {
+  font-size: 16px;
+}
+/* Validation error pill rendered below a landing-page address input when the user
+   tries to advance without picking a full street address from the Places dropdown. */
+.funnel-address-error {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px 20px;
+  background: #fdecec;
+  color: #d92228;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+/* Hero transaction-type tabs (Sell / Buy / Sell & Buy). The active tab pops
+   up by 8px above the inactive ones because they share a flex-end baseline
+   and the active tab gets larger top/bottom padding. The realtor.com clone
+   bakes the active styling into static class names on the first tab, so
+   toggling aria-selected via JS produces no visual change without these
+   ID-scoped overrides. */
+#tab-sell[aria-selected="true"],
+#tab-buy[aria-selected="true"],
+#tab-sell-buy[aria-selected="true"] {
+  background-color: #fff !important;
+  color: #d92228 !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+#tab-sell[aria-selected="false"],
+#tab-buy[aria-selected="false"],
+#tab-sell-buy[aria-selected="false"] {
+  background-color: #d92228 !important;
+  color: #fff !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+#tab-sell[aria-selected="false"]:hover,
+#tab-buy[aria-selected="false"]:hover,
+#tab-sell-buy[aria-selected="false"]:hover {
+  background-color: #a92e2a !important;
+}
+
+/* FAQ accordion: smooth height transition for the FAQ accordion panels.
+   The clone shipped the panels with inline max-height: 0 so they're
+   collapsed by default; the JS toggles max-height to scrollHeight on
+   expand. This rule animates the open/close. */
+[role="region"][aria-labelledby$="-header"] {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+/* FAQ icon: hide the vertical stroke of the +/- SVG when the question
+   is expanded so the icon reads as a minus instead of a plus. The icon
+   was originally a single path with both strokes; we split it into two
+   paths above so the vertical can be toggled by CSS. */
+button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
+  display: none;
+}
+
+/* Header customizations: hide nav content for new desktop visitors (only logo
+   + white bar visible) until an address is collected. The data attribute is
+   set by an inline head script before paint to avoid flash; openFunnel()
+   removes it once the funnel starts and persists the revealed state in
+   localStorage so returning visitors keep the full header. Mobile is untouched. */
+@media (min-width: 768px) {
+  html[data-drozq-header-hidden="1"] .drozq-header-content {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
+/* Mobile sidebar: turn the link items into real anchors with the same look
+   the original placeholder spans had. The original Panda selectors keyed off
+   "ul li a" but the markup shipped with bare spans, so links were unstyled. */
+[data-testid="mobile-nav-items"] a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  opacity: 0.87;
+  color: var(--colors-text-secondary);
+  text-align: left;
+  padding: 0 24px;
+  line-height: 2.9;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+  font-weight: 400;
+  text-decoration: none;
+}
+[data-testid="mobile-nav-items"] a:hover,
+[data-testid="mobile-nav-items"] a:focus {
+  background: var(--colors-background-lighter-gray);
+  text-decoration: none;
+}
+
+/* Mobile drawer: the React-Panda clone shipped the drawer markup but no JS
+   to slide it in. Toggle visibility via data-active. */
+[data-testid="sidebar"][data-active="true"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateX(0) !important;
+  z-index: 99 !important;
+  box-shadow: 0 0 24px rgba(0,0,0,0.18);
+}
+.drozq-mobile-overlay {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Desktop "More" dropdown menu */
+#drozq-more-li { position: relative; }
+#drozq-more-toggle { cursor: pointer; user-select: none; }
+#drozq-more-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 200px;
+  background: #fff;
+  border: 1px solid var(--colors-border-light);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  border-radius: 6px;
+  padding: 6px 0;
+  margin: 0;
+  list-style: none;
+  z-index: 200;
+  display: none;
+  text-align: left;
+}
+#drozq-more-li.is-open #drozq-more-menu { display: block; }
+@media (hover: hover) {
+  #drozq-more-li:hover #drozq-more-menu { display: block; }
+}
+#drozq-more-menu li {
+  display: block;
+  padding: 0;
+  border: none;
+  margin: 0;
+}
+#drozq-more-menu li:hover { border: none; padding: 0; }
+#drozq-more-menu a {
+  display: block;
+  padding: 10px 18px;
+  color: var(--colors-text-body);
+  text-decoration: none;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+#drozq-more-menu a:hover,
+#drozq-more-menu a:focus {
+  background: var(--colors-background-lightest-gray);
+  color: var(--colors-primary);
+  text-decoration: none;
+}
+</style>
+<div id="funnel-progress"><div id="funnel-progress-bar"></div></div>
+<div id="funnel-valuebar"><span id="funnel-valuebar-text"><strong>Free home valuation.</strong> Reviewed personally by Joshua Guerrero.</span></div>
+<div id="funnel-step-container">
+  <div id="funnel-form-col"><div id="funnel-stepcount" aria-live="polite">Step 1 of 3</div>
+  <!-- ============ SELL FUNNEL ============ -->
+  <div class="funnel-step active" data-funnel="sell" data-step="1">
+    <h2>Are you looking to sell?</h2>
+    <div class="funnel-options funnel-options-1col">
+      <button type="button" class="funnel-option" data-value="No, just curious">No, just curious</button>
+      <button type="button" class="funnel-option" data-value="Yes, immediately">Yes, immediately</button>
+      <button type="button" class="funnel-option" data-value="Yes, in 1-3 months">Yes, in 1-3 months</button>
+      <button type="button" class="funnel-option" data-value="Yes, 4 or more months out">Yes, 4 or more months out</button>
+    </div>
+  </div>
+  <div class="funnel-step" data-funnel="sell" data-step="2">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h2>What's your full name?</h2>
+    <input type="text" id="funnel-step5-name" name="full_name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
+    <div class="funnel-error" role="alert" id="funnel-step5-name-error"></div>
+    <button type="button" id="funnel-step5-continue" class="funnel-cta">Continue</button>
+  </div>
+  <div class="funnel-step" data-funnel="sell" data-step="3">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h2>Where should I send it?</h2>
+    <input type="email" id="funnel-step6-email" name="email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
+    <div class="funnel-error" role="alert" id="funnel-step6-email-error"></div>
+    <input type="tel" id="funnel-step6-phone" name="phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
+    <div class="funnel-error" role="alert" id="funnel-step6-phone-error"></div>
+    <button type="button" id="funnel-step6-submit" class="funnel-cta">Send My Report</button>
+    <div class="funnel-error" role="alert" id="funnel-step6-submit-error"></div>
+    <div class="funnel-assurance"><strong>Your valuation hits your inbox the instant you submit.</strong> Reviewed personally. Licensed in California, DRE #02267255.</div>
+    <div class="funnel-fineprint">By submitting, you agree that Joshua Guerrero may call and text you at the number provided, including by automated technology and prerecorded or artificial voice, about your home value and related real estate services. Consent is not a condition of any purchase. Message and data rates may apply; reply STOP to opt out. See our <a href="/privacy/" class="funnel-legal-link" data-legal="privacy">Privacy Policy</a> and <a href="/terms/" class="funnel-legal-link" data-legal="terms">Terms</a>.</div>
+  </div>
+
+  <!-- ============ BUY FUNNEL ============ -->
+  <div class="funnel-step" data-funnel="buy" data-step="1">
+    <h2>Are you looking to buy?</h2>
+    <div class="funnel-options funnel-options-1col">
+      <button type="button" class="funnel-option" data-value="No, just curious">No, just curious</button>
+      <button type="button" class="funnel-option" data-value="Yes, immediately">Yes, immediately</button>
+      <button type="button" class="funnel-option" data-value="Yes, in 1-3 months">Yes, in 1-3 months</button>
+      <button type="button" class="funnel-option" data-value="Yes, 4 or more months out">Yes, 4 or more months out</button>
+    </div>
+  </div>
+  <div class="funnel-step" data-funnel="buy" data-step="2">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h2>Where are you in the buying process?</h2>
+    <div class="funnel-options funnel-options-1col">
+      <button type="button" class="funnel-option" data-value="Just started">Just started</button>
+      <button type="button" class="funnel-option" data-value="Pre-approved, ready to tour">Pre-approved, ready to tour</button>
+      <button type="button" class="funnel-option" data-value="Already making offers">Already making offers</button>
+    </div>
+  </div>
+  <!-- buy-step5-* element IDs keep their legacy step number for JS cross-ref
+       stability; data-step drives ordering. Name is collected on step 3 and
+       removed from the final contact step (step 4). -->
+  <div class="funnel-step" data-funnel="buy" data-step="3">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h2>What's your full name?</h2>
+    <input type="text" id="buy-step5-name" name="full_name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
+    <div class="funnel-error" role="alert" id="buy-step5-name-error"></div>
+    <button type="button" id="buy-name-continue" class="funnel-cta">Continue</button>
+  </div>
+  <div class="funnel-step" data-funnel="buy" data-step="4">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h2>Where should I send it?</h2>
+    <input type="email" id="buy-step5-email" name="email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
+    <div class="funnel-error" role="alert" id="buy-step5-email-error"></div>
+    <input type="tel" id="buy-step5-phone" name="phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
+    <div class="funnel-error" role="alert" id="buy-step5-phone-error"></div>
+    <button type="button" id="buy-step5-submit" class="funnel-cta">Send My Report</button>
+    <div class="funnel-error" role="alert" id="buy-step5-submit-error"></div>
+    <div class="funnel-assurance"><strong>Your valuation hits your inbox the instant you submit.</strong> Reviewed personally. Licensed in California, DRE #02267255.</div>
+    <div class="funnel-fineprint">By submitting, you agree that Joshua Guerrero may call and text you at the number provided, including by automated technology and prerecorded or artificial voice, about your home search and related real estate services. Consent is not a condition of any purchase. Message and data rates may apply; reply STOP to opt out. See our <a href="/privacy/" class="funnel-legal-link" data-legal="privacy">Privacy Policy</a> and <a href="/terms/" class="funnel-legal-link" data-legal="terms">Terms</a>.</div>
+  </div>
+
+  <!-- ============ SELL & BUY FUNNEL ============ -->
+  <!-- NOTE: element IDs keep their original step numbers (step2-buylocation,
+       step6-name/email/phone/submit) for cross-reference stability across the
+       JS. data-step is the source of truth for ordering, not the id text.
+       The sell address is captured by the landing-form Places autocomplete
+       before this funnel opens (tryOpenFunnelFromForm gates Sell&Buy on a
+       Places-validated address), so there is no in-funnel address step. -->
+  <div class="funnel-step" data-funnel="sellandbuy" data-step="1">
+    <h2>Where do you want to buy?</h2>
+    <input type="text" id="sellandbuy-step2-buylocation" name="buy_location" class="funnel-input" placeholder="City, neighborhood, or ZIP" autocomplete="address-level2" inputmode="text" aria-label="City, neighborhood, or ZIP">
+    <div class="funnel-error" role="alert" id="sellandbuy-step2-buylocation-error"></div>
+    <button type="button" id="sellandbuy-step2-continue" class="funnel-cta">Continue</button>
+  </div>
+  <div class="funnel-step" data-funnel="sellandbuy" data-step="2">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h2>Are you looking to sell?</h2>
+    <div class="funnel-options funnel-options-1col">
+      <button type="button" class="funnel-option" data-value="No, just curious">No, just curious</button>
+      <button type="button" class="funnel-option" data-value="Yes, immediately">Yes, immediately</button>
+      <button type="button" class="funnel-option" data-value="Yes, in 1-3 months">Yes, in 1-3 months</button>
+      <button type="button" class="funnel-option" data-value="Yes, 4 or more months out">Yes, 4 or more months out</button>
+    </div>
+  </div>
+  <div class="funnel-step" data-funnel="sellandbuy" data-step="3">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h2>What's your full name?</h2>
+    <input type="text" id="sellandbuy-step6-name" name="full_name" class="funnel-input" placeholder="First and last name" autocomplete="name" autocapitalize="words" inputmode="text" aria-label="First and last name">
+    <div class="funnel-error" role="alert" id="sellandbuy-step6-name-error"></div>
+    <button type="button" id="sellandbuy-name-continue" class="funnel-cta">Continue</button>
+  </div>
+  <div class="funnel-step" data-funnel="sellandbuy" data-step="4">
+    <a href="#" class="funnel-back" aria-label="Go to previous step">&larr; Back</a>
+    <h2>Where should I send it?</h2>
+    <input type="email" id="sellandbuy-step6-email" name="email" class="funnel-input" placeholder="Email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
+    <div class="funnel-error" role="alert" id="sellandbuy-step6-email-error"></div>
+    <input type="tel" id="sellandbuy-step6-phone" name="phone" class="funnel-input" placeholder="Phone" autocomplete="tel" inputmode="tel" autocapitalize="off" aria-label="Phone">
+    <div class="funnel-error" role="alert" id="sellandbuy-step6-phone-error"></div>
+    <button type="button" id="sellandbuy-step6-submit" class="funnel-cta">Send My Report</button>
+    <div class="funnel-error" role="alert" id="sellandbuy-step6-submit-error"></div>
+    <div class="funnel-assurance"><strong>Your valuation hits your inbox the instant you submit.</strong> Reviewed personally. Licensed in California, DRE #02267255.</div>
+    <div class="funnel-fineprint">By submitting, you agree that Joshua Guerrero may call and text you at the number provided, including by automated technology and prerecorded or artificial voice, about your home sale, home search, and related real estate services. Consent is not a condition of any purchase. Message and data rates may apply; reply STOP to opt out. See our <a href="/privacy/" class="funnel-legal-link" data-legal="privacy">Privacy Policy</a> and <a href="/terms/" class="funnel-legal-link" data-legal="terms">Terms</a>.</div>
+  </div>
+
+  </div>
+<div id="funnel-deliverable" class="funnel-deliverable"></div>
+</div>
+</section>
+<!-- In-funnel legal modal: shows /privacy/ and /terms/ content in a scrollable popup without leaving the funnel -->
+<div id="drozq-legal-modal" class="drozq-legal-modal" aria-hidden="true">
+  <div class="drozq-legal-backdrop" data-legal-close></div>
+  <div class="drozq-legal-panel" role="dialog" aria-modal="true" aria-labelledby="drozq-legal-title">
+    <div class="drozq-legal-head">
+      <h2 id="drozq-legal-title" class="drozq-legal-title">Privacy Policy</h2>
+      <button type="button" class="drozq-legal-x" data-legal-close aria-label="Close">&times;</button>
+    </div>
+    <div class="drozq-legal-body" id="drozq-legal-content" tabindex="0">
+      <p class="drozq-legal-loading">Loading&hellip;</p>
+    </div>
+  </div>
+</div>
+<!-- DROZQ_FUNNEL_HTML_END -->
+<!-- DROZQ_FUNNEL_JS_BEGIN: synced from /index.html by scripts/sync_funnels.py. Do not edit outside the source. -->
+<script>/* Funnel/Maps race guard: guarantee window.initFunnelPlaces exists before the async (possibly cached) Maps script can invoke it. The real implementation in the inline script below overwrites this stub and self-invokes if Maps already fired. Without this, a cached Maps callback racing ahead of the 40KB inline funnel script silently leaves the address autocomplete unattached. */window.initFunnelPlaces=function(){window.__funnelMapsReady=true;};</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAO__0suXD6CDECevon18renbKLmCF-0ks&libraries=places&loading=async&callback=initFunnelPlaces"></script>
+<script>
+(function() {
+  var FUNNEL_ENDPOINT = "/api/lead";
+
+  // Dual-fire tracking helper. PostHog (loaded via GTM) gets the typed event;
+  // dataLayer also receives it so GTM can forward to GA4. Both calls are
+  // null-safe so missing tracking never breaks the funnel.
+  function track(event, props) {
+    try { if (window.posthog && typeof window.posthog.capture === "function") window.posthog.capture(event, props || {}); } catch (e) {}
+    try { (window.dataLayer = window.dataLayer || []).push(Object.assign({ event: event }, props || {})); } catch (e) {}
+  }
+
+  // Tracks whether each address input has a valid Places selection (full street address).
+  // Key: input element. Value: true if last place_changed yielded street_number + route.
+  var validAddressMap = new WeakMap();
+
+  // Persist returning-visitor identity (name, email, phone, address, gclid) to
+  // localStorage with a 30-day expiry so subsequent visits auto-fill the same data.
+  // Intent-of-the-moment fields (timeline, price, property type) are NOT persisted.
+  var STORAGE_KEY = "drozq_funnel_returning";
+  var STORAGE_TTL_DAYS = 30;
+
+  function saveReturningData() {
+    try {
+      var payload = {
+        fullName: window.funnelState.fullName || "",
+        email: window.funnelState.email || "",
+        phone: window.funnelState.phone || "",
+        address: window.funnelState.address || {},
+        gclid: window.funnelState.gclid || "",
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) { /* localStorage disabled or full; funnel still works */ }
+  }
+
+  function loadReturningData() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      if (!parsed || !parsed.savedAt) return null;
+      var ageMs = Date.now() - new Date(parsed.savedAt).getTime();
+      if (ageMs > STORAGE_TTL_DAYS * 24 * 60 * 60 * 1000) {
+        localStorage.removeItem(STORAGE_KEY);
+        return null;
+      }
+      return parsed;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function clearReturningData() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  }
+
+  function showAddressError(input, message) {
+    if (!input) return;
+    var form = input.closest("form.pos_relative");
+    if (!form) return;
+    var existing = form.querySelector(".funnel-address-error");
+    if (existing) {
+      existing.textContent = message;
+      return;
+    }
+    var err = document.createElement("div");
+    err.className = "funnel-address-error";
+    err.setAttribute("role", "alert");
+    err.textContent = message;
+    form.appendChild(err);
+  }
+
+  function clearAddressError(input) {
+    if (!input) return;
+    var form = input.closest("form.pos_relative");
+    if (!form) return;
+    var existing = form.querySelector(".funnel-address-error");
+    if (existing) existing.remove();
+  }
+
+  var ADDRESS_ERROR_MSG = "Please enter the full address of the property you are looking to sell.";
+
+  window.funnelState = {
+    address: { street: "", city: "", state: "", zip: "", lat: null, lng: null, formatted: "" },
+    timeline: "", propertyType: "",
+    buyLocation: "", buyTimeline: "", buyProcess: "",
+    fullName: "", email: "", phone: "",
+    gclid: "", pageUrl: "", timestamp: ""
+  };
+
+  // Active funnel mode: "sell" (default), "buy", or "sellandbuy".
+  // Set by hero/mid-page tab clicks and by openFunnel().
+  window.activeFunnel = "sell";
+  var FUNNEL_TOTAL_STEPS = { sell: 3, buy: 4, sellandbuy: 4 };
+
+  // Hydrate identity fields from localStorage if a returning visitor is recognized.
+  var returningData = loadReturningData();
+  if (returningData) {
+    window.funnelState.fullName = returningData.fullName || "";
+    window.funnelState.email = returningData.email || "";
+    window.funnelState.phone = returningData.phone || "";
+    if (returningData.address && returningData.address.formatted) {
+      window.funnelState.address = returningData.address;
+    }
+    if (returningData.gclid && !window.funnelState.gclid) {
+      window.funnelState.gclid = returningData.gclid;
+    }
+  }
+
+  // For returning visitors with a saved address, pre-fill all 7 landing-page inputs
+  // and pre-mark them valid so the address-validation gate passes without a re-pick.
+  if (returningData && returningData.address && returningData.address.formatted) {
+    function populateLandingInputs() {
+      var inputs = document.querySelectorAll('form.pos_relative input[name="location"]');
+      for (var i = 0; i < inputs.length; i++) {
+        var inp = inputs[i];
+        // Skip the Buy tab's city/area input - hydrating a full street address there
+        // would mismatch the "City and State or ZIP" placeholder semantics.
+        var form = inp.closest("form.pos_relative");
+        if (detectFunnelMode(form) === "buy") continue;
+        var current = (inp.value || "").trim().toLowerCase();
+        if (!current || current === "irvine, ca") {
+          inp.value = returningData.address.formatted;
+          validAddressMap.set(inp, returningData.address.lat != null && returningData.address.lng != null);
+        }
+      }
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", populateLandingInputs);
+    } else {
+      populateLandingInputs();
+    }
+  }
+
+  var currentStep = 1;
+  var overlay = document.getElementById("funnel-overlay");
+  var progressBar = document.getElementById("funnel-progress-bar");
+  // Dialog focus management: the funnel is a modal dialog, so focus moves
+  // into the active step on open/advance and returns to the opener on close.
+  function focusActiveStep() {
+    try {
+      var active = overlay ? overlay.querySelector(".funnel-step.active") : null;
+      if (!active) return;
+      var target = active.querySelector('input:not([type="hidden"]):not([disabled]):not([tabindex="-1"]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]):not(.funnel-back)');
+      if (target && target.focus) target.focus({ preventScroll: true });
+    } catch (e) {}
+  }
+
+  function showStep(n) {
+    var mode = window.activeFunnel || "sell";
+    var totalSteps = FUNNEL_TOTAL_STEPS[mode] || 5;
+    if (n < 1 || n > totalSteps) return;
+    var prevStep = currentStep;
+    currentStep = n;
+    if (n > prevStep) {
+      track("funnel_step_advance", { mode: mode, from_step: prevStep, to_step: n, total_steps: totalSteps });
+    } else if (n < prevStep) {
+      track("funnel_back", { mode: mode, from_step: prevStep, to_step: n });
+    }
+    var steps = overlay.querySelectorAll(".funnel-step");
+    for (var i = 0; i < steps.length; i++) {
+      var stepFunnel = steps[i].getAttribute("data-funnel") || "sell";
+      var stepN = steps[i].getAttribute("data-step");
+      var match = stepFunnel === mode && stepN === String(n);
+      steps[i].classList.toggle("active", match);
+    }
+    // Reserve 100% for an actually-submitted lead (set on funnel_submit_success).
+    // n/(totalSteps+1) keeps the bar moving forward without ever reading "done"
+    // while a required step remains. Robust to any step count per funnel.
+    if (progressBar) progressBar.style.width = ((n / (totalSteps + 1)) * 100) + "%";
+    var stepCount = document.getElementById("funnel-stepcount");
+    if (stepCount) stepCount.textContent = "Step " + n + " of " + totalSteps;
+    overlay.scrollTop = 0;
+    focusActiveStep();
+
+    // SELL: step 2 = name; step 3 = email + phone.
+    if (mode === "sell") {
+      if (n === 2) {
+        var nameInput = document.getElementById("funnel-step5-name");
+        if (nameInput && window.funnelState.fullName) nameInput.value = window.funnelState.fullName;
+      }
+      if (n === 3) {
+        var emailInput = document.getElementById("funnel-step6-email");
+        var phoneInput = document.getElementById("funnel-step6-phone");
+        if (emailInput && window.funnelState.email) emailInput.value = window.funnelState.email;
+        if (phoneInput && window.funnelState.phone) phoneInput.value = window.funnelState.phone;
+      }
+    }
+    // BUY: step 3 = name; step 4 = email + phone.
+    if (mode === "buy") {
+      if (n === 3) {
+        var bn = document.getElementById("buy-step5-name");
+        if (bn && window.funnelState.fullName) bn.value = window.funnelState.fullName;
+      }
+      if (n === 4) {
+        var be = document.getElementById("buy-step5-email");
+        var bp = document.getElementById("buy-step5-phone");
+        if (be && window.funnelState.email) be.value = window.funnelState.email;
+        if (bp && window.funnelState.phone) bp.value = window.funnelState.phone;
+      }
+    }
+    // SELL & BUY: step 1 = buy location; step 2 = sell timeline (options);
+    // step 3 = name; step 4 = email + phone. The sell address is captured by
+    // the landing-form Places autocomplete before this funnel opens (no
+    // in-funnel address step).
+    if (mode === "sellandbuy") {
+      if (n === 1) {
+        var sbl = document.getElementById("sellandbuy-step2-buylocation");
+        if (sbl && window.funnelState.buyLocation) sbl.value = window.funnelState.buyLocation;
+      }
+      if (n === 3) {
+        var sbn = document.getElementById("sellandbuy-step6-name");
+        if (sbn && window.funnelState.fullName) sbn.value = window.funnelState.fullName;
+      }
+      if (n === 4) {
+        var sbe = document.getElementById("sellandbuy-step6-email");
+        var sbp = document.getElementById("sellandbuy-step6-phone");
+        if (sbe && window.funnelState.email) sbe.value = window.funnelState.email;
+        if (sbp && window.funnelState.phone) sbp.value = window.funnelState.phone;
+      }
+    }
+  }
+
+  function captureGclid() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var g = params.get("gclid");
+      var fromUrl = !!g;
+      if (!g) {
+        var m = document.cookie.match(/(?:^|;\s*)gclid=([^;]+)/);
+        if (m) g = decodeURIComponent(m[1]);
+      }
+      if (!g) {
+        try { g = sessionStorage.getItem("drozq_gclid") || ""; } catch (e) {}
+      }
+      if (g) {
+        window.funnelState.gclid = g;
+        // If we just pulled it from the URL, persist for 90 days so subsequent
+        // pageviews and re-opens still attribute to this click.
+        if (fromUrl) {
+          try {
+            var maxAge = 60 * 60 * 24 * 90; // 90 days
+            document.cookie = "gclid=" + encodeURIComponent(g) + "; path=/; max-age=" + maxAge + "; SameSite=Lax";
+            sessionStorage.setItem("drozq_gclid", g);
+          } catch (e) {}
+        }
+        // Mirror the gclid into dataLayer so any GA4 Custom Definition (or
+        // PostHog ingestion) can pick it up on every event for this session,
+        // not only at lead-submit time. Idempotent: dataLayer push is fine
+        // even if GTM hasn't booted yet.
+        try { (window.dataLayer = window.dataLayer || []).push({ event: "gclid_captured", gclid: g }); } catch (e) {}
+      }
+    } catch (err) { /* no-op */ }
+  }
+  // Run once on page load so the gclid is known before any user interaction
+  // (e.g., before the funnel opens, before submit). Subsequent calls inside
+  // openFunnel + submit refresh in case a cookie warmed mid-session.
+  captureGclid();
+
+  // Detect which funnel a landing-page form opens based on its surrounding tabpanel.
+  // Hero tabpanels: tabpanel-sell / tabpanel-buy / tabpanel-sell-buy.
+  // Mid-page "I'm selling/buying" tabs use sellTabBtn / buyTabBtn as labelledby.
+  // Forms outside any tabpanel default to "sell".
+  function detectFunnelMode(formEl) {
+    if (!formEl) return "sell";
+    var panel = formEl.closest('[role="tabpanel"]');
+    if (!panel) return "sell";
+    var combined = ((panel.id || "") + " " + (panel.getAttribute("aria-labelledby") || "")).toLowerCase();
+    if (combined.indexOf("sell-buy") >= 0 || combined.indexOf("sellandbuy") >= 0 || combined.indexOf("sellbuy") >= 0) return "sellandbuy";
+    if (combined.indexOf("buy") >= 0) return "buy";
+    return "sell";
+  }
+
+  function openFunnel(prefill, mode) {
+    // Header reveal: an address has been collected, so unhide the nav for
+    // this session and all future visits. See inline init script in <head>.
+    try { localStorage.setItem('drozq_header_revealed', '1'); } catch(e) {}
+    document.documentElement.removeAttribute('data-drozq-header-hidden');
+    captureGclid();
+    window.funnelState.pageUrl = window.location.href;
+    window.funnelState.timestamp = new Date().toISOString();
+
+    mode = mode || "sell";
+    window.activeFunnel = mode;
+    var __scEl = document.getElementById("funnel-step-container");
+    if (__scEl) __scEl.setAttribute("data-mode", mode);
+
+    // Persistent value reminder (the "memory" thread): always on screen so the
+    // user never forgets what they are working toward. Mode-specific deliverable
+    // + free + turnaround. Null-safe so it never breaks the funnel.
+    var vb = document.getElementById("funnel-valuebar-text");
+    if (vb) {
+      var VALUEBAR = {
+        sell: "<strong>Your instant home valuation.</strong> Free <span class=\"fv-dot\">·</span> delivered the moment you finish",
+        buy: "<strong>Your buyer's market brief.</strong> Free <span class=\"fv-dot\">·</span> in your inbox within 24 hours",
+        sellandbuy: "<strong>Your move brief.</strong> Free <span class=\"fv-dot\">·</span> in your inbox within 24 hours"
+      };
+      vb.innerHTML = VALUEBAR.sell; // unified funnel: one value bar for every mode
+    }
+
+    // Deliverable build-out: ONE shared card rendered just below the active
+    // step's form on EVERY step (it is the last child of the step container,
+    // after the step divs). Mode-specific full card (visual mock + what you
+    // get + bullets + turnaround + proof). Static markup, null-safe.
+    var dv = document.getElementById("funnel-deliverable");
+    if (dv) {
+      var DV_BODY = function(title, b1, b2, b3, proof) {
+        return '<div class="funnel-dv-body"><div class="funnel-dv-eyebrow">What you get</div>' +
+          '<h3 class="funnel-dv-title">' + title + '</h3>' +
+          '<ul class="funnel-dv-list"><li>' + b1 + '</li><li>' + b2 + '</li><li>' + b3 + '</li></ul>' +
+          '<span class="funnel-dv-eta">In your inbox within 24 hours</span>' +
+          '<p class="funnel-dv-proof">' + proof + '</p></div>';
+      };
+      var DELIVERABLE = {
+        sell: '<div class="funnel-vp-head">Free, the instant you finish</div>' +
+          '<div class="funnel-vp-block"><div class="funnel-vp-eyebrow">Your instant home valuation</div>' +
+          '<div class="funnel-vp-title">What your home is really worth right now</div>' +
+          '<ul class="funnel-vp-list"><li>Its true market value today, the number a real buyer pays</li>' +
+          '<li>What it would cost to rebuild from the dirt up</li>' +
+          '<li>A same-day cash offer, calculated to the dollar (if you want it)</li>' +
+          '<li>Every comparable sale on your street, adjusted line by line</li></ul>' +
+          '<div class="funnel-vp-note">Run through my own valuation model: the same data investors and other buyers use, tuned by me. Not a Zestimate guess.</div></div>' +
+          
+          '<div class="funnel-vp-badge">Delivered the instant you hit submit</div>',
+        buy: '<div class="funnel-dv-visual" aria-hidden="true"><div class="dv-bar"></div><div class="dv-row"><span></span><b></b></div><div class="dv-row"><span></span><b></b></div><div class="dv-row"><span></span><b></b></div><div class="dv-line s"></div></div>' +
+          DV_BODY("The homes worth your money, before the crowd",
+            "Active, coming soon, and quiet listings filtered to your criteria.",
+            "Price per square foot by neighborhood, so the mispriced one stands out.",
+            "What each should really sell for, so your offer wins without overpaying.",
+            "I read a comp set the same way whether you buy or sell. See Case File 002."),
+        sellandbuy: '<div class="funnel-dv-visual" aria-hidden="true"><div class="dv-bar"></div><div class="dv-track"><i></i><span></span><i></i><span></span><i class="o"></i><span></span><i class="o"></i></div><div class="dv-line"></div><div class="dv-line s"></div></div>' +
+          DV_BODY("Your move, sequenced so you are never homeless or double paying",
+            "Order of operations: list, accept, rent back or contingency, close.",
+            "A dated timeline so the sale funds the purchase, not your savings.",
+            "The written fallback if one side slips, decided before it happens.",
+            "Two closings on one calendar is the part most agents improvise. I do not.")
+      };
+      dv.innerHTML = DELIVERABLE.sell; // unified funnel: one value panel for every mode
+    }
+
+    if (mode === "buy") {
+      // Buy uses a city/area string captured from the landing form's location input.
+      if (prefill) window.funnelState.buyLocation = prefill;
+      // Fallback: if Places autocomplete already set address.formatted (city pick),
+      // use that. Covers the auto-open-on-Places-pick path where prefill may be empty.
+      if (!window.funnelState.buyLocation && window.funnelState.address.formatted) {
+        window.funnelState.buyLocation = window.funnelState.address.formatted;
+      }
+    } else {
+      // Sell and Sell&Buy use a full street address. If the user has not yet picked
+      // from Places autocomplete (no geometry on state), fall back to whatever they
+      // typed. Leaves .city empty so the {city} placeholder uses "Southern California".
+      if (window.funnelState.address.lat === null && prefill) {
+        window.funnelState.address.formatted = prefill;
+      }
+    }
+
+    // Always start at step 1 of the active funnel.
+    currentStep = 1;
+
+    try { window.__drozqFunnelOpener = document.activeElement; } catch (e) {}
+    overlay.classList.add("is-open");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
+    track("funnel_open", {
+      mode: mode,
+      prefill_provided: !!prefill,
+      gclid: window.funnelState.gclid || ""
+    });
+
+    showStep(currentStep);
+    window.scrollTo(0, 0);
+  }
+
+  // Expose for bespoke pages that open the funnel programmatically (e.g. /value/
+  // opens it in sell mode, pre-loaded with the address the visitor already
+  // valued). Synced to every registered page, so the global is always present.
+  window.openFunnel = openFunnel;
+
+  // ---- Sticky mobile CTA bar ----------------------------------------------
+  // Mobile-only (max-width 767.98px) fixed bottom bar that opens the Sell
+  // funnel. Hidden until the visitor scrolls past the first screen so the hero
+  // pill stays the only CTA above the fold, hidden again while an input
+  // outside the overlay has focus (on-screen keyboard), and skipped entirely
+  // on /thank-you/ (post-conversion). z-index 900 keeps it under the funnel
+  // overlay (9999) and the mobile drawer (1100), so both naturally cover it.
+  (function stickyMobileCta() {
+    if (window.location.pathname.indexOf("/thank-you") === 0) return;
+    if (document.getElementById("drozq-sticky-cta")) return;
+
+    var styleEl = document.createElement("style");
+    styleEl.textContent =
+      "#drozq-sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:900;display:none;" +
+      "padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:#fff;" +
+      "box-shadow:0 -4px 16px rgba(26,24,22,0.12);transform:translateY(110%);" +
+      "transition:transform .25s ease;}" +
+      "#drozq-sticky-cta.is-visible{transform:translateY(0);}" +
+      "#drozq-sticky-cta button{display:block;width:100%;height:48px;border:none;border-radius:9999px;" +
+      "background:#d92228;color:#fff;font-family:inherit;font-size:16px;font-weight:700;" +
+      "letter-spacing:.5px;cursor:pointer;}" +
+      "#drozq-sticky-cta button:active{background:#a92e2a;}" +
+      "@media (max-width:767.98px){#drozq-sticky-cta{display:block;}}" +
+      "@media (prefers-reduced-motion:reduce){#drozq-sticky-cta{transition:none;}}";
+    document.head.appendChild(styleEl);
+
+    var bar = document.createElement("div");
+    bar.id = "drozq-sticky-cta";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "What's my home worth?";
+    bar.appendChild(btn);
+    document.body.appendChild(bar);
+
+    btn.addEventListener("click", function () {
+      track("sticky_cta_click", { mode: "sell" });
+      openFunnel("", "sell");
+    });
+
+    var inputFocused = false;
+    function updateBar() {
+      var threshold = (window.innerHeight || 600) * 0.75;
+      var show = !inputFocused && (window.scrollY || window.pageYOffset || 0) > threshold;
+      bar.classList.toggle("is-visible", show);
+      try { document.body.style.paddingBottom = show ? (bar.offsetHeight + "px") : ""; } catch (e) {}
+    }
+    window.addEventListener("scroll", updateBar, { passive: true });
+    document.addEventListener("focusin", function (e) {
+      var t = e.target;
+      if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) && overlay && !overlay.contains(t)) {
+        inputFocused = true;
+        updateBar();
+      }
+    });
+    document.addEventListener("focusout", function () {
+      inputFocused = false;
+      setTimeout(updateBar, 150);
+    });
+    updateBar();
+  })();
+
+  function readPrefillFromForm(form) {
+    if (!form) return "";
+    var input = form.querySelector('input[name="location"]');
+    if (!input || !input.value) return "";
+    var v = input.value.trim();
+    if (!v) return "";
+    if (v.toLowerCase() === "irvine, ca") return "";
+    return v;
+  }
+
+  // Run the landing-form gate (address validation + open funnel) for a given form
+  // element. Used by both click and submit listeners.
+  function tryOpenFunnelFromForm(form) {
+    if (!form) return;
+    var mode = detectFunnelMode(form);
+    var addrInput = form.querySelector('input[name="location"]');
+    if (mode === "buy") {
+      // Buy mode accepts city-level input (no street_number required).
+      if (!addrInput || !addrInput.value.trim()) {
+        showAddressError(addrInput, "Please enter the city or area you're looking to buy in.");
+        if (addrInput) addrInput.focus();
+        return;
+      }
+    } else {
+      // Sell + Sell&Buy require a Places-confirmed street + route.
+      if (!addrInput || !validAddressMap.get(addrInput)) {
+        showAddressError(addrInput, ADDRESS_ERROR_MSG);
+        if (addrInput) addrInput.focus();
+        return;
+      }
+    }
+    openFunnel(readPrefillFromForm(form), mode);
+  }
+
+  // Wire all landing-page red CTAs by intercepting clicks on their submit buttons.
+  document.addEventListener("click", function(e) {
+    if (!e.target.closest) return;
+    var btn = e.target.closest('form.pos_relative button[type="submit"]');
+    if (!btn) return;
+    if (btn.closest("#funnel-overlay")) return;
+    e.preventDefault();
+    tryOpenFunnelFromForm(btn.closest("form.pos_relative"));
+  });
+
+  // Safety net: pressing Enter inside any of those forms also opens the funnel
+  // instead of submitting to the current URL and reloading the page.
+  document.addEventListener("submit", function(e) {
+    if (!e.target.closest) return;
+    var form = e.target.closest("form.pos_relative");
+    if (!form) return;
+    if (form.closest("#funnel-overlay")) return;
+    e.preventDefault();
+    tryOpenFunnelFromForm(form);
+  });
+
+  // Wire hero (and mid-page) [role="tab"] elements to swap which tabpanel is visible.
+  // The realtor.com clone shipped tab DOM with aria-selected and class="d_none" hidden
+  // on the inactive panels, but no JS to actually switch them. This is that JS.
+  function wireTabs() {
+    var tabs = document.querySelectorAll('[role="tab"]');
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].addEventListener("click", function(e) {
+        var clicked = this;
+        var clickedCtrl = clicked.getAttribute("aria-controls");
+        var clickedPanel = clickedCtrl ? document.getElementById(clickedCtrl) : null;
+        // If the clicked tab's target panel doesn't exist (mid-page "I'm buying"
+        // ships without a buyTab panel), no-op gracefully rather than blanking
+        // the surrounding section.
+        if (!clickedPanel) return;
+        var tablist = clicked.closest('[role="tablist"]');
+        if (!tablist) return;
+        e.preventDefault();
+        var siblings = tablist.querySelectorAll('[role="tab"]');
+        for (var j = 0; j < siblings.length; j++) {
+          var sib = siblings[j];
+          var isActive = sib === clicked;
+          sib.setAttribute("aria-selected", isActive ? "true" : "false");
+          // The mid-page "I'm selling/I'm buying" tabs use Panda CSS attribute
+          // selectors keyed on data-selected, so set both attrs to keep visuals
+          // and ARIA in sync.
+          sib.setAttribute("data-selected", isActive ? "true" : "false");
+          var ctrl = sib.getAttribute("aria-controls");
+          var panel = ctrl ? document.getElementById(ctrl) : null;
+          if (!panel) continue;
+          if (isActive) {
+            panel.classList.remove("d_none");
+            panel.removeAttribute("hidden");
+          } else {
+            panel.classList.add("d_none");
+            panel.setAttribute("hidden", "");
+          }
+        }
+      });
+    }
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", wireTabs);
+  } else {
+    wireTabs();
+  }
+
+  // Geo autofill: fetch the visitor's city/state from /api/geo (Cloudflare's
+  // request.cf) and replace the realtor.com clone's "Irvine, CA" defaults
+  // throughout the page. Targets:
+  //   1. <input name="location"> in Buy-mode landing forms ONLY (see below)
+  //   2. Visible "Irvine, CA" text nodes (hero strip + market section h2)
+  //   3. .funnel-city / .funnel-buy-city placeholder spans inside the funnel overlay
+  //   4. .geo-city placeholder spans (top headline) - city only, no state
+  // Input autofill (1) is intentionally scoped to Buy-mode forms. Sell, Sell&Buy,
+  // and the footer (default-Sell) location inputs capture the seller's own street
+  // address; an IP-inferred city is not the user's address, so we never prefill
+  // it there. Returning-visitor restore (populateLandingInputs, cookie) is a
+  // separate path and still hydrates Sell from previously submitted data.
+  // (2)(3)(4) are display-only city localization and apply site-wide.
+  // The Irvine market-trends readout is exempted via data-geo-static (step 2's
+  // walker skips it), so its heading always reads Irvine, CA regardless of IP.
+  function applyGeoCity(cityState, city) {
+    if (!cityState) return;
+
+    // 1. Buy-mode form inputs with the "Irvine, CA" default. Buy inputs capture a
+    // target search area, where an IP-detected city is a useful default. Sell +
+    // Sell&Buy + footer(default-Sell) inputs capture the seller's own street
+    // address and are never IP-prefilled (the cookie restore path handles those).
+    var inputs = document.querySelectorAll('form.pos_relative input[name="location"]');
+    for (var i = 0; i < inputs.length; i++) {
+      var inp = inputs[i];
+      if (detectFunnelMode(inp.closest("form.pos_relative")) !== "buy") continue;
+      var current = (inp.value || "").trim().toLowerCase();
+      if (current === "" || current === "irvine, ca") {
+        inp.value = cityState;
+      }
+    }
+
+    // 2. Visible "Irvine, CA" text nodes, TreeWalker over #__next subtree.
+    // OPT-IN since 2026-08-25: a text node swaps ONLY inside a container
+    // marked data-geo-swap, never inside footer/address, and never inside a
+    // data-geo-static element. Before this the walker rewrote every stray
+    // "Irvine, CA" on the site, which by then were all office addresses
+    // (footer, /contact/, /404.html, /privacy/, /terms/) and a review card
+    // city, so out-of-town visitors saw the Von Karman office relocated to
+    // their own city. No page currently opts in; the hook is kept for a
+    // future localized strip.
+    var root = document.getElementById("__next") || document.body;
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(node) {
+        if (!node.nodeValue || node.nodeValue.indexOf("Irvine, CA") < 0) return NodeFilter.FILTER_REJECT;
+        // Skip text inside script/style/iframe descendants, and inside any element
+        // marked data-geo-static (a city locked to its literal value, e.g. the
+        // Irvine market-trends readout, which must read Irvine regardless of IP).
+        var p = node.parentNode, inSwap = false;
+        while (p && p !== root) {
+          var tag = p.tagName;
+          if (tag === "SCRIPT" || tag === "STYLE" || tag === "IFRAME" || tag === "FOOTER" || tag === "ADDRESS") return NodeFilter.FILTER_REJECT;
+          if (p.nodeType === 1 && p.hasAttribute("data-geo-static")) return NodeFilter.FILTER_REJECT;
+          if (p.nodeType === 1 && p.hasAttribute("data-geo-swap")) inSwap = true;
+          p = p.parentNode;
+        }
+        return inSwap ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    var txt;
+    while ((txt = walker.nextNode())) {
+      txt.nodeValue = txt.nodeValue.split("Irvine, CA").join(cityState);
+    }
+
+    // 3. Funnel placeholder spans (only update when still on the default fallback)
+    var fallback = "Irvine";
+    var cityEls = overlay.querySelectorAll(".funnel-city");
+    for (var j = 0; j < cityEls.length; j++) {
+      if (cityEls[j].textContent === fallback) cityEls[j].textContent = city || cityState;
+    }
+    var buyCityEls = overlay.querySelectorAll(".funnel-buy-city");
+    for (var k = 0; k < buyCityEls.length; k++) {
+      if (buyCityEls[k].textContent === fallback) buyCityEls[k].textContent = city || cityState;
+    }
+
+    // 4. .geo-city placeholder spans (top headline) - city only, no state
+    var geoCityEls = document.querySelectorAll(".geo-city");
+    for (var l = 0; l < geoCityEls.length; l++) {
+      geoCityEls[l].textContent = city || cityState;
+    }
+  }
+
+  function fetchGeoAndApply() {
+    fetch("/api/geo", { credentials: "same-origin" })
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(geo) {
+        if (!geo || !geo.city) return;
+        var cityState = geo.regionCode ? (geo.city + ", " + geo.regionCode) : geo.city;
+        applyGeoCity(cityState, geo.city);
+      })
+      .catch(function() { /* no-op: keep defaults */ });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fetchGeoAndApply);
+  } else {
+    fetchGeoAndApply();
+  }
+
+  // Wire the "Common Questions" FAQ accordion. The realtor.com clone shipped
+  // each question as <button aria-controls=":rN:-content" aria-expanded="false">
+  // paired with <div id=":rN:-content" role="region" style="max-height:0">,
+  // but no JS to toggle. The existing Panda CSS already styles the +/- icon
+  // and the bottom border via [&[data-expanded="true"]] selectors, so we set
+  // both aria-expanded and data-expanded on click and animate max-height.
+  document.addEventListener("click", function(e) {
+    if (!e.target.closest) return;
+    var btn = e.target.closest('button[aria-controls][aria-expanded]');
+    if (!btn) return;
+    var ctrlId = btn.getAttribute("aria-controls");
+    if (!ctrlId) return;
+    var panel = document.getElementById(ctrlId);
+    if (!panel || panel.getAttribute("role") !== "region") return;
+    var isOpen = btn.getAttribute("aria-expanded") === "true";
+
+    // Exclusive accordion: close every other open FAQ panel (same role="region"
+    // gate as the toggle below). Both close + open use the same CSS transition
+    // so the animations stay in sync and run at the same speed.
+    var allBtns = document.querySelectorAll('button[aria-controls][aria-expanded]');
+    for (var i = 0; i < allBtns.length; i++) {
+      var otherBtn = allBtns[i];
+      if (otherBtn === btn) continue;
+      if (otherBtn.getAttribute("aria-expanded") !== "true") continue;
+      var otherId = otherBtn.getAttribute("aria-controls");
+      var otherPanel = otherId ? document.getElementById(otherId) : null;
+      if (!otherPanel || otherPanel.getAttribute("role") !== "region") continue;
+      otherBtn.setAttribute("aria-expanded", "false");
+      otherBtn.setAttribute("data-expanded", "false");
+      otherPanel.style.maxHeight = "0px";
+    }
+
+    if (isOpen) {
+      btn.setAttribute("aria-expanded", "false");
+      btn.setAttribute("data-expanded", "false");
+      panel.style.maxHeight = "0px";
+    } else {
+      btn.setAttribute("aria-expanded", "true");
+      btn.setAttribute("data-expanded", "true");
+      panel.style.maxHeight = panel.scrollHeight + "px";
+    }
+  });
+
+  // Delegated click handler: Back links + auto-advance option cards.
+  overlay.addEventListener("click", function(e) {
+    if (!e.target.closest) return;
+    var back = e.target.closest(".funnel-back");
+    if (back) {
+      e.preventDefault();
+      showStep(currentStep - 1);
+      return;
+    }
+    var opt = e.target.closest(".funnel-option");
+    if (!opt) return;
+    var stepEl = opt.closest(".funnel-step");
+    if (!stepEl) return;
+    var stepFunnel = stepEl.getAttribute("data-funnel") || "sell";
+    var step = stepEl.getAttribute("data-step");
+    var value = opt.getAttribute("data-value");
+    if (stepFunnel === "sell") {
+      if (step === "1") window.funnelState.timeline = value;
+    } else if (stepFunnel === "buy") {
+      if (step === "1") window.funnelState.buyTimeline = value;
+      else if (step === "2") window.funnelState.buyProcess = value;
+    } else if (stepFunnel === "sellandbuy") {
+      // Sell&Buy step 2 captures the sell-side timeline (reuses Sell's timeline state).
+      if (step === "2") window.funnelState.timeline = value;
+    }
+    track("funnel_option_selected", { mode: stepFunnel, step: parseInt(step, 10), value: value });
+    opt.classList.add("is-selected");
+    setTimeout(function() {
+      opt.classList.remove("is-selected");
+      showStep(parseInt(step, 10) + 1);
+    }, 150);
+  });
+
+  // ----- SELL: step 2 = name only. The property address is already captured by
+  // the landing-form Google Places autocomplete into funnelState.address before
+  // the Sell funnel can open (tryOpenFunnelFromForm gates Sell on a Places-
+  // validated address), so the old step-2 address re-confirm was a duplicate.
+  // Advance to step 3 (contact). -----
+  var s5 = document.getElementById("funnel-step5-continue");
+  if (s5) s5.addEventListener("click", function() {
+    var name = document.getElementById("funnel-step5-name").value.trim();
+    var nameErr = document.getElementById("funnel-step5-name-error");
+    if (name.split(/\s+/).filter(Boolean).length < 2) {
+      nameErr.textContent = "Please enter your first and last name.";
+      return;
+    }
+    nameErr.textContent = "";
+    window.funnelState.fullName = name;
+    saveReturningData();
+    showStep(3);
+  });
+
+  // ----- SELL & BUY: step 1 = buy location (city / area), advance to step 2.
+  // There is no in-funnel sell-address step; the sell address is captured by
+  // the landing-form Places autocomplete before this funnel opens
+  // (tryOpenFunnelFromForm gates Sell&Buy on a Places-validated address). -----
+  var sba2 = document.getElementById("sellandbuy-step2-continue");
+  if (sba2) sba2.addEventListener("click", function() {
+    var locInput = document.getElementById("sellandbuy-step2-buylocation");
+    var locErr = document.getElementById("sellandbuy-step2-buylocation-error");
+    var loc = locInput.value.trim();
+    if (!loc) {
+      locErr.textContent = "Please enter the city or area you're looking to buy in.";
+      return;
+    }
+    locErr.textContent = "";
+    window.funnelState.buyLocation = loc;
+    // Update the buy-city display so subsequent step copy reads correctly.
+    var buyCityEls = overlay.querySelectorAll(".funnel-buy-city");
+    for (var i = 0; i < buyCityEls.length; i++) buyCityEls[i].textContent = loc;
+    showStep(2);
+  });
+
+  // ----- SELL & BUY: step 3 = name only, advance to step 4 (contact).
+  // Mirrors the Sell funnel's name step; name is no longer asked on the
+  // final contact step. -----
+  var sbn1 = document.getElementById("sellandbuy-name-continue");
+  if (sbn1) sbn1.addEventListener("click", function() {
+    var name = document.getElementById("sellandbuy-step6-name").value.trim();
+    var nameErr = document.getElementById("sellandbuy-step6-name-error");
+    if (name.split(/\s+/).filter(Boolean).length < 2) {
+      nameErr.textContent = "Please enter your first and last name.";
+      return;
+    }
+    nameErr.textContent = "";
+    window.funnelState.fullName = name;
+    saveReturningData();
+    showStep(4);
+  });
+
+  // ----- BUY: step 3 = name only, advance to step 4 (contact).
+  // Mirrors the Sell funnel's name step; name is no longer asked on the
+  // final contact step. -----
+  var bn1 = document.getElementById("buy-name-continue");
+  if (bn1) bn1.addEventListener("click", function() {
+    var name = document.getElementById("buy-step5-name").value.trim();
+    var nameErr = document.getElementById("buy-step5-name-error");
+    if (name.split(/\s+/).filter(Boolean).length < 2) {
+      nameErr.textContent = "Please enter your first and last name.";
+      return;
+    }
+    nameErr.textContent = "";
+    window.funnelState.fullName = name;
+    saveReturningData();
+    showStep(4);
+  });
+
+  // ----- Phone formatter shared across all three contact-step phone inputs -----
+  // Reduce any input to a clean 10-digit US national number, dropping a leading
+  // country code. A US/Canada number typed or autofilled as "+1 (949)..." or
+  // "1 949..." arrives as 11 digits beginning with 1. NANP area codes never
+  // start with 1, so that leading 1 is unambiguously the country code. Without
+  // stripping it, the old slice(0,10) shoved the 1 into the area-code slot
+  // ("(194)...") AND truncated the real last digit, silently corrupting leads.
+  function normalizeUsDigits(value) {
+    var d = String(value == null ? "" : value).replace(/\D/g, "");
+    while (d.length > 10 && d.charAt(0) === "1") d = d.slice(1);
+    return d.slice(0, 10);
+  }
+  function formatPhone() {
+    var d = normalizeUsDigits(this.value);
+    var out = "";
+    if (d.length > 0) out = "(" + d.slice(0, 3);
+    if (d.length >= 4) out += ") " + d.slice(3, 6);
+    if (d.length >= 7) out += "-" + d.slice(6, 10);
+    this.value = out;
+  }
+  ["funnel-step6-phone", "buy-step5-phone", "sellandbuy-step6-phone"].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("input", formatPhone);
+  });
+
+  // ----- Generic submit handler used by all three funnels' final contact step -----
+  // Validates email + phone (+ name on Buy/Sell&Buy where name lives on the same step),
+  // builds a mode-specific FormData payload, posts to /api/lead, redirects to /thank-you/.
+  function attachSubmitHandler(buttonId, mode, ids) {
+    var btn = document.getElementById(buttonId);
+    if (!btn) return;
+    btn.addEventListener("click", function() {
+      var emailEl = document.getElementById(ids.email);
+      var phoneEl = document.getElementById(ids.phone);
+      var emailErr = document.getElementById(ids.emailErr);
+      var phoneErr = document.getElementById(ids.phoneErr);
+      var submitErr = document.getElementById(ids.submitErr);
+      submitErr.textContent = "";
+      var email = emailEl.value.trim();
+      var phone = phoneEl.value.trim();
+      var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      var ok = true;
+      if (!emailRe.test(email)) { emailErr.textContent = "Please enter a valid email."; ok = false; }
+      else { emailErr.textContent = ""; }
+      // normalizeUsDigits also covers the case where the value was set
+      // programmatically (autofill / returning-visitor prefill) without ever
+      // firing formatPhone, so a "+1 ..." paste still validates to 10 digits.
+      var phoneDigits = normalizeUsDigits(phone);
+      if (phoneDigits.length !== 10) { phoneErr.textContent = "Please enter a 10-digit US phone number."; ok = false; }
+      else {
+        phoneErr.textContent = "";
+        // Canonicalize to the national format and reflect it back so the user
+        // sees the corrected number and funnelState stores a clean value.
+        phone = "(" + phoneDigits.slice(0, 3) + ") " + phoneDigits.slice(3, 6) + "-" + phoneDigits.slice(6);
+        phoneEl.value = phone;
+      }
+
+      // Buy and Sell&Buy collect name on the contact step too. Sell collected it
+      // on step 2 and stored it in funnelState.fullName.
+      if (ids.name) {
+        var nameEl = document.getElementById(ids.name);
+        var nameErr = document.getElementById(ids.nameErr);
+        var nameVal = nameEl.value.trim();
+        if (nameVal.split(/\s+/).filter(Boolean).length < 2) {
+          nameErr.textContent = "Please enter your first and last name.";
+          ok = false;
+        } else { nameErr.textContent = ""; window.funnelState.fullName = nameVal; }
+      }
+
+      if (!ok) return;
+      window.funnelState.email = email;
+      window.funnelState.phone = phone;
+      saveReturningData();
+
+      track("funnel_submit_attempt", { mode: mode });
+
+      btn.disabled = true;
+      var origLabel = btn.textContent;
+      btn.textContent = "Sending...";
+
+      // Refresh attribution + timing fields right before submit so a gclid cookie
+      // that warmed after the funnel opened still gets captured.
+      captureGclid();
+      window.funnelState.pageUrl = window.location.href;
+      window.funnelState.timestamp = new Date().toISOString();
+
+      var s = window.funnelState;
+      var fd = new FormData();
+      fd.append("name", s.fullName || "");
+      fd.append("email", s.email || "");
+      fd.append("phone", s.phone || "");
+      fd.append("consent", "yes");
+      fd.append("gclid", s.gclid || "");
+      fd.append("page_url", s.pageUrl || "");
+      fd.append("submitted_at", s.timestamp || "");
+      var hpEl = document.getElementById("funnel-honeypot");
+      fd.append("company_website", hpEl ? hpEl.value : "");
+      var submissionId = "";
+      try { submissionId = (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID() : (Date.now().toString(36) + "-" + Math.random().toString(36).slice(2)); } catch (e) {}
+      fd.append("submission_id", submissionId);
+
+      var intent, source, message;
+      if (mode === "buy") {
+        intent = "Home Purchase";
+        source = "homepage funnel - Buy";
+        fd.append("buy_location", s.buyLocation || "");
+        fd.append("buy_timeline", s.buyTimeline || "");
+        fd.append("buy_process", s.buyProcess || "");
+        message = [
+          "Buy timeline: " + (s.buyTimeline || "(not provided)"),
+          "Buying process: " + (s.buyProcess || "(not provided)"),
+          "Target area: " + (s.buyLocation || "(not provided)")
+        ].join("\n");
+      } else if (mode === "sellandbuy") {
+        intent = "Home Sale + Purchase";
+        source = "homepage funnel - Sell & Buy";
+        fd.append("street_address", s.address.street || "");
+        fd.append("city", s.address.city || "");
+        fd.append("state", s.address.state || "");
+        fd.append("zip", s.address.zip || "");
+        fd.append("full_address", s.address.formatted || "");
+        fd.append("lat", s.address.lat == null ? "" : String(s.address.lat));
+        fd.append("lng", s.address.lng == null ? "" : String(s.address.lng));
+        fd.append("timeline", s.timeline || "");
+        fd.append("buy_location", s.buyLocation || "");
+        message = [
+          "Sell timeline: " + (s.timeline || "(not provided)"),
+          "Buy location: " + (s.buyLocation || "(not provided)")
+        ].join("\n");
+      } else {
+        // sell (default)
+        intent = "Home Valuation";
+        source = "homepage funnel";
+        fd.append("street_address", s.address.street || "");
+        fd.append("city", s.address.city || "");
+        fd.append("state", s.address.state || "");
+        fd.append("zip", s.address.zip || "");
+        fd.append("full_address", s.address.formatted || "");
+        fd.append("lat", s.address.lat == null ? "" : String(s.address.lat));
+        fd.append("lng", s.address.lng == null ? "" : String(s.address.lng));
+        fd.append("timeline", s.timeline || "");
+        message = "Sell timeline: " + (s.timeline || "(not provided)");
+      }
+      fd.append("intent", intent);
+      fd.append("source_page", source);
+      fd.append("message", message);
+
+      // Submit with automatic retry. A single network blip or a slow cold-start
+      // on mobile must never dead-end a lead (the "network" error_kind we saw in
+      // PostHog), so transient failures (fetch reject, abort/timeout, or a 5xx)
+      // are retried up to MAX_ATTEMPTS with a short backoff before we surface an
+      // error. A 4xx (validation) is terminal and not retried. The per-attempt
+      // timeout is generous (20s) because a lead is worth the wait far more than
+      // a fast failure; the old 10s cap clipped slow mobile connections. In the
+      // rare case where the server received a submit but its response was lost,
+      // a retry can create a duplicate lead; that is deliberately preferred over
+      // losing the lead, and duplicates are trivially deduped downstream.
+      var MAX_ATTEMPTS = 3;
+      var ATTEMPT_TIMEOUT_MS = 20000;
+
+      function finishSuccess() {
+        track("funnel_submit_success", { mode: mode });
+        // Lead is in: complete the progress bar before the redirect.
+        if (progressBar) progressBar.style.width = "100%";
+        // Mark the redirect so /thank-you/ can fire the GA4 generate_lead
+        // event ONLY for real funnel conversions, not for direct visits or
+        // bookmarks. sessionStorage is tab-scoped so a closed-and-reopened
+        // tab won't re-trigger; ?ref=funnel is a backup signal we strip
+        // from the URL on the receiving page.
+        try {
+          sessionStorage.setItem("drozq_lead_just_submitted", "1");
+          sessionStorage.setItem("drozq_lead_mode", mode);
+        } catch (e) {}
+        window.location.href = "/thank-you/?ref=funnel";
+      }
+
+      function showFunnelError(kind) {
+        track("funnel_submit_error", { mode: mode, error_kind: kind || "unknown" });
+        submitErr.textContent = "Something went wrong. Text Joshua at (949) 438-5948.";
+        btn.disabled = false;
+        btn.textContent = origLabel;
+      }
+
+      function submitAttempt(attempt) {
+        var ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+        var timeoutId = setTimeout(function() { if (ctrl) ctrl.abort(); }, ATTEMPT_TIMEOUT_MS);
+
+        function retryOrFail(kind) {
+          if (attempt < MAX_ATTEMPTS) {
+            track("funnel_submit_retry", { mode: mode, attempt: attempt, error_kind: kind });
+            btn.textContent = "Retrying...";
+            // Linear backoff: 1s before attempt 2, 2s before attempt 3.
+            setTimeout(function() { submitAttempt(attempt + 1); }, attempt * 1000);
+          } else {
+            showFunnelError(kind);
+          }
+        }
+
+        fetch(FUNNEL_ENDPOINT, {
+          method: "POST",
+          body: fd,
+          signal: ctrl ? ctrl.signal : undefined
+        }).then(function(res) {
+          clearTimeout(timeoutId);
+          // 5xx / 429 are transient server states worth a retry; other non-2xx
+          // (e.g. a 4xx validation reject) are terminal.
+          if (res.status >= 500 || res.status === 429) { retryOrFail("server"); return; }
+          return res.json().then(function(json) {
+            if (res.ok && json && json.ok) {
+              finishSuccess();
+            } else {
+              showFunnelError("server");
+            }
+          }, function() {
+            showFunnelError("server_parse");
+          });
+        }).catch(function() {
+          clearTimeout(timeoutId);
+          retryOrFail("network");
+        });
+      }
+
+      submitAttempt(1);
+    });
+  }
+
+  attachSubmitHandler("funnel-step6-submit", "sell", {
+    email: "funnel-step6-email",
+    emailErr: "funnel-step6-email-error",
+    phone: "funnel-step6-phone",
+    phoneErr: "funnel-step6-phone-error",
+    submitErr: "funnel-step6-submit-error"
+  });
+  // Name is collected on Buy step 3 (-> funnelState.fullName), not on the
+  // final contact step, so no name/nameErr keys here (same as the Sell funnel).
+  attachSubmitHandler("buy-step5-submit", "buy", {
+    email: "buy-step5-email",
+    emailErr: "buy-step5-email-error",
+    phone: "buy-step5-phone",
+    phoneErr: "buy-step5-phone-error",
+    submitErr: "buy-step5-submit-error"
+  });
+  // Name is collected on Sell&Buy step 3 (-> funnelState.fullName), not on the
+  // final contact step, so no name/nameErr keys here (same as the Sell funnel).
+  attachSubmitHandler("sellandbuy-step6-submit", "sellandbuy", {
+    email: "sellandbuy-step6-email",
+    emailErr: "sellandbuy-step6-email-error",
+    phone: "sellandbuy-step6-phone",
+    phoneErr: "sellandbuy-step6-phone-error",
+    submitErr: "sellandbuy-step6-submit-error"
+  });
+
+  // ---- Places autocomplete (Places API New) --------------------------------
+  // The legacy google.maps.places.Autocomplete class is deprecated for new
+  // customers and logs a console warning on every page. This helper uses the
+  // Autocomplete Data API (AutocompleteSuggestion + Place.fetchFields) with a
+  // session token and renders suggestions into an in-house .pac-container /
+  // .pac-item dropdown, so the site's dropdown polish + pill-flatten CSS keep
+  // working and the visible behaviour is unchanged. If the new classes are
+  // missing or the first request rejects (Places API (New) not enabled on the
+  // key), it falls back to the legacy class for the rest of the pageview, so
+  // the lead path never breaks. Exposed as window.drozqPlacesAttach for the
+  // bespoke gates (/value/, /net-sheet/, /where-we-help/).
+  var placesNewState = null; // null = untested, true = working, false = fell back
+  function placesNewAvailable() {
+    try {
+      return !!(window.google && google.maps && google.maps.places &&
+        google.maps.places.AutocompleteSuggestion && google.maps.places.AutocompleteSessionToken);
+    } catch (e) { return false; }
+  }
+  function placeToLegacyShape(place) {
+    var comps = [];
+    var src = place.addressComponents || [];
+    for (var i = 0; i < src.length; i++) {
+      comps.push({ long_name: src[i].longText || "", short_name: src[i].shortText || "", types: src[i].types || [] });
+    }
+    var loc = place.location || null;
+    return {
+      address_components: comps,
+      formatted_address: place.formattedAddress || "",
+      name: place.displayName || "",
+      place_id: place.id || "",
+      geometry: loc ? { location: {
+        lat: function () { return typeof loc.lat === "function" ? loc.lat() : loc.lat; },
+        lng: function () { return typeof loc.lng === "function" ? loc.lng() : loc.lng; }
+      } } : null
+    };
+  }
+  function escapeHtmlText(v) {
+    return String(v == null ? "" : v).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
+  }
+  function attachPlacesLegacy(input, opts, onPlace) {
+    var ac = new google.maps.places.Autocomplete(input, opts.regions
+      ? { types: ["(regions)"], componentRestrictions: { country: "us" }, fields: ["formatted_address", "name"] }
+      : { types: ["address"], componentRestrictions: { country: "us" }, fields: ["address_components", "formatted_address", "geometry"] });
+    ac.addListener("place_changed", function () {
+      var place = ac.getPlace();
+      if (place) onPlace(place);
+    });
+    return ac;
+  }
+  function attachPlacesNew(input, opts, onPlace) {
+    var token = null, box = null, items = [], activeIdx = -1, timer = null, lastQuery = "", seq = 0, torn = false;
+    var form = input.closest ? input.closest("form.pos_relative") : null;
+    function ensureBox() {
+      if (box) return box;
+      box = document.createElement("div");
+      box.className = "pac-container drozq-pac";
+      box.setAttribute("role", "listbox");
+      box.style.display = "none";
+      document.body.appendChild(box);
+      return box;
+    }
+    function position() {
+      if (!box || box.style.display === "none") return;
+      var r = input.getBoundingClientRect();
+      box.style.left = (r.left + window.scrollX) + "px";
+      box.style.top = (r.bottom + window.scrollY) + "px";
+      box.style.width = r.width + "px";
+    }
+    function hide() {
+      if (box) box.style.display = "none";
+      if (form) form.classList.remove("is-pac-open");
+      activeIdx = -1; items = [];
+    }
+    function setActive(i) {
+      for (var k = 0; k < items.length; k++) items[k].el.classList.toggle("pac-item-selected", k === i);
+      activeIdx = i;
+    }
+    function render(sugs) {
+      var b = ensureBox();
+      b.innerHTML = ""; items = []; activeIdx = -1;
+      for (var i = 0; i < sugs.length; i++) {
+        var pp = sugs[i] && sugs[i].placePrediction;
+        if (!pp) continue;
+        var main = (pp.mainText && pp.mainText.text) || (pp.text && pp.text.text) || "";
+        var sec = (pp.secondaryText && pp.secondaryText.text) || "";
+        var el = document.createElement("div");
+        el.className = "pac-item";
+        el.setAttribute("role", "option");
+        el.innerHTML = '<span class="pac-icon pac-icon-marker"></span><span class="pac-item-query">' + escapeHtmlText(main) + '</span> <span>' + escapeHtmlText(sec) + '</span>';
+        (function (prediction) {
+          el.addEventListener("mousedown", function (e) { e.preventDefault(); pick(prediction); });
+        })(pp);
+        b.appendChild(el);
+        items.push({ el: el, pp: pp });
+      }
+      if (!items.length) { hide(); return; }
+      b.style.display = "block";
+      position();
+      if (form) form.classList.add("is-pac-open");
+    }
+    function fallback() {
+      if (torn) return;
+      torn = true;
+      placesNewState = false;
+      hide();
+      input.removeEventListener("input", onInput);
+      input.removeEventListener("keydown", onKey);
+      input.removeEventListener("blur", onBlur);
+      input.removeEventListener("focus", onFocus);
+      window.removeEventListener("resize", position);
+      window.removeEventListener("scroll", position, true);
+      if (box && box.parentNode) box.parentNode.removeChild(box);
+      box = null;
+      try { attachPlacesLegacy(input, opts, onPlace); } catch (e) {}
+    }
+    function query(q) {
+      var my = ++seq;
+      try {
+        if (!token) token = new google.maps.places.AutocompleteSessionToken();
+        var req = { input: q, sessionToken: token, includedRegionCodes: ["us"] };
+        if (opts.regions) req.includedPrimaryTypes = ["(regions)"];
+        else if (opts.types && opts.types.length) req.includedPrimaryTypes = opts.types;
+        google.maps.places.AutocompleteSuggestion.fetchAutocompleteSuggestions(req).then(function (res) {
+          if (my !== seq || torn) return;
+          placesNewState = true;
+          render((res && res.suggestions) || []);
+        }, function () {
+          if (my !== seq || torn) return;
+          if (placesNewState !== true) fallback(); else hide();
+        });
+      } catch (e) {
+        if (placesNewState !== true) fallback(); else hide();
+      }
+    }
+    function pick(pp) {
+      hide();
+      var fields = opts.regions ? ["formattedAddress", "displayName"] : ["addressComponents", "formattedAddress", "location"];
+      try {
+        var place = pp.toPlace();
+        place.fetchFields({ fields: fields }).then(function () {
+          token = null;
+          var shaped = placeToLegacyShape(place);
+          var label = shaped.formatted_address || shaped.name;
+          if (label) { input.value = label; lastQuery = label; }
+          onPlace(shaped);
+        }, function () { token = null; });
+      } catch (e) { token = null; }
+    }
+    function onInput() {
+      var v = (input.value || "").trim();
+      if (v.length < 3) { seq++; hide(); return; }
+      if (v === lastQuery) return;
+      lastQuery = v;
+      clearTimeout(timer);
+      timer = setTimeout(function () { query(v); }, 180);
+    }
+    function onKey(e) {
+      var open = box && box.style.display !== "none" && items.length;
+      if (!open) return;
+      if (e.key === "ArrowDown") { e.preventDefault(); setActive((activeIdx + 1) % items.length); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); setActive((activeIdx - 1 + items.length) % items.length); }
+      else if (e.key === "Enter") { if (activeIdx >= 0) { e.preventDefault(); pick(items[activeIdx].pp); } }
+      else if (e.key === "Escape" || e.key === "Esc") { e.preventDefault(); e.stopPropagation(); hide(); }
+    }
+    function onBlur() { setTimeout(hide, 150); }
+    function onFocus() { if (items.length && box) { box.style.display = "block"; position(); if (form) form.classList.add("is-pac-open"); } }
+    input.setAttribute("autocomplete", "off");
+    input.setAttribute("aria-autocomplete", "list");
+    input.addEventListener("input", onInput);
+    input.addEventListener("keydown", onKey);
+    input.addEventListener("blur", onBlur);
+    input.addEventListener("focus", onFocus);
+    window.addEventListener("resize", position);
+    window.addEventListener("scroll", position, true);
+    // Create the (hidden) container now so page-level dropdown polish that
+    // looks for .pac-container at bind time (the /value/ and /net-sheet/
+    // gates) finds it, exactly as the legacy class created its own eagerly.
+    ensureBox();
+  }
+  // opts: { regions: true } for city / ZIP / neighborhood picks, otherwise a
+  // street address; onPlace receives the legacy-shaped place object
+  // ({ address_components, formatted_address, geometry }) in both paths.
+  function drozqPlacesAttach(input, opts, onPlace) {
+    opts = opts || {};
+    if (placesNewState !== false && placesNewAvailable()) attachPlacesNew(input, opts, onPlace);
+    else attachPlacesLegacy(input, opts, onPlace);
+  }
+  window.drozqPlacesAttach = drozqPlacesAttach;
+
+  // Google Places initializer, called by the Maps script via callback=initFunnelPlaces.
+  // Attaches Autocomplete to (a) every landing-page form.pos_relative input[name="location"]
+  // and (b) the Sell&Buy in-funnel buy-location input (id="sellandbuy-step2-buylocation").
+  window.initFunnelPlaces = function() {
+    if (typeof google === "undefined" || !google.maps || !google.maps.places) return;
+
+    // Each landing-page input sits inside a styled pill wrapper (input.parentElement)
+    // that is wider than the input itself (it also contains the See Plan button).
+    // Google's Autocomplete positions .pac-container against the inner input, which
+    // produces a visible gap below the pill and a leftward horizontal inset. The hook
+    // below overrides Google's inline left/top/width so the dropdown snaps to the pill.
+    var pacAlignTo = null;
+    var pacObserverInit = false;
+
+    function alignVisiblePac() {
+      if (!pacAlignTo) return;
+      // Clear is-pac-open from any previously-active form. Only one input can host
+      // the visible dropdown at a time, so any stale class from a different form
+      // should be removed before re-applying based on current visibility.
+      var openForms = document.querySelectorAll("form.pos_relative.is-pac-open");
+      for (var k = 0; k < openForms.length; k++) {
+        openForms[k].classList.remove("is-pac-open");
+      }
+
+      var pacs = document.querySelectorAll(".pac-container");
+      if (!pacs.length) return;
+      var rect = pacAlignTo.getBoundingClientRect();
+      var leftPx = (rect.left + window.scrollX) + "px";
+      var topPx = (rect.bottom + window.scrollY) + "px";
+      var widthPx = rect.width + "px";
+      var anyOpen = false;
+      for (var i = 0; i < pacs.length; i++) {
+        var pac = pacs[i];
+        if (pac.style.display === "none") continue;
+        anyOpen = true;
+        if (pac.style.left !== leftPx) pac.style.left = leftPx;
+        if (pac.style.top !== topPx) pac.style.top = topPx;
+        if (pac.style.width !== widthPx) pac.style.width = widthPx;
+      }
+
+      // Toggle the is-pac-open class on the active form so its pill flattens the
+      // bottom corners. Funnel inputs (no form.pos_relative parent) are skipped.
+      if (anyOpen) {
+        var form = pacAlignTo.closest("form.pos_relative");
+        if (form) form.classList.add("is-pac-open");
+      }
+    }
+
+    function ensurePacObserver() {
+      if (pacObserverInit) return;
+      var pacs = document.querySelectorAll(".pac-container");
+      if (!pacs.length) return;
+      pacObserverInit = true;
+      var observer = new MutationObserver(alignVisiblePac);
+      for (var i = 0; i < pacs.length; i++) {
+        observer.observe(pacs[i], { attributes: true, attributeFilter: ["style"] });
+      }
+    }
+
+    function attachAutocomplete(input, onPick) {
+      if (!input || input.dataset.funnelAcAttached === "1") return;
+      input.dataset.funnelAcAttached = "1";
+      drozqPlacesAttach(input, { types: ["street_address", "premise", "subpremise"] }, function(place) {
+        if (!place || !place.address_components) return;
+        var a = window.funnelState.address;
+        var streetNumber = "", route = "";
+        a.city = ""; a.state = ""; a.zip = "";
+        for (var i = 0; i < place.address_components.length; i++) {
+          var comp = place.address_components[i];
+          if (comp.types.indexOf("street_number") >= 0) streetNumber = comp.long_name;
+          else if (comp.types.indexOf("route") >= 0) route = comp.long_name;
+          else if (comp.types.indexOf("locality") >= 0) a.city = comp.long_name;
+          else if (comp.types.indexOf("administrative_area_level_1") >= 0) a.state = comp.short_name;
+          else if (comp.types.indexOf("postal_code") >= 0) a.zip = comp.long_name;
+        }
+        a.street = (streetNumber + " " + route).trim();
+        a.formatted = place.formatted_address || "";
+        if (place.geometry && place.geometry.location) {
+          a.lat = place.geometry.location.lat();
+          a.lng = place.geometry.location.lng();
+        }
+        var city = a.city || "Irvine";
+        var cityEls = overlay.querySelectorAll(".funnel-city");
+        for (var j = 0; j < cityEls.length; j++) cityEls[j].textContent = city;
+
+        // Mark this input as having a valid full-address selection only if both
+        // a street number and a route (street name) are present. City-only or
+        // region-level picks are rejected.
+        if (streetNumber && route) {
+          validAddressMap.set(input, true);
+          clearAddressError(input);
+          // Persist the parsed address for returning-visitor auto-fill.
+          saveReturningData();
+        } else {
+          validAddressMap.set(input, false);
+        }
+
+        if (typeof onPick === "function") onPick();
+      });
+
+      // Any keystroke after a Place was picked invalidates the selection.
+      // User must re-pick from the dropdown to set the flag again. Also clears
+      // any visible error so it doesn't linger while the user is correcting.
+      input.addEventListener("input", function() {
+        validAddressMap.set(input, false);
+        clearAddressError(input);
+      });
+
+      // Only landing-page inputs sit inside a styled pill that needs override. The
+      // funnel step-4 input has no pill wrapper, so default Google positioning is fine.
+      // Align to the input's own bounding rect (not the pill) so the dropdown's width
+      // matches the input portion only and stops before the See Plan button.
+      if (input.closest("form.pos_relative")) {
+        var rafId = null;
+        function scheduleAlign() {
+          if (rafId) return;
+          rafId = requestAnimationFrame(function() {
+            rafId = null;
+            alignVisiblePac();
+          });
+        }
+        input.addEventListener("focus", function() {
+          pacAlignTo = input;
+          setTimeout(function() {
+            ensurePacObserver();
+            alignVisiblePac();
+          }, 0);
+        });
+        // Defensive cleanup: when the input loses focus, drop the is-pac-open class
+        // after a short delay (so a click on a suggestion still registers first).
+        input.addEventListener("blur", function() {
+          setTimeout(function() {
+            var form = input.closest("form.pos_relative");
+            if (form) form.classList.remove("is-pac-open");
+          }, 150);
+        });
+        // Re-align if the user scrolls or resizes while the dropdown is open.
+        window.addEventListener("resize", scheduleAlign);
+        window.addEventListener("scroll", scheduleAlign, true);
+      }
+    }
+
+    var landingInputs = document.querySelectorAll('form.pos_relative input[name="location"]');
+    for (var i = 0; i < landingInputs.length; i++) {
+      (function(input) {
+        attachAutocomplete(input, function() {
+          var form = input.closest("form.pos_relative");
+          var mode = detectFunnelMode(form);
+          // Pass input.value so Buy mode captures buyLocation. For Sell + Sell&Buy
+          // openFunnel ignores prefill once Places set address.lat, so this is safe.
+          openFunnel(input.value || "", mode);
+        });
+      })(landingInputs[i]);
+    }
+
+    // Dedicated autocomplete for the Sell&Buy buy-location input (step 1).
+    // Region-level suggestions (cities / ZIPs / neighborhoods). It writes ONLY
+    // funnelState.buyLocation and the .funnel-buy-city display spans. It must
+    // NOT touch funnelState.address: that holds the SELL address captured by
+    // the landing-form autocomplete, and the Sell&Buy lead is built from it.
+    function attachBuyLocationAutocomplete(input) {
+      if (!input || input.dataset.funnelAcAttached === "1") return;
+      input.dataset.funnelAcAttached = "1";
+      drozqPlacesAttach(input, { regions: true }, function(place) {
+        var val = ((place && (place.formatted_address || place.name)) || input.value || "").trim();
+        if (!val) return;
+        window.funnelState.buyLocation = val;
+        var buyCityEls = overlay.querySelectorAll(".funnel-buy-city");
+        for (var i = 0; i < buyCityEls.length; i++) buyCityEls[i].textContent = val;
+        var err = document.getElementById("sellandbuy-step2-buylocation-error");
+        if (err) err.textContent = "";
+      });
+    }
+    attachBuyLocationAutocomplete(document.getElementById("sellandbuy-step2-buylocation"));
+  };
+
+  // If the async Maps script already loaded and fired its callback before this
+  // inline script defined the real initFunnelPlaces (e.g. cached Maps winning
+  // the race), the pre-Maps stub set __funnelMapsReady. Attach autocomplete now.
+  // attach* helpers are idempotent (dataset.funnelAcAttached guard), so a late
+  // duplicate Maps callback re-invoking this is harmless.
+  if (window.__funnelMapsReady || (typeof google !== "undefined" && google.maps && google.maps.places)) {
+    window.initFunnelPlaces();
+  }
+
+  // Open the funnel when a hero address input is populated by autofill, paste,
+  // or a programmatic value drop (iPhone autofill, Chrome/Safari/Firefox autofill,
+  // password-manager-style address fillers). The Google Places place_changed
+  // listener handles user-clicked dropdown suggestions; this covers every other
+  // path. The deferred check skips opening if place_changed already opened the
+  // funnel in the same tick, so dropdown selection never double-fires.
+  function wireLandingFunnelOpenOnAutofill() {
+    var inputs = document.querySelectorAll('form.pos_relative input[name="location"]');
+    for (var i = 0; i < inputs.length; i++) {
+      (function(input) {
+        if (input.dataset.funnelAutofillWired === "1") return;
+        input.dataset.funnelAutofillWired = "1";
+
+        function deferredOpen() {
+          setTimeout(function() {
+            if (overlay.classList.contains("is-open")) return;
+            var v = (input.value || "").trim();
+            if (!v) return;
+            // Skip the realtor.com clone's "Irvine, CA" placeholder default
+            // unless the user actually edited it. readPrefillFromForm()
+            // applies the same filter for click/submit paths.
+            if (v.toLowerCase() === "irvine, ca") return;
+            var form = input.closest("form.pos_relative");
+            var mode = detectFunnelMode(form);
+            openFunnel(v, mode);
+          }, 60);
+        }
+
+        // change: fires on blur after autofill / programmatic value set on
+        // most browsers (Chrome, Safari desktop).
+        input.addEventListener("change", deferredOpen);
+
+        // paste: catches the explicit paste path even before the input event.
+        input.addEventListener("paste", deferredOpen);
+
+        // input event: detect "empty -> substantial in one tick" pattern that
+        // characterises iPhone autofill and password-manager address drops.
+        // Track the previous length so single keystrokes (delta == 1) don't
+        // trigger; only sudden jumps from <3 chars to >=10 do.
+        var lastLen = (input.value || "").length;
+        input.addEventListener("input", function() {
+          var newLen = (input.value || "").length;
+          var prev = lastLen;
+          lastLen = newLen;
+          if (prev < 3 && newLen >= 10 && (newLen - prev) >= 7) {
+            deferredOpen();
+          }
+        });
+      })(inputs[i]);
+    }
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", wireLandingFunnelOpenOnAutofill);
+  } else {
+    wireLandingFunnelOpenOnAutofill();
+  }
+})();
+</script>
+<script>
+/* In-funnel legal modal: privacy/terms content fetched from their own pages and shown in a
+   scrollable popup layered above the funnel (z-index 100001), so the visitor never leaves the
+   funnel. Single source of truth: /privacy/ and /terms/ stay canonical; this reads them live. */
+(function () {
+  var modal = document.getElementById("drozq-legal-modal");
+  if (!modal) return;
+  var titleEl = document.getElementById("drozq-legal-title");
+  var contentEl = document.getElementById("drozq-legal-content");
+  var DOCS = {
+    privacy: { url: "/privacy/", title: "Privacy Policy" },
+    terms: { url: "/terms/", title: "Terms" }
+  };
+  var cache = {};
+  var lastFocus = null;
+
+  function retargetLinks(root) {
+    var as = root.querySelectorAll("a[href]");
+    for (var i = 0; i < as.length; i++) {
+      var href = as[i].getAttribute("href") || "";
+      if (href.indexOf("mailto:") === 0 || href.indexOf("tel:") === 0) continue;
+      as[i].setAttribute("target", "_blank");
+      as[i].setAttribute("rel", "noopener noreferrer");
+    }
+  }
+
+  function decodeCfEmail(hex) {
+    try {
+      var k = parseInt(hex.substr(0, 2), 16), s = "";
+      for (var i = 2; i < hex.length; i += 2) s += String.fromCharCode(parseInt(hex.substr(i, 2), 16) ^ k);
+      return s;
+    } catch (e) { return ""; }
+  }
+  function deobfuscateEmails(root) {
+    // Cloudflare edge email-protection: decode so the modal shows the real address (the page's
+    // own decoder script does not run on this fetched fragment).
+    var spans = root.querySelectorAll("[data-cfemail]");
+    for (var i = 0; i < spans.length; i++) {
+      var email = decodeCfEmail(spans[i].getAttribute("data-cfemail") || "");
+      if (!email) continue;
+      var a = spans[i].closest ? spans[i].closest("a") : null;
+      if (a) { a.setAttribute("href", "mailto:" + email); a.textContent = email; }
+      else { spans[i].textContent = email; }
+    }
+    var links = root.querySelectorAll('a[href*="/cdn-cgi/l/email-protection"]');
+    for (var j = 0; j < links.length; j++) {
+      var hx = (links[j].getAttribute("href") || "").split("#")[1] || "";
+      var em = decodeCfEmail(hx);
+      if (em) { links[j].setAttribute("href", "mailto:" + em); if (links[j].textContent.indexOf("[email") !== -1) links[j].textContent = em; }
+    }
+  }
+
+  function render(key, html) {
+    var parsed = new DOMParser().parseFromString(html, "text/html");
+    var inner = parsed.querySelector(".legal-inner");
+    var hero = parsed.querySelector(".legal-hero");
+    var heroH1 = hero ? hero.querySelector("h1") : null;
+    var heroMeta = hero ? hero.querySelector(".meta") : null;
+    if (heroH1 && heroH1.textContent.trim()) titleEl.textContent = heroH1.textContent.trim();
+    var holder = document.createElement("div");
+    if (inner) {
+      var ctas = inner.querySelectorAll(".legal-cta");
+      for (var j = 0; j < ctas.length; j++) ctas[j].parentNode.removeChild(ctas[j]);
+      holder.innerHTML = inner.innerHTML;
+    } else {
+      holder.textContent = parsed.body ? parsed.body.textContent : "";
+    }
+    deobfuscateEmails(holder);
+    retargetLinks(holder);
+    contentEl.innerHTML = "";
+    if (heroMeta && heroMeta.textContent.trim()) {
+      var m = document.createElement("p");
+      m.className = "drozq-legal-meta";
+      m.textContent = heroMeta.textContent.trim();
+      contentEl.appendChild(m);
+    }
+    while (holder.firstChild) contentEl.appendChild(holder.firstChild);
+    cache[key] = { title: titleEl.textContent, html: contentEl.innerHTML };
+  }
+
+  function load(key) {
+    var d = DOCS[key];
+    if (!d) return;
+    titleEl.textContent = d.title;
+    if (cache[key]) {
+      titleEl.textContent = cache[key].title;
+      contentEl.innerHTML = cache[key].html;
+      contentEl.scrollTop = 0;
+      return;
+    }
+    contentEl.innerHTML = '<p class="drozq-legal-loading">Loading&hellip;</p>';
+    fetch(d.url, { credentials: "same-origin" })
+      .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })
+      .then(function (html) { render(key, html); contentEl.scrollTop = 0; })
+      .catch(function () {
+        contentEl.innerHTML = '<p class="drozq-legal-loading">Unable to load right now. <a href="' + d.url + '" target="_blank" rel="noopener noreferrer">Open the ' + d.title + ' in a new tab.</a></p>';
+      });
+  }
+
+  function openModal(key) {
+    lastFocus = document.activeElement;
+    load(key);
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.addEventListener("keydown", onKey);
+    var x = modal.querySelector(".drozq-legal-x");
+    if (x) x.focus();
+  }
+
+  function closeModal() {
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.removeEventListener("keydown", onKey);
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  function onKey(e) {
+    if (e.key === "Escape" || e.keyCode === 27) { e.preventDefault(); e.stopPropagation(); closeModal(); }
+  }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var link = t.closest("[data-legal]");
+    if (link) {
+      e.preventDefault();
+      openModal(link.getAttribute("data-legal"));
+      return;
+    }
+    if (t.closest("[data-legal-close]")) {
+      e.preventDefault();
+      closeModal();
+    }
+  });
+function closeFunnel(method) {
+    var fo = document.getElementById("funnel-overlay");
+    if (!fo || !fo.classList.contains("is-open")) return;
+    fo.classList.remove("is-open"); fo.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    var fm = { mode: window.activeFunnel || "", method: method || "x" };
+    try { if (window.posthog && window.posthog.capture) window.posthog.capture("funnel_close", fm); } catch (e) {}
+    try { (window.dataLayer = window.dataLayer || []).push({ event: "funnel_close", mode: fm.mode, method: fm.method }); } catch (e) {}
+    try { var op = window.__drozqFunnelOpener; if (op && op.focus && document.contains(op)) op.focus({ preventScroll: true }); } catch (e) {}
+    window.__drozqFunnelOpener = null;
+  }
+  window.closeFunnel = closeFunnel;
+  var fx = document.getElementById("funnel-close-x");
+  if (fx) fx.addEventListener("click", function () { closeFunnel("x"); });
+  // Esc closes the dialog; Tab cycles inside it (WAI-ARIA modal dialog pattern).
+  document.addEventListener("keydown", function (e) {
+    var fo = document.getElementById("funnel-overlay");
+    if (!fo || !fo.classList.contains("is-open")) return;
+    var lm = document.getElementById("drozq-legal-modal");
+    if (lm && lm.classList.contains("is-open")) return;
+    if (e.key === "Escape" || e.key === "Esc") { e.preventDefault(); closeFunnel("esc"); return; }
+    if (e.key !== "Tab") return;
+    var nodes = fo.querySelectorAll('a[href], button:not([disabled]), input:not([type="hidden"]):not([disabled]):not([tabindex="-1"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+    var list = [];
+    for (var i = 0; i < nodes.length; i++) { if (nodes[i].getClientRects().length) list.push(nodes[i]); }
+    if (!list.length) return;
+    var first = list[0], last = list[list.length - 1], a = document.activeElement;
+    if (e.shiftKey) { if (a === first || !fo.contains(a)) { e.preventDefault(); last.focus(); } }
+    else if (a === last || !fo.contains(a)) { e.preventDefault(); first.focus(); }
+  });
+  window.addEventListener("pageshow", function (e) { if (e.persisted) window.location.reload(); });
+  })();
+</script>
+<!-- DROZQ_FUNNEL_JS_END -->
+<!-- DROZQ_NAV_JS_BEGIN --><script>
+(function() {
+  "use strict";
+
+  // Mobile hamburger: wire open/close on the React-Panda drawer markup the
+  // realtor.com clone shipped without behavior.
+  var hamburger = document.getElementById("drozq-hamburger");
+  var sidebar = document.querySelector('[data-testid="sidebar"]');
+  var overlay = sidebar ? sidebar.nextElementSibling : null;
+
+  function openMobileNav() {
+    if (!sidebar) return;
+    sidebar.setAttribute("data-active", "true");
+    if (overlay) overlay.classList.add("drozq-mobile-overlay");
+    document.body.style.overflow = "hidden";
+  }
+  function closeMobileNav() { if (!sidebar || sidebar.getAttribute("data-active") !== "true") return;
+    sidebar.setAttribute("data-active", "false");
+    if (overlay) overlay.classList.remove("drozq-mobile-overlay");
+    document.body.style.overflow = "";
+  }
+  if (hamburger) {
+    hamburger.addEventListener("click", function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (sidebar && sidebar.getAttribute("data-active") === "true") closeMobileNav();
+      else openMobileNav();
+    });
+  }
+  if (overlay) {
+    overlay.addEventListener("click", closeMobileNav);
+  }
+  // Close drawer on any link tap inside it.
+  if (sidebar) {
+    sidebar.addEventListener("click", function(e) {
+      var a = e.target.closest && e.target.closest("a");
+      if (a) closeMobileNav();
+    });
+  }
+
+  // Desktop "More" dropdown.
+  var moreLi = document.getElementById("drozq-more-li");
+  var moreToggle = document.getElementById("drozq-more-toggle");
+
+  function openMore() {
+    if (!moreLi) return;
+    moreLi.classList.add("is-open");
+    if (moreToggle) moreToggle.setAttribute("aria-expanded", "true");
+  }
+  function closeMore() {
+    if (!moreLi) return;
+    moreLi.classList.remove("is-open");
+    if (moreToggle) moreToggle.setAttribute("aria-expanded", "false");
+  }
+  if (moreToggle) {
+    moreToggle.addEventListener("click", function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (moreLi.classList.contains("is-open")) closeMore();
+      else openMore();
+    });
+    moreToggle.addEventListener("keydown", function(e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        if (moreLi.classList.contains("is-open")) closeMore();
+        else openMore();
+      }
+    });
+  }
+  document.addEventListener("click", function(e) {
+    if (!moreLi) return;
+    if (moreLi.contains(e.target)) return;
+    closeMore();
+  });
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") { closeMore(); closeMobileNav(); }
+  });
+
+  // Hash-driven tab switch so More-menu links like /#tab-buy actually flip
+  // the hero tab when the page is loaded with a hash.
+  function applyHashTab() {
+    var h = (window.location.hash || "").toLowerCase();
+    if (!h) return;
+    var m = h.match(/^#(tab-(?:sell-buy|sell|buy))/);
+    if (!m) return;
+    var btn = document.getElementById(m[1]);
+    if (btn && typeof btn.click === "function") btn.click();
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", applyHashTab);
+  } else {
+    applyHashTab();
+  }
+  window.addEventListener("hashchange", applyHashTab);
+})();
+</script><!-- DROZQ_NAV_JS_END -->
+</body></html>
