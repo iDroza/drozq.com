@@ -79,3 +79,16 @@ Trestle facts from the Cotality docs (trestle-documentation.corelogic.com/web-ap
 - Trestle: https://www.cotality.com/products/trestle, docs https://trestle-documentation.corelogic.com/web-api/, pricing https://trestle-documentation.corelogic.com/data-pricing/, support trestlesupport@cotality.com
 - Real Brokerage support (broker signature): https://support.therealbrokerage.com/
 - DRE record confirming the responsible broker: https://www2.dre.ca.gov/PublicASP/pplinfo.asp?License_id=02267255
+
+## Decision and status (2026-09-02, Joshua): no vendor, straight from CRMLS
+
+Joshua's ruling: no IDX vendor and no reseller. The feed comes from CRMLS directly (the CRMLS RESO OData Web API, token endpoint `https://soc.crmls.org/connect/token`, client-credentials grant, production `https://h.api.crmls.org/Reso/OData/`, docs at devdocs.crmls.org). Trestle is the fallback only if CRMLS says direct is not offered.
+
+Identifiers (from the Matrix roster, 2026-09-02): agent login ID **LGGUERJOS**, AOR Laguna, DRE 02267255; office **LGRBT**, Real Brokerage Technologies, Inc., office DRE 02022092, office contact on the CRMLS roster bob.watson@therealbrokerage.com (619-248-6434, 8030 La Mesa Blvd #502, La Mesa). Real's signature desk: casign@therealbrokerage.com; California broker team cabroker@therealbrokerage.com; designated broker Rachel Stalnaker.
+
+Two drafts sit in guerrerojoshua720@gmail.com, ready to send, each with the pre-filled CRMLS IDX Request Form attached (`Downloads/CRMLS_IDX_Request_Form_drozq_prefilled.pdf`):
+
+1. To licensing@crmls.org, cc api@crmls.org: the direct RESO Web API IDX license request (agreement + Participant authorization, API account, fee, Trestle-not-required confirmation, non-display field list), the 19.2 compliance commitments, and the 19.2.18 notice that `/homes/` already displays the Matrix IDX frame (ID 131c38ac).
+2. To casign@therealbrokerage.com, cc cabroker@ + bob.watson@: the broker-of-record signature on the form and, later, the data license agreement; states that Joshua owns compliance and every fee.
+
+When CRMLS answers: sign whatever they send the same day, forward the license to casign@ for Real's countersignature, then build step 3 of the plan (sync worker, D1, `/homes/` native search) against the CRMLS endpoint instead of Trestle.
