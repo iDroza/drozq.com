@@ -134,6 +134,7 @@ STATS = f"""
       <div class="fl-stat"><b>350,000</b><span>Requests a day</span></div>
       <div class="fl-stat"><b>100</b><span>Reads per 10 seconds</span></div>
     </div>
+    <p class="fl-note"><strong>Status, evening of {PROBE_DATE}: everything switched off.</strong> No lead push, no webhook subscriptions, no dashboard readback. Keys kept. The CLI still works for one-at-a-time manual use.</p>
     <p class="fl-note">Key verified live on {PROBE_DATE}: <code>GET /webhooks</code> answered 200 with zero subscriptions registered, and the same call with no key answered 401. Base URL <code>https://api.fello.ai/public/v1</code>, one header, <code>x-api-key</code>. The client secret never touches an API call; it is the HMAC key that proves an inbound webhook came from Fello.</p>
   </div>
 </section>
@@ -342,7 +343,7 @@ LIMITS = """
 BUILD = """
 <section id="build" aria-labelledby="fello-build-title" class="bg_#fff py_48px md:py_64px">
   <div class="fl-wrap">
-    <div class="fl-head"><h2 id="fello-build-title">Wired, as of September 2, 2026.</h2><p>Steps two through four are live on the site. Step one is off by order. The native Follow Up Boss sync carries the dollar figures; this is everything the API adds on top.</p></div>
+    <div class="fl-head"><h2 id="fello-build-title">Built September 2, 2026. Switched off the same evening.</h2><p>Every step below exists in the code and is dormant: no webhooks are subscribed, no lead is pushed, the dashboard readback is unconfigured. Turning any of it on is a deliberate act.</p></div>
     <div class="fl-grid fl-grid--2">
       <div class="fl-card fl-card--warm">
         <p class="fl-eyebrow">01 &middot; Off, by order</p>
@@ -350,17 +351,17 @@ BUILD = """
         <p>Built, then switched off the same evening. The lead handler sends nothing to Fello; the push function and the tag vocabulary stay in the CLI for an explicit, one-at-a-time add. Fello only learns about a lead when Joshua puts it there himself.</p>
       </div>
       <div class="fl-card fl-card--warm">
-        <p class="fl-eyebrow">02 &middot; Live</p>
+        <p class="fl-eyebrow">02 &middot; Off</p>
         <h3>The webhook receiver at /api/fello/webhook</h3>
         <p>Signature-verified, 200 in milliseconds, work behind the response. Fello form submissions become drozq leads (alert, Follow Up Boss event, drip). Dashboard clicks, email clicks, postcard scans, and Felix handoffs send a hot alert with score, phone, and property, and tag the FUB person. Unsubscribes pause the drozq drip. Enrichment, detail changes, and tags refresh the FUB person quietly.</p>
       </div>
       <div class="fl-card fl-card--warm">
-        <p class="fl-eyebrow">03 &middot; Live</p>
+        <p class="fl-eyebrow">03 &middot; Dormant</p>
         <h3>One tag vocabulary</h3>
         <p>Drozq Website, then Seller or Buyer, then the mode (Sell, Buy, Sell + Buy, Valuation, Net Sheet, One Tap), the timeline bucket (Now, 1-3 mo, 4+ mo, Curious), the page of origin, and Paid: Google when a click id is present. Applied on every push, so Fello segments and workflows key off the same words.</p>
       </div>
       <div class="fl-card fl-card--warm">
-        <p class="fl-eyebrow">04 &middot; Live</p>
+        <p class="fl-eyebrow">04 &middot; Off</p>
         <h3>Engagement on the operating dashboard</h3>
         <p>The newest hundred leads are swept through Fello every ten minutes and ranked hot first: a dashboard or email click inside seven days, then views, then lead score. Three numbers on the dashboard, the named call list in the CLI, and the Fello home value and equity attached per lead the moment the Follow Up Boss field mapping is on.</p>
       </div>

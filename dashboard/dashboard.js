@@ -63,12 +63,7 @@
     teamVolumeYtd: { source: "FUB Deals Leaderboard", format: "currencyWhole" },
     teamActiveAgentsYtd: { source: "FUB Deals Leaderboard", format: "count" },
     shellPagesRemaining: { source: "Active Realty", format: "count" },
-    setsRemaining: { source: "Active Realty", format: "count" },
-    // Fello nurture readback (2026-09-02). Optional so a snapshot from a
-    // Worker that predates the block still renders everything else.
-    felloHotLeads7d: { source: "Fello", format: "count", optional: true },
-    felloLeadsScored: { source: "Fello", format: "count", optional: true },
-    felloAvgLeadScore: { source: "Fello", format: "decimal", optional: true }
+    setsRemaining: { source: "Active Realty", format: "count" }
   };
   var countFormatter = new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 0

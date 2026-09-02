@@ -1,5 +1,7 @@
 # Fello API: what the keys can do, and what they cannot
 
+> **2026-09-02, evening: EVERYTHING OFF.** Joshua's order. Webhooks unsubscribed, the lead push removed, the dashboard readback unconfigured, the cards removed. Keys kept (Cloudflare + `scripts/.fello_secret`). The code stays dormant; the CLI still works for manual, one-at-a-time use.
+
 *Researched 2026-09-02 against docs.fello.ai (rendered), the Fello help center, the integrations hub, and a live probe of the key (including a throwaway contact, `fello-api-probe@drozq.com`, still in the account until the value mapping is verified). Rendered for Joshua at `/fello/` (noindex). CLI: `scripts/fello.py`. Credentials: gitignored `scripts/.fello_secret` (never in the repo).*
 
 ## The one-paragraph version
