@@ -127,39 +127,28 @@ console.log("\n== tag vocabulary ==");
   check("placeholder phone + placeholder name are dropped", ph.phone === undefined && ph.name === undefined, ph);
 }
 
-console.log("\n== outbound push from /api/lead ==");
+console.log("\n== /api/lead NEVER pushes to Fello (Joshua's order, 2026-09-02) ==");
 {
   calls = []; felloCreateStatus = 200;
   const env = Object.assign({ EMAIL_DB: memoryD1() }, CHANNELS);
-  await submitLead(env, LEAD);
-  check("no FELLO_API_KEY -> no Fello call", felloCalls().length === 0, felloCalls().length);
+  const r0 = await submitLead(env, LEAD);
+  check("no FELLO_API_KEY -> lead accepted, no Fello call", r0.status === 200 && felloCalls().length === 0, felloCalls().length);
 
   calls = [];
   const envF = Object.assign({ EMAIL_DB: memoryD1(), FELLO_API_KEY: "fk" }, CHANNELS);
   const cap = captureConsole();
   const r = await submitLead(envF, LEAD);
   cap.restore();
-  const create = felloCalls().find((c) => c.method === "POST" && c.u.endsWith("/contact"));
-  check("lead accepted and pushed to Fello", r.status === 200 && Boolean(create), r);
-  const sent = create ? JSON.parse(create.body) : {};
-  check("push carries key + tags + address + E.164 phone", create && create.headers["x-api-key"] === "fk" && sent.tags.includes("Drozq: Sell") && sent.tags.includes("Timeline: 1-3 mo") && sent.address === LEAD.full_address && sent.phone === "+19495550134", sent);
-  check("LEAD_FELLO_PUSHED logged with masked email", cap.lines.some((l) => l.startsWith("LEAD_FELLO_PUSHED") && l.includes("s***@example.com") && !l.includes("seller@example.com")), cap.lines.filter((l) => l.includes("FELLO")));
-
-  calls = []; felloCreateStatus = 400; felloContacts = { "seller@example.com": { contactId: "cid-1", email: "seller@example.com", tags: [] } };
-  const cap2 = captureConsole();
-  await submitLead(envF, LEAD);
-  cap2.restore();
-  const tagCall = felloCalls().find((c) => c.method === "POST" && c.u.endsWith("/contact/cid-1/tags"));
-  const propCall = felloCalls().find((c) => c.method === "POST" && c.u.endsWith("/contact/cid-1/property"));
-  check("DuplicateContact -> lookup + tags appended + property attached", Boolean(tagCall) && Boolean(propCall), felloCalls().map((c) => c.method + " " + c.u));
-  check("LEAD_FELLO_DUPLICATE logged", cap2.lines.some((l) => l.startsWith("LEAD_FELLO_DUPLICATE")), null);
-
-  calls = []; felloCreateStatus = 200;
-  await submitLead(envF, Object.assign({}, LEAD, { intent: "Field Notes Subscribe", email: "reader@example.com" }));
-  check("newsletter subscriber is never pushed", felloCalls().length === 0, felloCalls().length);
+  check("WITH FELLO_API_KEY -> lead accepted, still no Fello call", r.status === 200 && felloCalls().length === 0, felloCalls().map((c) => c.method + " " + c.u));
+  check("no LEAD_FELLO_* marker logged", !cap.lines.some((l) => l.startsWith("LEAD_FELLO")), cap.lines.filter((l) => l.includes("FELLO")));
   calls = [];
-  await submitLead(envF, Object.assign({}, LEAD, { intent: "Fello Seller Lead: Home Value Lead", referral_source: "Fello", email: "fromfello@example.com" }));
-  check("a Fello-originated lead is never pushed back", felloCalls().length === 0, felloCalls().length);
+  await submitLead(envF, Object.assign({}, LEAD, { intent: "Home Purchase", email: "buyer@example.com" }));
+  await submitLead(envF, Object.assign({}, LEAD, { intent: "Home Valuation Lead", email: "val@example.com" }));
+  await submitLead(envF, Object.assign({}, LEAD, { intent: "Seller Net Sheet", email: "ns@example.com" }));
+  check("buy / valuation / net sheet leads: no Fello call either", felloCalls().length === 0, felloCalls().length);
+
+  // The library function still works for the CLI, and still refuses the loops.
+  check("pushLeadToFello skip rules stay intact for CLI use", felloShouldPush({ email: "a@b.co", intent: "Field Notes Subscribe" }) === false && felloShouldPush({ email: "a@b.co", intent: "Fello Seller Lead: x" }) === false, null);
 }
 
 console.log("\n== webhook: signature + dedupe ==");
@@ -198,7 +187,7 @@ console.log("\n== webhook: FormSubmission -> the lead pipeline ==");
   const leadCall = calls.find((c) => c.u.includes("/api/lead"));
   check("webhook 200 and the lead was posted internally", r.status === 200 && Boolean(leadCall), r);
   check("lead pipeline ran: alert email + FUB Seller Inquiry", mailCalls().length === 1 && fubCalls().some((c) => c.body.includes("Seller Inquiry")), { mail: mailCalls().length, fub: fubCalls().map((c) => c.u) });
-  check("no loop: the Fello-originated lead was not pushed back to Fello", !felloCalls().some((c) => c.method === "POST" && c.u.endsWith("/contact")), felloCalls().map((c) => c.method + " " + c.u));
+  check("no Fello contact write of any kind from the lead pipeline", !felloCalls().some((c) => c.method === "POST"), felloCalls().map((c) => c.method + " " + c.u));
   check("FELLO_WEBHOOK_FORM_LEAD logged", cap.lines.some((l) => l.startsWith("FELLO_WEBHOOK_FORM_LEAD status=200")), cap.lines.filter((l) => l.includes("FELLO")));
   const noEmail = { eventType: "FormSubmission", eventDate: "2026-09-02T01:02:04.000Z", data: { formSubmissionInfo: { formData: { firstName: "No", lastName: "Mail" } } } };
   calls = [];

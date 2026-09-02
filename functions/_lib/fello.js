@@ -1,6 +1,8 @@
-// Fello (fello.ai) integration helpers, shared by /api/lead (the outbound
-// contact push), /api/fello/webhook (the inbound event receiver) and
-// /api/fello/engagement (the lead-score readback for the dashboard + CLI).
+// Fello (fello.ai) integration helpers, shared by /api/fello/webhook (the
+// inbound event receiver) and /api/fello/engagement (the lead-score readback
+// for the dashboard + CLI). pushLeadToFello exists for the CLI / a future
+// explicit opt-in ONLY: site leads are NOT pushed to Fello (Joshua's order,
+// 2026-09-02, "do not submit leads to fello"); /api/lead never calls it.
 //
 // Env contract (Cloudflare Pages > Settings):
 //   FELLO_API_KEY        the Custom App key (x-api-key). Full account access.
