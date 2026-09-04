@@ -749,6 +749,30 @@ Examples observed:
 - Captions and labels: `14px`
 - Eyebrows: `11-12px` / 700 / `letter-spacing: 1.5px` / uppercase / `#d92228` (red eyebrow)
 
+### Homepage type scale (2026-09-03, homepage only for now)
+
+Joshua's ruling on the `#drozq-commit-strip` stat bar: "I like the size of these ... resize the other text to match this ... not a huge fan of the small text but like the sizing and the spacing, it makes it so much easier to read, which is good for conversions." So every block below the splash on `/index.html` now reads at the strip's scale. The rules live in one scoped block, `<style id="drozq-home-type-css">` in `<head>` (so nothing paints at the old scale first), keyed by section id: `#home-steps` (3-step card), `#home-hard` (Selling your home can be hard), `#home-market`, `#home-proof`, `#home-condition`, `#home-five-steps`, `#what-i-owe-you`, `#brand-wall`, `#home-faq`, `#home-closer`. Id + descendant selectors beat the single-class Panda utilities on specificity, so the markup's classes stay exactly as they were and the block is the only thing to tune. The splash (locked), the synced funnel, the header and the footer are untouched.
+
+The scale, derived from the strip (kicker `clamp(20px,2.4vw,27px)`, values `clamp(30px,3.6vw,50px)`, labels 11.5 / 12.5px uppercase):
+
+| Role | Base (375) | `lg` (992+) | Where |
+|---|---|---|---|
+| Section h2 | `clamp(30px,3.4vw,46px)` / 1.12 | 46px at 1440 | every h2 below the splash |
+| Sub-headline (`--hm-h3`) | `clamp(20px,2.4vw,27px)` / 1.25 | 27px | 3-step card title, "It's a seller's market", Five Steps card h3s. The condition-panel h3s cap at 24px (`clamp(20px,2.1vw,24px)`) because their column is 422px wide at desktop and 27px wrapped every title |
+| Secondary stat (`--hm-stat`) | `clamp(30px,3.2vw,44px)` / 1.05, tabular | 44px | the proof-card dollar figures. The market widget's two figures use `clamp(28px,2.8vw,40px)` + `white-space:nowrap` because its column is `min-content` and "42 days" broke across lines at 44px; the strip itself keeps 50px |
+| Body paragraph (`--hm-body`) | 18 / 28 | 19 / 30 | section intros, FAQ answers, the market sentence (left-aligned now, was justified) |
+| Card body (`--hm-card`) | 17 / 26 | 18 / 28 | condition-panel items, proof cards, Five Steps cards, the 3-step items at `lg` (16 / 24 below it, three columns in 343px) |
+| Grid-card title (`--hm-title`) | 18 / 24 | 20 / 26 | Hard Parts item titles, proof-card category + reviewer name |
+| Label (`--hm-label`) | 12.5px, tracking 1.2px | 13px, tracking 1.6px | uppercase: Five Steps eyebrow + chips + total eyebrow, the market stat labels (now rendered UNDER their figure in red, `order:2`, like the strip), the proof-card stat labels (block under the figure, `#3f4650`) |
+| Meta (`--hm-meta`) | 15px | 16px | proof-card city line + "Read the case file" |
+| FAQ question | `clamp(19px,2vw,22px)` / 1.35 | 22px | `#home-faq button h3`; row padding 16px 40px 20px 0 |
+| What I owe you | 17 / 24 (phone labels) | 18 / 28 at `md`, 19 / 30 at `lg` | the desktop sentences |
+| Condition tabs / h4 | 16px / 20px | 17px at `md` / 24px at `lg` | `#sellTabBtn`, `#needsTabBtn`, the pill h4 |
+
+Layout knock-ons handled in the same block: `#hardparts-grid > div` is 165px at base (two per row in 343px) and 200px from `md` (five across = 1000px at 1440); the Hard Parts h2 gets 16px side padding because its band has none; `#home-condition` drops the fixed `lg:h_800px` for `height:auto; min-height:800px` (both tabs measure 983px at 1440, so the toggle still does not jump); the proof-card stat label lost its leading `&nbsp;` when it became a block. Verified 2026-09-03 at 375 / 768 / 1440: zero horizontal overflow at every width.
+
+**Rollout to the other pages is a BACKLOG item, not automatic.** The sibling pages still run the pre-2026-09-03 scale; when Joshua approves, port the table above as a scoped block on each page (the section ids differ per page) and update this section to say "sitewide".
+
 ### Reusable building blocks (used across migrated pages)
 
 These section patterns are reused 2+ times across the migrated content pages. Treat them as the vocabulary for any future migration. Copy the matching `migrate_*.py` constant verbatim and just retitle.
