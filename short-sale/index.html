@@ -1022,7 +1022,7 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
   var STORAGE_KEY = "drozq_funnel_returning";
   var STORAGE_TTL_DAYS = 30;
 
-  function saveReturningData() {
+  function saveReturningData(skipServerSync) {
     try {
       var payload = {
         fullName: window.funnelState.fullName || "",
@@ -1034,6 +1034,24 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch (e) { /* localStorage disabled or full; funnel still works */ }
+    // Also push to the durable, server-backed store keyed by the drozq_vid
+    // cookie (see /api/visitor). localStorage alone is capped to 7 days by
+    // Safari ITP regardless of the 30-day TTL above, so it can't be the only
+    // copy of a returning visitor's identity; this is the copy that actually
+    // survives a return visit weeks out.
+    if (!skipServerSync) {
+      try {
+        var rvBody = new URLSearchParams();
+        rvBody.set("fullName", window.funnelState.fullName || "");
+        rvBody.set("email", window.funnelState.email || "");
+        rvBody.set("phone", window.funnelState.phone || "");
+        rvBody.set("gclid", window.funnelState.gclid || "");
+        if (window.funnelState.address && window.funnelState.address.formatted) {
+          rvBody.set("address", JSON.stringify(window.funnelState.address));
+        }
+        fetch("/api/visitor", { method: "POST", body: rvBody, credentials: "same-origin", keepalive: true }).catch(function () {});
+      } catch (e) {}
+    }
   }
 
   function loadReturningData() {
@@ -1112,27 +1130,55 @@ button[aria-controls$="-content"][aria-expanded="true"] .faq-icon-vertical {
 
   // For returning visitors with a saved address, pre-fill all 7 landing-page inputs
   // and pre-mark them valid so the address-validation gate passes without a re-pick.
-  if (returningData && returningData.address && returningData.address.formatted) {
-    function populateLandingInputs() {
-      var inputs = document.querySelectorAll('form.pos_relative input[name="location"]');
-      for (var i = 0; i < inputs.length; i++) {
-        var inp = inputs[i];
-        // Skip the Buy tab's city/area input - hydrating a full street address there
-        // would mismatch the "City and State or ZIP" placeholder semantics.
-        var form = inp.closest("form.pos_relative");
-        if (detectFunnelMode(form) === "buy") continue;
-        var current = (inp.value || "").trim().toLowerCase();
-        if (!current || current === "irvine, ca") {
-          inp.value = returningData.address.formatted;
-          validAddressMap.set(inp, returningData.address.lat != null && returningData.address.lng != null);
-        }
+  function populateLandingInputs(addr) {
+    var inputs = document.querySelectorAll('form.pos_relative input[name="location"]');
+    for (var i = 0; i < inputs.length; i++) {
+      var inp = inputs[i];
+      // Skip the Buy tab's city/area input - hydrating a full street address there
+      // would mismatch the "City and State or ZIP" placeholder semantics.
+      var form = inp.closest("form.pos_relative");
+      if (detectFunnelMode(form) === "buy") continue;
+      var current = (inp.value || "").trim().toLowerCase();
+      if (!current || current === "irvine, ca") {
+        inp.value = addr.formatted;
+        validAddressMap.set(inp, addr.lat != null && addr.lng != null);
       }
     }
+  }
+  function runPopulateLandingInputs(addr) {
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", populateLandingInputs);
+      document.addEventListener("DOMContentLoaded", function () { populateLandingInputs(addr); });
     } else {
-      populateLandingInputs();
+      populateLandingInputs(addr);
     }
+  }
+  if (returningData && returningData.address && returningData.address.formatted) {
+    runPopulateLandingInputs(returningData.address);
+  }
+
+  // localStorage is the fast path but Safari ITP caps it (and document.cookie)
+  // to 7 days of no direct interaction, well inside the 30-day window this
+  // system promises. Fall back to the server-backed record (keyed by the
+  // drozq_vid cookie, which functions/_middleware.js re-issues on every
+  // visit and IS immune to that cap) whenever the local copy came up empty,
+  // so a visitor who clicked a Google ad two weeks ago and comes back on
+  // mobile Safari still gets recognized.
+  if (!(returningData && (returningData.fullName || returningData.email || (returningData.address && returningData.address.formatted)))) {
+    fetch("/api/visitor", { credentials: "same-origin" }).then(function (r) { return r.json(); }).then(function (res) {
+      if (!res || !res.found || !res.data) return;
+      var d = res.data;
+      if (d.fullName && !window.funnelState.fullName) window.funnelState.fullName = d.fullName;
+      if (d.email && !window.funnelState.email) window.funnelState.email = d.email;
+      if (d.phone && !window.funnelState.phone) window.funnelState.phone = d.phone;
+      if (d.gclid && !window.funnelState.gclid) window.funnelState.gclid = d.gclid;
+      if (d.address && d.address.formatted && !(window.funnelState.address && window.funnelState.address.formatted)) {
+        window.funnelState.address = d.address;
+        runPopulateLandingInputs(d.address);
+      }
+      // Refresh the local cache so the next pageview is instant again, but
+      // don't re-POST what we just received right back at the server.
+      saveReturningData(true);
+    }).catch(function () {});
   }
 
   var currentStep = 1;
