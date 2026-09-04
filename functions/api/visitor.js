@@ -20,6 +20,7 @@
 
 import { getVid } from "../_lib/visitorid.js";
 import { enforceRateLimits } from "../_lib/ratelimit.js";
+import { phCapture } from "../_lib/email.js";
 
 const TABLE_SQL =
   "CREATE TABLE IF NOT EXISTS returning_visitors (" +
@@ -46,29 +47,57 @@ function clip(v, n) {
   return String(v == null ? "" : v).trim().slice(0, n);
 }
 
-export async function onRequestGet(context) {
+// Server-side telemetry for the endpoint itself (it has none otherwise): one
+// event per GET/POST so real traffic -- volume, the found/not-found split,
+// how often a POST arrives with no vid cookie at all (would flag the
+// middleware not running) -- is visible in PostHog instead of just Cloudflare
+// function logs. Fire-and-forget behind waitUntil; never affects the response.
+function track(context, event, vid, props) {
   try {
-    const { request, env } = context;
-    if (!env.EMAIL_DB) return json({ ok: true, found: false });
+    context.waitUntil(phCapture(event, vid || "no-vid", Object.assign({ $lib: "drozq-visitor-api" }, props || {})));
+  } catch (e) {}
+}
 
-    const vid = getVid(request);
-    if (!vid) return json({ ok: true, found: false });
+export async function onRequestGet(context) {
+  const { request, env } = context;
+  const vid = getVid(request);
+  try {
+    if (!env.EMAIL_DB) {
+      track(context, "visitor_id_get", vid, { found: false, reason: "unconfigured" });
+      return json({ ok: true, found: false });
+    }
+
+    if (!vid) {
+      track(context, "visitor_id_get", vid, { found: false, reason: "no_vid" });
+      return json({ ok: true, found: false });
+    }
 
     await ensureTable(env.EMAIL_DB);
     const row = await env.EMAIL_DB.prepare(
       "SELECT full_name, email, phone, address_json, gclid, updated_at FROM returning_visitors WHERE vid = ?1"
     ).bind(vid).first();
 
-    if (!row) return json({ ok: true, found: false });
+    if (!row) {
+      track(context, "visitor_id_get", vid, { found: false, reason: "no_row" });
+      return json({ ok: true, found: false });
+    }
 
     const ageSec = Math.floor(Date.now() / 1000) - Number(row.updated_at || 0);
-    if (ageSec > TTL_SECONDS) return json({ ok: true, found: false });
+    if (ageSec > TTL_SECONDS) {
+      track(context, "visitor_id_get", vid, { found: false, reason: "expired", age_days: Math.floor(ageSec / 86400) });
+      return json({ ok: true, found: false });
+    }
 
     let address = null;
     if (row.address_json) {
       try { address = JSON.parse(row.address_json); } catch (e) {}
     }
 
+    track(context, "visitor_id_get", vid, {
+      found: true,
+      age_days: Math.floor(ageSec / 86400),
+      has_name: !!row.full_name, has_email: !!row.email, has_phone: !!row.phone, has_address: !!address, has_gclid: !!row.gclid
+    });
     return json({
       ok: true,
       found: true,
@@ -83,22 +112,32 @@ export async function onRequestGet(context) {
     });
   } catch (e) {
     console.error("VISITOR_GET_FAILED " + ((e && e.message) || e));
+    track(context, "visitor_id_get", vid, { found: false, reason: "error" });
     return json({ ok: true, found: false });
   }
 }
 
 export async function onRequestPost(context) {
+  const { request, env } = context;
+  const vid = getVid(request);
   try {
-    const { request, env } = context;
-    if (!env.EMAIL_DB) return json({ ok: false, error: "unconfigured" }, 503);
+    if (!env.EMAIL_DB) {
+      track(context, "visitor_id_post", vid, { outcome: "unconfigured" });
+      return json({ ok: false, error: "unconfigured" }, 503);
+    }
 
-    const vid = getVid(request);
-    if (!vid) return json({ ok: false, error: "no_visitor_id" }, 200);
+    if (!vid) {
+      track(context, "visitor_id_post", vid, { outcome: "no_vid" });
+      return json({ ok: false, error: "no_visitor_id" }, 200);
+    }
 
     const limited = await enforceRateLimits(context, [
       { bucket: "visitor:10m", limit: 30, windowSeconds: 600 }
     ]);
-    if (limited) return limited;
+    if (limited) {
+      track(context, "visitor_id_post", vid, { outcome: "rate_limited" });
+      return limited;
+    }
 
     const contentType = request.headers.get("Content-Type") || "";
     let fields = {};
@@ -125,6 +164,7 @@ export async function onRequestPost(context) {
     }
 
     if (!fullName && !email && !phone && !addressJson && !gclid) {
+      track(context, "visitor_id_post", vid, { outcome: "empty" });
       return json({ ok: true }, 200); // nothing worth storing
     }
 
@@ -149,9 +189,14 @@ export async function onRequestPost(context) {
       );
     }
 
+    track(context, "visitor_id_post", vid, {
+      outcome: "saved",
+      has_name: !!fullName, has_email: !!email, has_phone: !!phone, has_address: !!addressJson, has_gclid: !!gclid
+    });
     return json({ ok: true }, 200);
   } catch (e) {
     console.error("VISITOR_POST_FAILED " + ((e && e.message) || e));
+    track(context, "visitor_id_post", vid, { outcome: "error" });
     return json({ ok: false, error: "server_error" }, 500);
   }
 }

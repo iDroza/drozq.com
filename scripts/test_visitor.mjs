@@ -9,6 +9,21 @@ import { memoryD1, makeContext, checker } from "./_test_d1.mjs";
 
 const { check, done } = checker();
 
+// visitor.js fires phCapture() (a real fetch to PostHog) on every call.
+// Stub fetch so the test suite never actually hits the network / pollutes
+// production analytics with test vids; record calls for the assertions
+// below that want to confirm an event fired.
+const phCalls = [];
+const realFetch = globalThis.fetch;
+globalThis.fetch = async (url, init) => {
+  const u = String(url);
+  if (u.includes("posthog.com")) {
+    try { phCalls.push(JSON.parse((init && init.body) || "{}")); } catch (e) {}
+    return new Response("{}", { status: 200 });
+  }
+  return realFetch(url, init);
+};
+
 function reqWithCookies(url, cookies, init) {
   const headers = Object.assign({}, (init && init.headers) || {});
   if (cookies) headers["Cookie"] = cookies;
@@ -109,19 +124,29 @@ console.log("\n== /api/visitor POST -> GET round trip ==");
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ fullName: "Jane Doe", email: "jane@example.com", phone: "9494385948", gclid: "CLID123", address })
   });
-  const postRes = await visitorPost(makeContext(postReq, env));
+  const postCtx = makeContext(postReq, env);
+  const postRes = await visitorPost(postCtx);
+  await Promise.all(postCtx._waits);
   const postBody = await postRes.json();
   check("POST accepted", postRes.status === 200 && postBody.ok === true, postBody);
+
+  const postEvent = phCalls.find((c) => c.event === "visitor_id_post" && c.distinct_id === vid);
+  check("POST fires a visitor_id_post PostHog event with outcome:saved + field flags", !!postEvent && postEvent.properties.outcome === "saved" && postEvent.properties.has_name && postEvent.properties.has_address, postEvent);
 
   const table = await env.EMAIL_DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='returning_visitors'").first();
   check("returning_visitors table created lazily", !!table);
 
   const getReq = reqWithCookies("https://drozq.com/api/visitor", cookie);
-  const getRes = await visitorGet(makeContext(getReq, env));
+  const getCtx = makeContext(getReq, env);
+  const getRes = await visitorGet(getCtx);
+  await Promise.all(getCtx._waits);
   const getBody = await getRes.json();
   check("GET finds the row", getBody.ok === true && getBody.found === true, getBody);
   check("fields round-trip", getBody.data.fullName === "Jane Doe" && getBody.data.email === "jane@example.com" && getBody.data.phone === "9494385948" && getBody.data.gclid === "CLID123", getBody.data);
   check("address round-trips as an object", getBody.data.address && getBody.data.address.formatted === address.formatted, getBody.data.address);
+
+  const getEvent = phCalls.find((c) => c.event === "visitor_id_get" && c.distinct_id === vid && c.properties.found === true);
+  check("GET fires a visitor_id_get PostHog event with found:true", !!getEvent, getEvent);
 
   // A different vid must never see this row.
   const otherReq = reqWithCookies("https://drozq.com/api/visitor", "drozq_vid=someone-else");
@@ -197,4 +222,5 @@ console.log("\n== /api/visitor: EMAIL_DB unbound degrades gracefully ==");
   check("POST without EMAIL_DB -> 503 unconfigured", postRes.status === 503, postRes.status);
 }
 
+globalThis.fetch = realFetch;
 done();
